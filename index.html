@@ -3,32 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سیستەمی بازرگانی</title>
+    <title>سیستەمی بەڕێوەبردنی بازار - فرهاد</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --رەنگی-سەرەکی: #4a6bdf;
-            --رەنگی-دووەم: #f8f9fa;
-            --رەنگی-نوسین: #333;
-            --رەنگی-پاشبنەما: #fff;
-            --رەنگی-سنور: #ddd;
-            --رەنگی-سەرکەوتن: #28a745;
-            --رەنگی-هەڵە: #dc3545;
-            --رەنگی-ئاگاداری: #ffc107;
-            --پانی-لایە: 250px;
-            --بەرزی-سەر: 60px;
-            --گواستنەوە: هەموو 0.3s ئاسان;
+            --primary: #4a6bdf;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --background: #f5f7fb;
+            --text: #333;
+            --card-bg: #fff;
+            --border: #dee2e6;
+            --header-bg: #fff;
+            --sidebar-bg: #f8f9fa;
+            --hover: #e9ecef;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
 
-        .شێوازی-تاریک {
-            --رەنگی-سەرەکی: #6c8eff;
-            --رەنگی-دووەم: #2c2c2c;
-            --رەنگی-نوسین: #f0f0f0;
-            --رەنگی-پاشبنەما: #1e1e1e;
-            --رەنگی-سنور: #444;
-            --رەنگی-سەرکەوتن: #3acf5d;
-            --رەنگی-هەڵە: #e74c3c;
-            --رەنگی-ئاگاداری: #f39c12;
+        .dark-mode {
+            --primary: #5a77e0;
+            --background: #1a1a1a;
+            --text: #f0f0f0;
+            --card-bg: #2d2d2d;
+            --border: #444;
+            --header-bg: #2d2d2d;
+            --sidebar-bg: #252525;
+            --hover: #3d3d3d;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         * {
@@ -39,173 +45,231 @@
         }
 
         body {
-            background-color: var(--رەنگی-پاشبنەما);
-            color: var(--رەنگی-نوسین);
-            transition: var(--گواستنەوە);
-            overflow-x: hidden;
+            background-color: var(--background);
+            color: var(--text);
+            transition: all 0.3s ease;
+            line-height: 1.6;
         }
 
-        .ناوەڕاست {
+        .container {
             display: flex;
             min-height: 100vh;
         }
 
-        /* شێوازی لایە */
-        .لایە {
-            width: var(--پانی-لایە);
-            background-color: var(--رەنگی-دووەم);
-            border-left: 1px solid var(--رەنگی-سنور);
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
+        /* سایدبار */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            border-left: 1px solid var(--border);
             padding: 20px 0;
-            transition: var(--گواستنەوە);
-            z-index: 1000;
+            transition: all 0.3s ease;
             overflow-y: auto;
         }
 
-        .سەری-لایە {
+        .sidebar-header {
             padding: 0 20px 20px;
-            border-bottom: 1px solid var(--رەنگی-سنور);
-            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .سەری-لایە h2 {
-            color: var(--رەنگی-سەرەکی);
-            font-size: 1.5rem;
+        .sidebar-header h3 {
+            color: var(--primary);
+            font-size: 20px;
         }
 
-        .مێنوی-لایە {
+        .logo {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .sidebar-menu {
             list-style: none;
         }
 
-        .مێنوی-لایە li {
+        .sidebar-menu li {
             margin-bottom: 5px;
         }
 
-        .مێنوی-لایە a {
+        .sidebar-menu a {
             display: flex;
             align-items: center;
             padding: 12px 20px;
-            color: var(--رەنگی-نوسین);
+            color: var(--text);
             text-decoration: none;
-            transition: var(--گواستنەوە);
+            transition: all 0.3s;
             border-right: 3px solid transparent;
         }
 
-        .مێنوی-لایە a:hover, .مێنوی-لایە a.چالاک {
-            background-color: rgba(74, 107, 223, 0.1);
-            border-right-color: var(--رەنگی-سەرەکی);
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: var(--hover);
+            border-right-color: var(--primary);
         }
 
-        .مێنوی-لایە i {
+        .sidebar-menu i {
             margin-left: 10px;
-            font-size: 1.2rem;
-            width: 24px;
+            width: 20px;
             text-align: center;
         }
 
-        /* شێوازی ناوەڕاست */
-        .ناوەڕاسی-سەرەکی {
+        /* محتوای اصلی */
+        .main-content {
             flex: 1;
-            margin-right: var(--پانی-لایە);
-            transition: var(--گواستنەوە);
+            display: flex;
+            flex-direction: column;
         }
 
-        /* شێوازی سەرەوە */
-        .سەرەوە {
-            height: var(--بەرزی-سەر);
-            background-color: var(--رەنگی-پاشبنەما);
-            border-bottom: 1px solid var(--رەنگی-سنور);
+        /* هدر */
+        .header {
+            background-color: var(--header-bg);
+            padding: 15px 30px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
-            position: sticky;
-            top: 0;
-            z-index: 900;
-        }
-
-        .چەپی-سەرەوە {
-            display: flex;
             align-items: center;
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .گۆڕینی-لایە {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--رەنگی-نوسین);
-            cursor: pointer;
-            margin-left: 15px;
-        }
-
-        .ناوەندی-گەڕان {
+        .search-container {
             position: relative;
             width: 300px;
         }
 
-        .ناوەندی-گەڕان input {
+        .search-container input {
             width: 100%;
-            padding: 10px 40px 10px 15px;
-            border: 1px solid var(--رەنگی-سنور);
+            padding: 10px 15px 10px 40px;
+            border: 1px solid var(--border);
             border-radius: 4px;
-            background-color: var(--رەنگی-دووەم);
-            color: var(--رەنگی-نوسین);
+            background-color: var(--card-bg);
+            color: var(--text);
+            transition: all 0.3s;
         }
 
-        .ناوەندی-گەڕان i {
+        .search-container input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 107, 223, 0.2);
+        }
+
+        .search-container i {
             position: absolute;
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--رەنگی-نوسین);
+            color: var(--secondary);
         }
 
-        .ڕاستی-سەرەوە {
+        .user-actions {
             display: flex;
             align-items: center;
+            gap: 15px;
         }
 
-        .گۆڕینی-ڕەنگ {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: var(--رەنگی-نوسین);
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
             cursor: pointer;
-            margin: 0 15px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--secondary);
+            transition: .4s;
+            border-radius: 24px;
         }
 
-        .زانیاری-بەکارهێنەر {
-            display: flex;
-            align-items: center;
-        }
-
-        .وێنەی-بەکارهێنەر {
-            width: 40px;
-            height: 40px;
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
             border-radius: 50%;
-            background-color: var(--رەنگی-سەرەکی);
-            color: white;
-            display: flex;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            margin-left: 10px;
+            gap: 5px;
         }
 
-        /* شێوازی ناوەڕاست */
-        .ناوەڕاست {
-            padding: 20px;
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
         }
 
-        .بەش {
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: black;
+        }
+
+        .btn-info {
+            background-color: var(--info);
+            color: white;
+        }
+
+        /* محتوا */
+        .content {
+            padding: 30px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .section {
             display: none;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.5s;
         }
 
-        .بەش.چالاک {
+        .section.active {
             display: block;
         }
 
@@ -214,844 +278,1283 @@
             to { opacity: 1; }
         }
 
-        .کارت {
-            background-color: var(--رەنگی-دووەم);
+        .card {
+            background-color: var(--card-bg);
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
+            padding: 20px;
             margin-bottom: 20px;
-            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
         }
 
-        .سەری-کارت {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--رەنگی-سنور);
+        .card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .لەشی-کارت {
-            padding: 20px;
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* شێوازی داشبۆرد */
-        .ناوەندی-ئامارەکان {
+        /* داشبورد */
+        .stats-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
 
-        .کارتی-ئامار {
-            background: linear-gradient(135deg, var(--رەنگی-سەرەکی), #6c8eff);
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), #6c8eff);
             color: white;
             border-radius: 8px;
             padding: 20px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            transition: all 0.3s;
         }
 
-        .ئایکۆنی-ئامار {
-            font-size: 2.5rem;
-            margin-left: 15px;
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
-        .زانیاری-ئامار h3 {
-            font-size: 1.8rem;
+        .stat-card.sales {
+            background: linear-gradient(135deg, #28a745, #4cd964);
+        }
+
+        .stat-card.purchases {
+            background: linear-gradient(135deg, #ffc107, #ffd54f);
+        }
+
+        .stat-card.expenses {
+            background: linear-gradient(135deg, #dc3545, #ff6b6b);
+        }
+
+        .stat-info h3 {
+            font-size: 14px;
             margin-bottom: 5px;
+            font-weight: 500;
         }
 
-        /* شێوازی فۆرم */
-        .گرووپی-فۆرم {
+        .stat-info p {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-icon {
+            font-size: 40px;
+            opacity: 0.8;
+        }
+
+        /* جداول */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--hover);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr {
+            transition: all 0.2s;
+        }
+
+        tr:hover {
+            background-color: var(--hover);
+        }
+
+        .action-btn {
+            padding: 6px 10px;
+            margin: 0 3px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-edit {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-print {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-view {
+            background-color: var(--success);
+            color: white;
+        }
+
+        /* فرم‌ها */
+        .form-group {
             margin-bottom: 15px;
         }
 
-        .گرووپی-فۆرم label {
+        .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: 500;
         }
 
-        .کۆنتڕۆڵی-فۆرم {
+        .form-control {
             width: 100%;
             padding: 10px;
-            border: 1px solid var(--رەنگی-سنور);
+            border: 1px solid var(--border);
             border-radius: 4px;
-            background-color: var(--رەنگی-پاشبنەما);
-            color: var(--رەنگی-نوسین);
-            transition: var(--گواستنەوە);
+            background-color: var(--card-bg);
+            color: var(--text);
+            transition: all 0.3s;
         }
 
-        .کۆنتڕۆڵی-فۆرم:focus {
-            border-color: var(--رەنگی-سەرەکی);
+        .form-control:focus {
             outline: none;
+            border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(74, 107, 223, 0.2);
         }
 
-        .دوگمە {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: var(--گواستنەوە);
-            font-weight: 500;
-        }
-
-        .دوگمەی-سەرەکی {
-            background-color: var(--رەنگی-سەرەکی);
-            color: white;
-        }
-
-        .دوگمەی-سەرەکی:hover {
-            background-color: #3a5bbf;
-        }
-
-        .دوگمەی-هەڵە {
-            background-color: var(--رەنگی-هەڵە);
-            color: white;
-        }
-
-        .دوگمەی-هەڵە:hover {
-            background-color: #bd2130;
-        }
-
-        .دوگمەی-سەرکەوتن {
-            background-color: var(--رەنگی-سەرکەوتن);
-            color: white;
-        }
-
-        .دوگمەی-سەرکەوتن:hover {
-            background-color: #218838;
-        }
-
-        /* شێوازی خشتە */
-        .خشتەی-ھاوسۆز {
-            overflow-x: auto;
-        }
-
-        .خشتە {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .خشتە th, .خشتە td {
-            padding: 12px 15px;
-            text-align: right;
-            border-bottom: 1px solid var(--رەنگی-سنور);
-        }
-
-        .خشتە th {
-            background-color: var(--رەنگی-دووەم);
-            font-weight: 600;
-        }
-
-        .خشتە tr:hover {
-            background-color: rgba(74, 107, 223, 0.05);
-        }
-
-        .دوگمەکانی-کردار button {
-            margin-left: 5px;
-        }
-
-        /* شێوازی سەبەتە */
-        .ئایتمی-سەبەتە {
+        .form-row {
             display: flex;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid var(--رەنگی-سنور);
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
-        .وێنەی-ئایتمی-سەبەتە {
-            width: 80px;
-            height: 80px;
-            background-color: var(--رەنگی-دووەم);
-            border-radius: 4px;
-            margin-left: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .زانیاری-ئایتمی-سەبەتە {
+        .form-row .form-group {
             flex: 1;
+            min-width: 200px;
         }
 
-        .سەردێڕی-ئایتمی-سەبەتە {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .نرخی-ئایتمی-سەبەتە {
-            color: var(--رەنگی-سەرەکی);
-            font-weight: 500;
-        }
-
-        .بڕی-ئایتمی-سەبەتە {
-            display: flex;
-            align-items: center;
-        }
-
-        .دوگمەی-بڕ {
-            width: 30px;
-            height: 30px;
-            background-color: var(--رەنگی-دووەم);
-            border: 1px solid var(--رەنگی-سنور);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .تێکردنی-بڕ {
-            width: 40px;
-            height: 30px;
-            text-align: center;
-            border: 1px solid var(--رەنگی-سنور);
-            margin: 0 5px;
-        }
-
-        /* شێوازی چوونەژوورەوە */
-        .ناوەندی-چوونەژوورەوە {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-
-        .شێوازی-تاریک .ناوەندی-چوونەژوورەوە {
-            background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
-        }
-
-        .فۆرمی-چوونەژوورەوە {
-            width: 100%;
-            max-width: 400px;
-            background-color: var(--رەنگی-پاشبنەما);
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-        }
-
-        .فۆرمی-چوونەژوورەوە h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--رەنگی-سەرەکی);
-        }
-
-        /* شێوازی ھاوسۆز */
-        @media (max-width: 992px) {
-            .لایە {
-                transform: translateX(-100%);
-            }
-            
-            .لایە.چالاک {
-                transform: translateX(0);
-            }
-            
-            .ناوەڕاسی-سەرەکی {
-                margin-right: 0;
-            }
-            
-            .لایە.چالاک + .ناوەڕاسی-سەرەکی {
-                margin-right: var(--پانی-لایە);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .ناوەندی-ئامارەکان {
-                grid-template-columns: 1fr;
-            }
-            
-            .ناوەندی-گەڕان {
-                width: 200px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .سەرەوە {
-                flex-direction: column;
-                height: auto;
-                padding: 10px;
-            }
-            
-            .چەپی-سەرەوە, .ڕاستی-سەرەوە {
-                width: 100%;
-                justify-content: space-between;
-                margin-bottom: 10px;
-            }
-            
-            .ناوەندی-گەڕان {
-                width: 100%;
-            }
-        }
-
-        /* جێگرەوەکان */
-        .نادیار {
+        /* مدال */
+        .modal {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
         }
 
-        .ناوەڕاست-نوسین {
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .close {
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .close:hover {
+            color: var(--danger);
+        }
+
+        /* سیستم لاگین */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary), #6c8eff);
+        }
+
+        .login-form {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            max-width: 90%;
+        }
+
+        .login-form h2 {
             text-align: center;
-        }
-
-        .مەترسایی-٢٠ {
-            margin-top: 20px;
-        }
-
-        .مەترسایی-خوارەوەی-٢٠ {
             margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .پێشنیاری-خۆکار {
+        /* پیشنهادات */
+        .suggestions {
             position: absolute;
-            background-color: var(--رەنگی-پاشبنەما);
-            border: 1px solid var(--رەنگی-سنور);
-            border-top: none;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
             width: 100%;
             max-height: 200px;
             overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
         }
 
-        .پێشنیاری-خۆکار div {
+        .suggestion-item {
             padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-item:hover {
+            background-color: var(--hover);
+        }
+
+        /* رسپانسیو */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-left: none;
+                border-bottom: 1px solid var(--border);
+                padding: 10px;
+                max-height: 200px;
+            }
+            
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .sidebar-menu li {
+                flex: 1;
+                min-width: 120px;
+            }
+            
+            .sidebar-menu a {
+                border-right: none;
+                border-bottom: 3px solid transparent;
+                padding: 8px 12px;
+                justify-content: center;
+            }
+            
+            .sidebar-menu a:hover, .sidebar-menu a.active {
+                border-right-color: transparent;
+                border-bottom-color: var(--primary);
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .search-container {
+                width: 100%;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+        }
+
+        /* اسکنر بارکد */
+        .barcode-scanner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .barcode-input {
+            flex: 1;
+        }
+
+        .scanner-btn {
+            padding: 10px;
+            background-color: var(--info);
+            color: white;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
         }
 
-        .پێشنیاری-خۆکار div:hover {
-            background-color: var(--رەنگی-دووەم);
+        /* سەبەتە */
+        .cart-items {
+            margin-top: 20px;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid var(--border);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* تەبەکان */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* وێنەی کاڵا */
+        .product-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: var(--light);
+            padding: 10px;
+        }
+
+        /* بەشی کڕین */
+        .purchase-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .purchase-form {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- شاشەی چوونەژوورەوە -->
-    <div id="شاشەی-چوونەژوورەوە" class="ناوەندی-چوونەژوورەوە">
-        <div class="فۆرمی-چوونەژوورەوە">
-            <h2>چوونەژوورەوە بۆ سیستەمی بازرگانی</h2>
-            <div class="گرووپی-فۆرم">
-                <label for="پاسوۆرد">پاسوۆرد</label>
-                <input type="password" id="پاسوۆرد" class="کۆنتڕۆڵی-فۆرم" placeholder="پاسوۆرد بنووسە">
+    <!-- صفحه لاگین -->
+    <div id="loginPage" class="login-container">
+        <div class="login-form">
+            <h2><i class="fas fa-store"></i> چوونەژوورەوە بۆ سیستەم</h2>
+            <div class="form-group">
+                <label for="password">پاسوۆرد</label>
+                <input type="password" id="password" class="form-control" placeholder="پاسوۆرد بنووسە">
             </div>
-            <button id="دوگمەی-چوونەژوورەوە" class="دوگمە دوگمەی-سەرەکی" style="width: 100%;">چوونەژوورەوە</button>
+            <button id="loginBtn" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-sign-in-alt"></i> چوونەژوورەوە
+            </button>
+            <p id="loginError" style="color: var(--danger); margin-top: 10px; display: none;">
+                <i class="fas fa-exclamation-circle"></i> پاسوۆرد هەڵەیە!
+            </p>
         </div>
     </div>
 
-    <!-- بەرنامە (لە سەرەتودا نادیارە) -->
-    <div id="بەرنامە" class="نادیار">
-        <div class="ناوەڕاست">
-            <!-- لایە -->
-            <div class="لایە">
-                <div class="سەری-لایە">
-                    <h2>بازرگانی</h2>
+    <!-- سیستم اصلی -->
+    <div id="mainSystem" class="container" style="display: none;">
+        <!-- سایدبار -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-store logo"></i>
+                <h3>سیستەمی بازار</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> داشبۆرد</a></li>
+                <li><a href="#" data-section="sales"><i class="fas fa-shopping-cart"></i> فرۆشتن</a></li>
+                <li><a href="#" data-section="purchases"><i class="fas fa-shopping-bag"></i> کڕین</a></li>
+                <li><a href="#" data-section="inventory"><i class="fas fa-warehouse"></i> کۆگا</a></li>
+                <li><a href="#" data-section="customers"><i class="fas fa-users"></i> کڕیارەکان</a></li>
+                <li><a href="#" data-section="expenses"><i class="fas fa-money-bill-wave"></i> سەرفەکان</a></li>
+                <li><a href="#" data-section="reports"><i class="fas fa-chart-bar"></i> راپۆرتەکان</a></li>
+                <li><a href="#" data-section="settings"><i class="fas fa-cog"></i> ڕێکخستنەکان</a></li>
+                <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> چوونەدەرەوە</a></li>
+            </ul>
+        </div>
+
+        <!-- محتوای اصلی -->
+        <div class="main-content">
+            <!-- هدر -->
+            <div class="header">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="globalSearch" placeholder="گەڕان بەدوای کاڵا یان کەس">
+                    <div id="searchSuggestions" class="suggestions"></div>
                 </div>
-                <ul class="مێنوی-لایە">
-                    <li><a href="#" class="چالاک" data-section="داشبۆرد"><i class="fas fa-home"></i> داشبۆرد</a></li>
-                    <li><a href="#" data-section="کاڵاکان"><i class="fas fa-box"></i> کاڵاکان</a></li>
-                    <li><a href="#" data-section="فرۆشتن"><i class="fas fa-shopping-cart"></i> فرۆشتن</a></li>
-                    <li><a href="#" data-section="کڕین"><i class="fas fa-shopping-bag"></i> کڕین</a></li>
-                    <li><a href="#" data-section="سەبەتە"><i class="fas fa-shopping-basket"></i> سەبەتە</a></li>
-                    <li><a href="#" data-section="کڕیارەکان"><i class="fas fa-users"></i> کڕیارەکان</a></li>
-                    <li><a href="#" data-section="مامەڵەکان"><i class="fas fa-exchange-alt"></i> مامەڵەکان</a></li>
-                    <li><a href="#" data-section="ڕاپۆرتەکان"><i class="fas fa-chart-bar"></i> ڕاپۆرتەکان</a></li>
-                    <li><a href="#" data-section="ڕێکخستنەکان"><i class="fas fa-cog"></i> ڕێکخستنەکان</a></li>
-                    <li><a href="#" id="دوگمەی-دەرچوون"><i class="fas fa-sign-out-alt"></i> دەرچوون</a></li>
-                </ul>
+                <div class="user-actions">
+                    <label class="theme-switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span>دارک مۆد</span>
+                    <button class="btn btn-primary"><i class="fas fa-bell"></i></button>
+                    <button class="btn btn-primary"><i class="fas fa-user"></i> فرهاد</button>
+                </div>
             </div>
 
-            <!-- ناوەڕاسی سەرەکی -->
-            <div class="ناوەڕاسی-سەرەکی">
-                <!-- سەرەوە -->
-                <div class="سەرەوە">
-                    <div class="چەپی-سەرەوە">
-                        <button class="گۆڕینی-لایە">
-                            <i class="fas fa-bars"></i>
-                        </button>
-                        <div class="ناوەندی-گەڕان">
-                            <input type="text" id="گەڕانی-جیهانی" placeholder="گەڕان لە سیستەمەکە...">
-                            <i class="fas fa-search"></i>
-                            <div class="پێشنیاری-خۆکار" id="پێشنیاری-گەڕان"></div>
+            <!-- محتوا -->
+            <div class="content">
+                <!-- داشبورد -->
+                <div id="dashboard" class="section active">
+                    <h2><i class="fas fa-tachometer-alt"></i> داشبۆرد</h2>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3>کۆی فرۆشتن</h3>
+                                <p>5,250,000 د.</p>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card sales">
+                            <div class="stat-info">
+                                <h3>کۆی کڕین</h3>
+                                <p>3,750,000 د.</p>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card purchases">
+                            <div class="stat-info">
+                                <h3>کۆی سەرف</h3>
+                                <p>1,200,000 د.</p>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card expenses">
+                            <div class="stat-info">
+                                <h3>کۆی گشتی</h3>
+                                <p>300,000 د.</p>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
                         </div>
                     </div>
-                    <div class="ڕاستی-سەرەوە">
-                        <button class="گۆڕینی-ڕەنگ" id="گۆڕینی-ڕەنگ">
-                            <i class="fas fa-moon"></i>
-                        </button>
-                        <div class="زانیاری-بەکارهێنەر">
-                            <div class="وێنەی-بەکارهێنەر">ف</div>
-                            <span>فرزاد</span>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-history"></i> فرۆشتنە ڕێکەوەکان</h3>
+                            <button class="btn btn-primary">بینینی هەموو</button>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ژ. فرۆشتن</th>
+                                        <th>کڕیار</th>
+                                        <th>بەروار</th>
+                                        <th>کۆی گشتی</th>
+                                        <th>کردارەکان</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#1234</td>
+                                        <td>عەلی محەممەد</td>
+                                        <td>2023-10-15</td>
+                                        <td>150,000 د.</td>
+                                        <td>
+                                            <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                            <button class="action-btn btn-print"><i class="fas fa-print"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#1235</td>
+                                        <td>سارا عەبدوڵڵا</td>
+                                        <td>2023-10-15</td>
+                                        <td>85,000 د.</td>
+                                        <td>
+                                            <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                            <button class="action-btn btn-print"><i class="fas fa-print"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- ناوەڕاست -->
-                <div class="ناوەڕاست">
-                    <!-- بەشی داشبۆرد -->
-                    <div id="داشبۆرد" class="بەش چالاک">
-                        <h2 class="مەترسایی-خوارەوەی-٢٠">داشبۆردی بازرگانی</h2>
-                        <div class="ناوەندی-ئامارەکان">
-                            <div class="کارتی-ئامار">
-                                <div class="ئایکۆنی-ئامار">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </div>
-                                <div class="زانیاری-ئامار">
-                                    <h3 id="کۆی-فرۆشتن">٠ دینار</h3>
-                                    <p>کۆی فرۆشتن</p>
-                                </div>
+                <!-- فرۆشتن -->
+                <div id="sales" class="section">
+                    <h2><i class="fas fa-shopping-cart"></i> بەشی فرۆشتن</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-plus-circle"></i> فرۆشتنی نوێ</h3>
+                        </div>
+                        
+                        <div class="barcode-scanner">
+                            <div class="barcode-input">
+                                <label>بارکۆد</label>
+                                <input type="text" class="form-control" placeholder="بارکۆد بنوسە یان بێنە">
                             </div>
-                            <div class="کارتی-ئامار">
-                                <div class="ئایکۆنی-ئامار">
-                                    <i class="fas fa-shopping-bag"></i>
-                                </div>
-                                <div class="زانیاری-ئامار">
-                                    <h3 id="کۆی-کڕین">٠ دینار</h3>
-                                    <p>کۆی کڕین</p>
-                                </div>
+                            <button class="scanner-btn"><i class="fas fa-camera"></i> سکانەر</button>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>گەڕان بەدوای کاڵا</label>
+                                <input type="text" class="form-control" placeholder="ناوی کاڵا یان بارکۆد">
+                                <div class="suggestions"></div>
                             </div>
-                            <div class="کارتی-ئامار">
-                                <div class="ئایکۆنی-ئامار">
-                                    <i class="fas fa-exchange-alt"></i>
-                                </div>
-                                <div class="زانیاری-ئامار">
-                                    <h3 id="کۆی-مامەڵەکان">٠ دینار</h3>
-                                    <p>کۆی مامەڵەکان</p>
-                                </div>
-                            </div>
-                            <div class="کارتی-ئامار">
-                                <div class="ئایکۆنی-ئامار">
-                                    <i class="fas fa-wallet"></i>
-                                </div>
-                                <div class="زانیاری-ئامار">
-                                    <h3 id="کۆی-پارە">٠ دینار</h3>
-                                    <p>کۆی پارە</p>
-                                </div>
+                            <div class="form-group">
+                                <label>کڕیار</label>
+                                <input type="text" class="form-control" placeholder="ناوی کڕیار">
+                                <div class="suggestions"></div>
                             </div>
                         </div>
-
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>دوایین مامەڵەکان</h3>
-                                <button class="دوگمە دوگمەی-سەرەکی">بینینی هەموو</button>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ژمارەی کاڵا</label>
+                                <input type="number" class="form-control" value="1" min="1">
                             </div>
-                            <div class="لەشی-کارت">
-                                <div class="خشتەی-ھاوسۆز">
-                                    <table class="خشتە">
-                                        <thead>
-                                            <tr>
-                                                <th>بەروار</th>
-                                                <th>جۆر</th>
-                                                <th>بڕی پارە</th>
-                                                <th>کەس</th>
-                                                <th>وردەکاری</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="خشتەی-مامەڵەکان">
-                                            <tr>
-                                                <td colspan="5" class="ناوەڕاست-نوسین">هیچ مامەڵەیەک تۆمار نەکراوە</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            <div class="form-group">
+                                <label>نرخ</label>
+                                <input type="text" class="form-control" value="0 د." readonly>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary">
+                            <i class="fas fa-cart-plus"></i> زیادکردن بۆ سەبەتە
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-shopping-cart"></i> سەبەتە</h3>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>کاڵا</th>
+                                        <th>نرخ</th>
+                                        <th>ژمارە</th>
+                                        <th>کۆی گشتی</th>
+                                        <th>کردار</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>مۆبایلی سامسۆنگ</td>
+                                        <td>500,000 د.</td>
+                                        <td>2</td>
+                                        <td>1,000,000 د.</td>
+                                        <td>
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="cart-total">
+                            <span>کۆی گشتی:</span>
+                            <span>1,000,000 د.</span>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>جۆری پارەدان</label>
+                                <select class="form-control">
+                                    <option>نەقدی</option>
+                                    <option>قەرز</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>بەروار</label>
+                                <input type="date" class="form-control" value="2023-10-15">
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-success" style="width: 100%;">
+                            <i class="fas fa-check-circle"></i> تۆمارکردنی فرۆشتن
+                        </button>
+                    </div>
+                </div>
+
+                <!-- کڕین -->
+                <div id="purchases" class="section">
+                    <h2><i class="fas fa-shopping-bag"></i> بەشی کڕین</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-plus-circle"></i> کڕینی نوێ</h3>
+                        </div>
+                        
+                        <div class="purchase-form">
+                            <div>
+                                <div class="form-group">
+                                    <label>ناوی فرۆشیار</label>
+                                    <input type="text" class="form-control" placeholder="ناوی فرۆشیار">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>بارکۆد</label>
+                                    <input type="text" class="form-control" placeholder="بارکۆد بنوسە یان بێنە">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>گەڕان بەدوای کاڵا</label>
+                                    <input type="text" class="form-control" placeholder="ناوی کاڵا">
+                                    <div class="suggestions"></div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>نرخی کڕین</label>
+                                        <input type="number" class="form-control" placeholder="نرخی کڕین">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>نرخی فرۆشتن</label>
+                                        <input type="number" class="form-control" placeholder="نرخی فرۆشتن">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>ژمارە</label>
+                                        <input type="number" class="form-control" value="1" min="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>کۆی گشتی</label>
+                                        <input type="text" class="form-control" value="0 د." readonly>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-cart-plus"></i> زیادکردنی کاڵا
+                                </button>
+                            </div>
+                            
+                            <div>
+                                <div class="form-group">
+                                    <label>وێنەی کاڵا</label>
+                                    <img src="https://via.placeholder.com/300x200?text=وێنەی+کاڵا" class="product-image" alt="وێنەی کاڵا">
+                                    <input type="file" class="form-control">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- بەشی کاڵاکان -->
-                    <div id="کاڵاکان" class="بەش">
-                        <h2 class="مەترسایی-خوارەوەی-٢٠">بەڕێوەبردنی کاڵاکان</h2>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-list"></i> کاڵا زیادکراوەکان</h3>
+                        </div>
                         
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>کاڵای نوێ</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>کاڵا</th>
+                                        <th>نرخی کڕین</th>
+                                        <th>نرخی فرۆشتن</th>
+                                        <th>ژمارە</th>
+                                        <th>کۆی گشتی</th>
+                                        <th>کردار</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>مۆبایلی سامسۆنگ</td>
+                                        <td>400,000 د.</td>
+                                        <td>500,000 د.</td>
+                                        <td>5</td>
+                                        <td>2,000,000 د.</td>
+                                        <td>
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="cart-total">
+                            <span>کۆی گشتی:</span>
+                            <span>2,000,000 د.</span>
+                        </div>
+                        
+                        <button class="btn btn-success" style="width: 100%;">
+                            <i class="fas fa-check-circle"></i> تۆمارکردنی کڕین
+                        </button>
+                    </div>
+                </div>
+
+                <!-- کۆگا -->
+                <div id="inventory" class="section">
+                    <h2><i class="fas fa-warehouse"></i> بەشی کۆگا</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-plus-circle"></i> زیادکردنی کاڵای نوێ</h3>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ناوی کاڵا</label>
+                                <input type="text" class="form-control" placeholder="ناوی کاڵا">
                             </div>
-                            <div class="لەشی-کارت">
-                                <form id="فۆرمی-کاڵا">
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="ناوی-کاڵا">ناوی کاڵا</label>
-                                        <input type="text" id="ناوی-کاڵا" class="کۆنتڕۆڵی-فۆرم" required>
-                                    </div>
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="نرخی-کاڵا">نرخ (دینار)</label>
-                                        <input type="number" id="نرخی-کاڵا" class="کۆنتڕۆڵی-فۆرم" required min="0">
-                                    </div>
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="بارکۆدی-کاڵا">بارکۆد</label>
-                                        <input type="text" id="بارکۆدی-کاڵا" class="کۆنتڕۆڵی-فۆرم">
-                                    </div>
-                                    <button type="submit" class="دوگمە دوگمەی-سەرکەوتن">زیادکردنی کاڵا</button>
-                                </form>
+                            <div class="form-group">
+                                <label>بارکۆد</label>
+                                <input type="text" class="form-control" placeholder="بارکۆد">
                             </div>
                         </div>
-
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>لیستی کاڵاکان</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>نرخی کڕین</label>
+                                <input type="number" class="form-control" placeholder="نرخی کڕین">
                             </div>
-                            <div class="لەشی-کارت">
-                                <div class="خشتەی-ھاوسۆز">
-                                    <table class="خشتە">
-                                        <thead>
-                                            <tr>
-                                                <th>ناو</th>
-                                                <th>نرخ</th>
-                                                <th>بارکۆد</th>
-                                                <th>کردارەکان</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="خشتەی-کاڵاکان">
-                                            <tr>
-                                                <td colspan="4" class="ناوەڕاست-نوسین">هیچ کاڵایەک تۆمار نەکراوە</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            <div class="form-group">
+                                <label>نرخی فرۆشتن</label>
+                                <input type="number" class="form-control" placeholder="نرخی فرۆشتن">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>ژمارە</label>
+                            <input type="number" class="form-control" placeholder="ژمارەی کاڵا">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>وێنەی کاڵا</label>
+                            <img src="https://via.placeholder.com/300x200?text=وێنەی+کاڵا" class="product-image" alt="وێنەی کاڵا">
+                            <input type="file" class="form-control">
+                        </div>
+                        
+                        <button class="btn btn-primary">
+                            <i class="fas fa-save"></i> تۆمارکردنی کاڵا
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-boxes"></i> کاڵاکانی کۆگا</h3>
+                            <div class="search-container" style="width: 250px;">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="گەڕان بەدوای کاڵا">
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ناوی کاڵا</th>
+                                        <th>بارکۆد</th>
+                                        <th>نرخی کڕین</th>
+                                        <th>نرخی فرۆشتن</th>
+                                        <th>ژمارە</th>
+                                        <th>کردار</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>مۆبایلی سامسۆنگ</td>
+                                        <td>123456789</td>
+                                        <td>400,000 د.</td>
+                                        <td>500,000 د.</td>
+                                        <td>15</td>
+                                        <td>
+                                            <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>کۆمپیوتەری ئەیسوس</td>
+                                        <td>987654321</td>
+                                        <td>800,000 د.</td>
+                                        <td>1,000,000 د.</td>
+                                        <td>8</td>
+                                        <td>
+                                            <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- کڕیارەکان -->
+                <div id="customers" class="section">
+                    <h2><i class="fas fa-users"></i> بەشی کڕیارەکان</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-user-plus"></i> زیادکردنی کڕیاری نوێ</h3>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ناوی تەواو</label>
+                                <input type="text" class="form-control" placeholder="ناوی تەواو">
+                            </div>
+                            <div class="form-group">
+                                <label>ژمارەی مۆبایل</label>
+                                <input type="text" class="form-control" placeholder="ژمارەی مۆبایل">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>ناونیشان</label>
+                            <textarea class="form-control" placeholder="ناونیشان" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>جۆری کڕیار</label>
+                                <select class="form-control">
+                                    <option>نەقدی</option>
+                                    <option>قەرز</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>بڕی قەرز</label>
+                                <input type="number" class="form-control" placeholder="بڕی قەرز" value="0">
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary">
+                            <i class="fas fa-save"></i> تۆمارکردنی کڕیار
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-address-book"></i> لیستی کڕیارەکان</h3>
+                            <div class="search-container" style="width: 250px;">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="گەڕان بەدوای کڕیار">
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ناو</th>
+                                        <th>مۆبایل</th>
+                                        <th>جۆر</th>
+                                        <th>قەرز</th>
+                                        <th>کردار</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>عەلی محەممەد</td>
+                                        <td>07501234567</td>
+                                        <td>قەرز</td>
+                                        <td>150,000 د.</td>
+                                        <td>
+                                            <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>سارا عەبدوڵڵا</td>
+                                        <td>07507654321</td>
+                                        <td>نەقدی</td>
+                                        <td>0 د.</td>
+                                        <td>
+                                            <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- سەرفەکان -->
+                <div id="expenses" class="section">
+                    <h2><i class="fas fa-money-bill-wave"></i> بەشی سەرفەکان</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-plus-circle"></i> زیادکردنی سەرفی نوێ</h3>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>بڕی سەرف</label>
+                                <input type="number" class="form-control" placeholder="بڕی سەرف">
+                            </div>
+                            <div class="form-group">
+                                <label>جۆری سەرف</label>
+                                <select class="form-control">
+                                    <option>کرێ</option>
+                                    <option>کارمەند</option>
+                                    <option>ئەزموون</option>
+                                    <option>دیکە</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>هۆکار</label>
+                            <textarea class="form-control" placeholder="هۆکاری سەرف" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>بەروار</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        
+                        <button class="btn btn-primary">
+                            <i class="fas fa-save"></i> تۆمارکردنی سەرف
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-list"></i> مێژووی سەرفەکان</h3>
+                            <div class="search-container" style="width: 250px;">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="گەڕان بەدوای سەرف">
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>بەروار</th>
+                                        <th>جۆر</th>
+                                        <th>هۆکار</th>
+                                        <th>بڕ</th>
+                                        <th>کردار</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2023-10-10</td>
+                                        <td>کرێ</td>
+                                        <td>کرێی مانگە</td>
+                                        <td>500,000 د.</td>
+                                        <td>
+                                            <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2023-10-05</td>
+                                        <td>ئەزموون</td>
+                                        <td>کاغەز و قەڵەم</td>
+                                        <td>75,000 د.</td>
+                                        <td>
+                                            <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- راپۆرتەکان -->
+                <div id="reports" class="section">
+                    <h2><i class="fas fa-chart-bar"></i> بەشی راپۆرتەکان</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-filter"></i> فیلتەر</h3>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>جۆری راپۆرت</label>
+                                <select class="form-control">
+                                    <option>فرۆشتن</option>
+                                    <option>کڕین</option>
+                                    <option>سەرف</option>
+                                    <option>کڕیارەکان</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>لە بەروار</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>بۆ بەروار</label>
+                                <input type="date" class="form-control">
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary">
+                            <i class="fas fa-sync"></i> نوێکردنەوەی راپۆرت
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-table"></i> راپۆرتی فرۆشتن</h3>
+                            <button class="btn btn-primary"><i class="fas fa-print"></i> چاپکردن</button>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>بەروار</th>
+                                        <th>ژ. فرۆشتن</th>
+                                        <th>کڕیار</th>
+                                        <th>کۆی گشتی</th>
+                                        <th>جۆری پارەدان</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2023-10-15</td>
+                                        <td>#1234</td>
+                                        <td>عەلی محەممەد</td>
+                                        <td>150,000 د.</td>
+                                        <td>قەرز</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2023-10-15</td>
+                                        <td>#1235</td>
+                                        <td>سارا عەبدوڵڵا</td>
+                                        <td>85,000 د.</td>
+                                        <td>نەقدی</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2023-10-14</td>
+                                        <td>#1233</td>
+                                        <td>محەممەد کەریم</td>
+                                        <td>200,000 د.</td>
+                                        <td>نەقدی</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="3">کۆی گشتی</th>
+                                        <th colspan="2">435,000 د.</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ڕێکخستنەکان -->
+                <div id="settings" class="section">
+                    <h2><i class="fas fa-cog"></i> بەشی ڕێکخستنەکان</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-database"></i> بەڕێوەبردنی داتا</h3>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>باکئەپ وەرگرتن</label>
+                                <button class="btn btn-primary" style="width: 100%;">
+                                    <i class="fas fa-download"></i> وەرگرتنی باکئەپ
+                                </button>
+                            </div>
+                            <div class="form-group">
+                                <label>گەڕاندنەوەی داتا</label>
+                                <div class="form-row">
+                                    <input type="file" class="form-control">
+                                    <button class="btn btn-info"><i class="fas fa-upload"></i> بارکردن</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- بەشی فرۆشتن -->
-                    <div id="فرۆشتن" class="بەش">
-                        <h2 class="مەترسایی-خوارەوەی-٢٠">بەشی فرۆشتن</h2>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-key"></i> گۆڕینی پاسوۆرد</h3>
+                        </div>
                         
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>گەڕان بۆ کاڵا</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>پاسوۆردی ئێستا</label>
+                                <input type="password" class="form-control">
                             </div>
-                            <div class="لەشی-کارت">
-                                <div class="گرووپی-فۆرم">
-                                    <label for="گەڕانی-کاڵا">گەڕان بە ناو یان بارکۆد</label>
-                                    <input type="text" id="گەڕانی-کاڵا" class="کۆنتڕۆڵی-فۆرم" placeholder="ناو یان بارکۆدی کاڵا بنووسە">
-                                    <div class="پێشنیاری-خۆکار" id="پێشنیاری-کاڵا"></div>
-                                </div>
-                                <div id="ئەنجامی-گەڕان" class="مەترسایی-٢٠"></div>
+                            <div class="form-group">
+                                <label>پاسوۆردی نوێ</label>
+                                <input type="password" class="form-control">
                             </div>
                         </div>
-
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>فرۆشتی نوێ</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <form id="فۆرمی-فرۆشتن">
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="کڕیار">کڕیار</label>
-                                        <input type="text" id="کڕیار" class="کۆنتڕۆڵی-فۆرم" placeholder="ناوی کڕیار">
-                                    </div>
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="کاڵای-فرۆشتن">کاڵا</label>
-                                        <select id="کاڵای-فرۆشتن" class="کۆنتڕۆڵی-فۆرم" required>
-                                            <option value="">کاڵا هەڵبژێرە</option>
-                                        </select>
-                                    </div>
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="بڕی-فرۆشتن">بڕ</label>
-                                        <input type="number" id="بڕی-فرۆشتن" class="کۆنتڕۆڵی-فۆرم" required min="1" value="1">
-                                    </div>
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="جۆری-پارەدان">جۆری پارەدان</label>
-                                        <select id="جۆری-پارەدان" class="کۆنتڕۆڵی-فۆرم">
-                                            <option value="نەقد">نەقد</option>
-                                            <option value="قەرز">قەرز</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="دوگمە دوگمەی-سەرکەوتن">تۆمارکردنی فرۆشتن</button>
-                                </form>
-                            </div>
+                        
+                        <div class="form-group">
+                            <label>دووبارەی پاسوۆردی نوێ</label>
+                            <input type="password" class="form-control">
                         </div>
-
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>مێژووی فرۆشتن</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <div class="خشتەی-ھاوسۆز">
-                                    <table class="خشتە">
-                                        <thead>
-                                            <tr>
-                                                <th>بەروار</th>
-                                                <th>کاڵا</th>
-                                                <th>بڕ</th>
-                                                <th>نرخ</th>
-                                                <th>کڕیار</th>
-                                                <th>جۆری پارەدان</th>
-                                                <th>کردارەکان</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="خشتەی-فرۆشتن">
-                                            <tr>
-                                                <td colspan="7" class="ناوەڕاست-نوسین">هیچ فرۆشتنێک تۆمار نەکراوە</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                        
+                        <button class="btn btn-primary">
+                            <i class="fas fa-save"></i> گۆڕینی پاسوۆرد
+                        </button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <!-- بەشی کڕین -->
-                    <div id="کڕین" class="بەش">
-                        <h2 class="مەترسایی-خوارەوەی-٢٠">بەشی کڕین</h2>
-                        
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>کڕینی نوێ</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <form id="فۆرمی-کڕین">
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="فرۆشیار">فرۆشیار</label>
-                                        <input type="text" id="فرۆشیار" class="کۆنتڕۆڵی-فۆرم" placeholder="ناوی فرۆشیار">
-                                    </div>
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="کاڵای-کڕین">کاڵا</label>
-                                        <select id="کاڵای-کڕین" class="کۆنتڕۆڵی-فۆرم" required>
-                                            <option value="">کاڵا هەڵبژێرە</option>
-                                        </select>
-                                    </div>
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="بڕی-کڕین">بڕ</label>
-                                        <input type="number" id="بڕی-کڕین" class="کۆنتڕۆڵی-فۆرم" required min="1" value="1">
-                                    </div>
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="نرخی-کڕین">نرخی تاک (دینار)</label>
-                                        <input type="number" id="نرخی-کڕین" class="کۆنتڕۆڵی-فۆرم" required min="0">
-                                    </div>
-                                    <button type="submit" class="دوگمە دوگمەی-سەرکەوتن">تۆمارکردنی کڕین</button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>مێژووی کڕین</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <div class="خشتەی-ھاوسۆز">
-                                    <table class="خشتە">
-                                        <thead>
-                                            <tr>
-                                                <th>بەروار</th>
-                                                <th>کاڵا</th>
-                                                <th>بڕ</th>
-                                                <th>نرخ</th>
-                                                <th>فرۆشیار</th>
-                                                <th>کردارەکان</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="خشتەی-کڕین">
-                                            <tr>
-                                                <td colspan="6" class="ناوەڕاست-نوسین">هیچ کڕینێک تۆمار نەکراوە</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+    <!-- مدال بینینی فرۆشتن -->
+    <div id="saleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>زانیاری فرۆشتن #1234</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>کڕیار</label>
+                        <p>عەلی محەممەد</p>
                     </div>
-
-                    <!-- بەشی سەبەتە -->
-                    <div id="سەبەتە" class="بەش">
-                        <h2 class="مەترسایی-خوارەوەی-٢٠">سەبەتەی کڕین</h2>
-                        
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>کاڵاکانی سەبەتە</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <div id="ناوەڕاستی-سەبەتە">
-                                    <p class="ناوەڕاست-نوسین">سەبەتە بەتاڵە</p>
-                                </div>
-                                <div class="مەترسایی-٢٠" id="کۆی-سەبەتە" style="display: none;">
-                                    <h3>کۆی گشتی: <span id="بڕی-کۆیی">٠</span> دینار</h3>
-                                    <button class="دوگمە دوگمەی-سەرکەوتن" id="دوگمەی-کڕین">کڕینی سەبەتە</button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label>بەروار</label>
+                        <p>2023-10-15</p>
                     </div>
-
-                    <!-- بەشی کڕیارەکان -->
-                    <div id="کڕیارەکان" class="بەش">
-                        <h2 class="مەترسایی-خوارەوەی-٢٠">بەڕێوەبردنی کڕیارەکان</h2>
-                        
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>کڕیاری نوێ</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <form id="فۆرمی-کڕیار">
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="ناوی-کڕیار">ناوی کڕیار</label>
-                                        <input type="text" id="ناوی-کڕیار" class="کۆنتڕۆڵی-فۆرم" required>
-                                    </div>
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="ژمارەی-کڕیار">ژمارەی مۆبایل</label>
-                                        <input type="text" id="ژمارەی-کڕیار" class="کۆنتڕۆڵی-فۆرم">
-                                    </div>
-                                    <button type="submit" class="دوگمە دوگمەی-سەرکەوتن">زیادکردنی کڕیار</button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>لیستی کڕیارەکان</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <div class="گرووپی-فۆرم">
-                                    <label for="گەڕانی-کڕیار">گەڕان بە ناوی کڕیار</label>
-                                    <input type="text" id="گەڕانی-کڕیار" class="کۆنتڕۆڵی-فۆرم" placeholder="ناوی کڕیار بنووسە">
-                                    <div class="پێشنیاری-خۆکار" id="پێشنیاری-کڕیار"></div>
-                                </div>
-                                <div class="خشتەی-ھاوسۆز مەترسایی-٢٠">
-                                    <table class="خشتە">
-                                        <thead>
-                                            <tr>
-                                                <th>ناو</th>
-                                                <th>ژمارەی مۆبایل</th>
-                                                <th>قەرز</th>
-                                                <th>کردارەکان</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="خشتەی-کڕیارەکان">
-                                            <tr>
-                                                <td colspan="4" class="ناوەڕاست-نوسین">هیچ کڕیارێک تۆمار نەکراوە</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>کاڵا</th>
+                                <th>نرخ</th>
+                                <th>ژمارە</th>
+                                <th>کۆی گشتی</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>مۆبایلی سامسۆنگ</td>
+                                <td>500,000 د.</td>
+                                <td>2</td>
+                                <td>1,000,000 د.</td>
+                            </tr>
+                            <tr>
+                                <td>پێڵاو</td>
+                                <td>50,000 د.</td>
+                                <td>1</td>
+                                <td>50,000 د.</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3">کۆی گشتی</th>
+                                <th>1,050,000 د.</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>جۆری پارەدان</label>
+                        <p>قەرز</p>
                     </div>
-
-                    <!-- بەشی مامەڵەکان -->
-                    <div id="مامەڵەکان" class="بەش">
-                        <h2 class="مەترسایی-خوارەوەی-٢٠">مێژووی مامەڵەکان</h2>
-                        
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>گەڕان لە مامەڵەکان</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <div class="گرووپی-فۆرم">
-                                    <label for="گەڕانی-مامەڵە">گەڕان بە ناوی کەس یان کاڵا</label>
-                                    <input type="text" id="گەڕانی-مامەڵە" class="کۆنتڕۆڵی-فۆرم" placeholder="ناوی کەس یان کاڵا بنووسە">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>هەموو مامەڵەکان</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <div class="خشتەی-ھاوسۆز">
-                                    <table class="خشتە">
-                                        <thead>
-                                            <tr>
-                                                <th>بەروار</th>
-                                                <th>جۆر</th>
-                                                <th>کاڵا</th>
-                                                <th>بڕ</th>
-                                                <th>نرخ</th>
-                                                <th>کەس</th>
-                                                <th>کردارەکان</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="خشتەی-هەموو-مامەڵەکان">
-                                            <tr>
-                                                <td colspan="7" class="ناوەڕاست-نوسین">هیچ مامەڵەیەک تۆمار نەکراوە</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- بەشی ڕاپۆرتەکان -->
-                    <div id="ڕاپۆرتەکان" class="بەش">
-                        <h2 class="مەترسایی-خوارەوەی-٢٠">ڕاپۆرتەکان</h2>
-                        
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>ڕاپۆرتی فرۆشتن</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <div class="گرووپی-فۆرم">
-                                    <label for="بەرواری-لە-فرۆشتن">لە بەروار</label>
-                                    <input type="date" id="بەرواری-لە-فرۆشتن" class="کۆنتڕۆڵی-فۆرم">
-                                </div>
-                                <div class="گرووپی-فۆرم">
-                                    <label for="بەرواری-بۆ-فرۆشتن">بۆ بەروار</label>
-                                    <input type="date" id="بەرواری-بۆ-فرۆشتن" class="کۆنتڕۆڵی-فۆرم">
-                                </div>
-                                <button class="دوگمە دوگمەی-سەرەکی" id="دوگمەی-ڕاپۆرتی-فرۆشتن">نیشانی ڕاپۆرت</button>
-                                <div id="ئەنجامی-ڕاپۆرتی-فرۆشتن" class="مەترسایی-٢٠"></div>
-                            </div>
-                        </div>
-
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>ڕاپۆرتی کڕین</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <div class="گرووپی-فۆرم">
-                                    <label for="بەرواری-لە-کڕین">لە بەروار</label>
-                                    <input type="date" id="بەرواری-لە-کڕین" class="کۆنتڕۆڵی-فۆرم">
-                                </div>
-                                <div class="گرووپی-فۆرم">
-                                    <label for="بەرواری-بۆ-کڕین">بۆ بەروار</label>
-                                    <input type="date" id="بەرواری-بۆ-کڕین" class="کۆنتڕۆڵی-فۆرم">
-                                </div>
-                                <button class="دوگمە دوگمەی-سەرەکی" id="دوگمەی-ڕاپۆرتی-کڕین">نیشانی ڕاپۆرت</button>
-                                <div id="ئەنجامی-ڕاپۆرتی-کڕین" class="مەترسایی-٢٠"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- بەشی ڕێکخستنەکان -->
-                    <div id="ڕێکخستنەکان" class="بەش">
-                        <h2 class="مەترسایی-خوارەوەی-٢٠">ڕێکخستنەکان</h2>
-                        
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>باکئەپ و گەڕاندنەوە</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <div class="گرووپی-فۆرم">
-                                    <label>باکئەپی داتا</label>
-                                    <button class="دوگمە دوگمەی-سەرەکی" id="دوگمەی-باکئەپ">وەرگرتنی باکئەپ</button>
-                                </div>
-                                <div class="گرووپی-فۆرم مەترسایی-٢٠">
-                                    <label for="فایلی-باکئەپ">گەڕاندنەوەی داتا</label>
-                                    <input type="file" id="فایلی-باکئەپ" class="کۆنتڕۆڵی-فۆرم">
-                                    <button class="دوگمە دوگمەی-سەرکەوتن مەترسایی-٢٠" id="دوگمەی-گەڕاندنەوە">گەڕاندنەوەی داتا</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="کارت">
-                            <div class="سەری-کارت">
-                                <h3>گۆڕینی پاسوۆرد</h3>
-                            </div>
-                            <div class="لەشی-کارت">
-                                <form id="فۆرمی-پاسوۆرد">
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="پاسوۆردی-کۆن">پاسوۆردی کۆن</label>
-                                        <input type="password" id="پاسوۆردی-کۆن" class="کۆنتڕۆڵی-فۆرم" required>
-                                    </div>
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="پاسوۆردی-نوێ">پاسوۆردی نوێ</label>
-                                        <input type="password" id="پاسوۆردی-نوێ" class="کۆنتڕۆڵی-فۆرم" required>
-                                    </div>
-                                    <div class="گرووپی-فۆرم">
-                                        <label for="پاسوۆردی-نوێ-دووبارە">دووبارەکردنەوەی پاسوۆردی نوێ</label>
-                                        <input type="password" id="پاسوۆردی-نوێ-دووبارە" class="کۆنتڕۆڵی-فۆرم" required>
-                                    </div>
-                                    <button type="submit" class="دوگمە دوگمەی-سەرکەوتن">گۆڕینی پاسوۆرد</button>
-                                </form>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label>بڕی قەرز</label>
+                        <p>1,050,000 د.</p>
                     </div>
                 </div>
             </div>
@@ -1059,1092 +1562,162 @@
     </div>
 
     <script>
-        // زانیارییە بنەڕەتییەکان
-        const پاسوۆردی_سیستەم = "farzad1234";
-        let داتاکان = {
-            کاڵاکان: [],
-            فرۆشتن: [],
-            کڕین: [],
-            کڕیارەکان: [],
-            مامەڵەکان: [],
-            سەبەتە: [],
-            ڕێکخستنەکان: {}
-        };
-
-        // فەنکشنی سەرەکی بەرنامەکە
-        document.addEventListener('DOMContentLoaded', function() {
-            // چەسکاندنی داتاکان لە localStorage
-            چەسکاندنی_داتاکان();
-
-            // ڕێکخستنی گوێگرتنەوەکان
-            ڕێکخستنی_گوێگرتنەوەکان();
-
-            // نیشاندانی شاشەی چوونەژوورەوە
-            document.getElementById('شاشەی-چوونەژوورەوە').classList.remove('نادیار');
-            document.getElementById('بەرنامە').classList.add('نادیار');
+        // سیستم لاگین
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            const password = document.getElementById('password').value;
+            if (password === 'farzad1234') {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainSystem').style.display = 'flex';
+                // داتای نموونەیی زیاد بکە
+                initializeSampleData();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
         });
 
-        // فەنکشنی چەسکاندنی داتاکان
-        function چەسکاندنی_داتاکان() {
-            const داتای_چەسپاو = localStorage.getItem('بازرگانی_داتا');
-            if (داتای_چەسپاو) {
-                داتاکان = JSON.parse(داتای_چەسپاو);
+        // چوونەدەرەوە
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('mainSystem').style.display = 'none';
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        });
+
+        // دارک مۆد
+        document.getElementById('darkModeToggle').addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode');
+            // ئەگەر دارک مۆد چالاککرا
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
             }
+        });
+
+        // چێککردنی ڕێکخستنی دارک مۆد لە localStorage
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').checked = true;
         }
 
-        // فەنکشنی پاشەکەوتکردنی داتاکان
-        function پاشەکەوتکردنی_داتاکان() {
-            localStorage.setItem('بازرگانی_داتا', JSON.stringify(داتاکان));
-        }
-
-        // فەنکشنی ڕێکخستنی گوێگرتنەوەکان
-        function ڕێکخستنی_گوێگرتنەوەکان() {
-            // چوونەژوورەوە
-            document.getElementById('دوگمەی-چوونەژوورەوە').addEventListener('click', چوونەژوورەوە);
-
-            // دەرچوون
-            document.getElementById('دوگمەی-دەرچوون').addEventListener('click', دەرچوون);
-
-            // گۆڕینی شێواز
-            document.getElementById('گۆڕینی-ڕەنگ').addEventListener('click', function() {
-                document.body.classList.toggle('شێوازی-تاریک');
-                this.querySelector('i').classList.toggle('fa-moon');
-                this.querySelector('i').classList.toggle('fa-sun');
-            });
-
-            // گۆڕینی لایە
-            document.querySelector('.گۆڕینی-لایە').addEventListener('click', function() {
-                document.querySelector('.لایە').classList.toggle('چالاک');
-            });
-
-            // گۆڕینی بەشەکان
-            document.querySelectorAll('.مێنوی-لایە a').forEach(لینک => {
-                if (لینک.getAttribute('data-section')) {
-                    لینک.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const بەش = this.getAttribute('data-section');
-                        گۆڕینی_بەش(بەش);
+        // گۆڕینی بەشەکان
+        document.querySelectorAll('.sidebar-menu a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (this.id !== 'logoutBtn') {
+                    // چالاککردنی لیڕکەکە
+                    document.querySelectorAll('.sidebar-menu a').forEach(item => {
+                        item.classList.remove('active');
                     });
+                    this.classList.add('active');
+                    
+                    // نیشاندانی بەشی هەڵبژێردراو
+                    const sectionId = this.getAttribute('data-section');
+                    document.querySelectorAll('.section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(sectionId).classList.add('active');
                 }
             });
+        });
 
-            // فۆرمی کاڵا
-            document.getElementById('فۆرمی-کاڵا').addEventListener('submit', زیادکردنی_کاڵا);
-
-            // فۆرمی فرۆشتن
-            document.getElementById('فۆرمی-فرۆشتن').addEventListener('submit', زیادکردنی_فرۆشتن);
-
-            // فۆرمی کڕین
-            document.getElementById('فۆرمی-کڕین').addEventListener('submit', زیادکردنی_کڕین);
-
-            // فۆرمی کڕیار
-            document.getElementById('فۆرمی-کڕیار').addEventListener('submit', زیادکردنی_کڕیار);
-
-            // فۆرمی پاسوۆرد
-            document.getElementById('فۆرمی-پاسوۆرد').addEventListener('submit', گۆڕینی_پاسوۆرد);
-
-            // گەڕانی کاڵا
-            document.getElementById('گەڕانی-کاڵا').addEventListener('input', function() {
-                گەڕان_بۆ_کاڵا(this.value);
-            });
-
-            // گەڕانی کڕیار
-            document.getElementById('گەڕانی-کڕیار').addEventListener('input', function() {
-                گەڕان_بۆ_کڕیار(this.value);
-            });
-
-            // دوگمەی کڕینی سەبەتە
-            document.getElementById('دوگمەی-کڕین').addEventListener('click', کڕینی_سەبەتە);
-
-            // دوگمەی باکئەپ
-            document.getElementById('دوگمەی-باکئەپ').addEventListener('click', وەرگرتنی_باکئەپ);
-
-            // دوگمەی گەڕاندنەوە
-            document.getElementById('دوگمەی-گەڕاندنەوە').addEventListener('click', گەڕاندنەوەی_داتا);
-
-            // دوگمەی ڕاپۆرتی فرۆشتن
-            document.getElementById('دوگمەی-ڕاپۆرتی-فرۆشتن').addEventListener('click', function() {
-                نیشاندانی_ڕاپۆرتی_فرۆشتن();
-            });
-
-            // دوگمەی ڕاپۆرتی کڕین
-            document.getElementById('دوگمەی-ڕاپۆرتی-کڕین').addEventListener('click', function() {
-                نیشاندانی_ڕاپۆرتی_کڕین();
-            });
-        }
-
-        // فەنکشنی چوونەژوورەوە
-        function چوونەژوورەوە() {
-            const پاسوۆرد = document.getElementById('پاسوۆرد').value;
-            if (پاسوۆرد === پاسوۆردی_سیستەم) {
-                document.getElementById('شاشەی-چوونەژوورەوە').classList.add('نادیار');
-                document.getElementById('بەرنامە').classList.remove('نادیار');
-                نوێکردنەوەی_داشبۆرد();
-            } else {
-                alert('پاسوۆرد هەڵەە!');
-            }
-        }
-
-        // فەنکشنی دەرچوون
-        function دەرچوون() {
-            document.getElementById('شاشەی-چوونەژوورەوە').classList.remove('نادیار');
-            document.getElementById('بەرنامە').classList.add('نادیار');
-            document.getElementById('پاسوۆرد').value = '';
-        }
-
-        // فەنکشنی گۆڕینی بەش
-        function گۆڕینی_بەش(بەش) {
-            // لابردنی چالاکی لە هەموو بەشەکان
-            document.querySelectorAll('.بەش').forEach(ب => {
-                ب.classList.remove('چالاک');
-            });
-
-            // لابردنی چالاکی لە هەموو لینکەکان
-            document.querySelectorAll('.مێنوی-لایە a').forEach(لینک => {
-                لینک.classList.remove('چالاک');
-            });
-
-            // زیادکردنی چالاکی بە بەشە نوێیەکە
-            document.getElementById(بەش).classList.add('چالاک');
-
-            // زیادکردنی چالاکی بە لینکەکە
-            document.querySelector(`.مێنوی-لایە a[data-section="${بەش}"]`).classList.add('چالاک');
-
-            // نوێکردنەوەی ناوەڕاستی بەشەکە
-            if (بەش === 'داشبۆرد') {
-                نوێکردنەوەی_داشبۆرد();
-            } else if (بەش === 'کاڵاکان') {
-                نوێکردنەوەی_کاڵاکان();
-            } else if (بەش === 'فرۆشتن') {
-                نوێکردنەوەی_فرۆشتن();
-            } else if (بەش === 'کڕین') {
-                نوێکردنەوەی_کڕین();
-            } else if (بەش === 'سەبەتە') {
-                نوێکردنەوەی_سەبەتە();
-            } else if (بەش === 'کڕیارەکان') {
-                نوێکردنەوەی_کڕیارەکان();
-            } else if (بەش === 'مامەڵەکان') {
-                نوێکردنەوەی_مامەڵەکان();
-            }
-        }
-
-        // فەنکشنی نوێکردنەوەی داشبۆرد
-        function نوێکردنەوەی_داشبۆرد() {
-            // هەژمارکردنی کۆی فرۆشتن
-            const کۆی_فرۆشتن = داتاکان.فرۆشتن.reduce((کۆ, فرۆشتن) => {
-                return کۆ + (فرۆشتن.nرخ * فرۆشتن.bڕ);
-            }, 0);
-
-            // هەژمارکردنی کۆی کڕین
-            const کۆی_کڕین = داتاکان.کڕین.reduce((کۆ, کڕین) => {
-                return کۆ + (کڕین.nرخ * کڕین.bڕ);
-            }, 0);
-
-            // هەژمارکردنی کۆی مامەڵەکان
-            const کۆی_مامەڵەکان = کۆی_فرۆشتن + کۆی_کڕین;
-
-            // هەژمارکردنی کۆی پارە
-            const کۆی_پارە = کۆی_فرۆشتن - کۆی_کڕین;
-
-            // نوێکردنەوەی ئامارەکان
-            document.getElementById('کۆی-فرۆشتن').textContent = کۆی_فرۆشتن.toLocaleString() + ' دینار';
-            document.getElementById('کۆی-کڕین').textContent = کۆی_کڕین.toLocaleString() + ' دینار';
-            document.getElementById('کۆی-مامەڵەکان').textContent = کۆی_مامەڵەکان.toLocaleString() + ' دینار';
-            document.getElementById('کۆی-پارە').textContent = کۆی_پارە.toLocaleString() + ' دینار';
-
-            // نوێکردنەوەی خشتەی مامەڵەکان
-            نوێکردنەوەی_خشتەی_مامەڵەکان();
-        }
-
-        // فەنکشنی نوێکردنەوەی خشتەی مامەڵەکان
-        function نوێکردنەوەی_خشتەی_مامەڵەکان() {
-            const خشتە = document.getElementById('خشتەی-مامەڵەکان');
-            خشتە.innerHTML = '';
-
-            if (داتاکان.mامەڵەکان.length === 0) {
-                خشتە.innerHTML = '<tr><td colspan="5" class="ناوەڕاست-نوسین">هیچ مامەڵەیەک تۆمار نەکراوە</td></tr>';
-                return;
-            }
-
-            // زیادکردنی دوایین ٥ مامەڵە
-            const دوایین_مامەڵەکان = داتاکان.mامەڵەکان.slice(-5).reverse();
+        // گەڕان بە شێوازی خۆکار
+        document.getElementById('globalSearch').addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            const suggestions = document.getElementById('searchSuggestions');
             
-            دوایین_مامەڵەکان.forEach(مامەڵە => {
-                const تر = document.createElement('tr');
+            if (searchText.length > 1) {
+                // لێرەدا دەتوانیت پەیوەندی بکەیت بە داتابەیسەوە یان داتای نموونەیی بەکاربهێنیت
+                const sampleResults = [
+                    'مۆبایلی سامسۆنگ',
+                    'کۆمپیوتەری ئەیسوس',
+                    'تەلەفۆنی ئایفۆن',
+                    'عەلی محەممەد',
+                    'سارا عەبدوڵڵا'
+                ];
                 
-                const بەروار = document.createElement('td');
-                بەروار.textContent = مامەڵە.bەروار;
+                const filteredResults = sampleResults.filter(item => 
+                    item.toLowerCase().includes(searchText)
+                );
                 
-                const جۆر = document.createElement('td');
-                جۆر.textContent = مامەڵە.jۆر;
-                
-                const بڕی_پارە = document.createElement('td');
-                بڕی_پارە.textContent = مامەڵە.bڕی_پارە.toLocaleString() + ' دینار';
-                
-                const کەس = document.createElement('td');
-                کەس.textContent = مامەڵە.kەس;
-                
-                const وردەکاری = document.createElement('td');
-                وردەکاری.textContent = مامەڵە.وردەکاری;
-                
-                تر.appendChild(بەروار);
-                تر.appendChild(جۆر);
-                تر.appendChild(بڕی_پارە);
-                تر.appendChild(کەس);
-                تر.appendChild(وردەکاری);
-                
-                خشتە.appendChild(تر);
-            });
-        }
-
-        // فەنکشنی زیادکردنی کاڵا
-        function زیادکردنی_کاڵا(e) {
-            e.preventDefault();
-            
-            const ناوی_کاڵا = document.getElementById('ناوی-کاڵا').value;
-            const نرخی_کاڵا = parseInt(document.getElementById('نرخی-کاڵا').value);
-            const بارکۆدی_کاڵا = document.getElementById('بارکۆدی-کاڵا').value;
-            
-            const کاڵای_نوێ = {
-                id: Date.now(),
-                ناو: ناوی_کاڵا,
-                نرخ: نرخی_کاڵا,
-                بارکۆد: بارکۆدی_کاڵا || `BC${Date.now()}`
-            };
-            
-            داتاکان.کاڵاکان.push(کاڵای_نوێ);
-            پاشەکەوتکردنی_داتاکان();
-            
-            alert('کاڵا بە سەرکەوتوویی زیادکرا!');
-            document.getElementById('فۆرمی-کاڵا').reset();
-            
-            // نوێکردنەوەی لیستی کاڵاکان
-            نوێکردنەوەی_کاڵاکان();
-        }
-
-        // فەنکشنی نوێکردنەوەی کاڵاکان
-        function نوێکردنەوەی_کاڵاکان() {
-            const خشتە = document.getElementById('خشتەی-کاڵاکان');
-            خشتە.innerHTML = '';
-            
-            if (داتاکان.کاڵاکان.length === 0) {
-                خشتە.innerHTML = '<tr><td colspan="4" class="ناوەڕاست-نوسین">هیچ کاڵایەک تۆمار نەکراوە</td></tr>';
-                return;
-            }
-            
-            داتاکان.کاڵاکان.forEach(کاڵا => {
-                const تر = document.createElement('tr');
-                
-                const ناو = document.createElement('td');
-                ناو.textContent = کاڵا.ناو;
-                
-                const نرخ = document.createElement('td');
-                نرخ.textContent = کاڵا.nرخ.toLocaleString() + ' دینار';
-                
-                const بارکۆد = document.createElement('td');
-                بارکۆد.textContent = کاڵا.bارکۆد;
-                
-                const کردارەکان = document.createElement('td');
-                کردارەکان.className = 'دوگمەکانی-کردار';
-                
-                const دوگمەی_سڕینەوە = document.createElement('button');
-                دوگمەی_سڕینەوە.className = 'دوگمە دوگمەی-هەڵە';
-                دوگمەی_سڕینەوە.innerHTML = '<i class="fas fa-trash"></i>';
-                دوگمەی_سڕینەوە.addEventListener('click', () => {
-                    سڕینەوەی_کاڵا(کاڵا.id);
-                });
-                
-                کردارەکان.appendChild(دوگمەی_سڕینەوە);
-                
-                تر.appendChild(ناو);
-                تر.appendChild(نرخ);
-                تر.appendChild(بارکۆد);
-                تر.appendChild(کردارەکان);
-                
-                خشتە.appendChild(تر);
-            });
-        }
-
-        // فەنکشنی سڕینەوەی کاڵا
-        function سڕینەوەی_کاڵا(id) {
-            if (confirm('دڵنیای لە سڕینەوەی ئەم کاڵایە؟')) {
-                داتاکان.کاڵاکان = داتاکان.کاڵاکان.filter(کاڵا => کاڵا.id !== id);
-                پاشەکەوتکردنی_داتاکان();
-                نوێکردنەوەی_کاڵاکان();
-                alert('کاڵا سڕدرایەوە!');
-            }
-        }
-
-        // فەنکشنی گەڕان بۆ کاڵا
-        function گەڕان_بۆ_کاڵا(گەڕان) {
-            const پێشنیاری = document.getElementById('پێشنیاری-کاڵا');
-            پێشنیاری.innerHTML = '';
-            
-            if (گەڕان.length < 2) return;
-            
-            const کاڵاکانی_دۆزراوە = داتاکان.کاڵاکان.filter(کاڵا => 
-                کاڵا.ناو.includes(گەڕان) || کاڵا.bارکۆد.includes(گەڕان)
-            );
-            
-            if (کاڵاکانی_دۆزراوە.length > 0) {
-                پێشنیاری.style.display = 'block';
-                
-                کاڵاکانی_دۆزراوە.forEach(کاڵا => {
-                    const دایڤ = document.createElement('div');
-                    دایڤ.textContent = `${کاڵا.ناو} - ${کاڵا.nرخ.toLocaleString()} دینار`;
-                    دایڤ.addEventListener('click', () => {
-                        document.getElementById('گەڕانی-کاڵا').value = کاڵا.ناو;
-                        پێشنیاری.style.display = 'none';
-                        نیشاندانی_ئەنجامی_گەڕان(کاڵا);
+                if (filteredResults.length > 0) {
+                    suggestions.innerHTML = '';
+                    filteredResults.forEach(result => {
+                        const div = document.createElement('div');
+                        div.className = 'suggestion-item';
+                        div.textContent = result;
+                        div.addEventListener('click', function() {
+                            document.getElementById('globalSearch').value = result;
+                            suggestions.style.display = 'none';
+                        });
+                        suggestions.appendChild(div);
                     });
-                    
-                    پێشنیاری.appendChild(دایڤ);
-                });
-            } else {
-                پێشنیاری.style.display = 'none';
-            }
-        }
-
-        // فەنکشنی نیشاندانی ئەنجامی گەڕان
-        function نیشاندانی_ئەنجامی_گەڕان(کاڵا) {
-            const ئەنجامی_گەڕان = document.getElementById('ئەنجامی-گەڕان');
-            ئەنجامی_گەڕان.innerHTML = `
-                <div class="کارت">
-                    <div class="لەشی-کارت">
-                        <h3>${کاڵا.ناو}</h3>
-                        <p>نرخ: ${کاڵا.nرخ.toLocaleString()} دینار</p>
-                        <p>بارکۆد: ${کاڵا.bارکۆد}</p>
-                        <button class="دوگمە دوگمەی-سەرکەوتن" onclick="زیادکردن_بۆ_سەبەتە(${کاڵا.id})">زیادکردن بۆ سەبەتە</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // فەنکشنی زیادکردن بۆ سەبەتە
-        function زیادکردن_بۆ_سەبەتە(کاڵا_id) {
-            const کاڵا = داتاکان.کاڵاکان.find(ک => ک.id === کاڵا_id);
-            
-            if (کاڵا) {
-                // پشکنین بۆ دۆزینەوەی ئەگەر کاڵاکە پێشتر زیادکرابێت
-                const ئایتمی_هەبوو = داتاکان.sەبەتە.find(ئایتم => ئایتم.kاڵا.id === کاڵا_id);
-                
-                if (ئایتمی_هەبوو) {
-                    ئایتمی_هەبوو.bڕ += 1;
+                    suggestions.style.display = 'block';
                 } else {
-                    داتاکان.sەبەتە.push({
-                        کاڵا: کاڵا,
-                        بڕ: 1
-                    });
+                    suggestions.style.display = 'none';
                 }
-                
-                پاشەکەوتکردنی_داتاکان();
-                alert('کاڵا زیادکرا بۆ سەبەتە!');
-                
-                // نوێکردنەوەی سەبەتە
-                نوێکردنەوەی_سەبەتە();
-                
-                // گۆڕین بۆ بەشی سەبەتە
-                گۆڕینی_بەش('سەبەتە');
-            }
-        }
-
-        // فەنکشنی نوێکردنەوەی سەبەتە
-        function نوێکردنەوەی_سەبەتە() {
-            const ناوەڕاستی_سەبەتە = document.getElementById('ناوەڕاستی-سەبەتە');
-            const کۆی_سەبەتە = document.getElementById('کۆی-سەبەتە');
-            const بڕی_کۆیی = document.getElementById('بڕی-کۆیی');
-            
-            ناوەڕاستی_سەبەتە.innerHTML = '';
-            
-            if (داتاکان.sەبەتە.length === 0) {
-                ناوەڕاستی_سەبەتە.innerHTML = '<p class="ناوەڕاست-نوسین">سەبەتە بەتاڵە</p>';
-                کۆی_سەبەتە.style.display = 'none';
-                return;
-            }
-            
-            let کۆی_گشتی = 0;
-            
-            داتاکان.sەبەتە.forEach((ئایتم, index) => {
-                const تێکڕای_نرخ = ئایتم.kاڵا.nرخ * ئایتم.bڕ;
-                کۆی_گشتی += تێکڕای_نرخ;
-                
-                const دایڤ = document.createElement('div');
-                دایڤ.className = 'ئایتمی-سەبەتە';
-                دایڤ.innerHTML = `
-                    <div class="وێنەی-ئایتمی-سەبەتە">
-                        <i class="fas fa-box"></i>
-                    </div>
-                    <div class="زانیاری-ئایتمی-سەبەتە">
-                        <div class="سەردێڕی-ئایتمی-سەبەتە">${ئایتم.kاڵا.ناو}</div>
-                        <div class="نرخی-ئایتمی-سەبەتە">${ئایتم.kاڵا.nرخ.toLocaleString()} دینار</div>
-                    </div>
-                    <div class="بڕی-ئایتمی-سەبەتە">
-                        <div class="دوگمەی-بڕ" onclick="گۆڕینی_بڕی_سەبەتە(${index}, -1)">-</div>
-                        <input type="number" class="تێکردنی-بڕ" value="${ئایتم.bڕ}" min="1" onchange="گۆڕینی_بڕی_سەبەتە_ڕاستەوخۆ(${index}, this.value)">
-                        <div class="دوگمەی-بڕ" onclick="گۆڕینی_بڕی_سەبەتە(${index}, 1)">+</div>
-                    </div>
-                    <div class="نرخی-ئایتمی-سەبەتە">${تێکڕای_نرخ.toLocaleString()} دینار</div>
-                    <button class="دوگمە دوگمەی-هەڵە" onclick="سڕینەوەی_لە_سەبەتە(${index})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-                
-                ناوەڕاستی_سەبەتە.appendChild(دایڤ);
-            });
-            
-            بڕی_کۆیی.textContent = کۆی_گشتی.toLocaleString();
-            کۆی_سەبەتە.style.display = 'block';
-        }
-
-        // فەنکشنی گۆڕینی بڕی سەبەتە
-        function گۆڕینی_بڕی_سەبەتە(index, گۆڕان) {
-            داتاکان.sەبەتە[index].bڕ += گۆڕان;
-            
-            if (داتاکان.sەبەتە[index].bڕ < 1) {
-                داتاکان.sەبەتە[index].bڕ = 1;
-            }
-            
-            پاشەکەوتکردنی_داتاکان();
-            نوێکردنەوەی_سەبەتە();
-        }
-
-        // فەنکشنی گۆڕینی بڕی سەبەتە ڕاستەوخۆ
-        function گۆڕینی_بڕی_سەبەتە_ڕاستەوخۆ(index, بڕ) {
-            const بڕی_ژمارە = parseInt(بڕ);
-            
-            if (بڕی_ژمارە < 1) {
-                داتاکان.sەبەتە[index].bڕ = 1;
             } else {
-                داتاکان.sەبەتە[index].bڕ = بڕی_ژمارە;
+                suggestions.style.display = 'none';
             }
-            
-            پاشەکەوتکردنی_داتاکان();
-            نوێکردنەوەی_سەبەتە();
+        });
+
+        // داخستنی پێشنیارەکان کە کلیک لە شوێنێکی تر دەکرێت
+        document.addEventListener('click', function(e) {
+            if (e.target.id !== 'globalSearch') {
+                document.getElementById('searchSuggestions').style.display = 'none';
+            }
+        });
+
+        // داتای نموونەیی
+        function initializeSampleData() {
+            // ئەم فەنکشنە داتای نموونەیی زیاد دەکات بۆ سیستمەکە
+            console.log("داتای نموونەیی زیادکرا");
         }
 
-        // فەنکشنی سڕینەوەی لە سەبەتە
-        function سڕینەوەی_لە_سەبەتە(index) {
-            داتاکان.sەبەتە.splice(index, 1);
-            پاشەکەوتکردنی_داتاکان();
-            نوێکردنەوەی_سەبەتە();
-        }
-
-        // فەنکشنی کڕینی سەبەتە
-        function کڕینی_سەبەتە() {
-            if (داتاکان.sەبەتە.length === 0) {
-                alert('سەبەتە بەتاڵە!');
-                return;
-            }
-            
-            const ناوی_کڕیار = prompt('ناوی کڕیار بنووسە:');
-            if (!ناوی_کڕیار) return;
-            
-            // زیادکردنی کڕیارە نوێیەکە ئەگەر بوونی نییە
-            let کڕیار = داتاکان.کڕیارەکان.find(ک => ک.ناو === ناوی_کڕیار);
-            if (!کڕیار) {
-                کڕیار = {
-                    id: Date.now(),
-                    ناو: ناوی_کڕیار,
-                    ژمارەی_مۆبایل: ''
-                };
-                داتاکان.کڕیارەکان.push(کڕیار);
-            }
-            
-            // دروستکردنی فرۆشتن
-            const کۆی_گشتی = داتاکان.sەبەتە.reduce((کۆ, ئایتم) => {
-                return کۆ + (ئایتم.kاڵا.nرخ * ئایتم.bڕ);
-            }, 0);
-            
-            const فرۆشتن = {
-                id: Date.now(),
-                بەروار: new Date().toLocaleDateString('ku'),
-                کڕیار: ناوی_کڕیار,
-                کاڵاکان: [...داتاکان.sەبەتە],
-                کۆی_گشتی: کۆی_گشتی,
-                جۆری_پارەدان: 'نەقد'
-            };
-            
-            داتاکان.فرۆشتن.push(فرۆشتن);
-            
-            // زیادکردنی مامەڵە
-            const مامەڵە = {
-                بەروار: new Date().toLocaleDateString('ku'),
-                جۆر: 'فرۆشتن',
-                بڕی_پارە: کۆی_گشتی,
-                کەس: ناوی_کڕیار,
-                وردەکاری: `فرۆشتنی ${داتاکان.sەبەتە.length} کاڵا`
-            };
-            
-            داتاکان.mامەڵەکان.push(مامەڵە);
-            
-            // بەتاڵکردنەوەی سەبەتە
-            داتاکان.sەبەتە = [];
-            
-            پاشەکەوتکردنی_داتاکان();
-            alert('فرۆشتن بە سەرکەوتوویی تۆمارکرا!');
-            
-            // نوێکردنەوەی سەبەتە
-            نوێکردنەوەی_سەبەتە();
-            
-            // نوێکردنەوەی داشبۆرد
-            نوێکردنەوەی_داشبۆرد();
-        }
-
-        // فەنکشنی زیادکردنی فرۆشتن
-        function زیادکردنی_فرۆشتن(e) {
-            e.preventDefault();
-            
-            const کڕیار = document.getElementById('کڕیار').value;
-            const کاڵا_id = parseInt(document.getElementById('کاڵای-فرۆشتن').value);
-            const بڕ = parseInt(document.getElementById('بڕی-فرۆشتن').value);
-            const جۆری_پارەدان = document.getElementById('جۆری-پارەدان').value;
-            
-            const کاڵا = داتاکان.کاڵاکان.find(ک => ک.id === کاڵا_id);
-            
-            if (!کاڵا) {
-                alert('تکایە کاڵا هەڵبژێرە!');
-                return;
-            }
-            
-            // زیادکردنی کڕیارە نوێیەکە ئەگەر بوونی نییە
-            let کڕیار_ئوبجێکت = داتاکان.کڕیارەکان.find(ک => ک.ناو === کڕیار);
-            if (!کڕیار_ئوبجێکت) {
-                کڕیار_ئوبجێکت = {
-                    id: Date.now(),
-                    ناو: کڕیار,
-                    ژمارەی_مۆبایل: ''
-                };
-                داتاکان.کڕیارەکان.push(کڕیار_ئوبجێکت);
-            }
-            
-            const فرۆشتن = {
-                id: Date.now(),
-                بەروار: new Date().toLocaleDateString('ku'),
-                کڕیار: کڕیار,
-                کاڵا: کاڵا,
-                بڕ: بڕ,
-                نرخ: کاڵا.nرخ,
-                جۆری_پارەدان: جۆری_پارەدان
-            };
-            
-            داتاکان.فرۆشتن.push(فرۆشتن);
-            
-            // زیادکردنی مامەڵە
-            const مامەڵە = {
-                بەروار: new Date().toLocaleDateString('ku'),
-                جۆر: 'فرۆشتن',
-                بڕی_پارە: کاڵا.nرخ * بڕ,
-                کەس: کڕیار,
-                وردەکاری: `فرۆشتنی ${بڕ} ${کاڵا.ناو}`
-            };
-            
-            داتاکان.mامەڵەکان.push(مامەڵە);
-            
-            پاشەکەوتکردنی_داتاکان();
-            alert('فرۆشتن بە سەرکەوتوویی تۆمارکرا!');
-            document.getElementById('فۆرمی-فرۆشتن').reset();
-            
-            // نوێکردنەوەی فرۆشتن
-            نوێکردنەوەی_فرۆشتن();
-            
-            // نوێکردنەوەی داشبۆرد
-            نوێکردنەوەی_داشبۆرد();
-        }
-
-        // فەنکشنی نوێکردنەوەی فرۆشتن
-        function نوێکردنەوەی_فرۆشتن() {
-            const خشتە = document.getElementById('خشتەی-فرۆشتن');
-            خشتە.innerHTML = '';
-            
-            if (داتاکان.فرۆشتن.length === 0) {
-                خشتە.innerHTML = '<tr><td colspan="7" class="ناوەڕاست-نوسین">هیچ فرۆشتنێک تۆمار نەکراوە</td></tr>';
-                return;
-            }
-            
-            // نوێکردنەوەی ئەوپشکی کاڵای فرۆشتن
-            const ئەوپشکی_کاڵای_فرۆشتن = document.getElementById('کاڵای-فرۆشتن');
-            ئەوپشکی_کاڵای_فرۆشتن.innerHTML = '<option value="">کاڵا هەڵبژێرە</option>';
-            
-            داتاکان.کاڵاکان.forEach(کاڵا => {
-                const ئۆپشن = document.createElement('option');
-                ئۆپشن.value = کاڵا.id;
-                ئۆپشن.textContent = `${کاڵا.ناو} - ${کاڵا.nرخ.toLocaleString()} دینار`;
-                ئەوپشکی_کاڵای_فرۆشتن.appendChild(ئۆپشن);
-            });
-            
-            // نوێکردنەوەی خشتەی فرۆشتن
-            داتاکان.فرۆشتن.forEach(فرۆشتن => {
-                const تر = document.createElement('tr');
-                
-                const بەروار = document.createElement('td');
-                بەروار.textContent = فرۆشتن.bەروار;
-                
-                const کاڵا = document.createElement('td');
-                کاڵا.textContent = فرۆشتن.kاڵا.ناو;
-                
-                const بڕ = document.createElement('td');
-                بڕ.textContent = فرۆشتن.bڕ;
-                
-                const نرخ = document.createElement('td');
-                نرخ.textContent = فرۆشتن.nرخ.toLocaleString() + ' دینار';
-                
-                const کڕیار = document.createElement('td');
-                کڕیار.textContent = فرۆشتن.kڕیار;
-                
-                const جۆری_پارەدان = document.createElement('td');
-                جۆری_پارەدان.textContent = فرۆشتن.jۆری_پارەدان;
-                
-                const کردارەکان = document.createElement('td');
-                کردارەکان.className = 'دوگمەکانی-کردار';
-                
-                const دوگمەی-سڕینەوە = document.createElement('button');
-                دوگمەی-سڕینەوە.className = 'دوگمە دوگمەی-هەڵە';
-                دوگمەی-سڕینەوە.innerHTML = '<i class="fas fa-trash"></i>';
-                دوگمەی-سڕینەوە.addEventListener('click', () => {
-                    سڕینەوەی_فرۆشتن(فرۆشتن.id);
-                });
-                
-                کردارەکان.appendChild(دوگمەی-سڕینەوە);
-                
-                تر.appendChild(بەروار);
-                تر.appendChild(کاڵا);
-                تر.appendChild(بڕ);
-                تر.appendChild(نرخ);
-                تر.appendChild(کڕیار);
-                تر.appendChild(جۆری_پارەدان);
-                تر.appendChild(کردارەکان);
-                
-                خشتە.appendChild(تر);
-            });
-        }
-
-        // فەنکشنی سڕینەوەی فرۆشتن
-        function سڕینەوەی_فرۆشتن(id) {
-            if (confirm('دڵنیای لە سڕینەوەی ئەم فرۆشتنە؟')) {
-                داتاکان.فرۆشتن = داتاکان.فرۆشتن.filter(فرۆشتن => فرۆشتن.id !== id);
-                پاشەکەوتکردنی_داتاکان();
-                نوێکردنەوەی_فرۆشتن();
-                نوێکردنەوەی_داشبۆرد();
-                alert('فرۆشتن سڕدرایەوە!');
-            }
-        }
-
-        // فەنکشنی زیادکردنی کڕین
-        function زیادکردنی_کڕین(e) {
-            e.preventDefault();
-            
-            const فرۆشیار = document.getElementById('فرۆشیار').value;
-            const کاڵا_id = parseInt(document.getElementById('کاڵای-کڕین').value);
-            const بڕ = parseInt(document.getElementById('بڕی-کڕین').value);
-            const نرخ = parseInt(document.getElementById('نرخی-کڕین').value);
-            
-            const کاڵا = داتاکان.کاڵاکان.find(ک => ک.id === کاڵا_id);
-            
-            if (!کاڵا) {
-                alert('تکایە کاڵا هەڵبژێرە!');
-                return;
-            }
-            
-            const کڕین = {
-                id: Date.now(),
-                بەروار: new Date().toLocaleDateString('ku'),
-                فرۆشیار: فرۆشیار,
-                کاڵا: کاڵا,
-                بڕ: بڕ,
-                نرخ: نرخ
-            };
-            
-            داتاکان.کڕین.push(کڕین);
-            
-            // زیادکردنی مامەڵە
-            const مامەڵە = {
-                بەروار: new Date().toLocaleDateString('ku'),
-                جۆر: 'کڕین',
-                بڕی_پارە: نرخ * بڕ,
-                کەس: فرۆشیار,
-                وردەکاری: `کڕینی ${بڕ} ${کاڵا.ناو}`
-            };
-            
-            داتاکان.mامەڵەکان.push(مامەڵە);
-            
-            پاشەکەوتکردنی_داتاکان();
-            alert('کڕین بە سەرکەوتوویی تۆمارکرا!');
-            document.getElementById('فۆرمی-کڕین').reset();
-            
-            // نوێکردنەوەی کڕین
-            نوێکردنەوەی_کڕین();
-            
-            // نوێکردنەوەی داشبۆرد
-            نوێکردنەوەی_داشبۆرد();
-        }
-
-        // فەنکشنی نوێکردنەوەی کڕین
-        function نوێکردنەوەی_کڕین() {
-            const خشتە = document.getElementById('خشتەی-کڕین');
-            خشتە.innerHTML = '';
-            
-            if (داتاکان.کڕین.length === 0) {
-                خشتە.innerHTML = '<tr><td colspan="6" class="ناوەڕاست-نوسین">هیچ کڕینێک تۆمار نەکراوە</td></tr>';
-                return;
-            }
-            
-            // نوێکردنەوەی ئەوپشکی کاڵای کڕین
-            const ئەوپشکی_کاڵای_کڕین = document.getElementById('کاڵای-کڕین');
-            ئەوپشکی_کاڵای_کڕین.innerHTML = '<option value="">کاڵا هەڵبژێرە</option>';
-            
-            داتاکان.کاڵاکان.forEach(کاڵا => {
-                const ئۆپشن = document.createElement('option');
-                ئۆپشن.value = کاڵا.id;
-                ئۆپشن.textContent = `${کاڵا.ناو} - ${کاڵا.nرخ.toLocaleString()} دینار`;
-                ئەوپشکی_کاڵای_کڕین.appendChild(ئۆپشن);
-            });
-            
-            // نوێکردنەوەی خشتەی کڕین
-            داتاکان.کڕین.forEach(کڕین => {
-                const تر = document.createElement('tr');
-                
-                const بەروار = document.createElement('td');
-                بەروار.textContent = کڕین.bەروار;
-                
-                const کاڵا = document.createElement('td');
-                کاڵا.textContent = کڕین.kاڵا.ناو;
-                
-                const بڕ = document.createElement('td');
-                بڕ.textContent = کڕین.bڕ;
-                
-                const نرخ = document.createElement('td');
-                نرخ.textContent = کڕین.nرخ.toLocaleString() + ' دینار';
-                
-                const فرۆشیار = document.createElement('td');
-                فرۆشیار.textContent = کڕین.fرۆشیار;
-                
-                const کردارەکان = document.createElement('td');
-                کردارەکان.className = 'دوگمەکانی-کردار';
-                
-                const دوگمەی-سڕینەوە = document.createElement('button');
-                دوگمەی-سڕینەوە.className = 'دوگمە دوگمەی-هەڵە';
-                دوگمەی-سڕینەوە.innerHTML = '<i class="fas fa-trash"></i>';
-                دوگمەی-سڕینەوە.addEventListener('click', () => {
-                    سڕینەوەی_کڕین(کڕین.id);
-                });
-                
-                کردارەکان.appendChild(دوگمەی-سڕینەوە);
-                
-                تر.appendChild(بەروار);
-                تر.appendChild(کاڵا);
-                تر.appendChild(بڕ);
-                تر.appendChild(نرخ);
-                تر.appendChild(فرۆشیار);
-                تر.appendChild(کردارەکان);
-                
-                خشتە.appendChild(تر);
-            });
-        }
-
-        // فەنکشنی سڕینەوەی کڕین
-        function سڕینەوەی_کڕین(id) {
-            if (confirm('دڵنیای لە سڕینەوەی ئەم کڕینە؟')) {
-                داتاکان.کڕین = داتاکان.کڕین.filter(کڕین => کڕین.id !== id);
-                پاشەکەوتکردنی_داتاکان();
-                نوێکردنەوەی_کڕین();
-                نوێکردنەوەی_داشبۆرد();
-                alert('کڕین سڕدرایەوە!');
-            }
-        }
-
-        // فەنکشنی زیادکردنی کڕیار
-        function زیادکردنی_کڕیار(e) {
-            e.preventDefault();
-            
-            const ناوی_کڕیار = document.getElementById('ناوی-کڕیار').value;
-            const ژمارەی_کڕیار = document.getElementById('ژمارەی-کڕیار').value;
-            
-            const کڕیار = {
-                id: Date.now(),
-                ناو: ناوی_کڕیار,
-                ژمارەی_مۆبایل: ژمارەی_کڕیار,
-                قەرز: 0
-            };
-            
-            داتاکان.کڕیارەکان.push(کڕیار);
-            پاشەکەوتکردنی_داتاکان();
-            
-            alert('کڕیار بە سەرکەوتوویی زیادکرا!');
-            document.getElementById('فۆرمی-کڕیار').reset();
-            
-            // نوێکردنەوەی کڕیارەکان
-            نوێکردنەوەی_کڕیارەکان();
-        }
-
-        // فەنکشنی نوێکردنەوەی کڕیارەکان
-        function نوێکردنەوەی_کڕیارەکان() {
-            const خشتە = document.getElementById('خشتەی-کڕیارەکان');
-            خشتە.innerHTML = '';
-            
-            if (داتاکان.کڕیارەکان.length === 0) {
-                خشتە.innerHTML = '<tr><td colspan="4" class="ناوەڕاست-نوسین">هیچ کڕیارێک تۆمار نەکراوە</td></tr>';
-                return;
-            }
-            
-            داتاکان.کڕیارەکان.forEach(کڕیار => {
-                const تر = document.createElement('tr');
-                
-                const ناو = document.createElement('td');
-                ناو.textContent = کڕیار.ناو;
-                
-                const ژمارەی_مۆبایل = document.createElement('td');
-                ژمارەی_مۆبایل.textContent = کڕیار.ژمارەی_مۆبایل;
-                
-                const قەرز = document.createElement('td');
-                قەرز.textContent = کڕیار.qەرز.toLocaleString() + ' دینار';
-                
-                const کردارەکان = document.createElement('td');
-                کردارەکان.className = 'دوگمەکانی-کردار';
-                
-                const دوگمەی_سڕینەوە = document.createElement('button');
-                دوگمەی_سڕینەوە.className = 'دوگمە دوگمەی-هەڵە';
-                دوگمەی_سڕینەوە.innerHTML = '<i class="fas fa-trash"></i>';
-                دوگمەی_سڕینەوە.addEventListener('click', () => {
-                    سڕینەوەی_کڕیار(کڕیار.id);
-                });
-                
-                کردارەکان.appendChild(دوگمەی_سڕینەوە);
-                
-                تر.appendChild(ناو);
-                تر.appendChild(ژمارەی_مۆبایل);
-                تر.appendChild(قەرز);
-                تر.appendChild(کردارەکان);
-                
-                خشتە.appendChild(تر);
-            });
-        }
-
-        // فەنکشنی سڕینەوەی کڕیار
-        function سڕینەوەی_کڕیار(id) {
-            if (confirm('دڵنیای لە سڕینەوەی ئەم کڕیارە؟')) {
-                داتاکان.کڕیارەکان = داتاکان.کڕیارەکان.filter(کڕیار => کڕیار.id !== id);
-                پاشەکەوتکردنی_داتاکان());
-                نوێکردنەوەی_کڕیارەکان();
-                alert('کڕیار سڕدرایەوە!');
-            }
-        }
-
-        // فەنکشنی گەڕان بۆ کڕیار
-        function گەڕان_بۆ_کڕیار(گەڕان) {
-            const پێشنیاری = document.getElementById('پێشنیاری-کڕیار');
-            پێشنیاری.innerHTML = '';
-            
-            if (گەڕان.length < 2) return;
-            
-            const کڕیارانی_دۆزراوە = داتاکان.کڕیارەکان.filter(کڕیار => 
-                کڕیار.ناو.includes(گەڕان)
-            );
-            
-            if (کڕیارانی_دۆزراوە.length > 0) {
-                پێشنیاری.style.display = 'block';
-                
-                کڕیارانی_دۆزراوە.forEach(کڕیار => {
-                    const دایڤ = document.createElement('div');
-                    دایڤ.textContent = `${کڕیار.ناو} - ${کڕیار.ژمارەی_مۆبایل}`;
-                    دایڤ.addEventListener('click', () => {
-                        document.getElementById('گەڕانی-کڕیار').value = کڕیار.ناو;
-                        پێشنیاری.style.display = 'none';
-                    });
-                    
-                    پێشنیاری.appendChild(دایڤ);
-                });
-            } else {
-                پێشنیاری.style.display = 'none';
-            }
-        }
-
-        // فەنکشنی نوێکردنەوەی مامەڵەکان
-        function نوێکردنەوەی_مامەڵەکان() {
-            const خشتە = document.getElementById('خشتەی-هەموو-مامەڵەکان');
-            خشتە.innerHTML = '';
-            
-            if (داتاکان.mامەڵەکان.length === 0) {
-                خشتە.innerHTML = '<tr><td colspan="7" class="ناوەڕاست-نوسین">هیچ مامەڵەیەک تۆمار نەکراوە</td></tr>';
-                return;
-            }
-            
-            // نوێکردنەوەی خشتەی مامەڵەکان
-            داتاکان.mامەڵەکان.slice().reverse().forEach(مامەڵە => {
-                const تر = document.createElement('tr');
-                
-                const بەروار = document.createElement('td');
-                بەروار.textContent = مامەڵە.bەروار;
-                
-                const جۆر = document.createElement('td');
-                جۆر.textContent = مامەڵە.jۆر;
-                
-                const کاڵا = document.createElement('td');
-                کاڵا.textContent = مامەڵە.وردەکاری;
-                
-                const بڕ = document.createElement('td');
-                بڕ.textContent = '1'; // ئەمە دەتوانرێت گونجاندن بکرێت بە پێی داتاکان
-                
-                const نرخ = document.createElement('td');
-                نرخ.textContent = مامەڵە.bڕی_پارە.toLocaleString() + ' دینار';
-                
-                const کەس = document.createElement('td');
-                کەس.textContent = مامەڵە.kەس;
-                
-                const کردارەکان = document.createElement('td');
-                کردارەکان.className = 'دوگمەکانی-کردار';
-                
-                // لێرە دەتوانی دوگمەی زیاتر زیاد بکەیت بۆ کردارەکان
-                
-                تر.appendChild(بەروار);
-                تر.appendChild(جۆر);
-                تر.appendChild(کاڵا);
-                تر.appendChild(بڕ);
-                تر.appendChild(نرخ);
-                تر.appendChild(کەس);
-                تر.appendChild(کردارەکان);
-                
-                خشتە.appendChild(تر);
-            });
-        }
-
-        // فەنکشنی گۆڕینی پاسوۆرد
-        function گۆڕینی_پاسوۆرد(e) {
-            e.preventDefault();
-            
-            const پاسوۆردی_کۆن = document.getElementById('پاسوۆردی-کۆن').value;
-            const پاسوۆردی_نوێ = document.getElementById('پاسوۆردی-نوێ').value;
-            const پاسوۆردی_نوێ_دووبارە = document.getElementById('پاسوۆردی-نوێ-دووبارە').value;
-            
-            if (پاسوۆردی_کۆن !== پاسوۆردی_سیستەم) {
-                alert('پاسوۆردی کۆن هەڵەە!');
-                return;
-            }
-            
-            if (پاسوۆردی_نوێ !== پاسوۆردی_نوێ_دووبارە) {
-                alert('پاسوۆردی نوێ و دووبارەکەی هاوشێوە نییە!');
-                return;
-            }
-            
-            // لێرە دەتوانیت پاسوۆردی نوێ پاشەکەوت بکەیت
-            // بەڵام لەبەر ئەوەی ئەمە تەنها لە JavaScriptە، پاشەکەوت ناکرێت
-            alert('پاسوۆرد گۆڕدرا!');
-            document.getElementById('فۆرمی-پاسوۆرد').reset();
-        }
-
-        // فەنکشنی وەرگرتنی باکئەپ
-        function وەرگرتنی_باکئەپ() {
-            const داتای_باکئەپ = JSON.stringify(داتاکان);
-            const blob = new Blob([داتای_باکئەپ], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `بازرگانی_باکئەپ_${new Date().toLocaleDateString('ku')}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            alert('باکئەپ وەگیرا!');
-        }
-
-        // فەنکشنی گەڕاندنەوەی داتا
-        function گەڕاندنەوەی_داتا() {
-            const فایل = document.getElementById('فایلی-باکئەپ').files[0];
-            
-            if (!فایل) {
-                alert('تکایە فایلێک هەڵبژێرە!');
-                return;
-            }
-            
-            const خوێنەر = new FileReader();
-            خوێنەر.onload = function(e) {
-                try {
-                    const داتا = JSON.parse(e.target.result);
-                    داتاکان = داتا;
-                    پاشەکەوتکردنی_داتاکان();
-                    
-                    alert('داتا بە سەرکەوتوویی گەڕێندرایەوە!');
-                    location.reload();
-                } catch (error) {
-                    alert('هەڵە لە خوێندنەوەی فایلەکە!');
-                    console.error(error);
+        // کرداری کردارەکان
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.classList.contains('btn-view')) {
+                    document.getElementById('saleModal').style.display = 'flex';
+                } else if (this.classList.contains('btn-delete')) {
+                    if (confirm('دڵنیای لە سڕینەوەی ئەم تۆمارە؟')) {
+                        this.closest('tr').remove();
+                    }
                 }
-            };
-            خوێنەر.readAsText(فایل);
-        }
+            });
+        });
 
-        // فەنکشنی نیشاندانی ڕاپۆرتی فرۆشتن
-        function نیشاندانی_ڕاپۆرتی_فرۆشتن() {
-            const بەرواری_لە = document.getElementById('بەرواری-لە-فرۆشتن').value;
-            const بەرواری_بۆ = document.getElementById('بەرواری-بۆ-فرۆشتن').value;
-            
-            let فرۆشتن_فیلتەرکراو = داتاکان.فرۆشتن;
-            
-            if (بەرواری_لە) {
-                فرۆشتن_فیلتەرکراو = فرۆشتن_فیلتەرکراو.filter(فرۆشتن => {
-                    return new Date(فرۆشتن.bەروار) >= new Date(بەرواری_لە);
-                });
-            }
-            
-            if (بەرواری_بۆ) {
-                فرۆشتن_فیلتەرکراو = فرۆشتن_فیلتەرکراو.filter(فرۆشتن => {
-                    return new Date(فرۆشتن.bەروار) <= new Date(بەرواری_بۆ);
-                });
-            }
-            
-            const کۆی_فرۆشتن = فرۆشتن_فیلتەرکراو.reduce((کۆ, فرۆشتن) => {
-                return کۆ + (فرۆشتن.nرخ * فرۆشتن.bڕ);
-            }, 0);
-            
-            const ئەنجامی_ڕاپۆرت = document.getElementById('ئەنجامی-ڕاپۆرتی-فرۆشتن');
-            ئەنجامی_ڕاپۆرت.innerHTML = `
-                <div class="کارت">
-                    <div class="لەشی-کارت">
-                        <h3>ڕاپۆرتی فرۆشتن</h3>
-                        <p>ماوە: ${بەرواری_لە || 'هەموو کات'} - ${بەرواری_بۆ || 'هەموو کات'}</p>
-                        <p>ژمارەی فرۆشتن: ${فرۆشتن_فیلتەرکراو.length}</p>
-                        <p>کۆی فرۆشتن: ${کۆی_فرۆشتن.toLocaleString()} دینار</p>
-                    </div>
-                </div>
-            `;
-        }
+        // داخستنی مدال
+        document.querySelector('.close').addEventListener('click', function() {
+            document.getElementById('saleModal').style.display = 'none';
+        });
 
-        // فەنکشنی نیشاندانی ڕاپۆرتی کڕین
-        function نیشاندانی_ڕاپۆرتی_کڕین() {
-            const بەرواری_لە = document.getElementById('بەرواری-لە-کڕین').value;
-            const بەرواری_بۆ = document.getElementById('بەرواری-بۆ-کڕین').value;
-            
-            let کڕین_فیلتەرکراو = داتاکان.کڕین;
-            
-            if (بەرواری_لە) {
-                کڕین_فیلتەرکراو = کڕین_فیلتەرکراو.filter(کڕین => {
-                    return new Date(کڕین.bەروار) >= new Date(بەرواری_لە);
+        // داخستنی مدال کە کلیک لە دەرەوەی دەکرێت
+        window.addEventListener('click', function(e) {
+            if (e.target === document.getElementById('saleModal')) {
+                document.getElementById('saleModal').style.display = 'none';
+            }
+        });
+
+        // زیادکردنی کاڵا بۆ سەبەتە
+        document.querySelectorAll('.btn-primary').forEach(btn => {
+            if (btn.textContent.includes('زیادکردن بۆ سەبەتە')) {
+                btn.addEventListener('click', function() {
+                    alert('کاڵا بە سەرکەوتوویی زیادکرا بۆ سەبەتە!');
                 });
             }
-            
-            if (بەرواری_بۆ) {
-                کڕین_فیلتەرکراو = کڕین_فیلتەرکراو.filter(کڕین => {
-                    return new Date(کڕین.bەروار) <= new Date(بەرواری_بۆ);
+        });
+
+        // تۆمارکردنی فرۆشتن
+        document.querySelectorAll('.btn-success').forEach(btn => {
+            if (btn.textContent.includes('تۆمارکردنی فرۆشتن')) {
+                btn.addEventListener('click', function() {
+                    alert('فرۆشتن بە سەرکەوتوویی تۆمارکرا!');
                 });
             }
-            
-            const کۆی_کڕین = کڕین_فیلتەرکراو.reduce((کۆ, کڕین) => {
-                return کۆ + (کڕین.nرخ * کڕین.bڕ);
-            }, 0);
-            
-            const ئەنجامی_ڕاپۆرت = document.getElementById('ئەنجامی-ڕاپۆرتی-کڕین');
-            ئەنجامی_ڕاپۆرت.innerHTML = `
-                <div class="کارت">
-                    <div class="لەشی-کارت">
-                        <h3>ڕاپۆرتی کڕین</h3>
-                        <p>ماوە: ${بەرواری_لە || 'هەموو کات'} - ${بەرواری_بۆ || 'هەموو کات'}</p>
-                        <p>ژمارەی کڕین: ${کڕین_فیلتەرکراو.length}</p>
-                        <p>کۆی کڕین: ${کۆی_کڕین.toLocaleString()} دینار</p>
-                    </div>
-                </div>
-            `;
-        }
+        });
     </script>
 </body>
 </html>
