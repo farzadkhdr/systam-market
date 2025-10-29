@@ -935,8 +935,7 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Payment Summary Section - Hidden in Print -->
-                                        <div class="row mb-4 no-print">
+                                        <div class="row mb-4">
                                             <div class="col-12">
                                                 <h5>Payment Summary</h5>
                                                 <table class="table table-bordered">
@@ -956,8 +955,7 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Signature Area - Hidden in Print -->
-                                        <div class="row signature-area no-print">
+                                        <div class="row signature-area">
                                             <div class="col-6">
                                                 <strong>Customer Signature:</strong>
                                                 <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
@@ -968,8 +966,7 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Footer Message - Hidden in Print -->
-                                        <div class="row mt-4 no-print">
+                                        <div class="row mt-4">
                                             <div class="col-12 text-center">
                                                 <small>Thank you for choosing our car rental service!</small>
                                             </div>
@@ -1906,6 +1903,17 @@
                     const rentalId = e.target.closest('.print-invoice').getAttribute('data-id');
                     printRentalInvoice(rentalId);
                 }
+
+                // زیادکردنی فەنکشنی بینین و سڕینەوەی فاکتور
+                if (e.target.closest('.view-invoice')) {
+                    const rentalId = e.target.closest('.view-invoice').getAttribute('data-id');
+                    viewRentalInvoice(rentalId);
+                }
+
+                if (e.target.closest('.delete-rental')) {
+                    const rentalId = e.target.closest('.delete-rental').getAttribute('data-id');
+                    deleteRental(rentalId);
+                }
             });
         }
 
@@ -2626,6 +2634,176 @@
             
             // Print the invoice
             window.print();
+        }
+
+        // View Rental Invoice Details
+        function viewRentalInvoice(rentalId) {
+            const rental = systemData.rentals.find(r => r.id === rentalId);
+            if (!rental) return;
+            
+            const customer = systemData.customers.find(c => c.id === rental.customerId);
+            const vehicle = systemData.vehicles.find(v => v.id === rental.vehicleId);
+            
+            if (!customer || !vehicle) {
+                showAlert('Customer or vehicle not found!', 'danger');
+                return;
+            }
+            
+            // Calculate totals
+            const totalAmount = rental.rentalAmount * rental.rentalDays;
+            const advancePayment = rental.advancePayment || 0;
+            const remainingBalance = totalAmount - advancePayment;
+            
+            // Create modal for viewing invoice
+            const modalHtml = `
+                <div class="modal fade" id="viewInvoiceModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Rental Invoice Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="invoice-logo text-center mb-4">
+                                    ${systemData.settings.logo ? 
+                                        `<img src="${systemData.settings.logo}" style="max-width: 150px;" alt="${systemData.settings.systemName}">` : 
+                                        `<i class="fas fa-car fa-3x text-primary"></i>`
+                                    }
+                                    <h3>${systemData.settings.systemName}</h3>
+                                </div>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-6">
+                                        <strong>Invoice Code:</strong> ${rental.invoiceCode}
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <strong>Date:</strong> ${formatDate(rental.created)}
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-6">
+                                        <h5>Customer Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Name:</strong></td><td>${customer.fullName}</td></tr>
+                                            <tr><td><strong>Age:</strong></td><td>${customer.age}</td></tr>
+                                            <tr><td><strong>ID:</strong></td><td>${customer.idNumber}</td></tr>
+                                            <tr><td><strong>Contact:</strong></td><td>${customer.contact}</td></tr>
+                                            <tr><td><strong>Address:</strong></td><td>${customer.address}</td></tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-6">
+                                        <h5>Vehicle Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Vehicle:</strong></td><td>${vehicle.name}</td></tr>
+                                            <tr><td><strong>Model:</strong></td><td>${vehicle.model}</td></tr>
+                                            <tr><td><strong>Color:</strong></td><td>${vehicle.color}</td></tr>
+                                            <tr><td><strong>Plate:</strong></td><td>${vehicle.plate}</td></tr>
+                                            <tr><td><strong>Daily Rate:</strong></td><td>${rental.rentalAmount} ${systemData.settings.currency}</td></tr>
+                                        </table>
+                                        ${vehicle.image ? 
+                                            `<img src="${vehicle.image}" class="img-fluid mt-2" style="max-height: 100px;" alt="${vehicle.name}">` : 
+                                            ''
+                                        }
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h5>Rental Details</h5>
+                                        <table class="table table-bordered">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Start Date</th>
+                                                    <th>End Date</th>
+                                                    <th>Days</th>
+                                                    <th>Daily Rate</th>
+                                                    <th>Total Amount</th>
+                                                    <th>Advance Payment</th>
+                                                    <th>Remaining Balance</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>${formatDate(rental.startDate)}</td>
+                                                    <td>${formatDate(rental.endDate)}</td>
+                                                    <td>${rental.rentalDays}</td>
+                                                    <td>${rental.rentalAmount} ${systemData.settings.currency}</td>
+                                                    <td>${totalAmount} ${systemData.settings.currency}</td>
+                                                    <td>${advancePayment} ${systemData.settings.currency}</td>
+                                                    <td>${remainingBalance} ${systemData.settings.currency}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="alert ${remainingBalance > 0 ? 'alert-warning' : 'alert-success'}">
+                                            <strong>Status:</strong> ${rental.status} | 
+                                            <strong>Remaining Balance:</strong> ${remainingBalance} ${systemData.settings.currency}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="printRentalInvoice('${rental.id}')">
+                                    <i class="fas fa-print"></i> Print Invoice
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('viewInvoiceModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body and show it
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('viewInvoiceModal'));
+            modal.show();
+        }
+
+        // Delete Rental Function
+        function deleteRental(rentalId) {
+            const rental = systemData.rentals.find(r => r.id === rentalId);
+            if (!rental) return;
+            
+            // Check if rental is active
+            if (rental.status === 'active') {
+                showAlert('Cannot delete active rental! Please return the vehicle first.', 'danger');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to delete this rental record? This action cannot be undone.')) {
+                // Find and update vehicle status if it was returned
+                if (rental.status === 'returned') {
+                    const vehicle = systemData.vehicles.find(v => v.id === rental.vehicleId);
+                    if (vehicle) {
+                        vehicle.status = 'available';
+                    }
+                    
+                    // Remove return record
+                    systemData.returns = systemData.returns.filter(r => r.rentalId !== rental.id);
+                }
+                
+                // Remove rental
+                systemData.rentals = systemData.rentals.filter(r => r.id !== rental.id);
+                saveDataToStorage();
+                
+                // Reload tables
+                loadRentalTable();
+                loadVehicleTable();
+                loadReturnHistoryTable();
+                
+                showAlert('Rental record deleted successfully!', 'success');
+            }
         }
 
         // Toggle customer form visibility
@@ -3363,6 +3541,12 @@
                             </button>
                             <button class="btn btn-sm btn-primary print-invoice" data-id="${rental.id}">
                                 <i class="fas fa-print"></i>
+                            </button>
+                            <button class="btn btn-sm btn-warning view-invoice" data-id="${rental.id}">
+                                <i class="fas fa-file-invoice"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-rental" data-id="${rental.id}">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     `;
