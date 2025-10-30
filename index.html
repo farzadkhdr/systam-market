@@ -1853,6 +1853,9 @@
             
             // Add event listeners for delete buttons
             setupDeleteEventListeners();
+            
+            // Add event listeners for view and delete buttons
+            setupViewDeleteEventListeners();
         }
 
         // Setup delete event listeners
@@ -1913,6 +1916,53 @@
                 if (e.target.closest('.delete-rental')) {
                     const rentalId = e.target.closest('.delete-rental').getAttribute('data-id');
                     deleteRental(rentalId);
+                }
+            });
+        }
+
+        // Setup view and delete event listeners for all modules
+        function setupViewDeleteEventListeners() {
+            document.addEventListener('click', function(e) {
+                // بینینی گەیاندنەوە
+                if (e.target.closest('.view-return')) {
+                    const returnId = e.target.closest('.view-return').getAttribute('data-id');
+                    viewReturnDetails(returnId);
+                }
+                
+                // سڕینەوەی گەیاندنەوە
+                if (e.target.closest('.delete-return')) {
+                    const returnId = e.target.closest('.delete-return').getAttribute('data-id');
+                    deleteReturn(returnId);
+                }
+                
+                // بینینی چاکسازی
+                if (e.target.closest('.view-maintenance')) {
+                    const maintenanceId = e.target.closest('.view-maintenance').getAttribute('data-id');
+                    viewMaintenanceDetails(maintenanceId);
+                }
+                
+                // بینینی تاوان
+                if (e.target.closest('.view-fine')) {
+                    const fineId = e.target.closest('.view-fine').getAttribute('data-id');
+                    viewFineDetails(fineId);
+                }
+                
+                // بینینی پارەدان
+                if (e.target.closest('.view-payment')) {
+                    const paymentId = e.target.closest('.view-payment').getAttribute('data-id');
+                    viewPaymentDetails(paymentId);
+                }
+                
+                // سڕینەوەی پارەدان
+                if (e.target.closest('.delete-payment-record')) {
+                    const paymentId = e.target.closest('.delete-payment-record').getAttribute('data-id');
+                    deletePaymentRecord(paymentId);
+                }
+                
+                // بینینی کرێ
+                if (e.target.closest('.view-rental')) {
+                    const rentalId = e.target.closest('.view-rental').getAttribute('data-id');
+                    viewRentalDetails(rentalId);
                 }
             });
         }
@@ -2402,33 +2452,7 @@
             document.getElementById('remainingBalance').textContent = `${debtInfo.remainingBalance} ${systemData.settings.currency}`;
             
             // Load payment history
-            const paymentHistoryBody = document.getElementById('paymentHistoryTableBody');
-            paymentHistoryBody.innerHTML = '';
-            
-            const customerPayments = systemData.payments.filter(p => p.customerId === customer.id);
-            customerPayments.forEach(payment => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${formatDate(payment.date)}</td>
-                    <td>${payment.amount} ${systemData.settings.currency}</td>
-                    <td>${payment.type}</td>
-                    <td>${payment.description || '-'}</td>
-                    <td>
-                        <button class="btn btn-sm btn-danger delete-payment" data-id="${payment.id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                paymentHistoryBody.appendChild(row);
-            });
-            
-            // Add event listeners to delete buttons
-            document.querySelectorAll('.delete-payment').forEach(button => {
-                button.addEventListener('click', function() {
-                    const paymentId = this.getAttribute('data-id');
-                    deletePayment(paymentId, customer);
-                });
-            });
+            loadPaymentHistoryTable(customer);
         }
 
         // Delete payment
@@ -2803,6 +2827,434 @@
                 loadReturnHistoryTable();
                 
                 showAlert('Rental record deleted successfully!', 'success');
+            }
+        }
+
+        // بینینی وردەکارییەکانی گەیاندنەوە
+        function viewReturnDetails(returnId) {
+            const returnRecord = systemData.returns.find(r => r.id === returnId);
+            if (!returnRecord) return;
+            
+            const rental = systemData.rentals.find(r => r.id === returnRecord.rentalId);
+            const customer = rental ? systemData.customers.find(c => c.id === rental.customerId) : null;
+            const vehicle = rental ? systemData.vehicles.find(v => v.id === rental.vehicleId) : null;
+            
+            if (!rental || !customer || !vehicle) {
+                showAlert('Return record details not found!', 'danger');
+                return;
+            }
+            
+            const modalHtml = `
+                <div class="modal fade" id="viewReturnModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Return Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Rental Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Invoice Code:</strong></td><td>${rental.invoiceCode}</td></tr>
+                                            <tr><td><strong>Vehicle:</strong></td><td>${vehicle.name}</td></tr>
+                                            <tr><td><strong>Customer:</strong></td><td>${customer.fullName}</td></tr>
+                                            <tr><td><strong>Rental Period:</strong></td><td>${formatDate(rental.startDate)} to ${formatDate(rental.endDate)}</td></tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Return Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Return Date:</strong></td><td>${formatDate(returnRecord.returnDate)}</td></tr>
+                                            <tr><td><strong>Return Time:</strong></td><td>${new Date(returnRecord.created).toLocaleTimeString()}</td></tr>
+                                            <tr><td><strong>Status:</strong></td><td><span class="badge bg-success">Returned</span></td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                ${returnRecord.notes ? `
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <h5>Notes</h5>
+                                        <div class="alert alert-info">${returnRecord.notes}</div>
+                                    </div>
+                                </div>
+                                ` : ''}
+                                
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <h5>Payment Summary</h5>
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <td><strong>Total Rental Amount:</strong></td>
+                                                <td>${rental.rentalAmount * rental.rentalDays} ${systemData.settings.currency}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Advance Payment:</strong></td>
+                                                <td>${rental.advancePayment} ${systemData.settings.currency}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Remaining Balance:</strong></td>
+                                                <td class="fw-bold">${(rental.rentalAmount * rental.rentalDays) - rental.advancePayment} ${systemData.settings.currency}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('viewReturnModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body and show it
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('viewReturnModal'));
+            modal.show();
+        }
+
+        // بینینی وردەکارییەکانی چاکسازی
+        function viewMaintenanceDetails(maintenanceId) {
+            const maintenance = systemData.maintenance.find(m => m.id === maintenanceId);
+            if (!maintenance) return;
+            
+            const vehicle = systemData.vehicles.find(v => v.id === maintenance.vehicleId);
+            
+            const modalHtml = `
+                <div class="modal fade" id="viewMaintenanceModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Maintenance Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Vehicle Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Vehicle:</strong></td><td>${vehicle ? vehicle.name : 'N/A'}</td></tr>
+                                            <tr><td><strong>Model:</strong></td><td>${vehicle ? vehicle.model : 'N/A'}</td></tr>
+                                            <tr><td><strong>Plate:</strong></td><td>${vehicle ? vehicle.plate : 'N/A'}</td></tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Maintenance Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Type:</strong></td><td>${maintenance.type}</td></tr>
+                                            <tr><td><strong>Date:</strong></td><td>${formatDate(maintenance.date)}</td></tr>
+                                            <tr><td><strong>Cost:</strong></td><td>${maintenance.cost} ${systemData.settings.currency}</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <h5>Description</h5>
+                                        <div class="alert alert-info">${maintenance.description}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('viewMaintenanceModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body and show it
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('viewMaintenanceModal'));
+            modal.show();
+        }
+
+        // بینینی وردەکارییەکانی تاوان
+        function viewFineDetails(fineId) {
+            const fineTax = systemData.finesTaxes.find(f => f.id === fineId);
+            if (!fineTax) return;
+            
+            const customer = systemData.customers.find(c => c.id === fineTax.customerId);
+            
+            const modalHtml = `
+                <div class="modal fade" id="viewFineModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Fine/Tax Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Customer Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Name:</strong></td><td>${customer ? customer.fullName : 'N/A'}</td></tr>
+                                            <tr><td><strong>ID:</strong></td><td>${customer ? customer.idNumber : 'N/A'}</td></tr>
+                                            <tr><td><strong>Contact:</strong></td><td>${customer ? customer.contact : 'N/A'}</td></tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Fine/Tax Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Type:</strong></td><td>${fineTax.type}</td></tr>
+                                            <tr><td><strong>Amount:</strong></td><td>${fineTax.amount} ${systemData.settings.currency}</td></tr>
+                                            <tr><td><strong>Date:</strong></td><td>${formatDate(fineTax.date)}</td></tr>
+                                            <tr><td><strong>Status:</strong></td><td>
+                                                <span class="badge ${fineTax.status === 'paid' ? 'bg-success' : 'bg-danger'}">
+                                                    ${fineTax.status}
+                                                </span>
+                                            </td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <h5>Description</h5>
+                                        <div class="alert alert-info">${fineTax.description}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                ${fineTax.status === 'unpaid' ? 
+                                    `<button type="button" class="btn btn-success" onclick="markFineAsPaid('${fineTax.id}'); document.getElementById('viewFineModal').querySelector('.btn-close').click();">
+                                        Mark as Paid
+                                    </button>` : ''
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('viewFineModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body and show it
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('viewFineModal'));
+            modal.show();
+        }
+
+        // بینینی وردەکارییەکانی پارەدان
+        function viewPaymentDetails(paymentId) {
+            const payment = systemData.payments.find(p => p.id === paymentId);
+            if (!payment) return;
+            
+            const customer = systemData.customers.find(c => c.id === payment.customerId);
+            
+            const modalHtml = `
+                <div class="modal fade" id="viewPaymentModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Payment Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <table class="table table-bordered">
+                                            <tr><td><strong>Customer:</strong></td><td>${customer ? customer.fullName : 'N/A'}</td></tr>
+                                            <tr><td><strong>Amount:</strong></td><td>${payment.amount} ${systemData.settings.currency}</td></tr>
+                                            <tr><td><strong>Date:</strong></td><td>${formatDate(payment.date)}</td></tr>
+                                            <tr><td><strong>Type:</strong></td><td>${payment.type}</td></tr>
+                                            <tr><td><strong>Description:</strong></td><td>${payment.description || '-'}</td></tr>
+                                            <tr><td><strong>Payment Time:</strong></td><td>${new Date(payment.created).toLocaleString()}</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('viewPaymentModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body and show it
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('viewPaymentModal'));
+            modal.show();
+        }
+
+        // بینینی وردەکارییەکانی کرێ
+        function viewRentalDetails(rentalId) {
+            const rental = systemData.rentals.find(r => r.id === rentalId);
+            if (!rental) return;
+            
+            const customer = systemData.customers.find(c => c.id === rental.customerId);
+            const vehicle = systemData.vehicles.find(v => v.id === rental.vehicleId);
+            
+            if (!customer || !vehicle) {
+                showAlert('Rental details not found!', 'danger');
+                return;
+            }
+            
+            const modalHtml = `
+                <div class="modal fade" id="viewRentalModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Rental Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Customer Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Name:</strong></td><td>${customer.fullName}</td></tr>
+                                            <tr><td><strong>Age:</strong></td><td>${customer.age}</td></tr>
+                                            <tr><td><strong>ID:</strong></td><td>${customer.idNumber}</td></tr>
+                                            <tr><td><strong>Contact:</strong></td><td>${customer.contact}</td></tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Vehicle Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Vehicle:</strong></td><td>${vehicle.name}</td></tr>
+                                            <tr><td><strong>Model:</strong></td><td>${vehicle.model}</td></tr>
+                                            <tr><td><strong>Color:</strong></td><td>${vehicle.color}</td></tr>
+                                            <tr><td><strong>Plate:</strong></td><td>${vehicle.plate}</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <h5>Rental Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Invoice Code:</strong></td><td>${rental.invoiceCode}</td></tr>
+                                            <tr><td><strong>Start Date:</strong></td><td>${formatDate(rental.startDate)}</td></tr>
+                                            <tr><td><strong>End Date:</strong></td><td>${formatDate(rental.endDate)}</td></tr>
+                                            <tr><td><strong>Rental Days:</strong></td><td>${rental.rentalDays}</td></tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Payment Information</h5>
+                                        <table class="table table-bordered table-sm">
+                                            <tr><td><strong>Daily Rate:</strong></td><td>${rental.rentalAmount} ${systemData.settings.currency}</td></tr>
+                                            <tr><td><strong>Total Amount:</strong></td><td>${rental.rentalAmount * rental.rentalDays} ${systemData.settings.currency}</td></tr>
+                                            <tr><td><strong>Advance Payment:</strong></td><td>${rental.advancePayment} ${systemData.settings.currency}</td></tr>
+                                            <tr><td><strong>Remaining Balance:</strong></td><td class="fw-bold">${(rental.rentalAmount * rental.rentalDays) - rental.advancePayment} ${systemData.settings.currency}</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="alert ${rental.status === 'active' ? 'alert-warning' : 'alert-success'}">
+                                            <strong>Status:</strong> ${rental.status} | 
+                                            <strong>Return Date:</strong> ${rental.returnDate ? formatDate(rental.returnDate) : 'Not Returned'}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="printRentalInvoice('${rental.id}')">
+                                    <i class="fas fa-print"></i> Print Invoice
+                                </button>
+                                ${rental.status === 'returned' ? 
+                                    `<button type="button" class="btn btn-danger" onclick="deleteRental('${rental.id}'); document.getElementById('viewRentalModal').querySelector('.btn-close').click();">
+                                        <i class="fas fa-trash"></i> Delete Rental
+                                    </button>` : ''
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('viewRentalModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body and show it
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('viewRentalModal'));
+            modal.show();
+        }
+
+        // سڕینەوەی تۆمارێکی گەیاندنەوە
+        function deleteReturn(returnId) {
+            const returnRecord = systemData.returns.find(r => r.id === returnId);
+            if (!returnRecord) return;
+            
+            const rental = systemData.rentals.find(r => r.id === returnRecord.rentalId);
+            
+            if (confirm('Are you sure you want to delete this return record? This will make the rental active again.')) {
+                // Make rental active again
+                if (rental) {
+                    rental.status = 'active';
+                    rental.returnDate = null;
+                    
+                    // Make vehicle rented again
+                    const vehicle = systemData.vehicles.find(v => v.id === rental.vehicleId);
+                    if (vehicle) {
+                        vehicle.status = 'rented';
+                    }
+                }
+                
+                // Remove return record
+                systemData.returns = systemData.returns.filter(r => r.id !== returnId);
+                saveDataToStorage();
+                
+                // Reload tables
+                loadReturnHistoryTable();
+                loadRentalTable();
+                loadVehicleTable();
+                
+                showAlert('Return record deleted successfully!', 'success');
+            }
+        }
+
+        // سڕینەوەی تۆمارێکی پارەدان
+        function deletePaymentRecord(paymentId) {
+            const payment = systemData.payments.find(p => p.id === paymentId);
+            if (!payment) return;
+            
+            if (confirm('Are you sure you want to delete this payment record?')) {
+                systemData.payments = systemData.payments.filter(p => p.id !== paymentId);
+                saveDataToStorage();
+                
+                // Reload payment tables if open
+                const customer = systemData.customers.find(c => c.id === payment.customerId);
+                if (customer && document.getElementById('customerPaymentDetails').style.display === 'block') {
+                    loadCustomerPaymentDetails(customer);
+                }
+                
+                showAlert('Payment record deleted successfully!', 'success');
             }
         }
 
@@ -3581,6 +4033,9 @@
                                 <button class="btn btn-sm btn-info view-return" data-id="${returnRecord.id}">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                                <button class="btn btn-sm btn-danger delete-return" data-id="${returnRecord.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </td>
                         `;
                         returnHistoryBody.appendChild(row);
@@ -3692,6 +4147,34 @@
                     </td>
                 `;
                 userTableBody.appendChild(row);
+            });
+        }
+
+        // Load payment history table
+        function loadPaymentHistoryTable(customer) {
+            const paymentHistoryBody = document.getElementById('paymentHistoryTableBody');
+            if (!paymentHistoryBody) return;
+            
+            paymentHistoryBody.innerHTML = '';
+            
+            const customerPayments = systemData.payments.filter(p => p.customerId === customer.id);
+            customerPayments.forEach(payment => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${formatDate(payment.date)}</td>
+                    <td>${payment.amount} ${systemData.settings.currency}</td>
+                    <td>${payment.type}</td>
+                    <td>${payment.description || '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info view-payment" data-id="${payment.id}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-payment-record" data-id="${payment.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                paymentHistoryBody.appendChild(row);
             });
         }
 
