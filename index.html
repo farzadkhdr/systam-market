@@ -1180,7 +1180,7 @@
                                     </div>
                                     
                                     <div class="add-payment mt-4">
-                                        <h5>Add Payment</h5>
+                                        <h5>Add/Edit Payment</h5>
                                         <form id="addPaymentForm">
                                             <div class="row">
                                                 <div class="col-md-3 mb-3">
@@ -1209,6 +1209,7 @@
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-success">Add Payment</button>
+                                            <button type="reset" class="btn btn-secondary">Cancel Edit</button>
                                         </form>
                                     </div>
                                 </div>
@@ -2311,7 +2312,7 @@
             showAlert('Maintenance record added successfully!', 'success');
         }
 
-        // Handle adding payment
+        // Handle adding payment - Updated with print functionality
         function handleAddPayment(e) {
             e.preventDefault();
             
@@ -2339,7 +2340,136 @@
             document.getElementById('addPaymentForm').reset();
             loadCustomerPaymentDetails(customer);
             
-            showAlert('Payment added successfully!', 'success');
+            // Show print option
+            showAlert('Payment added successfully! <button class="btn btn-sm btn-success ms-2" onclick="printPaymentReceipt(\'' + payment.id + '\')">Print Receipt</button>', 'success');
+        }
+
+        // Print payment receipt
+        function printPaymentReceipt(paymentId) {
+            const payment = systemData.payments.find(p => p.id === paymentId);
+            if (!payment) return;
+            
+            const customer = systemData.customers.find(c => c.id === payment.customerId);
+            
+            // Create print content
+            const printContent = `
+                <div class="print-only">
+                    <div class="invoice-logo">
+                        ${systemData.settings.logo ? 
+                            `<img src="${systemData.settings.logo}" style="max-width: 200px;">` : 
+                            `<i class="fas fa-car fa-3x"></i>`
+                        }
+                        <h3>${systemData.settings.systemName}</h3>
+                    </div>
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h3>Payment Receipt</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <strong>Receipt #:</strong> PAY-${payment.id.substr(-6).toUpperCase()}
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>Date:</strong> ${formatDate(payment.date)}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5>Customer Information</h5>
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td><strong>Name:</strong></td>
+                                            <td>${customer.fullName}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>ID Number:</strong></td>
+                                            <td>${customer.idNumber}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Contact:</strong></td>
+                                            <td>${customer.contact}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5>Payment Details</h5>
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td><strong>Amount:</strong></td>
+                                            <td>${payment.amount} ${systemData.settings.currency}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Payment Type:</strong></td>
+                                            <td>${payment.type}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Description:</strong></td>
+                                            <td>${payment.description || '-'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Payment Date:</strong></td>
+                                            <td>${formatDate(payment.date)}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="row signature-area">
+                                <div class="col-6">
+                                    <strong>Customer Signature:</strong>
+                                    <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>Company Signature:</strong>
+                                    <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-12 text-center">
+                                    <small>Thank you for your payment!</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Open print window
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Payment Receipt</title>
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+                        <style>
+                            body { font-family: Arial, sans-serif; }
+                            .print-only { display: block !important; }
+                            .no-print { display: none !important; }
+                            .invoice-logo { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+                            .signature-area { margin-top: 50px; border-top: 1px solid #000; padding-top: 10px; }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent}
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 500);
+                            };
+                        <\/script>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
         }
 
         // Handle adding fine/tax
@@ -2509,7 +2639,7 @@
             };
         }
 
-        // Update the loadCustomerPaymentDetails function to use the new calculation
+        // Updated loadCustomerPaymentDetails function with payment history management
         function loadCustomerPaymentDetails(customer) {
             document.getElementById('customerPaymentDetails').style.display = 'block';
             
@@ -3973,7 +4103,7 @@
             });
         }
 
-        // Load dashboard data - Updated Version
+        // Load dashboard data - Updated Version with auto-refresh
         function loadDashboardData() {
             // Update statistics
             const availableVehicles = systemData.vehicles.filter(v => v.status === 'available').length;
@@ -4105,6 +4235,13 @@
             // Load vehicle status chart
             loadVehicleStatusChart();
         }
+
+        // Auto-refresh dashboard every 30 seconds
+        setInterval(function() {
+            if (document.getElementById('dashboard').classList.contains('active')) {
+                loadDashboardData();
+            }
+        }, 30000);
 
         // Load vehicle status chart
         function loadVehicleStatusChart() {
@@ -4439,7 +4576,7 @@
             });
         }
 
-        // Load payment history table
+        // Updated loadPaymentHistoryTable function with enhanced actions
         function loadPaymentHistoryTable(customer) {
             const paymentHistoryBody = document.getElementById('paymentHistoryTableBody');
             if (!paymentHistoryBody) return;
@@ -4458,6 +4595,12 @@
                         <button class="btn btn-sm btn-info view-payment" data-id="${payment.id}">
                             <i class="fas fa-eye"></i>
                         </button>
+                        <button class="btn btn-sm btn-primary print-payment" data-id="${payment.id}">
+                            <i class="fas fa-print"></i>
+                        </button>
+                        <button class="btn btn-sm btn-warning edit-payment" data-id="${payment.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
                         <button class="btn btn-sm btn-danger delete-payment-record" data-id="${payment.id}">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -4465,6 +4608,75 @@
                 `;
                 paymentHistoryBody.appendChild(row);
             });
+            
+            // Add event listeners for new buttons
+            document.querySelectorAll('.print-payment').forEach(button => {
+                button.addEventListener('click', function() {
+                    const paymentId = this.getAttribute('data-id');
+                    printPaymentReceipt(paymentId);
+                });
+            });
+            
+            document.querySelectorAll('.edit-payment').forEach(button => {
+                button.addEventListener('click', function() {
+                    const paymentId = this.getAttribute('data-id');
+                    editPayment(paymentId);
+                });
+            });
+        }
+
+        // Edit payment function
+        function editPayment(paymentId) {
+            const payment = systemData.payments.find(p => p.id === paymentId);
+            if (!payment) return;
+            
+            const customer = systemData.customers.find(c => c.id === payment.customerId);
+            
+            // Populate payment form
+            document.getElementById('paymentCustomerSearch').value = customer.fullName;
+            document.getElementById('paymentAmount').value = payment.amount;
+            document.getElementById('paymentDate').value = payment.date;
+            document.getElementById('paymentType').value = payment.type;
+            document.getElementById('paymentDescription').value = payment.description || '';
+            
+            // Show customer payment details
+            loadCustomerPaymentDetails(customer);
+            
+            // Change form submit behavior to update instead of add
+            const form = document.getElementById('addPaymentForm');
+            const originalSubmit = form.onsubmit;
+            
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                
+                // Update payment
+                payment.amount = parseInt(document.getElementById('paymentAmount').value);
+                payment.date = document.getElementById('paymentDate').value;
+                payment.type = document.getElementById('paymentType').value;
+                payment.description = document.getElementById('paymentDescription').value;
+                
+                saveDataToStorage();
+                loadCustomerPaymentDetails(customer);
+                
+                // Restore original submit behavior
+                form.onsubmit = originalSubmit;
+                form.reset();
+                
+                showAlert('Payment updated successfully!', 'success');
+            };
+            
+            // Change button text
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Update Payment';
+            
+            // Restore original button text when form is reset
+            form.addEventListener('reset', function() {
+                submitButton.textContent = originalText;
+                form.onsubmit = originalSubmit;
+            });
+            
+            showAlert('Payment data loaded for editing. Update and submit to save changes.', 'info');
         }
 
         // View vehicle details
