@@ -1412,6 +1412,70 @@
                                 </div>
                             </div>
                             
+                            <!-- Backup & Restore Section -->
+                            <div class="card mt-4 admin-only">
+                                <div class="card-header">
+                                    <h5 class="mb-0">باکەپ کردن و گەڕاندنەوە</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header bg-primary text-white">
+                                                    <h6 class="mb-0">دروستکردنی باکەپ</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p class="card-text">هەموو داتاکانی سیستەمەکە کۆپی بکە بۆ فایلێک.</p>
+                                                    <button type="button" class="btn btn-success w-100" id="backupBtn">
+                                                        <i class="fas fa-download me-2"></i>دروستکردنی باکەپ
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header bg-warning text-dark">
+                                                    <h6 class="mb-0">گەڕاندنەوەی باکەپ</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p class="card-text">داتاکانی پێشوو لە فایلێکەوە باربکەوە.</p>
+                                                    <div class="mb-3">
+                                                        <label for="backupFile" class="form-label">هەڵبژاردنی فایلی باکەپ</label>
+                                                        <input class="form-control" type="file" id="backupFile" accept=".json">
+                                                    </div>
+                                                    <button type="button" class="btn btn-warning w-100" id="restoreBtn">
+                                                        <i class="fas fa-upload me-2"></i>گەڕاندنەوەی باکەپ
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card mt-4">
+                                        <div class="card-header bg-info text-white">
+                                            <h6 class="mb-0">باکەپەکانی پێشوو</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ناوی فایل</th>
+                                                            <th>قەبارە</th>
+                                                            <th>کاتی دروستکردن</th>
+                                                            <th>کردارەکان</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="backupHistoryTable">
+                                                        <!-- مێژووی باکەپەکان لێرە نمایش دەبێت -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div class="card mt-4 admin-only">
                                 <div class="card-header">
                                     User Management
@@ -1755,6 +1819,9 @@
             loadMaintenanceHistoryTable();
             loadFinesTaxesTable();
             loadUserTable();
+            
+            // Load backup history
+            loadBackupHistory();
         }
 
         // Apply system settings to UI
@@ -1847,6 +1914,10 @@
             document.getElementById('addNewRole').addEventListener('click', addNewRole);
             document.getElementById('deleteRole').addEventListener('click', deleteRole);
             document.getElementById('permissionRole').addEventListener('change', loadRolePermissions);
+            
+            // Backup and Restore
+            document.getElementById('backupBtn').addEventListener('click', createBackup);
+            document.getElementById('restoreBtn').addEventListener('click', restoreBackup);
             
             // Auto-suggestions
             setupAutoSuggestions();
@@ -3514,6 +3585,219 @@
             
             // Reload permissions for current role
             loadRolePermissions();
+        }
+
+        // Backup and Restore Functions
+        // Create backup function
+        function createBackup() {
+            // Get current data
+            const dataToBackup = {
+                systemData: systemData,
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            // Create blob and download link
+            const blob = new Blob([JSON.stringify(dataToBackup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            // Create filename with timestamp
+            const date = new Date();
+            const filename = `car_rental_backup_${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}_${date.getHours().toString().padStart(2, '0')}${date.getMinutes().toString().padStart(2, '0')}.json`;
+            
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Save backup info to localStorage
+            saveBackupInfo(filename, blob.size);
+            
+            showAlert('باکەپ بە سەرکەوتوویی دروست کرا!', 'success');
+        }
+
+        // Restore backup function
+        function restoreBackup() {
+            const fileInput = document.getElementById('backupFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('تکایە فایلێکی باکەپ هەڵبژێرە!', 'warning');
+                return;
+            }
+            
+            if (!file.name.endsWith('.json')) {
+                showAlert('تکایە فایلێکی JSON هەڵبژێرە!', 'danger');
+                return;
+            }
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const backupData = JSON.parse(e.target.result);
+                    
+                    // Verify backup structure
+                    if (!backupData.systemData || !backupData.timestamp) {
+                        showAlert('فایلی باکەپ نادروستە!', 'danger');
+                        return;
+                    }
+                    
+                    // Confirm restore action
+                    if (confirm('ئایا دڵنیای کە دەتەوێت هەموو داتاکانی ئێستا بسڕیتەوە و باکەپەکە باربکەیت؟ ئەم کردارە ناگەڕێتەوە!')) {
+                        // Restore data
+                        Object.keys(systemData).forEach(key => {
+                            if (backupData.systemData[key]) {
+                                systemData[key] = backupData.systemData[key];
+                            }
+                        });
+                        
+                        // Save to localStorage
+                        saveDataToStorage();
+                        
+                        // Reload the page to reflect changes
+                        location.reload();
+                        
+                        showAlert('باکەپ بە سەرکەوتوویی بارکرایەوە!', 'success');
+                    }
+                } catch (error) {
+                    console.error('Error restoring backup:', error);
+                    showAlert('هەڵە لە خوێندنەوەی فایلی باکەپ!', 'danger');
+                }
+            };
+            
+            reader.onerror = function() {
+                showAlert('هەڵە لە خوێندنەوەی فایل!', 'danger');
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // Save backup information to localStorage
+        function saveBackupInfo(filename, size) {
+            let backupHistory = JSON.parse(localStorage.getItem('backupHistory') || '[]');
+            
+            backupHistory.unshift({
+                filename: filename,
+                size: size,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Keep only last 10 backups in history
+            if (backupHistory.length > 10) {
+                backupHistory = backupHistory.slice(0, 10);
+            }
+            
+            localStorage.setItem('backupHistory', JSON.stringify(backupHistory));
+            
+            // Update backup history table
+            loadBackupHistory();
+        }
+
+        // Load backup history
+        function loadBackupHistory() {
+            const backupHistory = JSON.parse(localStorage.getItem('backupHistory') || '[]');
+            const tableBody = document.getElementById('backupHistoryTable');
+            
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            
+            if (backupHistory.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">هیچ باکەپێک بوونی نیە</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            backupHistory.forEach(backup => {
+                const date = new Date(backup.timestamp);
+                const formattedDate = date.toLocaleString();
+                const sizeInKB = (backup.size / 1024).toFixed(2);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${backup.filename}</td>
+                    <td>${sizeInKB} KB</td>
+                    <td>${formattedDate}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary download-backup" data-filename="${backup.filename}">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-backup" data-filename="${backup.filename}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners for download and delete buttons
+            document.querySelectorAll('.download-backup').forEach(button => {
+                button.addEventListener('click', function() {
+                    const filename = this.getAttribute('data-filename');
+                    downloadBackup(filename);
+                });
+            });
+            
+            document.querySelectorAll('.delete-backup').forEach(button => {
+                button.addEventListener('click', function() {
+                    const filename = this.getAttribute('data-filename');
+                    deleteBackup(filename);
+                });
+            });
+        }
+
+        // Download specific backup
+        function downloadBackup(filename) {
+            // In a real application, this would retrieve the actual backup file
+            // For this demo, we'll create a new backup with the requested filename
+            const dataToBackup = {
+                systemData: systemData,
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(dataToBackup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showAlert(`باکەپی ${filename} بارکرا!`, 'success');
+        }
+
+        // Delete backup from history
+        function deleteBackup(filename) {
+            if (confirm(`ئایا دڵنیای کە دەتەوێت باکەپی ${filename} بسڕیتەوە؟`)) {
+                let backupHistory = JSON.parse(localStorage.getItem('backupHistory') || '[]');
+                backupHistory = backupHistory.filter(backup => backup.filename !== filename);
+                localStorage.setItem('backupHistory', JSON.stringify(backupHistory));
+                loadBackupHistory();
+                showAlert('باکەپ سڕدرایەوە!', 'success');
+            }
+        }
+
+        // Auto backup function (optional - runs automatically)
+        function autoBackup() {
+            // Check if auto backup is enabled and last backup was more than 24 hours ago
+            const lastBackup = localStorage.getItem('lastAutoBackup');
+            const now = new Date().getTime();
+            
+            if (!lastBackup || (now - parseInt(lastBackup)) > 24 * 60 * 60 * 1000) {
+                createBackup();
+                localStorage.setItem('lastAutoBackup', now.toString());
+            }
         }
 
         // Setup auto-suggestions
