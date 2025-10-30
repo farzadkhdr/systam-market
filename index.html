@@ -3973,14 +3973,18 @@
             });
         }
 
-        // Load dashboard data
+        // Load dashboard data - Updated Version
         function loadDashboardData() {
             // Update statistics
             const availableVehicles = systemData.vehicles.filter(v => v.status === 'available').length;
             const rentedVehicles = systemData.vehicles.filter(v => v.status === 'rented').length;
             const activeRentals = systemData.rentals.filter(r => r.status === 'active').length;
             const totalCustomers = systemData.customers.length;
-            const totalPayments = systemData.payments.reduce((sum, payment) => sum + payment.amount, 0);
+            
+            // Calculate total payments including advance payments from rentals
+            const totalAdvancePayments = systemData.rentals.reduce((sum, rental) => sum + rental.advancePayment, 0);
+            const totalPaymentSectionPayments = systemData.payments.reduce((sum, payment) => sum + payment.amount, 0);
+            const totalPayments = totalAdvancePayments + totalPaymentSectionPayments;
             
             document.getElementById('dashboardStats').innerHTML = `
                 <div class="col-md-2">
@@ -4050,6 +4054,7 @@
                                 <div>
                                     <h4>${totalPayments}</h4>
                                     <p>Total Payments</p>
+                                    <small class="opacity-75">(Includes advance payments)</small>
                                 </div>
                                 <div class="align-self-center">
                                     <i class="fas fa-money-bill-wave fa-2x"></i>
