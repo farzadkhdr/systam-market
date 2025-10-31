@@ -404,7 +404,7 @@
                         </li>
                         <li class="nav-item payments-item">
                             <a class="nav-link" href="#payments" data-bs-toggle="tab">
-                                <i class="fas fa-money-bill-wave"></i> Payments
+                                <i class="fas fa-money-bill-wave"></i> Payments & Bank
                             </a>
                         </li>
                         <li class="nav-item fines-item">
@@ -848,132 +848,6 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Invoice for Printing -->
-                            <div id="invoicePrint" class="print-only" style="display: none;">
-                                <div class="invoice-logo">
-                                    <img id="printLogo" src="" style="max-width: 200px; display: none;">
-                                    <h3 id="printSystemName">Car Rental System</h3>
-                                </div>
-                                <div class="card">
-                                    <div class="card-header text-center">
-                                        <h3>Car Rental Invoice</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row mb-3">
-                                            <div class="col-6">
-                                                <strong>Invoice Code:</strong> <span id="printInvoiceCode"></span>
-                                            </div>
-                                            <div class="col-6 text-end">
-                                                <strong>Date:</strong> <span id="printInvoiceDate"></span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="row mb-4">
-                                            <div class="col-6">
-                                                <h5>Customer Information</h5>
-                                                <table class="table table-bordered">
-                                                    <tr>
-                                                        <td><strong>Name:</strong></td>
-                                                        <td id="printCustomerName"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Age:</strong></td>
-                                                        <td id="printCustomerAge"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Address:</strong></td>
-                                                        <td id="printCustomerAddress"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>ID Number:</strong></td>
-                                                        <td id="printCustomerId"></td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-6">
-                                                <h5>Vehicle Information</h5>
-                                                <table class="table table-bordered">
-                                                    <tr>
-                                                        <td><strong>Vehicle:</strong></td>
-                                                        <td id="printVehicleName"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Model:</strong></td>
-                                                        <td id="printVehicleModel"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Color:</strong></td>
-                                                        <td id="printVehicleColor"></td>
-                                                    </tr>
-                                                </table>
-                                                <div id="printVehicleImage" class="text-center mt-2">
-                                                    <!-- Vehicle image will be inserted here -->
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="row mb-4">
-                                            <div class="col-12">
-                                                <h5>Rental Details</h5>
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Rental Date</th>
-                                                            <th>Return Date</th>
-                                                            <th>Rental Days</th>
-                                                            <th>Daily Rate</th>
-                                                            <th>Total Amount</th>
-                                                            <th>Advance Payment</th>
-                                                            <th>Remaining Balance</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="printRentalDetails">
-                                                        <!-- Rental details will be inserted here -->
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="row mb-4">
-                                            <div class="col-12">
-                                                <h5>Payment Summary</h5>
-                                                <table class="table table-bordered">
-                                                    <tr>
-                                                        <td><strong>Total Amount:</strong></td>
-                                                        <td id="printTotalAmount"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Advance Payment:</strong></td>
-                                                        <td id="printAdvancePayment"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Remaining Balance:</strong></td>
-                                                        <td id="printRemainingBalance"></td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="row signature-area">
-                                            <div class="col-6">
-                                                <strong>Customer Signature:</strong>
-                                                <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
-                                            </div>
-                                            <div class="col-6 text-end">
-                                                <strong>Company Signature:</strong>
-                                                <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="row mt-4">
-                                            <div class="col-12 text-center">
-                                                <small>Thank you for choosing our car rental service!</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Vehicle Returns Tab -->
@@ -1112,9 +986,33 @@
                             </div>
                         </div>
 
-                        <!-- Payments Tab -->
+                        <!-- Payments & Bank Tab -->
                         <div class="tab-pane fade" id="payments">
-                            <h2 class="mb-4">Payment Management</h2>
+                            <h2 class="mb-4">Payment & Bank Management</h2>
+                            
+                            <!-- بانکی کەسی -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">🏦 Total My Bank</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-md-4">
+                                            <h3 id="totalMyBank">0 AED</h3>
+                                            <p class="text-muted">Total in My Bank</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h3 id="availableForTransfer">0 AED</h3>
+                                            <p class="text-muted">Available for Transfer</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#transferToBankModal">
+                                                <i class="fas fa-exchange-alt"></i> Transfer to My Bank
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             
                             <div class="card">
                                 <div class="card-header">
@@ -1211,6 +1109,29 @@
                                             <button type="submit" class="btn btn-success">Add Payment</button>
                                             <button type="reset" class="btn btn-secondary">Cancel Edit</button>
                                         </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Bank Transfer History</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Amount</th>
+                                                    <th>Description</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="bankTransferHistory">
+                                                <!-- مێژووی گواستنەوەکان لێرە دەردەکەوێت -->
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -1719,6 +1640,47 @@
         </div>
     </div>
 
+    <!-- Transfer to Bank Modal -->
+    <div class="modal fade" id="transferToBankModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Transfer to My Bank</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="transferToBankForm">
+                        <div class="mb-3">
+                            <label class="form-label">Available for Transfer</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="availableAmount" readonly value="0">
+                                <span class="input-group-text">AED</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="transferAmount" class="form-label">Transfer Amount</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="transferAmount" required min="1">
+                                <span class="input-group-text">AED</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="transferDate" class="form-label">Transfer Date</label>
+                            <input type="date" class="form-control" id="transferDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="transferDescription" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="transferDescription" placeholder="Transfer description...">
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-exchange-alt"></i> Transfer to My Bank
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -1737,6 +1699,8 @@
             maintenance: [],
             payments: [],
             finesTaxes: [],
+            bankTransactions: [],
+            myBankBalance: 0,
             settings: {
                 systemName: "Car Rental System",
                 currency: "AED",
@@ -1792,7 +1756,8 @@
             const today = new Date().toISOString().split('T')[0];
             const dateInputs = [
                 'returnDate', 'maintenanceDate', 'paymentDate', 'fineDate', 
-                'rentalStartDate', 'rentalEndDate', 'reportStartDate', 'reportEndDate'
+                'rentalStartDate', 'rentalEndDate', 'reportStartDate', 'reportEndDate',
+                'transferDate'
             ];
             
             dateInputs.forEach(id => {
@@ -1821,8 +1786,15 @@
             loadFinesTaxesTable();
             loadUserTable();
             
+            // Load bank information
+            loadBankInformation();
+            loadBankTransferHistory();
+            
             // Load backup history
             loadBackupHistory();
+            
+            // Setup auto refresh for dashboard
+            setupAutoRefreshDashboard();
         }
 
         // Apply system settings to UI
@@ -1891,6 +1863,9 @@
             // Add user form
             document.getElementById('addUserForm').addEventListener('submit', handleAddUser);
             
+            // Transfer to bank form
+            document.getElementById('transferToBankForm').addEventListener('submit', handleTransferToBank);
+            
             // Search functionality
             document.getElementById('vehicleSearchBtn').addEventListener('click', searchVehicles);
             document.getElementById('customerSearchBtn').addEventListener('click', searchCustomers);
@@ -1928,6 +1903,25 @@
             
             // Add event listeners for view and delete buttons
             setupViewDeleteEventListeners();
+        }
+
+        // Setup auto refresh for dashboard
+        function setupAutoRefreshDashboard() {
+            // نوێکردنەوەی داشبۆرد هەر کاتێک تبەکە کرایەوە
+            document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+                tab.addEventListener('shown.bs.tab', function(e) {
+                    if (e.target.getAttribute('href') === '#dashboard') {
+                        loadDashboardData();
+                    }
+                });
+            });
+            
+            // نوێکردنەوەی خۆکار هەر ٣٠ چرکە جارێک
+            setInterval(function() {
+                if (document.getElementById('dashboard').classList.contains('active')) {
+                    loadDashboardData();
+                }
+            }, 30000);
         }
 
         // Setup delete event listeners
@@ -2155,6 +2149,20 @@
         function handleCreateRental(e) {
             e.preventDefault();
             
+            // پشکنین بۆ دیاریکردنی سەیارە
+            const vehicleName = document.getElementById('rentalVehicle').value;
+            const vehicle = systemData.vehicles.find(v => v.name === vehicleName);
+            
+            if (!vehicle) {
+                showAlert('Please select a valid vehicle!', 'danger');
+                return;
+            }
+            
+            if (vehicle.status !== 'available') {
+                showAlert('Selected vehicle is not available for rental!', 'danger');
+                return;
+            }
+            
             // Check if we need to create a new customer
             const customerName = document.getElementById('rentalCustomer').value;
             let customer = systemData.customers.find(c => c.fullName === customerName);
@@ -2179,30 +2187,21 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         customer.guaranteeDoc = e.target.result;
-                        completeCreateRental(customer);
+                        completeCreateRental(customer, vehicle);
                     };
                     reader.readAsDataURL(docInput.files[0]);
                 } else {
-                    completeCreateRental(customer);
+                    completeCreateRental(customer, vehicle);
                 }
             } else {
-                completeCreateRental(customer);
+                completeCreateRental(customer, vehicle);
             }
         }
 
-        function completeCreateRental(customer) {
+        function completeCreateRental(customer, vehicle) {
             // Add customer if new
             if (!systemData.customers.some(c => c.id === customer.id)) {
                 systemData.customers.push(customer);
-            }
-            
-            // Find vehicle
-            const vehicleName = document.getElementById('rentalVehicle').value;
-            const vehicle = systemData.vehicles.find(v => v.name === vehicleName);
-            
-            if (!vehicle) {
-                showAlert('Vehicle not found!', 'danger');
-                return;
             }
             
             // Create rental
@@ -2342,6 +2341,46 @@
             
             // Show print option
             showAlert('Payment added successfully! <button class="btn btn-sm btn-success ms-2" onclick="printPaymentReceipt(\'' + payment.id + '\')">Print Receipt</button>', 'success');
+        }
+
+        // Handle transfer to bank
+        function handleTransferToBank(e) {
+            e.preventDefault();
+            
+            const transferAmount = parseInt(document.getElementById('transferAmount').value);
+            const availableAmount = calculateAvailableForTransfer();
+            
+            if (transferAmount > availableAmount) {
+                showAlert('Transfer amount exceeds available amount!', 'danger');
+                return;
+            }
+            
+            if (transferAmount <= 0) {
+                showAlert('Please enter a valid transfer amount!', 'danger');
+                return;
+            }
+            
+            const bankTransaction = {
+                id: generateId(),
+                amount: transferAmount,
+                date: document.getElementById('transferDate').value,
+                description: document.getElementById('transferDescription').value || 'Transfer to My Bank',
+                type: 'transfer',
+                created: new Date().toISOString()
+            };
+            
+            systemData.bankTransactions.push(bankTransaction);
+            systemData.myBankBalance += transferAmount;
+            
+            saveDataToStorage();
+            
+            document.getElementById('transferToBankForm').reset();
+            document.getElementById('transferToBankModal').querySelector('.btn-close').click();
+            
+            loadBankInformation();
+            loadDashboardData();
+            
+            showAlert('Amount transferred to your bank successfully!', 'success');
         }
 
         // Print payment receipt
@@ -2607,6 +2646,47 @@
             }
         }
 
+        // فەرمانی نوێ بۆ هەژماری پارەی بەردەست
+        function calculateAvailableForTransfer() {
+            const totalAdvancePayments = systemData.rentals.reduce((sum, rental) => sum + rental.advancePayment, 0);
+            const totalPaymentSectionPayments = systemData.payments.reduce((sum, payment) => sum + payment.amount, 0);
+            const totalReceived = totalAdvancePayments + totalPaymentSectionPayments;
+            
+            // پارەی ترانسفەرکراو
+            const totalTransferred = systemData.bankTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+            
+            return totalReceived - totalTransferred;
+        }
+
+        // فەرمانی بارکردنی زانیاری بانک
+        function loadBankInformation() {
+            const availableForTransfer = calculateAvailableForTransfer();
+            const myBankBalance = systemData.myBankBalance;
+            
+            document.getElementById('totalMyBank').textContent = myBankBalance + ' AED';
+            document.getElementById('availableForTransfer').textContent = availableForTransfer + ' AED';
+            document.getElementById('availableAmount').value = availableForTransfer;
+        }
+
+        // فەرمانی بارکردنی مێژووی گواستنەوە
+        function loadBankTransferHistory() {
+            const historyBody = document.getElementById('bankTransferHistory');
+            if (!historyBody) return;
+            
+            historyBody.innerHTML = '';
+            
+            systemData.bankTransactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${formatDate(transaction.date)}</td>
+                    <td>${transaction.amount} AED</td>
+                    <td>${transaction.description}</td>
+                    <td><span class="badge bg-success">Transferred</span></td>
+                `;
+                historyBody.appendChild(row);
+            });
+        }
+
         // Updated function to calculate customer debt - ensures debt is preserved after return
         function calculateCustomerDebt(customerId) {
             const customerRentals = systemData.rentals.filter(r => r.customerId === customerId);
@@ -2788,7 +2868,7 @@
             showAlert('User data loaded for editing.', 'info');
         }
 
-        // Print rental invoice
+        // Print rental invoice - NEW VERSION with separate window
         function printRentalInvoice(rentalId) {
             const rental = systemData.rentals.find(r => r.id === rentalId);
             if (!rental) return;
@@ -2801,64 +2881,145 @@
             }
         }
 
-        // Print invoice - Updated Version
+        // Print invoice - UPDATED VERSION with separate window
         function printInvoice(rental, customer, vehicle) {
-            // Update print content
-            document.getElementById('printInvoiceCode').textContent = rental.invoiceCode;
-            document.getElementById('printInvoiceDate').textContent = formatDate(new Date());
-            document.getElementById('printCustomerName').textContent = customer.fullName;
-            document.getElementById('printCustomerAge').textContent = customer.age;
-            document.getElementById('printCustomerAddress').textContent = customer.address;
-            document.getElementById('printCustomerId').textContent = customer.idNumber;
-            document.getElementById('printVehicleName').textContent = vehicle.name;
-            document.getElementById('printVehicleModel').textContent = vehicle.model;
-            document.getElementById('printVehicleColor').textContent = vehicle.color;
-            
-            // Set vehicle image
-            const vehicleImageContainer = document.getElementById('printVehicleImage');
-            if (vehicle.image) {
-                vehicleImageContainer.innerHTML = `<img src="${vehicle.image}" style="max-width: 150px; max-height: 100px; object-fit: cover;" alt="${vehicle.name}">`;
-            } else {
-                vehicleImageContainer.innerHTML = '<i class="fas fa-car fa-2x text-muted"></i>';
-            }
-            
-            // Calculate payment details
             const totalAmount = rental.rentalAmount * rental.rentalDays;
             const advancePayment = rental.advancePayment || 0;
             const remainingBalance = totalAmount - advancePayment;
             
-            // Update rental details table
-            document.getElementById('printRentalDetails').innerHTML = `
-                <tr>
-                    <td>${formatDate(rental.startDate)}</td>
-                    <td>${formatDate(rental.endDate)}</td>
-                    <td>${rental.rentalDays}</td>
-                    <td>${rental.rentalAmount} ${systemData.settings.currency}</td>
-                    <td>${totalAmount} ${systemData.settings.currency}</td>
-                    <td>${advancePayment} ${systemData.settings.currency}</td>
-                    <td>${remainingBalance} ${systemData.settings.currency}</td>
-                </tr>
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Rental Invoice - ${rental.invoiceCode}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .invoice-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+                        .invoice-details { margin: 20px 0; }
+                        .section { margin-bottom: 30px; }
+                        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f5f5f5; }
+                        .total-row { font-weight: bold; background-color: #f8f9fa; }
+                        .signature-area { margin-top: 50px; border-top: 1px solid #000; padding-top: 20px; }
+                        @media print {
+                            body { margin: 0; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="invoice-header">
+                        <h1>${systemData.settings.systemName}</h1>
+                        <h2>Car Rental Invoice</h2>
+                    </div>
+                    
+                    <div class="invoice-details">
+                        <div style="display: flex; justify-content: space-between;">
+                            <div>
+                                <strong>Invoice Code:</strong> ${rental.invoiceCode}
+                            </div>
+                            <div>
+                                <strong>Date:</strong> ${new Date().toLocaleDateString()}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>Customer Information</h3>
+                        <table>
+                            <tr><td><strong>Name:</strong></td><td>${customer.fullName}</td></tr>
+                            <tr><td><strong>Age:</strong></td><td>${customer.age}</td></tr>
+                            <tr><td><strong>ID Number:</strong></td><td>${customer.idNumber}</td></tr>
+                            <tr><td><strong>Contact:</strong></td><td>${customer.contact}</td></tr>
+                            <tr><td><strong>Address:</strong></td><td>${customer.address}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>Vehicle Information</h3>
+                        <table>
+                            <tr><td><strong>Vehicle:</strong></td><td>${vehicle.name}</td></tr>
+                            <tr><td><strong>Model:</strong></td><td>${vehicle.model}</td></tr>
+                            <tr><td><strong>Color:</strong></td><td>${vehicle.color}</td></tr>
+                            <tr><td><strong>Plate Number:</strong></td><td>${vehicle.plate}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>Rental Details</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Days</th>
+                                    <th>Daily Rate</th>
+                                    <th>Total Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>${formatDate(rental.startDate)}</td>
+                                    <td>${formatDate(rental.endDate)}</td>
+                                    <td>${rental.rentalDays}</td>
+                                    <td>${rental.rentalAmount} ${systemData.settings.currency}</td>
+                                    <td>${totalAmount} ${systemData.settings.currency}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>Payment Summary</h3>
+                        <table>
+                            <tr><td><strong>Total Amount:</strong></td><td>${totalAmount} ${systemData.settings.currency}</td></tr>
+                            <tr><td><strong>Advance Payment:</strong></td><td>${advancePayment} ${systemData.settings.currency}</td></tr>
+                            <tr class="total-row"><td><strong>Remaining Balance:</strong></td><td>${remainingBalance} ${systemData.settings.currency}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div class="signature-area">
+                        <div style="display: flex; justify-content: space-between;">
+                            <div style="width: 45%;">
+                                <strong>Customer Signature:</strong>
+                                <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
+                            </div>
+                            <div style="width: 45%; text-align: right;">
+                                <strong>Company Signature:</strong>
+                                <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <small>Thank you for choosing our car rental service!</small>
+                    </div>
+                    
+                    <div class="no-print" style="margin-top: 20px; text-align: center;">
+                        <button onclick="window.print()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            Print Invoice
+                        </button>
+                        <button onclick="window.close()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                            Close
+                        </button>
+                    </div>
+                    
+                    <script>
+                        window.onload = function() {
+                            // Auto-print after 1 second
+                            setTimeout(function() {
+                                window.print();
+                            }, 1000);
+                        };
+                    <\/script>
+                </body>
+                </html>
             `;
             
-            // Update payment summary
-            document.getElementById('printTotalAmount').textContent = `${totalAmount} ${systemData.settings.currency}`;
-            document.getElementById('printAdvancePayment').textContent = `${advancePayment} ${systemData.settings.currency}`;
-            document.getElementById('printRemainingBalance').textContent = `${remainingBalance} ${systemData.settings.currency}`;
-            
-            // Set logo if available
-            const printLogo = document.getElementById('printLogo');
-            if (systemData.settings.logo) {
-                printLogo.src = systemData.settings.logo;
-                printLogo.style.display = 'block';
-            } else {
-                printLogo.style.display = 'none';
-            }
-            
-            // Set system name
-            document.getElementById('printSystemName').textContent = systemData.settings.systemName;
-            
-            // Print the invoice
-            window.print();
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
         }
 
         // View Rental Invoice Details
@@ -3904,7 +4065,7 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            showAlert(`باکەپی ${filename} بارکرا!`, 'success');
+            showAlert(`باکەپی ${filename} بارکرا!', 'success`);
         }
 
         // Delete backup from history
@@ -4103,7 +4264,7 @@
             });
         }
 
-        // Load dashboard data - Updated Version with auto-refresh
+        // Load dashboard data - Updated Version with bank information
         function loadDashboardData() {
             // Update statistics
             const availableVehicles = systemData.vehicles.filter(v => v.status === 'available').length;
@@ -4114,7 +4275,10 @@
             // Calculate total payments including advance payments from rentals
             const totalAdvancePayments = systemData.rentals.reduce((sum, rental) => sum + rental.advancePayment, 0);
             const totalPaymentSectionPayments = systemData.payments.reduce((sum, payment) => sum + payment.amount, 0);
-            const totalPayments = totalAdvancePayments + totalPaymentSectionPayments;
+            const totalReceived = totalAdvancePayments + totalPaymentSectionPayments;
+            
+            // پارەی بەردەست بۆ گواستنەوە
+            const availableForTransfer = calculateAvailableForTransfer();
             
             document.getElementById('dashboardStats').innerHTML = `
                 <div class="col-md-2">
@@ -4148,21 +4312,6 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <div class="card dashboard-card bg-warning text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h4>${activeRentals}</h4>
-                                    <p>Active Rentals</p>
-                                </div>
-                                <div class="align-self-center">
-                                    <i class="fas fa-clipboard-list fa-2x"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
                     <div class="card dashboard-card bg-info text-white">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
@@ -4178,13 +4327,13 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <div class="card dashboard-card bg-danger text-white">
+                    <div class="card dashboard-card bg-warning text-white">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <h4>${totalPayments}</h4>
-                                    <p>Total Payments</p>
-                                    <small class="opacity-75">(Includes advance payments)</small>
+                                    <h4>${totalReceived}</h4>
+                                    <p>Total Received</p>
+                                    <small class="opacity-75">(All payments)</small>
                                 </div>
                                 <div class="align-self-center">
                                     <i class="fas fa-money-bill-wave fa-2x"></i>
@@ -4194,15 +4343,32 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <div class="card dashboard-card bg-secondary text-white">
+                    <div class="card dashboard-card bg-success text-white">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <h4>${systemData.vehicles.length}</h4>
-                                    <p>Total Vehicles</p>
+                                    <h4>${systemData.myBankBalance}</h4>
+                                    <p>My Bank</p>
+                                    <small class="opacity-75">(Transferred)</small>
                                 </div>
                                 <div class="align-self-center">
-                                    <i class="fas fa-car-side fa-2x"></i>
+                                    <i class="fas fa-university fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card dashboard-card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4>${availableForTransfer}</h4>
+                                    <p>Available</p>
+                                    <small class="opacity-75">(For transfer)</small>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-exchange-alt fa-2x"></i>
                                 </div>
                             </div>
                         </div>
@@ -4235,13 +4401,6 @@
             // Load vehicle status chart
             loadVehicleStatusChart();
         }
-
-        // Auto-refresh dashboard every 30 seconds
-        setInterval(function() {
-            if (document.getElementById('dashboard').classList.contains('active')) {
-                loadDashboardData();
-            }
-        }, 30000);
 
         // Load vehicle status chart
         function loadVehicleStatusChart() {
