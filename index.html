@@ -864,6 +864,132 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- Invoice for Printing -->
+                            <div id="invoicePrint" class="print-only" style="display: none;">
+                                <div class="invoice-logo">
+                                    <img id="printLogo" src="" style="max-width: 200px; display: none;">
+                                    <h3 id="printSystemName">Car Rental System</h3>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header text-center">
+                                        <h3>Car Rental Invoice</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <strong>Invoice Code:</strong> <span id="printInvoiceCode"></span>
+                                            </div>
+                                            <div class="col-6 text-end">
+                                                <strong>Date:</strong> <span id="printInvoiceDate"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-4">
+                                            <div class="col-6">
+                                                <h5>Customer Information</h5>
+                                                <table class="table table-bordered">
+                                                    <tr>
+                                                        <td><strong>Name:</strong></td>
+                                                        <td id="printCustomerName"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Age:</strong></td>
+                                                        <td id="printCustomerAge"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Address:</strong></td>
+                                                        <td id="printCustomerAddress"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>ID Number:</strong></td>
+                                                        <td id="printCustomerId"></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="col-6">
+                                                <h5>Vehicle Information</h5>
+                                                <table class="table table-bordered">
+                                                    <tr>
+                                                        <td><strong>Vehicle:</strong></td>
+                                                        <td id="printVehicleName"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Model:</strong></td>
+                                                        <td id="printVehicleModel"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Color:</strong></td>
+                                                        <td id="printVehicleColor"></td>
+                                                    </tr>
+                                                </table>
+                                                <div id="printVehicleImage" class="text-center mt-2">
+                                                    <!-- Vehicle image will be inserted here -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-4">
+                                            <div class="col-12">
+                                                <h5>Rental Details</h5>
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Rental Date</th>
+                                                            <th>Return Date</th>
+                                                            <th>Rental Days</th>
+                                                            <th>Daily Rate</th>
+                                                            <th>Total Amount</th>
+                                                            <th>Advance Payment</th>
+                                                            <th>Remaining Balance</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="printRentalDetails">
+                                                        <!-- Rental details will be inserted here -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-4">
+                                            <div class="col-12">
+                                                <h5>Payment Summary</h5>
+                                                <table class="table table-bordered">
+                                                    <tr>
+                                                        <td><strong>Total Amount:</strong></td>
+                                                        <td id="printTotalAmount"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Advance Payment:</strong></td>
+                                                        <td id="printAdvancePayment"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Remaining Balance:</strong></td>
+                                                        <td id="printRemainingBalance"></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row signature-area">
+                                            <div class="col-6">
+                                                <strong>Customer Signature:</strong>
+                                                <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
+                                            </div>
+                                            <div class="col-6 text-end">
+                                                <strong>Company Signature:</strong>
+                                                <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mt-4">
+                                            <div class="col-12 text-center">
+                                                <small>Thank you for choosing our car rental service!</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Vehicle Returns Tab -->
@@ -1306,19 +1432,19 @@
                             <!-- Backup & Restore Section -->
                             <div class="card mt-4 admin-only">
                                 <div class="card-header">
-                                    <h5 class="mb-0">باکەپ کردن و گەڕاندنەوە</h5>
+                                    <h5 class="mb-0">نسخ احتياطي واستعادة</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="card">
                                                 <div class="card-header bg-primary text-white">
-                                                    <h6 class="mb-0">دروستکردنی باکەپ</h6>
+                                                    <h6 class="mb-0">إنشاء نسخة احتياطية</h6>
                                                 </div>
                                                 <div class="card-body">
-                                                    <p class="card-text">هەموو داتاکانی سیستەمەکە کۆپی بکە بۆ فایلێک.</p>
+                                                    <p class="card-text">احفظ جميع بيانات النظام في ملف.</p>
                                                     <button type="button" class="btn btn-success w-100" id="backupBtn">
-                                                        <i class="fas fa-download me-2"></i>دروستکردنی باکەپ
+                                                        <i class="fas fa-download me-2"></i>إنشاء نسخة احتياطية
                                                     </button>
                                                 </div>
                                             </div>
@@ -1326,16 +1452,16 @@
                                         <div class="col-md-6">
                                             <div class="card">
                                                 <div class="card-header bg-warning text-dark">
-                                                    <h6 class="mb-0">گەڕاندنەوەی باکەپ</h6>
+                                                    <h6 class="mb-0">استعادة النسخة الاحتياطية</h6>
                                                 </div>
                                                 <div class="card-body">
-                                                    <p class="card-text">داتاکانی پێشوو لە فایلێکەوە باربکەوە.</p>
+                                                    <p class="card-text">استرجع البيانات السابقة من ملف.</p>
                                                     <div class="mb-3">
-                                                        <label for="backupFile" class="form-label">هەڵبژاردنی فایلی باکەپ</label>
+                                                        <label for="backupFile" class="form-label">اختر ملف النسخة الاحتياطية</label>
                                                         <input class="form-control" type="file" id="backupFile" accept=".json">
                                                     </div>
                                                     <button type="button" class="btn btn-warning w-100" id="restoreBtn">
-                                                        <i class="fas fa-upload me-2"></i>گەڕاندنەوەی باکەپ
+                                                        <i class="fas fa-upload me-2"></i>استعادة النسخة الاحتياطية
                                                     </button>
                                                 </div>
                                             </div>
@@ -1344,21 +1470,21 @@
                                     
                                     <div class="card mt-4">
                                         <div class="card-header bg-info text-white">
-                                            <h6 class="mb-0">باکەپەکانی پێشوو</h6>
+                                            <h6 class="mb-0">النسخ الاحتياطية السابقة</h6>
                                         </div>
                                         <div class="card-body">
                                             <div class="table-responsive">
                                                 <table class="table table-hover">
                                                     <thead>
                                                         <tr>
-                                                            <th>ناوی فایل</th>
-                                                            <th>قەبارە</th>
-                                                            <th>کاتی دروستکردن</th>
-                                                            <th>کردارەکان</th>
+                                                            <th>اسم الملف</th>
+                                                            <th>الحجم</th>
+                                                            <th>وقت الإنشاء</th>
+                                                            <th>الإجراءات</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="backupHistoryTable">
-                                                        <!-- مێژووی باکەپەکان لێرە نمایش دەبێت -->
+                                                        <!-- تاريخ النسخ الاحتياطية سيظهر هنا -->
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -1914,12 +2040,6 @@
                     const rentalId = e.target.closest('.delete-rental').getAttribute('data-id');
                     deleteRental(rentalId);
                 }
-
-                // Print invoice from list
-                if (e.target.closest('.print-invoice-list')) {
-                    const rentalId = e.target.closest('.print-invoice-list').getAttribute('data-id');
-                    printInvoiceFromList(rentalId);
-                }
             });
         }
 
@@ -2163,7 +2283,9 @@
             
             // Show success and print invoice
             showAlert('Rental created successfully!', 'success');
-            printInvoice(rental, customer, vehicle);
+            
+            // چاپکردنی فاکتور بەبێ ناوەوەی سیستەم
+            printInvoiceWithoutSystem(rental, customer, vehicle);
         }
 
         // Handle vehicle return - Updated Version
@@ -2288,8 +2410,9 @@
                     <div class="invoice-logo">
                         ${systemData.settings.logo ? 
                             `<img src="${systemData.settings.logo}" style="max-width: 200px;">` : 
-                            `<h3>${systemData.settings.systemName}</h3>`
+                            `<i class="fas fa-car fa-3x"></i>`
                         }
+                        <h3>${systemData.settings.systemName}</h3>
                     </div>
                     <div class="card">
                         <div class="card-header text-center">
@@ -2379,31 +2502,11 @@
                         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
                         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
                         <style>
-                            body { 
-                                font-family: Arial, sans-serif; 
-                                background: white !important;
-                                color: black !important;
-                            }
+                            body { font-family: Arial, sans-serif; }
                             .print-only { display: block !important; }
                             .no-print { display: none !important; }
                             .invoice-logo { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
                             .signature-area { margin-top: 50px; border-top: 1px solid #000; padding-top: 10px; }
-                            .card {
-                                border: 1px solid #ddd;
-                                box-shadow: none;
-                            }
-                            table {
-                                width: 100%;
-                                border-collapse: collapse;
-                            }
-                            th, td {
-                                border: 1px solid #ddd;
-                                padding: 8px;
-                                text-align: left;
-                            }
-                            th {
-                                background-color: #f8f9fa;
-                            }
                         </style>
                     </head>
                     <body>
@@ -2751,223 +2854,205 @@
             }
         }
 
-        // Print invoice directly from rental list
-        function printInvoiceFromList(rentalId) {
-            const rental = systemData.rentals.find(r => r.id === rentalId);
-            if (!rental) return;
-            
-            const customer = systemData.customers.find(c => c.id === rental.customerId);
-            const vehicle = systemData.vehicles.find(v => v.id === rental.vehicleId);
-            
-            if (customer && vehicle) {
-                printInvoice(rental, customer, vehicle);
-            }
-        }
-
-        // Print invoice - Updated Version (No System UI)
+        // Print invoice - Updated Version
         function printInvoice(rental, customer, vehicle) {
-            // Create print content without system UI
-            const printContent = `
-                <div class="print-only">
-                    <div class="invoice-logo">
-                        ${systemData.settings.logo ? 
-                            `<img src="${systemData.settings.logo}" style="max-width: 200px;">` : 
-                            `<h3>${systemData.settings.systemName}</h3>`
-                        }
-                    </div>
-                    <div class="card">
-                        <div class="card-header text-center">
-                            <h3>Car Rental Invoice</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <strong>Invoice Code:</strong> <span>${rental.invoiceCode}</span>
-                                </div>
-                                <div class="col-6 text-end">
-                                    <strong>Date:</strong> <span>${formatDate(new Date())}</span>
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-4">
-                                <div class="col-6">
-                                    <h5>Customer Information</h5>
-                                    <table class="table table-bordered">
-                                        <tr>
-                                            <td><strong>Name:</strong></td>
-                                            <td>${customer.fullName}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Age:</strong></td>
-                                            <td>${customer.age}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Address:</strong></td>
-                                            <td>${customer.address}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>ID Number:</strong></td>
-                                            <td>${customer.idNumber}</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                                <div class="col-6">
-                                    <h5>Vehicle Information</h5>
-                                    <table class="table table-bordered">
-                                        <tr>
-                                            <td><strong>Vehicle:</strong></td>
-                                            <td>${vehicle.name}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Model:</strong></td>
-                                            <td>${vehicle.model}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Color:</strong></td>
-                                            <td>${vehicle.color}</td>
-                                        </tr>
-                                    </table>
-                                    ${vehicle.image ? 
-                                        `<div class="text-center mt-2">
-                                            <img src="${vehicle.image}" style="max-width: 150px; max-height: 100px; object-fit: cover;" alt="${vehicle.name}">
-                                        </div>` : 
-                                        ''
-                                    }
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-4">
-                                <div class="col-12">
-                                    <h5>Rental Details</h5>
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Rental Date</th>
-                                                <th>Return Date</th>
-                                                <th>Rental Days</th>
-                                                <th>Daily Rate</th>
-                                                <th>Total Amount</th>
-                                                <th>Advance Payment</th>
-                                                <th>Remaining Balance</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>${formatDate(rental.startDate)}</td>
-                                                <td>${formatDate(rental.endDate)}</td>
-                                                <td>${rental.rentalDays}</td>
-                                                <td>${rental.rentalAmount} ${systemData.settings.currency}</td>
-                                                <td>${rental.rentalAmount * rental.rentalDays} ${systemData.settings.currency}</td>
-                                                <td>${rental.advancePayment || 0} ${systemData.settings.currency}</td>
-                                                <td>${(rental.rentalAmount * rental.rentalDays) - (rental.advancePayment || 0)} ${systemData.settings.currency}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-4">
-                                <div class="col-12">
-                                    <h5>Payment Summary</h5>
-                                    <table class="table table-bordered">
-                                        <tr>
-                                            <td><strong>Total Amount:</strong></td>
-                                            <td>${rental.rentalAmount * rental.rentalDays} ${systemData.settings.currency}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Advance Payment:</strong></td>
-                                            <td>${rental.advancePayment || 0} ${systemData.settings.currency}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Remaining Balance:</strong></td>
-                                            <td>${(rental.rentalAmount * rental.rentalDays) - (rental.advancePayment || 0)} ${systemData.settings.currency}</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                            
-                            <div class="row signature-area">
-                                <div class="col-6">
-                                    <strong>Customer Signature:</strong>
-                                    <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
-                                </div>
-                                <div class="col-6 text-end">
-                                    <strong>Company Signature:</strong>
-                                    <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="row mt-4">
-                                <div class="col-12 text-center">
-                                    <small>Thank you for choosing our car rental service!</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            // Update print content
+            document.getElementById('printInvoiceCode').textContent = rental.invoiceCode;
+            document.getElementById('printInvoiceDate').textContent = formatDate(new Date());
+            document.getElementById('printCustomerName').textContent = customer.fullName;
+            document.getElementById('printCustomerAge').textContent = customer.age;
+            document.getElementById('printCustomerAddress').textContent = customer.address;
+            document.getElementById('printCustomerId').textContent = customer.idNumber;
+            document.getElementById('printVehicleName').textContent = vehicle.name;
+            document.getElementById('printVehicleModel').textContent = vehicle.model;
+            document.getElementById('printVehicleColor').textContent = vehicle.color;
+            
+            // Set vehicle image
+            const vehicleImageContainer = document.getElementById('printVehicleImage');
+            if (vehicle.image) {
+                vehicleImageContainer.innerHTML = `<img src="${vehicle.image}" style="max-width: 150px; max-height: 100px; object-fit: cover;" alt="${vehicle.name}">`;
+            } else {
+                vehicleImageContainer.innerHTML = '<i class="fas fa-car fa-2x text-muted"></i>';
+            }
+            
+            // Calculate payment details
+            const totalAmount = rental.rentalAmount * rental.rentalDays;
+            const advancePayment = rental.advancePayment || 0;
+            const remainingBalance = totalAmount - advancePayment;
+            
+            // Update rental details table
+            document.getElementById('printRentalDetails').innerHTML = `
+                <tr>
+                    <td>${formatDate(rental.startDate)}</td>
+                    <td>${formatDate(rental.endDate)}</td>
+                    <td>${rental.rentalDays}</td>
+                    <td>${rental.rentalAmount} ${systemData.settings.currency}</td>
+                    <td>${totalAmount} ${systemData.settings.currency}</td>
+                    <td>${advancePayment} ${systemData.settings.currency}</td>
+                    <td>${remainingBalance} ${systemData.settings.currency}</td>
+                </tr>
             `;
             
-            // Open print window
+            // Update payment summary
+            document.getElementById('printTotalAmount').textContent = `${totalAmount} ${systemData.settings.currency}`;
+            document.getElementById('printAdvancePayment').textContent = `${advancePayment} ${systemData.settings.currency}`;
+            document.getElementById('printRemainingBalance').textContent = `${remainingBalance} ${systemData.settings.currency}`;
+            
+            // Set logo if available
+            const printLogo = document.getElementById('printLogo');
+            if (systemData.settings.logo) {
+                printLogo.src = systemData.settings.logo;
+                printLogo.style.display = 'block';
+            } else {
+                printLogo.style.display = 'none';
+            }
+            
+            // Set system name
+            document.getElementById('printSystemName').textContent = systemData.settings.systemName;
+            
+            // Print the invoice
+            window.print();
+        }
+
+        // چاپکردنی فاکتور بەبێ ناوەوەی سیستەم
+        function printInvoiceWithoutSystem(rental, customer, vehicle) {
             const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
+            
+            // دروستکردنی ناوەڕۆکی چاپ
+            const totalAmount = rental.rentalAmount * rental.rentalDays;
+            const advancePayment = rental.advancePayment || 0;
+            const remainingBalance = totalAmount - advancePayment;
+            
+            const printContent = `
                 <html>
                     <head>
-                        <title>Car Rental Invoice - ${rental.invoiceCode}</title>
-                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+                        <title>Car Rental Invoice</title>
                         <style>
-                            body { 
-                                font-family: Arial, sans-serif; 
-                                background: white !important;
-                                color: black !important;
-                            }
-                            .print-only { 
-                                display: block !important; 
-                            }
-                            .no-print { 
-                                display: none !important; 
-                            }
-                            .invoice-logo { 
-                                text-align: center; 
-                                margin-bottom: 20px; 
-                                border-bottom: 2px solid #333; 
-                                padding-bottom: 10px; 
-                            }
-                            .signature-area { 
-                                margin-top: 50px; 
-                                border-top: 1px solid #000; 
-                                padding-top: 10px; 
-                            }
-                            .card {
-                                border: 1px solid #ddd;
-                                box-shadow: none;
-                            }
-                            table {
-                                width: 100%;
-                                border-collapse: collapse;
-                            }
-                            th, td {
-                                border: 1px solid #ddd;
-                                padding: 8px;
-                                text-align: left;
-                            }
-                            th {
-                                background-color: #f8f9fa;
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            .invoice-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+                            .invoice-details { margin-bottom: 20px; }
+                            .section { margin-bottom: 25px; }
+                            table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+                            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                            th { background-color: #f8f9fa; }
+                            .total-row { font-weight: bold; background-color: #e9ecef; }
+                            .signature-area { margin-top: 50px; border-top: 1px solid #000; padding-top: 10px; }
+                            @media print {
+                                body { margin: 0; }
+                                .no-print { display: none; }
                             }
                         </style>
                     </head>
                     <body>
-                        ${printContent}
+                        <div class="invoice-header">
+                            <h1>Car Rental Invoice</h1>
+                            <p><strong>Invoice Code:</strong> ${rental.invoiceCode}</p>
+                            <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                        </div>
+                        
+                        <div class="section">
+                            <h3>Customer Information</h3>
+                            <table>
+                                <tr><td><strong>Name:</strong></td><td>${customer.fullName}</td></tr>
+                                <tr><td><strong>Age:</strong></td><td>${customer.age}</td></tr>
+                                <tr><td><strong>ID Number:</strong></td><td>${customer.idNumber}</td></tr>
+                                <tr><td><strong>Address:</strong></td><td>${customer.address}</td></tr>
+                                <tr><td><strong>Contact:</strong></td><td>${customer.contact}</td></tr>
+                            </table>
+                        </div>
+                        
+                        <div class="section">
+                            <h3>Vehicle Information</h3>
+                            <table>
+                                <tr><td><strong>Vehicle:</strong></td><td>${vehicle.name}</td></tr>
+                                <tr><td><strong>Model:</strong></td><td>${vehicle.model}</td></tr>
+                                <tr><td><strong>Color:</strong></td><td>${vehicle.color}</td></tr>
+                                <tr><td><strong>Plate Number:</strong></td><td>${vehicle.plate}</td></tr>
+                            </table>
+                        </div>
+                        
+                        <div class="section">
+                            <h3>Rental Details</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Rental Date</th>
+                                        <th>Return Date</th>
+                                        <th>Rental Days</th>
+                                        <th>Daily Rate</th>
+                                        <th>Total Amount</th>
+                                        <th>Advance Payment</th>
+                                        <th>Remaining Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${formatDate(rental.startDate)}</td>
+                                        <td>${formatDate(rental.endDate)}</td>
+                                        <td>${rental.rentalDays}</td>
+                                        <td>${rental.rentalAmount} ${systemData.settings.currency}</td>
+                                        <td>${totalAmount} ${systemData.settings.currency}</td>
+                                        <td>${advancePayment} ${systemData.settings.currency}</td>
+                                        <td>${remainingBalance} ${systemData.settings.currency}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="section">
+                            <h3>Payment Summary</h3>
+                            <table>
+                                <tr class="total-row">
+                                    <td><strong>Total Amount:</strong></td>
+                                    <td>${totalAmount} ${systemData.settings.currency}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Advance Payment:</strong></td>
+                                    <td>${advancePayment} ${systemData.settings.currency}</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td><strong>Remaining Balance:</strong></td>
+                                    <td>${remainingBalance} ${systemData.settings.currency}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="signature-area">
+                            <div style="float: left; width: 45%;">
+                                <strong>Customer Signature:</strong>
+                                <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
+                            </div>
+                            <div style="float: right; width: 45%; text-align: right;">
+                                <strong>Company Signature:</strong>
+                                <div style="height: 50px; border-bottom: 1px solid #000; margin-top: 10px;"></div>
+                            </div>
+                            <div style="clear: both;"></div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 30px;">
+                            <small>Thank you for choosing our car rental service!</small>
+                        </div>
+                        
+                        <div class="no-print" style="margin-top: 20px; text-align: center;">
+                            <button onclick="window.print()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                Print Invoice
+                            </button>
+                            <button onclick="window.close()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                                Close
+                            </button>
+                        </div>
+                        
                         <script>
+                            // چاپکردنی خۆکار لە کاتێکدا پەنجەرە دەکرێتەوە
                             window.onload = function() {
                                 window.print();
-                                setTimeout(function() {
-                                    window.close();
-                                }, 500);
                             };
                         <\/script>
                     </body>
                 </html>
-            `);
+            `;
+            
+            printWindow.document.write(printContent);
             printWindow.document.close();
         }
 
@@ -3084,7 +3169,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" onclick="printInvoiceFromList('${rental.id}')">
+                                <button type="button" class="btn btn-primary" onclick="printRentalInvoice('${rental.id}')">
                                     <i class="fas fa-print"></i> Print Invoice
                                 </button>
                             </div>
@@ -3491,7 +3576,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" onclick="printInvoiceFromList('${rental.id}')">
+                                <button type="button" class="btn btn-primary" onclick="printRentalInvoice('${rental.id}')">
                                     <i class="fas fa-print"></i> Print Invoice
                                 </button>
                                 ${rental.status === 'returned' ? 
@@ -3585,7 +3670,7 @@
             document.getElementById('customerDetailsCard').style.display = 'none';
         }
 
-        // Generate Customer Rental Report - FIXED VERSION
+        // Generate Customer Rental Report - FIXED VERSION with proper calculation
         function generateCustomerRentalReport(e) {
             if (e) e.preventDefault();
             
@@ -3626,10 +3711,16 @@
             
             customerRentals.forEach(rental => {
                 const vehicle = systemData.vehicles.find(v => v.id === rental.vehicleId);
-                const rentalPayments = systemData.payments.filter(p => p.customerId === customer.id);
-                const totalPaid = rentalPayments.reduce((sum, payment) => sum + payment.amount, 0);
+                
+                // Calculate payments specifically for this rental
+                const rentalPayments = systemData.payments.filter(p => 
+                    p.customerId === customer.id && 
+                    p.description && p.description.includes(rental.invoiceCode)
+                );
+                
+                const totalPaidForRental = rentalPayments.reduce((sum, payment) => sum + payment.amount, 0);
                 const totalAmount = rental.rentalAmount * rental.rentalDays;
-                const remainingDebt = totalAmount - rental.advancePayment - totalPaid;
+                const remainingDebt = totalAmount - rental.advancePayment - totalPaidForRental;
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -3640,7 +3731,7 @@
                     <td>${formatCurrency(rental.rentalAmount)}</td>
                     <td>${formatCurrency(totalAmount)}</td>
                     <td>${formatCurrency(rental.advancePayment)}</td>
-                    <td>${formatCurrency(totalPaid)}</td>
+                    <td>${formatCurrency(totalPaidForRental)}</td>
                     <td>${formatCurrency(remainingDebt)}</td>
                     <td>
                         <span class="badge ${rental.status === 'active' ? 'bg-warning' : 'bg-success'}">
@@ -3653,7 +3744,7 @@
                 // Update totals
                 totalRentalAmount += totalAmount;
                 totalAdvancePayment += rental.advancePayment;
-                totalPayment += totalPaid;
+                totalPayment += totalPaidForRental;
                 totalDebt += remainingDebt;
             });
             
@@ -3695,12 +3786,15 @@
                 const vehicle = systemData.vehicles.find(v => v.id === rental.vehicleId);
                 const vehicleName = vehicle ? vehicle.name : 'N/A';
                 const returnDate = rental.returnDate ? formatDate(rental.returnDate) : 'Not Returned';
-                const rentalPayments = systemData.payments.filter(p => p.customerId === customer.id);
-                const totalPaid = rentalPayments.reduce((sum, payment) => sum + payment.amount, 0);
+                const rentalPayments = systemData.payments.filter(p => 
+                    p.customerId === customer.id && 
+                    p.description && p.description.includes(rental.invoiceCode)
+                );
+                const totalPaidForRental = rentalPayments.reduce((sum, payment) => sum + payment.amount, 0);
                 const totalAmount = rental.rentalAmount * rental.rentalDays;
-                const remainingDebt = totalAmount - rental.advancePayment - totalPaid;
+                const remainingDebt = totalAmount - rental.advancePayment - totalPaidForRental;
                 
-                csvContent += `"${vehicleName}","${formatDate(rental.startDate)}","${returnDate}","${rental.rentalDays}","${rental.rentalAmount}","${totalAmount}","${rental.advancePayment}","${totalPaid}","${remainingDebt}","${rental.status}"\n`;
+                csvContent += `"${vehicleName}","${formatDate(rental.startDate)}","${returnDate}","${rental.rentalDays}","${rental.rentalAmount}","${totalAmount}","${rental.advancePayment}","${totalPaidForRental}","${remainingDebt}","${rental.status}"\n`;
             });
             
             // Create and download CSV file
@@ -3856,7 +3950,7 @@
             // Save backup info to localStorage
             saveBackupInfo(filename, blob.size);
             
-            showAlert('باکەپ بە سەرکەوتوویی دروست کرا!', 'success');
+            showAlert('تم إنشاء النسخة الاحتياطية بنجاح!', 'success');
         }
 
         // Restore backup function
@@ -3865,12 +3959,12 @@
             const file = fileInput.files[0];
             
             if (!file) {
-                showAlert('تکایە فایلێکی باکەپ هەڵبژێرە!', 'warning');
+                showAlert('الرجاء اختيار ملف النسخة الاحتياطية!', 'warning');
                 return;
             }
             
             if (!file.name.endsWith('.json')) {
-                showAlert('تکایە فایلێکی JSON هەڵبژێرە!', 'danger');
+                showAlert('الرجاء اختيار ملف JSON!', 'danger');
                 return;
             }
             
@@ -3882,12 +3976,12 @@
                     
                     // Verify backup structure
                     if (!backupData.systemData || !backupData.timestamp) {
-                        showAlert('فایلی باکەپ نادروستە!', 'danger');
+                        showAlert('ملف النسخة الاحتياطية غير صالح!', 'danger');
                         return;
                     }
                     
                     // Confirm restore action
-                    if (confirm('ئایا دڵنیای کە دەتەوێت هەموو داتاکانی ئێستا بسڕیتەوە و باکەپەکە باربکەیت؟ ئەم کردارە ناگەڕێتەوە!')) {
+                    if (confirm('هل أنت متأكد أنك تريد حذف جميع البيانات الحالية واستعادة النسخة الاحتياطية؟ لا يمكن التراجع عن هذا الإجراء!')) {
                         // Restore data
                         Object.keys(systemData).forEach(key => {
                             if (backupData.systemData[key]) {
@@ -3901,16 +3995,16 @@
                         // Reload the page to reflect changes
                         location.reload();
                         
-                        showAlert('باکەپ بە سەرکەوتوویی بارکرایەوە!', 'success');
+                        showAlert('تم استعادة النسخة الاحتياطية بنجاح!', 'success');
                     }
                 } catch (error) {
                     console.error('Error restoring backup:', error);
-                    showAlert('هەڵە لە خوێندنەوەی فایلی باکەپ!', 'danger');
+                    showAlert('خطأ في قراءة ملف النسخة الاحتياطية!', 'danger');
                 }
             };
             
             reader.onerror = function() {
-                showAlert('هەڵە لە خوێندنەوەی فایل!', 'danger');
+                showAlert('خطأ في قراءة الملف!', 'danger');
             };
             
             reader.readAsText(file);
@@ -3949,7 +4043,7 @@
             if (backupHistory.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="text-center text-muted">هیچ باکەپێک بوونی نیە</td>
+                        <td colspan="4" class="text-center text-muted">لا توجد نسخ احتياطية</td>
                     </tr>
                 `;
                 return;
@@ -4014,17 +4108,17 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            showAlert(`باکەپی ${filename} بارکرا!`, 'success');
+            showAlert(`تم تحميل النسخة الاحتياطية ${filename}!`, 'success');
         }
 
         // Delete backup from history
         function deleteBackup(filename) {
-            if (confirm(`ئایا دڵنیای کە دەتەوێت باکەپی ${filename} بسڕیتەوە؟`)) {
+            if (confirm(`هل أنت متأكد أنك تريد حذف النسخة الاحتياطية ${filename}؟`)) {
                 let backupHistory = JSON.parse(localStorage.getItem('backupHistory') || '[]');
                 backupHistory = backupHistory.filter(backup => backup.filename !== filename);
                 localStorage.setItem('backupHistory', JSON.stringify(backupHistory));
                 loadBackupHistory();
-                showAlert('باکەپ سڕدرایەوە!', 'success');
+                showAlert('تم حذف النسخة الاحتياطية!', 'success');
             }
         }
 
@@ -4498,7 +4592,7 @@
             });
         }
 
-        // Load rental table
+        // Load rental table with enhanced print options
         function loadRentalTable() {
             const rentalTableBody = document.getElementById('rentalTableBody');
             if (!rentalTableBody) return;
@@ -4527,10 +4621,10 @@
                             <button class="btn btn-sm btn-info view-rental" data-id="${rental.id}">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-sm btn-primary print-invoice-list" data-id="${rental.id}">
-                                <i class="fas fa-print"></i> Print
+                            <button class="btn btn-sm btn-primary print-invoice-simple" data-id="${rental.id}" title="Print Simple Invoice">
+                                <i class="fas fa-print"></i>
                             </button>
-                            <button class="btn btn-sm btn-warning view-invoice" data-id="${rental.id}">
+                            <button class="btn btn-sm btn-warning print-invoice-detailed" data-id="${rental.id}" title="Print Detailed Invoice">
                                 <i class="fas fa-file-invoice"></i>
                             </button>
                             <button class="btn btn-sm btn-danger delete-rental" data-id="${rental.id}">
@@ -4541,6 +4635,82 @@
                     rentalTableBody.appendChild(row);
                 }
             });
+            
+            // Add event listeners for new print buttons
+            document.querySelectorAll('.print-invoice-simple').forEach(button => {
+                button.addEventListener('click', function() {
+                    const rentalId = this.getAttribute('data-id');
+                    printSimpleInvoice(rentalId);
+                });
+            });
+            
+            document.querySelectorAll('.print-invoice-detailed').forEach(button => {
+                button.addEventListener('click', function() {
+                    const rentalId = this.getAttribute('data-id');
+                    printDetailedInvoice(rentalId);
+                });
+            });
+        }
+
+        // Print Simple Invoice
+        function printSimpleInvoice(rentalId) {
+            const rental = systemData.rentals.find(r => r.id === rentalId);
+            const customer = systemData.customers.find(c => c.id === rental.customerId);
+            const vehicle = systemData.vehicles.find(v => v.id === rental.vehicleId);
+            
+            if (!rental || !customer || !vehicle) return;
+            
+            const printWindow = window.open('', '_blank');
+            
+            const printContent = `
+                <html>
+                    <head>
+                        <title>Simple Invoice - ${rental.invoiceCode}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            .header { text-align: center; margin-bottom: 20px; }
+                            .details { margin-bottom: 15px; }
+                            .total { font-weight: bold; font-size: 1.2em; margin-top: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h2>Car Rental - Simple Invoice</h2>
+                            <p><strong>Invoice:</strong> ${rental.invoiceCode}</p>
+                        </div>
+                        
+                        <div class="details">
+                            <p><strong>Customer:</strong> ${customer.fullName}</p>
+                            <p><strong>Vehicle:</strong> ${vehicle.name}</p>
+                            <p><strong>Period:</strong> ${formatDate(rental.startDate)} to ${formatDate(rental.endDate)}</p>
+                            <p><strong>Days:</strong> ${rental.rentalDays}</p>
+                            <p><strong>Daily Rate:</strong> ${rental.rentalAmount} ${systemData.settings.currency}</p>
+                        </div>
+                        
+                        <div class="total">
+                            <p><strong>Total Amount:</strong> ${rental.rentalAmount * rental.rentalDays} ${systemData.settings.currency}</p>
+                        </div>
+                        
+                        <script>
+                            window.onload = function() { window.print(); }
+                        <\/script>
+                    </body>
+                </html>
+            `;
+            
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+        }
+
+        // Print Detailed Invoice
+        function printDetailedInvoice(rentalId) {
+            const rental = systemData.rentals.find(r => r.id === rentalId);
+            const customer = systemData.customers.find(c => c.id === rental.customerId);
+            const vehicle = systemData.vehicles.find(v => v.id === rental.vehicleId);
+            
+            if (!rental || !customer || !vehicle) return;
+            
+            printInvoiceWithoutSystem(rental, customer, vehicle);
         }
 
         // Load return history table
