@@ -1297,6 +1297,7 @@
                                                         <th>Description</th>
                                                         <th>Transferred By</th>
                                                         <th>Time</th>
+                                                        <th>Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="transferHistoryTable">
@@ -2123,6 +2124,22 @@
                 if (e.target.closest('.delete-rental')) {
                     const rentalId = e.target.closest('.delete-rental').getAttribute('data-id');
                     deleteRental(rentalId);
+                }
+
+                // زیادکردنی فەنکشنی سڕینەوە و گۆڕانکاری بۆ ترانسفێر
+                if (e.target.closest('.delete-transfer')) {
+                    const transferId = e.target.closest('.delete-transfer').getAttribute('data-id');
+                    deleteTransfer(transferId);
+                }
+                
+                if (e.target.closest('.edit-transfer')) {
+                    const transferId = e.target.closest('.edit-transfer').getAttribute('data-id');
+                    editTransfer(transferId);
+                }
+                
+                if (e.target.closest('.view-transfer')) {
+                    const transferId = e.target.closest('.view-transfer').getAttribute('data-id');
+                    viewTransferDetails(transferId);
                 }
             });
         }
@@ -3749,6 +3766,123 @@
             }
         }
 
+        // فەنکشنی سڕینەوەی تۆماری ترانسفێر
+        function deleteTransfer(transferId) {
+            const transfer = systemData.transfers.find(t => t.id === transferId);
+            if (!transfer) return;
+            
+            if (confirm('ئایا دڵنیایت کە دەتەوێت ئەم تۆماری ترانسفێرە بسڕیتەوە؟')) {
+                systemData.transfers = systemData.transfers.filter(t => t.id !== transferId);
+                saveDataToStorage();
+                updatePaymentTransferUI();
+                loadDashboardData();
+                showAlert('تۆماری ترانسفێر بە سەرکەوتوویی سڕایەوە!', 'success');
+            }
+        }
+
+        // فەنکشنی گۆڕانکاری لە تۆماری ترانسفێر
+        function editTransfer(transferId) {
+            const transfer = systemData.transfers.find(t => t.id === transferId);
+            if (!transfer) return;
+            
+            // پڕکردنەوەی فۆرمی ترانسفێر بە دراوە کۆنەکان
+            document.getElementById('transferAmount').value = transfer.amount;
+            document.getElementById('transferDescription').value = transfer.description;
+            
+            // گۆڕینی ڕەفتاری فۆرم بۆ نوێکردنەوە
+            const form = document.getElementById('transferPaymentForm');
+            const originalSubmit = form.onsubmit;
+            
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                
+                const newAmount = parseInt(document.getElementById('transferAmount').value);
+                const newDescription = document.getElementById('transferDescription').value;
+                
+                // نوێکردنەوەی تۆمارەکە
+                transfer.amount = newAmount;
+                transfer.description = newDescription;
+                transfer.editedAt = new Date().toISOString();
+                transfer.editedBy = systemData.currentUser.username;
+                
+                saveDataToStorage();
+                updatePaymentTransferUI();
+                
+                // گەڕاندنەوەی ڕەفتاری ئاسایی
+                form.onsubmit = originalSubmit;
+                form.reset();
+                
+                showAlert('تۆماری ترانسفێر بە سەرکەوتوویی نوێ کرایەوە!', 'success');
+            };
+        }
+
+        // فەنکشنی پشکنینی تۆماری ترانسفێر
+        function viewTransferDetails(transferId) {
+            const transfer = systemData.transfers.find(t => t.id === transferId);
+            if (!transfer) return;
+            
+            const modalHtml = `
+                <div class="modal fade" id="viewTransferModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">وردەکارییەکانی ترانسفێر</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>بڕی پارە</th>
+                                        <td>${transfer.amount} ${systemData.settings.currency}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>ڕێکەوت</th>
+                                        <td>${formatDate(transfer.date)}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>کات</th>
+                                        <td>${new Date(transfer.timestamp).toLocaleString()}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>پێناسە</th>
+                                        <td>${transfer.description}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>ترانسفێر کراوە لەلایەن</th>
+                                        <td>${transfer.transferredBy}</td>
+                                    </tr>
+                                    ${transfer.editedAt ? `
+                                        <tr>
+                                            <th>دوایین نوێکردنەوە</th>
+                                            <td>${new Date(transfer.editedAt).toLocaleString()}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>نوێ کراوە لەلایەن</th>
+                                            <td>${transfer.editedBy}</td>
+                                        </tr>
+                                    ` : ''}
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">داخستن</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // لابردنی مۆدالی پێشوو ئەگەر هەبوو
+            const existingModal = document.getElementById('viewTransferModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // زیادکردنی مۆدال بۆ بۆدی و نیشاندانی
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('viewTransferModal'));
+            modal.show();
+        }
+
         // Toggle customer form visibility
         function toggleCustomerForm() {
             const form = document.getElementById('newCustomerForm');
@@ -4512,7 +4646,7 @@
             if (transferHistory.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="text-center text-muted">No transfer history found</td>
+                        <td colspan="6" class="text-center text-muted">No transfer history found</td>
                     </tr>
                 `;
                 return;
@@ -4526,8 +4660,41 @@
                     <td>${transfer.description}</td>
                     <td>${transfer.transferredBy}</td>
                     <td>${new Date(transfer.timestamp).toLocaleTimeString()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info view-transfer" data-id="${transfer.id}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-warning edit-transfer" data-id="${transfer.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-transfer" data-id="${transfer.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
                 `;
                 tableBody.appendChild(row);
+            });
+            
+            // Add event listeners for new buttons
+            document.querySelectorAll('.view-transfer').forEach(button => {
+                button.addEventListener('click', function() {
+                    const transferId = this.getAttribute('data-id');
+                    viewTransferDetails(transferId);
+                });
+            });
+            
+            document.querySelectorAll('.edit-transfer').forEach(button => {
+                button.addEventListener('click', function() {
+                    const transferId = this.getAttribute('data-id');
+                    editTransfer(transferId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-transfer').forEach(button => {
+                button.addEventListener('click', function() {
+                    const transferId = this.getAttribute('data-id');
+                    deleteTransfer(transferId);
+                });
             });
         }
 
