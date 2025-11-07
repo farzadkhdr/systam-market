@@ -1699,6 +1699,47 @@
                                                 </label>
                                             </div>
                                         </div>
+                                        <!-- Permission های جدید -->
+                                        <div class="permission-item">
+                                            <div class="form-check">
+                                                <input class="form-check-input module-permission" type="checkbox" value="delete" id="permDelete">
+                                                <label class="form-check-label" for="permDelete">
+                                                    Delete Operations
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="permission-item">
+                                            <div class="form-check">
+                                                <input class="form-check-input module-permission" type="checkbox" value="edit" id="permEdit">
+                                                <label class="form-check-label" for="permEdit">
+                                                    Edit Operations
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="permission-item">
+                                            <div class="form-check">
+                                                <input class="form-check-input module-permission" type="checkbox" value="transfer" id="permTransfer">
+                                                <label class="form-check-label" for="permTransfer">
+                                                    Transfer Amount Access
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="permission-item">
+                                            <div class="form-check">
+                                                <input class="form-check-input module-permission" type="checkbox" value="user_management" id="permUserManagement">
+                                                <label class="form-check-label" for="permUserManagement">
+                                                    User Management
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="permission-item">
+                                            <div class="form-check">
+                                                <input class="form-check-input module-permission" type="checkbox" value="role_management" id="permRoleManagement">
+                                                <label class="form-check-label" for="permRoleManagement">
+                                                    Role Management
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                     
                                     <button class="btn btn-primary mt-3" id="savePermissions">Save Permissions</button>
@@ -1831,18 +1872,18 @@
             maintenance: [],
             payments: [],
             finesTaxes: [],
-            transfers: [], // New array for payment transfers
+            transfers: [],
             settings: {
                 systemName: "Car Rental System",
                 currency: "AED",
                 dateFormat: "dd/mm/yyyy"
             },
             permissions: {
-                admin: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports", "settings"],
-                manager: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports"],
-                staff: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines"],
+                admin: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports", "settings", "delete", "edit", "transfer", "user_management", "role_management"],
+                manager: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports", "delete", "edit", "transfer"],
+                staff: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "delete", "edit"],
                 viewer: ["dashboard", "vehicles", "rentals", "reports"],
-                accountant: ["dashboard", "payments", "fines", "reports"]
+                accountant: ["dashboard", "payments", "fines", "reports", "delete", "edit", "transfer"]
             },
             roles: ["admin", "manager", "staff", "viewer", "accountant"]
         };
@@ -1921,6 +1962,9 @@
             
             // Initialize payment transfer UI
             updatePaymentTransferUI();
+            
+            // Apply permission controls
+            applyPermissionControls();
         }
 
         // Apply system settings to UI
@@ -1951,6 +1995,54 @@
                 document.getElementById('sidebarLogo').src = systemData.settings.logo;
                 document.getElementById('sidebarLogo').style.display = 'inline';
                 document.getElementById('printLogo').src = systemData.settings.logo;
+            }
+        }
+
+        // فەنکشنی نوێ بۆ پشکنینی permission
+        function checkPermission(permission) {
+            if (!systemData.currentUser) return false;
+            const userPermissions = systemData.permissions[systemData.currentUser.role] || [];
+            return userPermissions.includes(permission);
+        }
+
+        // فەنکشنی نوێ بۆ کۆنتڕۆڵکردنی دەستپێگەیشتن
+        function applyPermissionControls() {
+            const permissions = systemData.permissions[systemData.currentUser.role] || [];
+            
+            // کۆنتڕۆڵی دەستپێگەیشتنی سڕینەوە
+            if (!permissions.includes('delete')) {
+                document.querySelectorAll('.delete-vehicle, .delete-maintenance, .delete-fine, .delete-user, .delete-rental, .delete-return, .delete-payment-record, .delete-transfer').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+            }
+            
+            // کۆنتڕۆڵی دەستپێگەیشتنی گۆڕانکاری
+            if (!permissions.includes('edit')) {
+                document.querySelectorAll('.edit-vehicle, .edit-customer, .edit-user, .edit-transfer, .edit-payment').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+            }
+            
+            // کۆنتڕۆڵی دەستپێگەیشتنی ترانسفێر
+            if (!permissions.includes('transfer')) {
+                const transferSection = document.getElementById('paymentTransferSection');
+                if (transferSection) transferSection.style.display = 'none';
+            }
+            
+            // کۆنتڕۆڵی دەستپێگەیشتنی بەڕێوەبردنی بەکارهێنەر
+            if (!permissions.includes('user_management')) {
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    if (el.textContent.includes('User Management') || el.querySelector('[data-bs-target="#userManagementModal"]')) {
+                        el.style.display = 'none';
+                    }
+                });
+            }
+            
+            // کۆنتڕۆڵی دەستپێگەیشتنی بەڕێوەبردنی ڕۆڵ
+            if (!permissions.includes('role_management')) {
+                document.querySelectorAll('#addNewRole, #deleteRole, #savePermissions').forEach(btn => {
+                    btn.style.display = 'none';
+                });
             }
         }
 
@@ -2068,8 +2160,37 @@
 
         // Setup delete event listeners
         function setupDeleteEventListeners() {
-            // Vehicle delete
             document.addEventListener('click', function(e) {
+                if (e.target.closest('.delete-vehicle') && !checkPermission('delete')) {
+                    showAlert('You do not have permission to delete vehicles!', 'danger');
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (e.target.closest('.delete-maintenance') && !checkPermission('delete')) {
+                    showAlert('You do not have permission to delete maintenance records!', 'danger');
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (e.target.closest('.delete-fine') && !checkPermission('delete')) {
+                    showAlert('You do not have permission to delete fines/taxes!', 'danger');
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (e.target.closest('.delete-user') && !checkPermission('user_management')) {
+                    showAlert('You do not have permission to delete users!', 'danger');
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (e.target.closest('.delete-transfer') && !checkPermission('transfer')) {
+                    showAlert('You do not have permission to delete transfers!', 'danger');
+                    e.preventDefault();
+                    return;
+                }
+                
                 if (e.target.closest('.delete-vehicle')) {
                     const vehicleId = e.target.closest('.delete-vehicle').getAttribute('data-id');
                     deleteVehicle(vehicleId);
@@ -2095,14 +2216,32 @@
                     markFineAsPaid(fineId);
                 }
                 
+                if (e.target.closest('.edit-vehicle') && !checkPermission('edit')) {
+                    showAlert('You do not have permission to edit vehicles!', 'danger');
+                    e.preventDefault();
+                    return;
+                }
+                
                 if (e.target.closest('.edit-vehicle')) {
                     const vehicleId = e.target.closest('.edit-vehicle').getAttribute('data-id');
                     editVehicle(vehicleId);
                 }
                 
+                if (e.target.closest('.edit-customer') && !checkPermission('edit')) {
+                    showAlert('You do not have permission to edit customers!', 'danger');
+                    e.preventDefault();
+                    return;
+                }
+                
                 if (e.target.closest('.edit-customer')) {
                     const customerId = e.target.closest('.edit-customer').getAttribute('data-id');
                     editCustomer(customerId);
+                }
+                
+                if (e.target.closest('.edit-user') && !checkPermission('user_management')) {
+                    showAlert('You do not have permission to edit users!', 'danger');
+                    e.preventDefault();
+                    return;
                 }
                 
                 if (e.target.closest('.edit-user')) {
@@ -2121,6 +2260,12 @@
                     viewRentalInvoice(rentalId);
                 }
 
+                if (e.target.closest('.delete-rental') && !checkPermission('delete')) {
+                    showAlert('You do not have permission to delete rentals!', 'danger');
+                    e.preventDefault();
+                    return;
+                }
+
                 if (e.target.closest('.delete-rental')) {
                     const rentalId = e.target.closest('.delete-rental').getAttribute('data-id');
                     deleteRental(rentalId);
@@ -2130,6 +2275,12 @@
                 if (e.target.closest('.delete-transfer')) {
                     const transferId = e.target.closest('.delete-transfer').getAttribute('data-id');
                     deleteTransfer(transferId);
+                }
+                
+                if (e.target.closest('.edit-transfer') && !checkPermission('transfer')) {
+                    showAlert('You do not have permission to edit transfers!', 'danger');
+                    e.preventDefault();
+                    return;
                 }
                 
                 if (e.target.closest('.edit-transfer')) {
@@ -2154,6 +2305,12 @@
                 }
                 
                 // سڕینەوەی گەیاندنەوە
+                if (e.target.closest('.delete-return') && !checkPermission('delete')) {
+                    showAlert('You do not have permission to delete returns!', 'danger');
+                    e.preventDefault();
+                    return;
+                }
+                
                 if (e.target.closest('.delete-return')) {
                     const returnId = e.target.closest('.delete-return').getAttribute('data-id');
                     deleteReturn(returnId);
@@ -2178,6 +2335,12 @@
                 }
                 
                 // سڕینەوەی پارەدان
+                if (e.target.closest('.delete-payment-record') && !checkPermission('delete')) {
+                    showAlert('You do not have permission to delete payments!', 'danger');
+                    e.preventDefault();
+                    return;
+                }
+                
                 if (e.target.closest('.delete-payment-record')) {
                     const paymentId = e.target.closest('.delete-payment-record').getAttribute('data-id');
                     deletePaymentRecord(paymentId);
@@ -2271,6 +2434,9 @@
                     element.style.display = permissions.includes(module) ? 'block' : 'none';
                 }
             }
+            
+            // جێبەجێکردنی کۆنتڕۆڵی permission
+            applyPermissionControls();
         }
 
         // Handle adding a new vehicle
@@ -2736,6 +2902,11 @@
         function handleAddUser(e) {
             e.preventDefault();
             
+            if (!checkPermission('user_management')) {
+                showAlert('You do not have permission to add users!', 'danger');
+                return;
+            }
+            
             const user = {
                 username: document.getElementById('newUsername').value,
                 password: document.getElementById('newUserPassword').value,
@@ -2897,6 +3068,11 @@
 
         // Edit vehicle
         function editVehicle(vehicleId) {
+            if (!checkPermission('edit')) {
+                showAlert('You do not have permission to edit vehicles!', 'danger');
+                return;
+            }
+            
             const vehicle = systemData.vehicles.find(v => v.id === vehicleId);
             if (!vehicle) return;
             
@@ -2917,6 +3093,11 @@
 
         // Edit customer
         function editCustomer(customerId) {
+            if (!checkPermission('edit')) {
+                showAlert('You do not have permission to edit customers!', 'danger');
+                return;
+            }
+            
             const customer = systemData.customers.find(c => c.id === customerId);
             if (!customer) return;
             
@@ -2938,6 +3119,11 @@
 
         // Edit user
         function editUser(username) {
+            if (!checkPermission('user_management')) {
+                showAlert('You do not have permission to edit users!', 'danger');
+                return;
+            }
+            
             const user = systemData.users.find(u => u.username === username);
             if (!user) return;
             
@@ -3782,6 +3968,11 @@
 
         // فەنکشنی گۆڕانکاری لە تۆماری ترانسفێر
         function editTransfer(transferId) {
+            if (!checkPermission('transfer')) {
+                showAlert('You do not have permission to edit transfers!', 'danger');
+                return;
+            }
+            
             const transfer = systemData.transfers.find(t => t.id === transferId);
             if (!transfer) return;
             
@@ -4076,6 +4267,11 @@
 
         // Add new role
         function addNewRole() {
+            if (!checkPermission('role_management')) {
+                showAlert('You do not have permission to manage roles!', 'danger');
+                return;
+            }
+            
             const roleName = prompt('Enter new role name:');
             if (roleName && !systemData.roles.includes(roleName)) {
                 systemData.roles.push(roleName);
@@ -4093,6 +4289,11 @@
 
         // Delete role
         function deleteRole() {
+            if (!checkPermission('role_management')) {
+                showAlert('You do not have permission to manage roles!', 'danger');
+                return;
+            }
+            
             const role = document.getElementById('permissionRole').value;
             
             if (role === 'admin') {
@@ -4601,6 +4802,11 @@
         // Handle payment transfer
         function handleTransferPayment(e) {
             e.preventDefault();
+            
+            if (!checkPermission('transfer')) {
+                showAlert('You do not have permission to transfer payments!', 'danger');
+                return;
+            }
             
             const amount = parseInt(document.getElementById('transferAmount').value);
             const description = document.getElementById('transferDescription').value;
@@ -5624,6 +5830,11 @@
 
         // Edit payment function
         function editPayment(paymentId) {
+            if (!checkPermission('edit')) {
+                showAlert('You do not have permission to edit payments!', 'danger');
+                return;
+            }
+            
             const payment = systemData.payments.find(p => p.id === paymentId);
             if (!payment) return;
             
