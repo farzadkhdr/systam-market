@@ -1699,47 +1699,6 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <!-- New Permission Items -->
-                                        <div class="permission-item">
-                                            <div class="form-check">
-                                                <input class="form-check-input module-permission" type="checkbox" value="delete_records" id="permDelete">
-                                                <label class="form-check-label" for="permDelete">
-                                                    Delete Records (Vehicles, Rentals, Customers, etc.)
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="permission-item">
-                                            <div class="form-check">
-                                                <input class="form-check-input module-permission" type="checkbox" value="edit_records" id="permEdit">
-                                                <label class="form-check-label" for="permEdit">
-                                                    Edit Records (Vehicles, Rentals, Customers, etc.)
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="permission-item">
-                                            <div class="form-check">
-                                                <input class="form-check-input module-permission" type="checkbox" value="transfer_amount" id="permTransfer">
-                                                <label class="form-check-label" for="permTransfer">
-                                                    Payment Transfer / Withdrawal Access
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="permission-item">
-                                            <div class="form-check">
-                                                <input class="form-check-input module-permission" type="checkbox" value="user_management" id="permUsers">
-                                                <label class="form-check-label" for="permUsers">
-                                                    User Management (Add/Edit/Delete Users)
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="permission-item">
-                                            <div class="form-check">
-                                                <input class="form-check-input module-permission" type="checkbox" value="role_management" id="permRoles">
-                                                <label class="form-check-label" for="permRoles">
-                                                    Role Management (Add/Delete Roles)
-                                                </label>
-                                            </div>
-                                        </div>
                                     </div>
                                     
                                     <button class="btn btn-primary mt-3" id="savePermissions">Save Permissions</button>
@@ -1879,13 +1838,11 @@
                 dateFormat: "dd/mm/yyyy"
             },
             permissions: {
-                admin: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports", "settings", 
-                        "delete_records", "edit_records", "transfer_amount", "user_management", "role_management"],
-                manager: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports",
-                         "delete_records", "edit_records"],
-                staff: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "edit_records"],
+                admin: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports", "settings"],
+                manager: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports"],
+                staff: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines"],
                 viewer: ["dashboard", "vehicles", "rentals", "reports"],
-                accountant: ["dashboard", "payments", "fines", "reports", "transfer_amount"]
+                accountant: ["dashboard", "payments", "fines", "reports"]
             },
             roles: ["admin", "manager", "staff", "viewer", "accountant"]
         };
@@ -2269,7 +2226,6 @@
                 
                 // Apply user permissions
                 applyUserPermissions(user);
-                applyPermissionBasedUI(); // Apply permission-based UI changes
                 
                 // Show success message
                 showAlert('Login successful!', 'success');
@@ -2314,68 +2270,6 @@
                 if (element) {
                     element.style.display = permissions.includes(module) ? 'block' : 'none';
                 }
-            }
-        }
-
-        // Function to check user permissions
-        function hasPermission(permission) {
-            if (!systemData.currentUser) return false;
-            
-            const userRole = systemData.currentUser.role;
-            const userPermissions = systemData.permissions[userRole] || [];
-            
-            return userPermissions.includes(permission);
-        }
-
-        // Function to apply permission-based UI changes
-        function applyPermissionBasedUI() {
-            const user = systemData.currentUser;
-            if (!user) return;
-
-            // Delete permissions
-            if (!hasPermission('delete_records')) {
-                document.querySelectorAll('.btn-danger, .delete-vehicle, .delete-rental, .delete-customer, .delete-maintenance, .delete-fine, .delete-user, .delete-return, .delete-payment-record, .delete-transfer').forEach(btn => {
-                    if (btn.textContent.includes('Delete') || btn.innerHTML.includes('fa-trash')) {
-                        btn.style.display = 'none';
-                    }
-                });
-            }
-
-            // Edit permissions
-            if (!hasPermission('edit_records')) {
-                document.querySelectorAll('.btn-warning, .edit-vehicle, .edit-rental, .edit-customer, .edit-user, .edit-transfer, .edit-payment').forEach(btn => {
-                    if (btn.textContent.includes('Edit') || btn.innerHTML.includes('fa-edit')) {
-                        btn.style.display = 'none';
-                    }
-                });
-            }
-
-            // Transfer permissions
-            if (!hasPermission('transfer_amount')) {
-                const transferSection = document.getElementById('paymentTransferSection');
-                if (transferSection) transferSection.style.display = 'none';
-            }
-
-            // User management permissions
-            if (!hasPermission('user_management')) {
-                // Hide from dropdown
-                const userManagementItem = document.querySelector('.admin-only [data-bs-target="#userManagementModal"]');
-                if (userManagementItem) userManagementItem.parentElement.style.display = 'none';
-                
-                // Hide from settings tab
-                const userManagementCard = document.querySelector('.admin-only .card:has(#userTableBody)');
-                if (userManagementCard) userManagementCard.style.display = 'none';
-            }
-
-            // Role management permissions
-            if (!hasPermission('role_management')) {
-                document.querySelectorAll('#addNewRole, #deleteRole').forEach(btn => {
-                    btn.style.display = 'none';
-                });
-                
-                // Hide role management section
-                const roleSection = document.querySelector('.permission-section:has(#permissionRole)');
-                if (roleSection) roleSection.style.display = 'none';
             }
         }
 
@@ -2842,12 +2736,6 @@
         function handleAddUser(e) {
             e.preventDefault();
             
-            // Check permission
-            if (!hasPermission('user_management')) {
-                showAlert('You do not have permission to manage users!', 'danger');
-                return;
-            }
-            
             const user = {
                 username: document.getElementById('newUsername').value,
                 password: document.getElementById('newUserPassword').value,
@@ -2934,14 +2822,18 @@
             loadPaymentHistoryTable(customer);
         }
 
-        // Delete vehicle - Updated with permission check
-        function deleteVehicle(vehicleId) {
-            // Check permission
-            if (!hasPermission('delete_records')) {
-                showAlert('You do not have permission to delete records!', 'danger');
-                return;
+        // Delete payment
+        function deletePayment(paymentId, customer) {
+            if (confirm('Are you sure you want to delete this payment?')) {
+                systemData.payments = systemData.payments.filter(p => p.id !== paymentId);
+                saveDataToStorage();
+                loadCustomerPaymentDetails(customer);
+                showAlert('Payment deleted successfully!', 'success');
             }
-            
+        }
+
+        // Delete vehicle
+        function deleteVehicle(vehicleId) {
             if (confirm('Are you sure you want to delete this vehicle?')) {
                 // Check if vehicle is currently rented
                 const activeRental = systemData.rentals.find(r => r.vehicleId === vehicleId && r.status === 'active');
@@ -2957,14 +2849,8 @@
             }
         }
 
-        // Delete maintenance record - Updated with permission check
+        // Delete maintenance record
         function deleteMaintenance(maintenanceId) {
-            // Check permission
-            if (!hasPermission('delete_records')) {
-                showAlert('You do not have permission to delete records!', 'danger');
-                return;
-            }
-            
             if (confirm('Are you sure you want to delete this maintenance record?')) {
                 systemData.maintenance = systemData.maintenance.filter(m => m.id !== maintenanceId);
                 saveDataToStorage();
@@ -2973,14 +2859,8 @@
             }
         }
 
-        // Delete fine/tax - Updated with permission check
+        // Delete fine/tax
         function deleteFineTax(fineId) {
-            // Check permission
-            if (!hasPermission('delete_records')) {
-                showAlert('You do not have permission to delete records!', 'danger');
-                return;
-            }
-            
             if (confirm('Are you sure you want to delete this fine/tax record?')) {
                 systemData.finesTaxes = systemData.finesTaxes.filter(f => f.id !== fineId);
                 saveDataToStorage();
@@ -2989,14 +2869,8 @@
             }
         }
 
-        // Delete user - Updated with permission check
+        // Delete user
         function deleteUser(username) {
-            // Check permission
-            if (!hasPermission('user_management')) {
-                showAlert('You do not have permission to manage users!', 'danger');
-                return;
-            }
-            
             if (username === 'admin') {
                 showAlert('Cannot delete admin user!', 'danger');
                 return;
@@ -3021,14 +2895,8 @@
             }
         }
 
-        // Edit vehicle - Updated with permission check
+        // Edit vehicle
         function editVehicle(vehicleId) {
-            // Check permission
-            if (!hasPermission('edit_records')) {
-                showAlert('You do not have permission to edit records!', 'danger');
-                return;
-            }
-            
             const vehicle = systemData.vehicles.find(v => v.id === vehicleId);
             if (!vehicle) return;
             
@@ -3047,14 +2915,8 @@
             showAlert('Vehicle data loaded for editing. Update and submit to save changes.', 'info');
         }
 
-        // Edit customer - Updated with permission check
+        // Edit customer
         function editCustomer(customerId) {
-            // Check permission
-            if (!hasPermission('edit_records')) {
-                showAlert('You do not have permission to edit records!', 'danger');
-                return;
-            }
-            
             const customer = systemData.customers.find(c => c.id === customerId);
             if (!customer) return;
             
@@ -3074,14 +2936,8 @@
             showAlert('Customer data loaded for editing.', 'info');
         }
 
-        // Edit user - Updated with permission check
+        // Edit user
         function editUser(username) {
-            // Check permission
-            if (!hasPermission('user_management')) {
-                showAlert('You do not have permission to manage users!', 'danger');
-                return;
-            }
-            
             const user = systemData.users.find(u => u.username === username);
             if (!user) return;
             
@@ -3446,14 +3302,8 @@
             modal.show();
         }
 
-        // Delete Rental Function - Updated with permission check
+        // Delete Rental Function
         function deleteRental(rentalId) {
-            // Check permission
-            if (!hasPermission('delete_records')) {
-                showAlert('You do not have permission to delete records!', 'danger');
-                return;
-            }
-            
             const rental = systemData.rentals.find(r => r.id === rentalId);
             if (!rental) return;
             
@@ -3864,14 +3714,8 @@
             modal.show();
         }
 
-        // سڕینەوەی تۆمارێکی گەیاندنەوە - Updated with permission check
+        // سڕینەوەی تۆمارێکی گەیاندنەوە
         function deleteReturn(returnId) {
-            // Check permission
-            if (!hasPermission('delete_records')) {
-                showAlert('You do not have permission to delete records!', 'danger');
-                return;
-            }
-            
             const returnRecord = systemData.returns.find(r => r.id === returnId);
             if (!returnRecord) return;
             
@@ -3903,14 +3747,8 @@
             }
         }
 
-        // سڕینەوەی تۆمارێکی پارەدان - Updated with permission check
+        // سڕینەوەی تۆمارێکی پارەدان
         function deletePaymentRecord(paymentId) {
-            // Check permission
-            if (!hasPermission('delete_records')) {
-                showAlert('You do not have permission to delete records!', 'danger');
-                return;
-            }
-            
             const payment = systemData.payments.find(p => p.id === paymentId);
             if (!payment) return;
             
@@ -3928,14 +3766,8 @@
             }
         }
 
-        // فەنکشنی سڕینەوەی تۆماری ترانسفێر - Updated with permission check
+        // فەنکشنی سڕینەوەی تۆماری ترانسفێر
         function deleteTransfer(transferId) {
-            // Check permission
-            if (!hasPermission('delete_records')) {
-                showAlert('You do not have permission to delete records!', 'danger');
-                return;
-            }
-            
             const transfer = systemData.transfers.find(t => t.id === transferId);
             if (!transfer) return;
             
@@ -3948,14 +3780,8 @@
             }
         }
 
-        // فەنکشنی گۆڕانکاری لە تۆماری ترانسفێر - Updated with permission check
+        // فەنکشنی گۆڕانکاری لە تۆماری ترانسفێر
         function editTransfer(transferId) {
-            // Check permission
-            if (!hasPermission('edit_records')) {
-                showAlert('You do not have permission to edit records!', 'danger');
-                return;
-            }
-            
             const transfer = systemData.transfers.find(t => t.id === transferId);
             if (!transfer) return;
             
@@ -4216,12 +4042,6 @@
 
         // Save permissions
         function savePermissions() {
-            // Check permission
-            if (!hasPermission('role_management')) {
-                showAlert('You do not have permission to manage roles!', 'danger');
-                return;
-            }
-            
             const role = document.getElementById('permissionRole').value;
             const permissions = [];
             
@@ -4254,14 +4074,8 @@
             });
         }
 
-        // Add new role - Updated with permission check
+        // Add new role
         function addNewRole() {
-            // Check permission
-            if (!hasPermission('role_management')) {
-                showAlert('You do not have permission to manage roles!', 'danger');
-                return;
-            }
-            
             const roleName = prompt('Enter new role name:');
             if (roleName && !systemData.roles.includes(roleName)) {
                 systemData.roles.push(roleName);
@@ -4277,14 +4091,8 @@
             }
         }
 
-        // Delete role - Updated with permission check
+        // Delete role
         function deleteRole() {
-            // Check permission
-            if (!hasPermission('role_management')) {
-                showAlert('You do not have permission to manage roles!', 'danger');
-                return;
-            }
-            
             const role = document.getElementById('permissionRole').value;
             
             if (role === 'admin') {
@@ -4731,12 +4539,6 @@
         // Payment Transfer Functions
         // Function to transfer payment to admin (withdraw money from system)
         function transferPaymentToAdmin(amount, description) {
-            // Check permission
-            if (!hasPermission('transfer_amount')) {
-                showAlert('You do not have permission to transfer payments!', 'danger');
-                return false;
-            }
-            
             if (!amount || amount <= 0) {
                 showAlert('Please enter a valid amount!', 'danger');
                 return false;
@@ -5820,14 +5622,8 @@
             });
         }
 
-        // Edit payment function - Updated with permission check
+        // Edit payment function
         function editPayment(paymentId) {
-            // Check permission
-            if (!hasPermission('edit_records')) {
-                showAlert('You do not have permission to edit records!', 'danger');
-                return;
-            }
-            
             const payment = systemData.payments.find(p => p.id === paymentId);
             if (!payment) return;
             
