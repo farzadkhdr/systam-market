@@ -1455,8 +1455,79 @@
                                                     <td><strong id="totalDebt">0 AED</strong></td>
                                                     <td></td>
                                                 </tr>
+                                                <!-- زیادکراوە: ڕیزێکی نوێ بۆ fines -->
+                                                <tr class="table-info">
+                                                    <td colspan="5" class="text-end"><strong>Fines & Taxes Summary:</strong></td>
+                                                    <td colspan="3"><strong>Total Fines Amount:</strong></td>
+                                                    <td><strong id="totalFinesAmount">0 AED</strong></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr class="table-warning">
+                                                    <td colspan="5" class="text-end"><strong>Final Summary:</strong></td>
+                                                    <td colspan="3"><strong>Total Remaining Balance (with fines):</strong></td>
+                                                    <td><strong id="totalRemainingBalance">0 AED</strong></td>
+                                                    <td></td>
+                                                </tr>
                                             </tfoot>
                                         </table>
+                                    </div>
+                                    
+                                    <!-- زیادکراوە: بەشی ئامارەکی fines -->
+                                    <div class="row mt-4">
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header bg-warning text-dark">
+                                                    <h6 class="mb-0">Fines & Taxes Statistics</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <table class="table table-sm">
+                                                        <tr>
+                                                            <td><strong>Total Fines/Taxes:</strong></td>
+                                                            <td id="statsTotalFines">0</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Unpaid Fines:</strong></td>
+                                                            <td id="statsUnpaidFines">0</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Paid Fines:</strong></td>
+                                                            <td id="statsPaidFines">0</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Total Fines Amount:</strong></td>
+                                                            <td id="statsTotalFinesAmount">0 AED</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header bg-info text-white">
+                                                    <h6 class="mb-0">Rental Statistics</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <table class="table table-sm">
+                                                        <tr>
+                                                            <td><strong>Total Rentals:</strong></td>
+                                                            <td id="statsTotalRentals">0</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Active Rentals:</strong></td>
+                                                            <td id="statsActiveRentals">0</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Returned Rentals:</strong></td>
+                                                            <td id="statsReturnedRentals">0</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Success Rate:</strong></td>
+                                                            <td id="statsSuccessRate">0%</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -2212,6 +2283,12 @@
                     const transferId = e.target.closest('.view-transfer').getAttribute('data-id');
                     viewTransferDetails(transferId);
                 }
+
+                // زیادکردنی فەنکشنی سڕینەوەی کڕیار
+                if (e.target.closest('.delete-customer')) {
+                    const customerId = e.target.closest('.delete-customer').getAttribute('data-id');
+                    deleteCustomer(customerId);
+                }
             });
         }
 
@@ -2270,6 +2347,18 @@
                 if (e.target.closest('.print-invoice-detailed')) {
                     const rentalId = e.target.closest('.print-invoice-detailed').getAttribute('data-id');
                     printDetailedInvoice(rentalId);
+                }
+
+                // بینینی سەیارە
+                if (e.target.closest('.view-vehicle')) {
+                    const vehicleId = e.target.closest('.view-vehicle').getAttribute('data-id');
+                    viewVehicleDetails(vehicleId);
+                }
+
+                // بینینی کڕیار
+                if (e.target.closest('.view-customer')) {
+                    const customerId = e.target.closest('.view-customer').getAttribute('data-id');
+                    viewCustomerDetails(customerId);
                 }
             });
         }
@@ -2970,6 +3059,31 @@
                 saveDataToStorage();
                 loadUserTable();
                 showAlert('User deleted successfully!', 'success');
+            }
+        }
+
+        // Delete customer
+        function deleteCustomer(customerId) {
+            if (!hasPermission('delete')) {
+                showAlert('You do not have permission to delete customers!', 'danger');
+                return;
+            }
+            
+            const customer = systemData.customers.find(c => c.id === customerId);
+            if (!customer) return;
+            
+            // Check for active rentals
+            const activeRentals = systemData.rentals.filter(r => r.customerId === customerId && r.status === 'active');
+            if (activeRentals.length > 0) {
+                showAlert('Cannot delete customer with active rentals!', 'danger');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to delete this customer?')) {
+                systemData.customers = systemData.customers.filter(c => c.id !== customerId);
+                saveDataToStorage();
+                loadCustomerTable();
+                showAlert('Customer deleted successfully!', 'success');
             }
         }
 
@@ -3895,12 +4009,12 @@
             const transfer = systemData.transfers.find(t => t.id === transferId);
             if (!transfer) return;
             
-            if (confirm('ئایا دڵنیایت کە دەتەوێت ئەم تۆماری ترانسفێرە بسڕیتەوە؟')) {
+            if (confirm('Are you sure you want to delete this transfer record?')) {
                 systemData.transfers = systemData.transfers.filter(t => t.id !== transferId);
                 saveDataToStorage();
                 updatePaymentTransferUI();
                 loadDashboardData();
-                showAlert('تۆماری ترانسفێر بە سەرکەوتوویی سڕایەوە!', 'success');
+                showAlert('Transfer record deleted successfully!', 'success');
             }
         }
 
@@ -3941,7 +4055,7 @@
                 form.onsubmit = originalSubmit;
                 form.reset();
                 
-                showAlert('تۆماری ترانسفێر بە سەرکەوتوویی نوێ کرایەوە!', 'success');
+                showAlert('Transfer record updated successfully!', 'success');
             };
         }
 
@@ -3955,58 +4069,58 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">وردەکارییەکانی ترانسفێر</h5>
+                                <h5 class="modal-title">Transfer Details</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
                                 <table class="table table-bordered">
                                     <tr>
-                                        <th>بڕی پارە</th>
+                                        <th>Amount</th>
                                         <td>${transfer.amount} ${systemData.settings.currency}</td>
                                     </tr>
                                     <tr>
-                                        <th>ڕێکەوت</th>
+                                        <th>Date</th>
                                         <td>${formatDate(transfer.date)}</td>
                                     </tr>
                                     <tr>
-                                        <th>کات</th>
+                                        <th>Time</th>
                                         <td>${new Date(transfer.timestamp).toLocaleString()}</td>
                                     </tr>
                                     <tr>
-                                        <th>پێناسە</th>
+                                        <th>Description</th>
                                         <td>${transfer.description}</td>
                                     </tr>
                                     <tr>
-                                        <th>ترانسفێر کراوە لەلایەن</th>
+                                        <th>Transferred By</th>
                                         <td>${transfer.transferredBy}</td>
                                     </tr>
                                     ${transfer.editedAt ? `
                                         <tr>
-                                            <th>دوایین نوێکردنەوە</th>
+                                            <th>Last Edited</th>
                                             <td>${new Date(transfer.editedAt).toLocaleString()}</td>
                                         </tr>
                                         <tr>
-                                            <th>نوێ کراوە لەلایەن</th>
+                                            <th>Edited By</th>
                                             <td>${transfer.editedBy}</td>
                                         </tr>
                                     ` : ''}
                                 </table>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">داخستن</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
             
-            // لابردنی مۆدالی پێشوو ئەگەر هەبوو
+            // Remove existing modal if any
             const existingModal = document.getElementById('viewTransferModal');
             if (existingModal) {
                 existingModal.remove();
             }
             
-            // زیادکردنی مۆدال بۆ بۆدی و نیشاندانی
+            // Add modal to body and show it
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             const modal = new bootstrap.Modal(document.getElementById('viewTransferModal'));
             modal.show();
@@ -4028,7 +4142,7 @@
             document.getElementById('customerDetailsCard').style.display = 'none';
         }
 
-        // Generate Customer Rental Report - FIXED VERSION with proper calculation
+        // Generate Customer Rental Report - FIXED VERSION with fines calculation
         function generateCustomerRentalReport(e) {
             if (e) e.preventDefault();
             
@@ -4036,7 +4150,6 @@
             const startDate = document.getElementById('reportStartDate').value;
             const endDate = document.getElementById('reportEndDate').value;
             
-            // Find customer
             const customer = systemData.customers.find(c => 
                 c.fullName.toLowerCase().includes(customerName.toLowerCase())
             );
@@ -4046,10 +4159,18 @@
                 return;
             }
             
-            // Get customer rentals
             let customerRentals = systemData.rentals.filter(r => r.customerId === customer.id);
+            const customerFines = systemData.finesTaxes.filter(f => f.customerId === customer.id);
             
-            // Apply date filters if provided
+            // ئامارەکان
+            const totalRentals = customerRentals.length;
+            const returnedRentals = customerRentals.filter(r => r.status === 'returned').length;
+            const activeRentals = customerRentals.filter(r => r.status === 'active').length;
+            const totalFines = customerFines.length;
+            const unpaidFines = customerFines.filter(f => f.status === 'unpaid').length;
+            const paidFines = customerFines.filter(f => f.status === 'paid').length;
+            const successRate = totalRentals > 0 ? Math.round((returnedRentals / totalRentals) * 100) : 0;
+            
             if (startDate) {
                 customerRentals = customerRentals.filter(r => r.startDate >= startDate);
             }
@@ -4058,19 +4179,17 @@
                 customerRentals = customerRentals.filter(r => r.startDate <= endDate);
             }
             
-            // Update report table
             const tableBody = document.getElementById('customerRentalReportBody');
             tableBody.innerHTML = '';
             
             let totalRentalAmount = 0;
             let totalAdvancePayment = 0;
             let totalPayment = 0;
+            let totalFinesAmount = 0;
             let totalDebt = 0;
             
             customerRentals.forEach(rental => {
                 const vehicle = systemData.vehicles.find(v => v.id === rental.vehicleId);
-                
-                // Calculate payments specifically for this rental
                 const rentalPayments = systemData.payments.filter(p => 
                     p.customerId === customer.id && 
                     p.description && p.description.includes(rental.invoiceCode)
@@ -4099,20 +4218,40 @@
                 `;
                 tableBody.appendChild(row);
                 
-                // Update totals
                 totalRentalAmount += totalAmount;
                 totalAdvancePayment += rental.advancePayment;
                 totalPayment += totalPaidForRental;
                 totalDebt += remainingDebt;
             });
             
-            // Update totals in the table footer
+            // زیادکردنی fines بە کۆی گشتی
+            customerFines.forEach(fine => {
+                totalFinesAmount += fine.amount;
+            });
+            
+            // کۆی گشتی پارەی ماوە لەگەڵ fines
+            const totalDebtWithFines = totalDebt + totalFinesAmount;
+            
+            // نوێکردنەوەی کۆگشتییەکان
             document.getElementById('totalRentalAmount').textContent = formatCurrency(totalRentalAmount);
             document.getElementById('totalAdvancePayment').textContent = formatCurrency(totalAdvancePayment);
             document.getElementById('totalPayment').textContent = formatCurrency(totalPayment);
-            document.getElementById('totalDebt').textContent = formatCurrency(totalDebt);
+            document.getElementById('totalDebt').textContent = formatCurrency(totalDebtWithFines);
+            document.getElementById('totalFinesAmount').textContent = formatCurrency(totalFinesAmount);
+            document.getElementById('totalRemainingBalance').textContent = formatCurrency(totalDebtWithFines);
             
-            showAlert('Customer rental report generated successfully!', 'success');
+            // نوێکردنەوەی ئامارەکان
+            document.getElementById('statsTotalFines').textContent = totalFines;
+            document.getElementById('statsUnpaidFines').textContent = unpaidFines;
+            document.getElementById('statsPaidFines').textContent = paidFines;
+            document.getElementById('statsTotalFinesAmount').textContent = formatCurrency(totalFinesAmount);
+            document.getElementById('statsTotalRentals').textContent = totalRentals;
+            document.getElementById('statsActiveRentals').textContent = activeRentals;
+            document.getElementById('statsReturnedRentals').textContent = returnedRentals;
+            document.getElementById('statsSuccessRate').textContent = successRate + '%';
+            
+            // نمایشی ئامارەکان لەگەڵ fines
+            showAlert(`Report generated successfully! Total Rentals: ${totalRentals} | Total Fines: ${totalFines} | Total Fines Amount: ${formatCurrency(totalFinesAmount)}`, 'success');
         }
 
         // Export Customer Rental Report to Excel
@@ -4342,7 +4481,7 @@
             
             // پشکنینی ڕێگەی سڕینەوە
             if (!actionPermissions.includes('delete')) {
-                document.querySelectorAll('.delete-vehicle, .delete-maintenance, .delete-fine, .delete-user, .delete-rental, .delete-return, .delete-payment-record, .delete-transfer').forEach(btn => {
+                document.querySelectorAll('.delete-vehicle, .delete-maintenance, .delete-fine, .delete-user, .delete-rental, .delete-return, .delete-payment-record, .delete-transfer, .delete-customer').forEach(btn => {
                     btn.style.display = 'none';
                 });
             }
@@ -5162,14 +5301,6 @@
                 `;
                 vehicleTableBody.appendChild(row);
             });
-            
-            // Add event listeners
-            document.querySelectorAll('.view-vehicle').forEach(button => {
-                button.addEventListener('click', function() {
-                    const vehicleId = this.getAttribute('data-id');
-                    viewVehicleDetails(vehicleId);
-                });
-            });
         }
 
         // Load customer table
@@ -5207,17 +5338,12 @@
                         <button class="btn btn-sm btn-warning edit-customer" data-id="${customer.id}">
                             <i class="fas fa-edit"></i>
                         </button>
+                        <button class="btn btn-sm btn-danger delete-customer" data-id="${customer.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 `;
                 customerTableBody.appendChild(row);
-            });
-            
-            // Add event listeners
-            document.querySelectorAll('.view-customer').forEach(button => {
-                button.addEventListener('click', function() {
-                    const customerId = this.getAttribute('data-id');
-                    viewCustomerDetails(customerId);
-                });
             });
         }
 
@@ -5263,21 +5389,6 @@
                     `;
                     rentalTableBody.appendChild(row);
                 }
-            });
-            
-            // Add event listeners for new print buttons
-            document.querySelectorAll('.print-invoice-simple').forEach(button => {
-                button.addEventListener('click', function() {
-                    const rentalId = this.getAttribute('data-id');
-                    printSimpleInvoice(rentalId);
-                });
-            });
-            
-            document.querySelectorAll('.print-invoice-detailed').forEach(button => {
-                button.addEventListener('click', function() {
-                    const rentalId = this.getAttribute('data-id');
-                    printDetailedInvoice(rentalId);
-                });
             });
         }
 
@@ -5839,21 +5950,6 @@
                     </td>
                 `;
                 paymentHistoryBody.appendChild(row);
-            });
-            
-            // Add event listeners for new buttons
-            document.querySelectorAll('.print-payment').forEach(button => {
-                button.addEventListener('click', function() {
-                    const paymentId = this.getAttribute('data-id');
-                    printPaymentReceipt(paymentId);
-                });
-            });
-            
-            document.querySelectorAll('.edit-payment').forEach(button => {
-                button.addEventListener('click', function() {
-                    const paymentId = this.getAttribute('data-id');
-                    editPayment(paymentId);
-                });
             });
         }
 
