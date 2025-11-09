@@ -2092,6 +2092,72 @@
             roles: ["admin", "manager", "staff", "viewer", "accountant"]
         };
 
+        // فەنکشنی نوێ بۆ نوێکردنەوەی هەموو تابلەکان
+        function refreshAllTables() {
+            console.log('نوێکردنەوەی هەموو تابلەکان...');
+            
+            // نوێکردنەوەی هەموو تابلەکانی سیستەم
+            loadDashboardData();
+            loadVehicleTable();
+            loadCustomerTable();
+            loadRentalTable();
+            loadReturnHistoryTable();
+            loadMaintenanceHistoryTable();
+            loadFinesTaxesTable();
+            loadUserTable();
+            
+            // نوێکردنەوەی UIی پارە و خەرجی
+            updatePaymentTransferUI();
+            updateSpendingUI();
+            
+            // نوێکردنەوەی مێژووی Backup
+            loadBackupHistory();
+            
+            // نوێکردنەوەی ڕیپۆرتەکان ئەگەر کرابێت
+            const reportCustomer = document.getElementById('reportCustomer').value;
+            if (reportCustomer) {
+                generateCustomerRentalReport();
+            }
+        }
+
+        // فەنکشنی گشتی بۆ هەموو کردارەکان کە پێویستی بە نوێکردنەوەیان هەیە
+        function performActionWithRefresh(actionFunction, ...args) {
+            // ئەنجامدانی کردارەکە
+            const result = actionFunction(...args);
+            
+            // نوێکردنەوەی هەموو تابلەکان
+            setTimeout(() => {
+                refreshAllTables();
+            }, 100);
+            
+            return result;
+        }
+
+        // فەنکشنە نوێکانی Enhanced
+        const handleAddVehicleEnhanced = (e) => performActionWithRefresh(handleAddVehicle, e);
+        const handleCreateRentalEnhanced = (e) => performActionWithRefresh(handleCreateRental, e);
+        const handleReturnVehicleEnhanced = (e) => performActionWithRefresh(handleReturnVehicle, e);
+        const handleAddMaintenanceEnhanced = (e) => performActionWithRefresh(handleAddMaintenance, e);
+        const handleAddPaymentEnhanced = (e) => performActionWithRefresh(handleAddPayment, e);
+        const handleAddFineTaxEnhanced = (e) => performActionWithRefresh(handleAddFineTax, e);
+        const handleSaveSettingsEnhanced = (e) => performActionWithRefresh(handleSaveSettings, e);
+        const handleChangePasswordEnhanced = (e) => performActionWithRefresh(handleChangePassword, e);
+        const handleAddUserEnhanced = (e) => performActionWithRefresh(handleAddUser, e);
+        const handleTransferPaymentEnhanced = (e) => performActionWithRefresh(handleTransferPayment, e);
+        const handleAddSpendingEnhanced = (e) => performActionWithRefresh(handleAddSpending, e);
+
+        // فەنکشنەکانی سڕینەوە و گۆڕین
+        const deleteVehicleEnhanced = (vehicleId) => performActionWithRefresh(deleteVehicle, vehicleId);
+        const deleteMaintenanceEnhanced = (maintenanceId) => performActionWithRefresh(deleteMaintenance, maintenanceId);
+        const deleteFineTaxEnhanced = (fineId) => performActionWithRefresh(deleteFineTax, fineId);
+        const deleteUserEnhanced = (username) => performActionWithRefresh(deleteUser, username);
+        const deleteCustomerEnhanced = (customerId) => performActionWithRefresh(deleteCustomer, customerId);
+        const deleteRentalEnhanced = (rentalId) => performActionWithRefresh(deleteRental, rentalId);
+        const deleteReturnEnhanced = (returnId) => performActionWithRefresh(deleteReturn, returnId);
+        const deletePaymentRecordEnhanced = (paymentId) => performActionWithRefresh(deletePaymentRecord, paymentId);
+        const deleteTransferEnhanced = (transferId) => performActionWithRefresh(deleteTransfer, transferId);
+        const deleteSpendingEnhanced = (spendingId) => performActionWithRefresh(deleteSpending, spendingId);
+
         // Initialize the system
         document.addEventListener('DOMContentLoaded', function() {
             // Load data from localStorage if available
@@ -2105,6 +2171,9 @@
             
             // Load dashboard data
             loadDashboardData();
+
+            // دەستپێکردنی پشکنینی گۆڕانکاری
+            setupDataChangeMonitoring();
         });
 
         // Load data from localStorage
@@ -2154,27 +2223,26 @@
             applySystemSettings();
             
             // Load initial data tables
-            loadVehicleTable();
-            loadCustomerTable();
-            loadRentalTable();
-            loadReturnHistoryTable();
-            loadMaintenanceHistoryTable();
-            loadFinesTaxesTable();
-            loadUserTable();
-            
-            // Load backup history
-            loadBackupHistory();
-            
-            // Initialize payment transfer UI
-            updatePaymentTransferUI();
-            
-            // Initialize spending UI
-            updateSpendingUI();
+            refreshAllTables();
             
             // Apply action permissions
             if (systemData.currentUser) {
                 applyActionPermissions();
             }
+        }
+
+        // فەنکشنی پشکنینی گۆڕانکاری لە داتا
+        function setupDataChangeMonitoring() {
+            let lastDataHash = JSON.stringify(systemData);
+            
+            setInterval(() => {
+                const currentDataHash = JSON.stringify(systemData);
+                if (currentDataHash !== lastDataHash) {
+                    console.log('گۆڕانکاری لە داتا دۆزرایەوە - نوێکردنەوەی UI');
+                    refreshAllTables();
+                    lastDataHash = currentDataHash;
+                }
+            }, 2000); // پشکنین هەر ٢ چرکە جارێک
         }
 
         // Apply system settings to UI
@@ -2216,32 +2284,32 @@
             // Logout button
             document.getElementById('logoutBtn').addEventListener('click', handleLogout);
             
-            // Vehicle form
-            document.getElementById('addVehicleForm').addEventListener('submit', handleAddVehicle);
+            // Vehicle form - گۆڕدراوە
+            document.getElementById('addVehicleForm').addEventListener('submit', handleAddVehicleEnhanced);
             
-            // Rental form
-            document.getElementById('createRentalForm').addEventListener('submit', handleCreateRental);
+            // Rental form - گۆڕدراوە
+            document.getElementById('createRentalForm').addEventListener('submit', handleCreateRentalEnhanced);
             
-            // Return form
-            document.getElementById('returnVehicleForm').addEventListener('submit', handleReturnVehicle);
+            // Return form - گۆڕدراوە
+            document.getElementById('returnVehicleForm').addEventListener('submit', handleReturnVehicleEnhanced);
             
-            // Maintenance form
-            document.getElementById('maintenanceForm').addEventListener('submit', handleAddMaintenance);
+            // Maintenance form - گۆڕدراوە
+            document.getElementById('maintenanceForm').addEventListener('submit', handleAddMaintenanceEnhanced);
             
-            // Payment form
-            document.getElementById('addPaymentForm').addEventListener('submit', handleAddPayment);
+            // Payment form - گۆڕدراوە
+            document.getElementById('addPaymentForm').addEventListener('submit', handleAddPaymentEnhanced);
             
-            // Fine/Tax form
-            document.getElementById('addFineTaxForm').addEventListener('submit', handleAddFineTax);
+            // Fine/Tax form - گۆڕدراوە
+            document.getElementById('addFineTaxForm').addEventListener('submit', handleAddFineTaxEnhanced);
             
-            // Settings form
-            document.getElementById('generalSettingsForm').addEventListener('submit', handleSaveSettings);
+            // Settings form - گۆڕدراوە
+            document.getElementById('generalSettingsForm').addEventListener('submit', handleSaveSettingsEnhanced);
             
-            // Change password form
-            document.getElementById('changePasswordForm').addEventListener('submit', handleChangePassword);
+            // Change password form - گۆڕدراوە
+            document.getElementById('changePasswordForm').addEventListener('submit', handleChangePasswordEnhanced);
             
-            // Add user form
-            document.getElementById('addUserForm').addEventListener('submit', handleAddUser);
+            // Add user form - گۆڕدراوە
+            document.getElementById('addUserForm').addEventListener('submit', handleAddUserEnhanced);
             
             // Search functionality
             document.getElementById('vehicleSearchBtn').addEventListener('click', searchVehicles);
@@ -2284,11 +2352,11 @@
             // Automatic calculation for rental form
             setupRentalCalculation();
             
-            // Transfer payment form
-            document.getElementById('transferPaymentForm').addEventListener('submit', handleTransferPayment);
+            // Transfer payment form - گۆڕدراوە
+            document.getElementById('transferPaymentForm').addEventListener('submit', handleTransferPaymentEnhanced);
             
-            // Spending form
-            document.getElementById('addSpendingForm').addEventListener('submit', handleAddSpending);
+            // Spending form - گۆڕدراوە
+            document.getElementById('addSpendingForm').addEventListener('submit', handleAddSpendingEnhanced);
         }
 
         // Setup automatic calculation for rental form
@@ -2325,26 +2393,25 @@
 
         // Setup delete event listeners
         function setupDeleteEventListeners() {
-            // Vehicle delete
             document.addEventListener('click', function(e) {
                 if (e.target.closest('.delete-vehicle')) {
                     const vehicleId = e.target.closest('.delete-vehicle').getAttribute('data-id');
-                    deleteVehicle(vehicleId);
+                    deleteVehicleEnhanced(vehicleId);
                 }
                 
                 if (e.target.closest('.delete-maintenance')) {
                     const maintenanceId = e.target.closest('.delete-maintenance').getAttribute('data-id');
-                    deleteMaintenance(maintenanceId);
+                    deleteMaintenanceEnhanced(maintenanceId);
                 }
                 
                 if (e.target.closest('.delete-fine')) {
                     const fineId = e.target.closest('.delete-fine').getAttribute('data-id');
-                    deleteFineTax(fineId);
+                    deleteFineTaxEnhanced(fineId);
                 }
                 
                 if (e.target.closest('.delete-user')) {
                     const username = e.target.closest('.delete-user').getAttribute('data-username');
-                    deleteUser(username);
+                    deleteUserEnhanced(username);
                 }
                 
                 if (e.target.closest('.mark-paid')) {
@@ -2372,7 +2439,6 @@
                     printRentalInvoice(rentalId);
                 }
 
-                // زیادکردنی فەنکشنی بینین و سڕینەوەی فاکتور
                 if (e.target.closest('.view-invoice')) {
                     const rentalId = e.target.closest('.view-invoice').getAttribute('data-id');
                     viewRentalInvoice(rentalId);
@@ -2380,13 +2446,12 @@
 
                 if (e.target.closest('.delete-rental')) {
                     const rentalId = e.target.closest('.delete-rental').getAttribute('data-id');
-                    deleteRental(rentalId);
+                    deleteRentalEnhanced(rentalId);
                 }
 
-                // زیادکردنی فەنکشنی سڕینەوە و گۆڕانکاری بۆ ترانسفێر
                 if (e.target.closest('.delete-transfer')) {
                     const transferId = e.target.closest('.delete-transfer').getAttribute('data-id');
-                    deleteTransfer(transferId);
+                    deleteTransferEnhanced(transferId);
                 }
                 
                 if (e.target.closest('.edit-transfer')) {
@@ -2399,16 +2464,14 @@
                     viewTransferDetails(transferId);
                 }
 
-                // زیادکردنی فەنکشنی سڕینەوەی کڕیار
                 if (e.target.closest('.delete-customer')) {
                     const customerId = e.target.closest('.delete-customer').getAttribute('data-id');
-                    deleteCustomer(customerId);
+                    deleteCustomerEnhanced(customerId);
                 }
 
-                // زیادکردنی فەنکشنی سڕینەوەی Spending
                 if (e.target.closest('.delete-spending')) {
                     const spendingId = e.target.closest('.delete-spending').getAttribute('data-id');
-                    deleteSpending(spendingId);
+                    deleteSpendingEnhanced(spendingId);
                 }
                 
                 if (e.target.closest('.edit-spending')) {
@@ -2426,67 +2489,56 @@
         // Setup view and delete event listeners for all modules
         function setupViewDeleteEventListeners() {
             document.addEventListener('click', function(e) {
-                // بینینی گەیاندنەوە
                 if (e.target.closest('.view-return')) {
                     const returnId = e.target.closest('.view-return').getAttribute('data-id');
                     viewReturnDetails(returnId);
                 }
                 
-                // سڕینەوەی گەیاندنەوە
                 if (e.target.closest('.delete-return')) {
                     const returnId = e.target.closest('.delete-return').getAttribute('data-id');
-                    deleteReturn(returnId);
+                    deleteReturnEnhanced(returnId);
                 }
                 
-                // بینینی چاکسازی
                 if (e.target.closest('.view-maintenance')) {
                     const maintenanceId = e.target.closest('.view-maintenance').getAttribute('data-id');
                     viewMaintenanceDetails(maintenanceId);
                 }
                 
-                // بینینی تاوان
                 if (e.target.closest('.view-fine')) {
                     const fineId = e.target.closest('.view-fine').getAttribute('data-id');
                     viewFineDetails(fineId);
                 }
                 
-                // بینینی پارەدان
                 if (e.target.closest('.view-payment')) {
                     const paymentId = e.target.closest('.view-payment').getAttribute('data-id');
                     viewPaymentDetails(paymentId);
                 }
                 
-                // سڕینەوەی پارەدان
                 if (e.target.closest('.delete-payment-record')) {
                     const paymentId = e.target.closest('.delete-payment-record').getAttribute('data-id');
-                    deletePaymentRecord(paymentId);
+                    deletePaymentRecordEnhanced(paymentId);
                 }
                 
-                // بینینی کرێ
                 if (e.target.closest('.view-rental')) {
                     const rentalId = e.target.closest('.view-rental').getAttribute('data-id');
                     viewRentalDetails(rentalId);
                 }
 
-                // چاپکردنی سادە
                 if (e.target.closest('.print-invoice-simple')) {
                     const rentalId = e.target.closest('.print-invoice-simple').getAttribute('data-id');
                     printSimpleInvoice(rentalId);
                 }
 
-                // چاپکردنی پێشکەوتوو
                 if (e.target.closest('.print-invoice-detailed')) {
                     const rentalId = e.target.closest('.print-invoice-detailed').getAttribute('data-id');
                     printDetailedInvoice(rentalId);
                 }
 
-                // بینینی سەیارە
                 if (e.target.closest('.view-vehicle')) {
                     const vehicleId = e.target.closest('.view-vehicle').getAttribute('data-id');
                     viewVehicleDetails(vehicleId);
                 }
 
-                // بینینی کڕیار
                 if (e.target.closest('.view-customer')) {
                     const customerId = e.target.closest('.view-customer').getAttribute('data-id');
                     viewCustomerDetails(customerId);
@@ -2604,9 +2656,9 @@
             saveDataToStorage();
             
             document.getElementById('addVehicleForm').reset();
-            loadVehicleTable();
             
             showAlert('Vehicle added successfully!', 'success');
+            return true;
         }
 
         // Handle creating a new rental
@@ -2660,7 +2712,7 @@
             
             if (!vehicle) {
                 showAlert('Vehicle not found!', 'danger');
-                return;
+                return false;
             }
             
             // Create rental
@@ -2685,14 +2737,13 @@
             saveDataToStorage();
             
             document.getElementById('createRentalForm').reset();
-            loadRentalTable();
-            loadVehicleTable();
             
             // Show success and print invoice
             showAlert('Rental created successfully!', 'success');
             
             // چاپکردنی فاکتور بەبێ ناوەوەی سیستەم
             printInvoiceWithoutSystem(rental, customer, vehicle);
+            return true;
         }
 
         // Handle vehicle return - Updated Version
@@ -2708,7 +2759,7 @@
             
             if (!rental) {
                 showAlert('Active rental with this invoice code not found!', 'danger');
-                return;
+                return false;
             }
             
             // Update rental status and return date ONLY
@@ -2734,11 +2785,9 @@
             saveDataToStorage();
             
             document.getElementById('returnVehicleForm').reset();
-            loadReturnHistoryTable();
-            loadRentalTable();
-            loadVehicleTable();
             
             showAlert('Vehicle returned successfully! Customer debt remains unchanged.', 'success');
+            return true;
         }
 
         // Handle adding maintenance record
@@ -2750,7 +2799,7 @@
             
             if (!vehicle) {
                 showAlert('Vehicle not found!', 'danger');
-                return;
+                return false;
             }
             
             const maintenance = {
@@ -2767,9 +2816,9 @@
             saveDataToStorage();
             
             document.getElementById('maintenanceForm').reset();
-            loadMaintenanceHistoryTable();
             
             showAlert('Maintenance record added successfully!', 'success');
+            return true;
         }
 
         // Handle adding payment - Updated with print functionality
@@ -2781,7 +2830,7 @@
             
             if (!customer) {
                 showAlert('Please select a customer first!', 'danger');
-                return;
+                return false;
             }
             
             const payment = {
@@ -2798,10 +2847,10 @@
             saveDataToStorage();
             
             document.getElementById('addPaymentForm').reset();
-            loadCustomerPaymentDetails(customer);
             
             // Show print option
             showAlert('Payment added successfully! <button class="btn btn-sm btn-success ms-2" onclick="printPaymentReceipt(\'' + payment.id + '\')">Print Receipt</button>', 'success');
+            return true;
         }
 
         // Print payment receipt
@@ -2941,7 +2990,7 @@
             
             if (!customer) {
                 showAlert('Customer not found!', 'danger');
-                return;
+                return false;
             }
             
             const fineTax = {
@@ -2959,9 +3008,9 @@
             saveDataToStorage();
             
             document.getElementById('addFineTaxForm').reset();
-            loadFinesTaxesTable();
             
             showAlert('Fine/Tax added successfully!', 'success');
+            return true;
         }
 
         // Handle saving system settings
@@ -2990,6 +3039,7 @@
             saveDataToStorage();
             applySystemSettings();
             showAlert('Settings saved successfully!', 'success');
+            return true;
         }
 
         // Handle changing password
@@ -3002,12 +3052,12 @@
             
             if (newPassword !== confirmPassword) {
                 showAlert('New passwords do not match!', 'danger');
-                return;
+                return false;
             }
             
             if (systemData.currentUser.password !== currentPassword) {
                 showAlert('Current password is incorrect!', 'danger');
-                return;
+                return false;
             }
             
             systemData.currentUser.password = newPassword;
@@ -3024,6 +3074,7 @@
             document.getElementById('changePasswordModal').querySelector('.btn-close').click();
             
             showAlert('Password changed successfully!', 'success');
+            return true;
         }
 
         // Handle adding user
@@ -3032,7 +3083,7 @@
             
             if (!hasPermission('add_user')) {
                 showAlert('You do not have permission to add users!', 'danger');
-                return;
+                return false;
             }
             
             const user = {
@@ -3047,7 +3098,7 @@
             // Check if username already exists
             if (systemData.users.some(u => u.username === user.username)) {
                 showAlert('Username already exists!', 'danger');
-                return;
+                return false;
             }
             
             systemData.users.push(user);
@@ -3055,9 +3106,9 @@
             
             document.getElementById('addUserForm').reset();
             document.getElementById('addUserModal').querySelector('.btn-close').click();
-            loadUserTable();
             
             showAlert('User added successfully!', 'success');
+            return true;
         }
 
         // Search for payment customer
@@ -3125,7 +3176,7 @@
         function deleteVehicle(vehicleId) {
             if (!hasPermission('delete')) {
                 showAlert('You do not have permission to delete vehicles!', 'danger');
-                return;
+                return false;
             }
             
             if (confirm('Are you sure you want to delete this vehicle?')) {
@@ -3133,89 +3184,94 @@
                 const activeRental = systemData.rentals.find(r => r.vehicleId === vehicleId && r.status === 'active');
                 if (activeRental) {
                     showAlert('Cannot delete vehicle that is currently rented!', 'danger');
-                    return;
+                    return false;
                 }
                 
                 systemData.vehicles = systemData.vehicles.filter(v => v.id !== vehicleId);
                 saveDataToStorage();
-                loadVehicleTable();
                 showAlert('Vehicle deleted successfully!', 'success');
+                return true;
             }
+            return false;
         }
 
         // Delete maintenance record
         function deleteMaintenance(maintenanceId) {
             if (!hasPermission('delete')) {
                 showAlert('You do not have permission to delete maintenance records!', 'danger');
-                return;
+                return false;
             }
             
             if (confirm('Are you sure you want to delete this maintenance record?')) {
                 systemData.maintenance = systemData.maintenance.filter(m => m.id !== maintenanceId);
                 saveDataToStorage();
-                loadMaintenanceHistoryTable();
                 showAlert('Maintenance record deleted successfully!', 'success');
+                return true;
             }
+            return false;
         }
 
         // Delete fine/tax
         function deleteFineTax(fineId) {
             if (!hasPermission('delete')) {
                 showAlert('You do not have permission to delete fines/taxes!', 'danger');
-                return;
+                return false;
             }
             
             if (confirm('Are you sure you want to delete this fine/tax record?')) {
                 systemData.finesTaxes = systemData.finesTaxes.filter(f => f.id !== fineId);
                 saveDataToStorage();
-                loadFinesTaxesTable();
                 showAlert('Fine/Tax record deleted successfully!', 'success');
+                return true;
             }
+            return false;
         }
 
         // Delete user
         function deleteUser(username) {
             if (!hasPermission('delete')) {
                 showAlert('You do not have permission to delete users!', 'danger');
-                return;
+                return false;
             }
             
             if (username === 'admin') {
                 showAlert('Cannot delete admin user!', 'danger');
-                return;
+                return false;
             }
             
             if (confirm('Are you sure you want to delete this user?')) {
                 systemData.users = systemData.users.filter(u => u.username !== username);
                 saveDataToStorage();
-                loadUserTable();
                 showAlert('User deleted successfully!', 'success');
+                return true;
             }
+            return false;
         }
 
         // Delete customer
         function deleteCustomer(customerId) {
             if (!hasPermission('delete')) {
                 showAlert('You do not have permission to delete customers!', 'danger');
-                return;
+                return false;
             }
             
             const customer = systemData.customers.find(c => c.id === customerId);
-            if (!customer) return;
+            if (!customer) return false;
             
             // Check for active rentals
             const activeRentals = systemData.rentals.filter(r => r.customerId === customerId && r.status === 'active');
             if (activeRentals.length > 0) {
                 showAlert('Cannot delete customer with active rentals!', 'danger');
-                return;
+                return false;
             }
             
             if (confirm('Are you sure you want to delete this customer?')) {
                 systemData.customers = systemData.customers.filter(c => c.id !== customerId);
                 saveDataToStorage();
-                loadCustomerTable();
                 showAlert('Customer deleted successfully!', 'success');
+                return true;
             }
+            return false;
         }
 
         // Mark fine as paid
@@ -3224,9 +3280,10 @@
             if (fine) {
                 fine.status = 'paid';
                 saveDataToStorage();
-                loadFinesTaxesTable();
                 showAlert('Fine/Tax marked as paid!', 'success');
+                return true;
             }
+            return false;
         }
 
         // Edit vehicle
@@ -3655,16 +3712,16 @@
         function deleteRental(rentalId) {
             if (!hasPermission('delete')) {
                 showAlert('You do not have permission to delete rentals!', 'danger');
-                return;
+                return false;
             }
             
             const rental = systemData.rentals.find(r => r.id === rentalId);
-            if (!rental) return;
+            if (!rental) return false;
             
             // Check if rental is active
             if (rental.status === 'active') {
                 showAlert('Cannot delete active rental! Please return the vehicle first.', 'danger');
-                return;
+                return false;
             }
             
             if (confirm('Are you sure you want to delete this rental record? This action cannot be undone.')) {
@@ -3683,13 +3740,10 @@
                 systemData.rentals = systemData.rentals.filter(r => r.id !== rental.id);
                 saveDataToStorage();
                 
-                // Reload tables
-                loadRentalTable();
-                loadVehicleTable();
-                loadReturnHistoryTable();
-                
                 showAlert('Rental record deleted successfully!', 'success');
+                return true;
             }
+            return false;
         }
 
         // بینینی وردەکارییەکانی گەیاندنەوە
@@ -4072,11 +4126,11 @@
         function deleteReturn(returnId) {
             if (!hasPermission('delete')) {
                 showAlert('You do not have permission to delete return records!', 'danger');
-                return;
+                return false;
             }
             
             const returnRecord = systemData.returns.find(r => r.id === returnId);
-            if (!returnRecord) return;
+            if (!returnRecord) return false;
             
             const rental = systemData.rentals.find(r => r.id === returnRecord.rentalId);
             
@@ -4097,56 +4151,49 @@
                 systemData.returns = systemData.returns.filter(r => r.id !== returnId);
                 saveDataToStorage();
                 
-                // Reload tables
-                loadReturnHistoryTable();
-                loadRentalTable();
-                loadVehicleTable();
-                
                 showAlert('Return record deleted successfully!', 'success');
+                return true;
             }
+            return false;
         }
 
         // سڕینەوەی تۆمارێکی پارەدان
         function deletePaymentRecord(paymentId) {
             if (!hasPermission('delete')) {
                 showAlert('You do not have permission to delete payment records!', 'danger');
-                return;
+                return false;
             }
             
             const payment = systemData.payments.find(p => p.id === paymentId);
-            if (!payment) return;
+            if (!payment) return false;
             
             if (confirm('Are you sure you want to delete this payment record?')) {
                 systemData.payments = systemData.payments.filter(p => p.id !== paymentId);
                 saveDataToStorage();
                 
-                // Reload payment tables if open
-                const customer = systemData.customers.find(c => c.id === payment.customerId);
-                if (customer && document.getElementById('customerPaymentDetails').style.display === 'block') {
-                    loadCustomerPaymentDetails(customer);
-                }
-                
                 showAlert('Payment record deleted successfully!', 'success');
+                return true;
             }
+            return false;
         }
 
         // فەنکشنی سڕینەوەی تۆماری ترانسفێر
         function deleteTransfer(transferId) {
             if (!hasPermission('delete')) {
                 showAlert('You do not have permission to delete transfer records!', 'danger');
-                return;
+                return false;
             }
             
             const transfer = systemData.transfers.find(t => t.id === transferId);
-            if (!transfer) return;
+            if (!transfer) return false;
             
             if (confirm('Are you sure you want to delete this transfer record?')) {
                 systemData.transfers = systemData.transfers.filter(t => t.id !== transferId);
                 saveDataToStorage();
-                updatePaymentTransferUI();
-                loadDashboardData();
                 showAlert('Transfer record deleted successfully!', 'success');
+                return true;
             }
+            return false;
         }
 
         // فەنکشنی گۆڕانکاری لە تۆماری ترانسفێر
@@ -4180,7 +4227,6 @@
                 transfer.editedBy = systemData.currentUser.username;
                 
                 saveDataToStorage();
-                updatePaymentTransferUI();
                 
                 // گەڕاندنەوەی ڕەفتاری ئاسایی
                 form.onsubmit = originalSubmit;
@@ -4269,7 +4315,7 @@
             
             if (!hasPermission('spending')) {
                 showAlert('You do not have permission to add spending records!', 'danger');
-                return;
+                return false;
             }
             
             const amount = parseInt(document.getElementById('spendingAmount').value);
@@ -4279,14 +4325,14 @@
             
             if (amount <= 0) {
                 showAlert('Please enter a valid amount!', 'danger');
-                return;
+                return false;
             }
             
             // پشکنینی بەشی بەردەست
             const currentBalance = getCurrentSystemBalance();
             if (amount > currentBalance) {
                 showAlert(`Spending amount exceeds available system balance! Available: ${currentBalance} ${systemData.settings.currency}`, 'danger');
-                return;
+                return false;
             }
             
             // دروستکردنی تۆماری Spending
@@ -4313,12 +4359,8 @@
             document.getElementById('addSpendingForm').reset();
             document.getElementById('spendingDate').value = new Date().toISOString().split('T')[0];
             
-            // نوێکردنەوەی UI
-            updateSpendingUI();
-            updatePaymentTransferUI();
-            loadDashboardData();
-            
             showAlert(`Spending record added successfully! ${amount} ${systemData.settings.currency} deducted from system balance.`, 'success');
+            return true;
         }
 
         // فەنکشنی نوێکردنەوەی UIی Spending
@@ -4495,9 +4537,6 @@
                 spending.editedBy = systemData.currentUser.username;
                 
                 saveDataToStorage();
-                updateSpendingUI();
-                updatePaymentTransferUI();
-                loadDashboardData();
                 
                 // گەڕاندنەوەی ڕەفتاری ئاسایی
                 form.onsubmit = originalSubmit;
@@ -4524,20 +4563,19 @@
         function deleteSpending(spendingId) {
             if (!hasPermission('delete')) {
                 showAlert('You do not have permission to delete spending records!', 'danger');
-                return;
+                return false;
             }
             
             const spending = systemData.spending.find(s => s.id === spendingId);
-            if (!spending) return;
+            if (!spending) return false;
             
             if (confirm('Are you sure you want to delete this spending record?')) {
                 systemData.spending = systemData.spending.filter(s => s.id !== spendingId);
                 saveDataToStorage();
-                updateSpendingUI();
-                updatePaymentTransferUI();
-                loadDashboardData();
                 showAlert('Spending record deleted successfully!', 'success');
+                return true;
             }
+            return false;
         }
 
         // Toggle customer form visibility
@@ -5405,7 +5443,7 @@
             
             if (!hasPermission('transfer_amount')) {
                 showAlert('You do not have permission to transfer amounts!', 'danger');
-                return;
+                return false;
             }
             
             const amount = parseInt(document.getElementById('transferAmount').value);
@@ -5415,12 +5453,10 @@
                 // Reset form
                 document.getElementById('transferPaymentForm').reset();
                 
-                // Update UI
-                updatePaymentTransferUI();
-                loadDashboardData(); // Update dashboard
-                
                 showAlert(`Successfully transferred ${amount} ${systemData.settings.currency} to admin!`, 'success');
+                return true;
             }
+            return false;
         }
 
         // Update payment transfer UI
@@ -5578,17 +5614,18 @@
                         </div>
                     </div>
                 </div>
+                <!-- زیادکراو: System Balance -->
                 <div class="col-md-2">
                     <div class="card dashboard-card bg-dark text-white">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <h4>${netProfit}</h4>
-                                    <p>Net Profit</p>
-                                    <small class="opacity-75">(After spending)</small>
+                                    <h4>${currentSystemBalance}</h4>
+                                    <p>System Balance</p>
+                                    <small class="opacity-75">(Available for transfer)</small>
                                 </div>
                                 <div class="align-self-center">
-                                    <i class="fas fa-chart-line fa-2x"></i>
+                                    <i class="fas fa-wallet fa-2x"></i>
                                 </div>
                             </div>
                         </div>
