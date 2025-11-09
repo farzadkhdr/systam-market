@@ -1308,6 +1308,105 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Spending Management Section (Admin Only) -->
+                            <div class="card mt-4 admin-only" id="spendingSection">
+                                <div class="card-header bg-danger text-white">
+                                    <h5 class="mb-0">Spending Management</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-4">
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body text-center">
+                                                    <h6>Total Spending</h6>
+                                                    <h3 id="totalSpendingAmount">0 AED</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-warning text-dark">
+                                                <div class="card-body text-center">
+                                                    <h6>Current System Balance</h6>
+                                                    <h3 id="currentBalanceAfterSpending">0 AED</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-success text-white">
+                                                <div class="card-body text-center">
+                                                    <h6>Net Profit</h6>
+                                                    <h3 id="netProfitAmount">0 AED</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <form id="addSpendingForm">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="spendingAmount" class="form-label">Spending Amount</label>
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" id="spendingAmount" required min="1">
+                                                    <span class="input-group-text">AED</span>
+                                                </div>
+                                                <div class="form-text">Available balance: <span id="availableBalanceForSpending">0</span> AED</div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="spendingCategory" class="form-label">Category</label>
+                                                <select class="form-select" id="spendingCategory" required>
+                                                    <option value="">Select category...</option>
+                                                    <option value="Maintenance">Vehicle Maintenance</option>
+                                                    <option value="Fuel">Fuel</option>
+                                                    <option value="Insurance">Insurance</option>
+                                                    <option value="Staff Salary">Staff Salary</option>
+                                                    <option value="Utilities">Utilities</option>
+                                                    <option value="Office Supplies">Office Supplies</option>
+                                                    <option value="Marketing">Marketing</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="spendingDate" class="form-label">Date</label>
+                                                <input type="date" class="form-control" id="spendingDate" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 mb-3">
+                                                <label for="spendingDescription" class="form-label">Description</label>
+                                                <input type="text" class="form-control" id="spendingDescription" 
+                                                       placeholder="e.g., Monthly office rent payment" required>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-money-bill-wave"></i> Add Spending
+                                        </button>
+                                    </form>
+
+                                    <!-- Spending History -->
+                                    <div class="mt-4">
+                                        <h5>Spending History</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Amount</th>
+                                                        <th>Category</th>
+                                                        <th>Description</th>
+                                                        <th>Added By</th>
+                                                        <th>Time</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="spendingHistoryTable">
+                                                    <!-- Spending history will be populated here -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Fines & Taxes Tab -->
@@ -1827,6 +1926,14 @@
                                                         </label>
                                                     </div>
                                                 </div>
+                                                <div class="permission-item">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input action-permission" type="checkbox" value="spending" id="permSpending">
+                                                        <label class="form-check-label" for="permSpending">
+                                                            Spending Management
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1962,24 +2069,25 @@
             payments: [],
             finesTaxes: [],
             transfers: [],
+            spending: [],
             settings: {
                 systemName: "Car Rental System",
                 currency: "AED",
                 dateFormat: "dd/mm/yyyy"
             },
             permissions: {
-                admin: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports", "settings", "delete", "edit", "add_user", "add_role", "delete_role", "transfer_amount"],
-                manager: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports", "delete", "edit"],
+                admin: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports", "settings", "delete", "edit", "add_user", "add_role", "delete_role", "transfer_amount", "spending"],
+                manager: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines", "reports", "delete", "edit", "spending"],
                 staff: ["dashboard", "vehicles", "rentals", "returns", "maintenance", "payments", "fines"],
                 viewer: ["dashboard", "vehicles", "rentals", "reports"],
-                accountant: ["dashboard", "payments", "fines", "reports", "transfer_amount"]
+                accountant: ["dashboard", "payments", "fines", "reports", "transfer_amount", "spending"]
             },
             actionPermissions: {
-                admin: ["delete", "edit", "add_user", "add_role", "delete_role", "transfer_amount"],
-                manager: ["delete", "edit"],
+                admin: ["delete", "edit", "add_user", "add_role", "delete_role", "transfer_amount", "spending"],
+                manager: ["delete", "edit", "spending"],
                 staff: [],
                 viewer: [],
-                accountant: ["transfer_amount"]
+                accountant: ["transfer_amount", "spending"]
             },
             roles: ["admin", "manager", "staff", "viewer", "accountant"]
         };
@@ -2024,7 +2132,8 @@
             const today = new Date().toISOString().split('T')[0];
             const dateInputs = [
                 'returnDate', 'maintenanceDate', 'paymentDate', 'fineDate', 
-                'rentalStartDate', 'rentalEndDate', 'reportStartDate', 'reportEndDate'
+                'rentalStartDate', 'rentalEndDate', 'reportStartDate', 'reportEndDate',
+                'spendingDate'
             ];
             
             dateInputs.forEach(id => {
@@ -2058,6 +2167,9 @@
             
             // Initialize payment transfer UI
             updatePaymentTransferUI();
+            
+            // Initialize spending UI
+            updateSpendingUI();
             
             // Apply action permissions
             if (systemData.currentUser) {
@@ -2174,6 +2286,9 @@
             
             // Transfer payment form
             document.getElementById('transferPaymentForm').addEventListener('submit', handleTransferPayment);
+            
+            // Spending form
+            document.getElementById('addSpendingForm').addEventListener('submit', handleAddSpending);
         }
 
         // Setup automatic calculation for rental form
@@ -2288,6 +2403,22 @@
                 if (e.target.closest('.delete-customer')) {
                     const customerId = e.target.closest('.delete-customer').getAttribute('data-id');
                     deleteCustomer(customerId);
+                }
+
+                // زیادکردنی فەنکشنی سڕینەوەی Spending
+                if (e.target.closest('.delete-spending')) {
+                    const spendingId = e.target.closest('.delete-spending').getAttribute('data-id');
+                    deleteSpending(spendingId);
+                }
+                
+                if (e.target.closest('.edit-spending')) {
+                    const spendingId = e.target.closest('.edit-spending').getAttribute('data-id');
+                    editSpending(spendingId);
+                }
+                
+                if (e.target.closest('.view-spending')) {
+                    const spendingId = e.target.closest('.view-spending').getAttribute('data-id');
+                    viewSpendingDetails(spendingId);
                 }
             });
         }
@@ -4108,6 +4239,12 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-warning" onclick="editTransfer('${transfer.id}'); document.getElementById('viewTransferModal').querySelector('.btn-close').click();">
+                                    Edit Transfer
+                                </button>
+                                <button type="button" class="btn btn-danger" onclick="deleteTransfer('${transfer.id}'); document.getElementById('viewTransferModal').querySelector('.btn-close').click();">
+                                    Delete Transfer
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -4124,6 +4261,283 @@
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             const modal = new bootstrap.Modal(document.getElementById('viewTransferModal'));
             modal.show();
+        }
+
+        // فەنکشنی مامەڵەکردن لەگەڵ زیادکردنی Spending
+        function handleAddSpending(e) {
+            e.preventDefault();
+            
+            if (!hasPermission('spending')) {
+                showAlert('You do not have permission to add spending records!', 'danger');
+                return;
+            }
+            
+            const amount = parseInt(document.getElementById('spendingAmount').value);
+            const category = document.getElementById('spendingCategory').value;
+            const date = document.getElementById('spendingDate').value;
+            const description = document.getElementById('spendingDescription').value;
+            
+            if (amount <= 0) {
+                showAlert('Please enter a valid amount!', 'danger');
+                return;
+            }
+            
+            // پشکنینی بەشی بەردەست
+            const currentBalance = getCurrentSystemBalance();
+            if (amount > currentBalance) {
+                showAlert(`Spending amount exceeds available system balance! Available: ${currentBalance} ${systemData.settings.currency}`, 'danger');
+                return;
+            }
+            
+            // دروستکردنی تۆماری Spending
+            const spending = {
+                id: generateId(),
+                amount: amount,
+                category: category,
+                date: date,
+                description: description,
+                addedBy: systemData.currentUser.username,
+                timestamp: new Date().toISOString(),
+                type: 'spending'
+            };
+            
+            // زیادکردنی بۆ سیستەمی دراوەکان
+            if (!systemData.spending) {
+                systemData.spending = [];
+            }
+            systemData.spending.push(spending);
+            
+            saveDataToStorage();
+            
+            // پاککردنەوەی فۆرم
+            document.getElementById('addSpendingForm').reset();
+            document.getElementById('spendingDate').value = new Date().toISOString().split('T')[0];
+            
+            // نوێکردنەوەی UI
+            updateSpendingUI();
+            updatePaymentTransferUI();
+            loadDashboardData();
+            
+            showAlert(`Spending record added successfully! ${amount} ${systemData.settings.currency} deducted from system balance.`, 'success');
+        }
+
+        // فەنکشنی نوێکردنەوەی UIی Spending
+        function updateSpendingUI() {
+            if (!systemData.spending) {
+                systemData.spending = [];
+            }
+            
+            const totalSpending = systemData.spending.reduce((sum, record) => sum + record.amount, 0);
+            const currentBalance = getCurrentSystemBalance();
+            const totalSystemPayments = systemData.rentals.reduce((sum, rental) => sum + rental.advancePayment, 0) + 
+                                       systemData.payments.reduce((sum, payment) => sum + payment.amount, 0);
+            const netProfit = totalSystemPayments - totalSpending;
+            
+            // نوێکردنەوەی ئامارەکان
+            if (document.getElementById('totalSpendingAmount')) {
+                document.getElementById('totalSpendingAmount').textContent = `${totalSpending} ${systemData.settings.currency}`;
+                document.getElementById('currentBalanceAfterSpending').textContent = `${currentBalance} ${systemData.settings.currency}`;
+                document.getElementById('netProfitAmount').textContent = `${netProfit} ${systemData.settings.currency}`;
+                document.getElementById('availableBalanceForSpending').textContent = currentBalance;
+            }
+            
+            // بارکردنی مێژووی Spending
+            loadSpendingHistory();
+        }
+
+        // فەنکشنی بارکردنی مێژووی Spending
+        function loadSpendingHistory() {
+            const spendingHistory = systemData.spending || [];
+            const tableBody = document.getElementById('spendingHistoryTable');
+            
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            
+            if (spendingHistory.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">No spending records found</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            spendingHistory.reverse().forEach(spending => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${formatDate(spending.date)}</td>
+                    <td>${spending.amount} ${systemData.settings.currency}</td>
+                    <td>${spending.category}</td>
+                    <td>${spending.description}</td>
+                    <td>${spending.addedBy}</td>
+                    <td>${new Date(spending.timestamp).toLocaleTimeString()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info view-spending" data-id="${spending.id}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-warning edit-spending" data-id="${spending.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-spending" data-id="${spending.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // فەنکشنی بینینی وردەکارییەکانی Spending
+        function viewSpendingDetails(spendingId) {
+            const spending = systemData.spending.find(s => s.id === spendingId);
+            if (!spending) return;
+            
+            const modalHtml = `
+                <div class="modal fade" id="viewSpendingModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Spending Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>Amount</th>
+                                        <td>${spending.amount} ${systemData.settings.currency}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Category</th>
+                                        <td>${spending.category}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Date</th>
+                                        <td>${formatDate(spending.date)}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Description</th>
+                                        <td>${spending.description}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Added By</th>
+                                        <td>${spending.addedBy}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Time</th>
+                                        <td>${new Date(spending.timestamp).toLocaleString()}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('viewSpendingModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body and show it
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('viewSpendingModal'));
+            modal.show();
+        }
+
+        // فەنکشنی گۆڕانکاری لە Spending
+        function editSpending(spendingId) {
+            if (!hasPermission('edit')) {
+                showAlert('You do not have permission to edit spending records!', 'danger');
+                return;
+            }
+            
+            const spending = systemData.spending.find(s => s.id === spendingId);
+            if (!spending) return;
+            
+            // پڕکردنەوەی فۆرم بە دراوە کۆنەکان
+            document.getElementById('spendingAmount').value = spending.amount;
+            document.getElementById('spendingCategory').value = spending.category;
+            document.getElementById('spendingDate').value = spending.date;
+            document.getElementById('spendingDescription').value = spending.description;
+            
+            // گۆڕینی ڕەفتاری فۆرم بۆ نوێکردنەوە
+            const form = document.getElementById('addSpendingForm');
+            const originalSubmit = form.onsubmit;
+            
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                
+                const newAmount = parseInt(document.getElementById('spendingAmount').value);
+                const newCategory = document.getElementById('spendingCategory').value;
+                const newDate = document.getElementById('spendingDate').value;
+                const newDescription = document.getElementById('spendingDescription').value;
+                
+                // پشکنینی بەشی بەردەست
+                const currentBalance = getCurrentSystemBalance();
+                const amountDifference = newAmount - spending.amount;
+                
+                if (amountDifference > 0 && amountDifference > currentBalance) {
+                    showAlert(`Cannot update spending! The increase exceeds available balance. Available: ${currentBalance} ${systemData.settings.currency}`, 'danger');
+                    return;
+                }
+                
+                // نوێکردنەوەی تۆمارەکە
+                spending.amount = newAmount;
+                spending.category = newCategory;
+                spending.date = newDate;
+                spending.description = newDescription;
+                spending.editedAt = new Date().toISOString();
+                spending.editedBy = systemData.currentUser.username;
+                
+                saveDataToStorage();
+                updateSpendingUI();
+                updatePaymentTransferUI();
+                loadDashboardData();
+                
+                // گەڕاندنەوەی ڕەفتاری ئاسایی
+                form.onsubmit = originalSubmit;
+                form.reset();
+                document.getElementById('spendingDate').value = new Date().toISOString().split('T')[0];
+                
+                showAlert('Spending record updated successfully!', 'success');
+            };
+            
+            // گۆڕینی دەقەی دوگمە
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Update Spending';
+            
+            // گەڕاندنەوەی دەقەی ڕەسەن کاتێک فۆرم پاکدەکرێتەوە
+            form.addEventListener('reset', function() {
+                submitButton.textContent = originalText;
+                form.onsubmit = originalSubmit;
+                document.getElementById('spendingDate').value = new Date().toISOString().split('T')[0];
+            });
+        }
+
+        // فەنکشنی سڕینەوەی Spending
+        function deleteSpending(spendingId) {
+            if (!hasPermission('delete')) {
+                showAlert('You do not have permission to delete spending records!', 'danger');
+                return;
+            }
+            
+            const spending = systemData.spending.find(s => s.id === spendingId);
+            if (!spending) return;
+            
+            if (confirm('Are you sure you want to delete this spending record?')) {
+                systemData.spending = systemData.spending.filter(s => s.id !== spendingId);
+                saveDataToStorage();
+                updateSpendingUI();
+                updatePaymentTransferUI();
+                loadDashboardData();
+                showAlert('Spending record deleted successfully!', 'success');
+            }
         }
 
         // Toggle customer form visibility
@@ -4481,14 +4895,14 @@
             
             // پشکنینی ڕێگەی سڕینەوە
             if (!actionPermissions.includes('delete')) {
-                document.querySelectorAll('.delete-vehicle, .delete-maintenance, .delete-fine, .delete-user, .delete-rental, .delete-return, .delete-payment-record, .delete-transfer, .delete-customer').forEach(btn => {
+                document.querySelectorAll('.delete-vehicle, .delete-maintenance, .delete-fine, .delete-user, .delete-rental, .delete-return, .delete-payment-record, .delete-transfer, .delete-customer, .delete-spending').forEach(btn => {
                     btn.style.display = 'none';
                 });
             }
             
             // پشکنینی ڕێگەی گۆڕانکاری
             if (!actionPermissions.includes('edit')) {
-                document.querySelectorAll('.edit-vehicle, .edit-customer, .edit-user, .edit-payment, .edit-transfer').forEach(btn => {
+                document.querySelectorAll('.edit-vehicle, .edit-customer, .edit-user, .edit-payment, .edit-transfer, .edit-spending').forEach(btn => {
                     btn.style.display = 'none';
                 });
             }
@@ -4514,6 +4928,14 @@
             if (!actionPermissions.includes('transfer_amount')) {
                 document.getElementById('paymentTransferSection').style.display = 'none';
                 document.querySelectorAll('.transfer-amount-btn').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+            }
+            
+            // پشکنینی ڕێگەی Spending
+            if (!actionPermissions.includes('spending')) {
+                document.getElementById('spendingSection').style.display = 'none';
+                document.querySelectorAll('.spending-btn').forEach(btn => {
                     btn.style.display = 'none';
                 });
             }
@@ -4957,14 +5379,24 @@
             return systemData.transfers.reduce((sum, transfer) => sum + transfer.amount, 0);
         }
 
-        // Function to calculate current system balance
+        // فەنکشنی نوێ بۆ System Balance کە Spending لەبەر دەگرێت
         function getCurrentSystemBalance() {
             const totalAdvancePayments = systemData.rentals.reduce((sum, rental) => sum + rental.advancePayment, 0);
             const totalPaymentSectionPayments = systemData.payments.reduce((sum, payment) => sum + payment.amount, 0);
             const totalSystemPayments = totalAdvancePayments + totalPaymentSectionPayments;
             const totalTransferred = getTotalTransferredAmount();
+            const totalSpending = systemData.spending ? systemData.spending.reduce((sum, record) => sum + record.amount, 0) : 0;
             
-            return totalSystemPayments - totalTransferred;
+            return totalSystemPayments - totalTransferred - totalSpending;
+        }
+
+        // فەنکشنی نوێ بۆ Net Profit
+        function getNetProfit() {
+            const totalSystemPayments = systemData.rentals.reduce((sum, rental) => sum + rental.advancePayment, 0) + 
+                                       systemData.payments.reduce((sum, payment) => sum + payment.amount, 0);
+            const totalSpending = systemData.spending ? systemData.spending.reduce((sum, record) => sum + record.amount, 0) : 0;
+            
+            return totalSystemPayments - totalSpending;
         }
 
         // Handle payment transfer
@@ -5048,28 +5480,6 @@
                 `;
                 tableBody.appendChild(row);
             });
-            
-            // Add event listeners for new buttons
-            document.querySelectorAll('.view-transfer').forEach(button => {
-                button.addEventListener('click', function() {
-                    const transferId = this.getAttribute('data-id');
-                    viewTransferDetails(transferId);
-                });
-            });
-            
-            document.querySelectorAll('.edit-transfer').forEach(button => {
-                button.addEventListener('click', function() {
-                    const transferId = this.getAttribute('data-id');
-                    editTransfer(transferId);
-                });
-            });
-            
-            document.querySelectorAll('.delete-transfer').forEach(button => {
-                button.addEventListener('click', function() {
-                    const transferId = this.getAttribute('data-id');
-                    deleteTransfer(transferId);
-                });
-            });
         }
 
         // Load dashboard data - Updated Version with auto-refresh and system balance
@@ -5087,6 +5497,9 @@
             
             // Calculate current system balance
             const currentSystemBalance = getCurrentSystemBalance();
+            
+            // Calculate net profit
+            const netProfit = getNetProfit();
             
             document.getElementById('dashboardStats').innerHTML = `
                 <div class="col-md-2">
@@ -5170,11 +5583,12 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <h4>${currentSystemBalance}</h4>
-                                    <p>System Balance</p>
+                                    <h4>${netProfit}</h4>
+                                    <p>Net Profit</p>
+                                    <small class="opacity-75">(After spending)</small>
                                 </div>
                                 <div class="align-self-center">
-                                    <i class="fas fa-wallet fa-2x"></i>
+                                    <i class="fas fa-chart-line fa-2x"></i>
                                 </div>
                             </div>
                         </div>
