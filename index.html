@@ -2092,6 +2092,26 @@
             roles: ["admin", "manager", "staff", "viewer", "accountant"]
         };
 
+        // فەنکشنی نوێ بۆ نوێکردنەوەی هەموو خشتەکان
+        function refreshAllTables() {
+            loadVehicleTable();
+            loadCustomerTable();
+            loadRentalTable();
+            loadReturnHistoryTable();
+            loadMaintenanceHistoryTable();
+            loadFinesTaxesTable();
+            loadUserTable();
+            loadDashboardData();
+            updatePaymentTransferUI();
+            updateSpendingUI();
+        }
+
+        // فەنکشنی نوێ بۆ پاشەکەوتکردن و نوێکردنەوە
+        function saveAndRefresh() {
+            saveDataToStorage();
+            refreshAllTables();
+        }
+
         // Initialize the system
         document.addEventListener('DOMContentLoaded', function() {
             // Load data from localStorage if available
@@ -2126,35 +2146,6 @@
             localStorage.setItem('carRentalSystemData', JSON.stringify(systemData));
         }
 
-        // Enhanced save function that also refreshes all tables
-        function enhancedSaveDataToStorage() {
-            saveDataToStorage();
-            refreshAllTables();
-        }
-
-        // Refresh all tables and data
-        function refreshAllTables() {
-            loadDashboardData();
-            loadVehicleTable();
-            loadCustomerTable();
-            loadRentalTable();
-            loadReturnHistoryTable();
-            loadMaintenanceHistoryTable();
-            loadFinesTaxesTable();
-            loadUserTable();
-            updatePaymentTransferUI();
-            updateSpendingUI();
-            
-            // نوێکردنەوەی مێژووی پارەدانەکان
-            const customerName = document.getElementById('paymentCustomerSearch')?.value;
-            if (customerName) {
-                const customer = systemData.customers.find(c => c.fullName === customerName);
-                if (customer) {
-                    loadCustomerPaymentDetails(customer);
-                }
-            }
-        }
-
         // Initialize the UI components
         function initializeUI() {
             // Set current date for date inputs
@@ -2183,22 +2174,10 @@
             applySystemSettings();
             
             // Load initial data tables
-            loadVehicleTable();
-            loadCustomerTable();
-            loadRentalTable();
-            loadReturnHistoryTable();
-            loadMaintenanceHistoryTable();
-            loadFinesTaxesTable();
-            loadUserTable();
+            refreshAllTables();
             
             // Load backup history
             loadBackupHistory();
-            
-            // Initialize payment transfer UI
-            updatePaymentTransferUI();
-            
-            // Initialize spending UI
-            updateSpendingUI();
             
             // Apply action permissions
             if (systemData.currentUser) {
@@ -2318,22 +2297,6 @@
             
             // Spending form
             document.getElementById('addSpendingForm').addEventListener('submit', handleAddSpending);
-            
-            // Setup tab change listeners
-            setupTabChangeListeners();
-        }
-
-        // Setup tab change listeners
-        function setupTabChangeListeners() {
-            const tabLinks = document.querySelectorAll('a[data-bs-toggle="tab"]');
-            tabLinks.forEach(tab => {
-                tab.addEventListener('shown.bs.tab', function(e) {
-                    const target = e.target.getAttribute('href');
-                    if (target === '#dashboard') {
-                        loadDashboardData();
-                    }
-                });
-            });
         }
 
         // Setup automatic calculation for rental form
@@ -2417,7 +2380,6 @@
                     printRentalInvoice(rentalId);
                 }
 
-                // زیادکردنی فەنکشنی بینین و سڕینەوەی فاکتور
                 if (e.target.closest('.view-invoice')) {
                     const rentalId = e.target.closest('.view-invoice').getAttribute('data-id');
                     viewRentalInvoice(rentalId);
@@ -2428,7 +2390,6 @@
                     deleteRental(rentalId);
                 }
 
-                // زیادکردنی فەنکشنی سڕینەوە و گۆڕانکاری بۆ ترانسفێر
                 if (e.target.closest('.delete-transfer')) {
                     const transferId = e.target.closest('.delete-transfer').getAttribute('data-id');
                     deleteTransfer(transferId);
@@ -2444,13 +2405,11 @@
                     viewTransferDetails(transferId);
                 }
 
-                // زیادکردنی فەنکشنی سڕینەوەی کڕیار
                 if (e.target.closest('.delete-customer')) {
                     const customerId = e.target.closest('.delete-customer').getAttribute('data-id');
                     deleteCustomer(customerId);
                 }
 
-                // زیادکردنی فەنکشنی سڕینەوەی Spending
                 if (e.target.closest('.delete-spending')) {
                     const spendingId = e.target.closest('.delete-spending').getAttribute('data-id');
                     deleteSpending(spendingId);
@@ -2465,14 +2424,12 @@
                     const spendingId = e.target.closest('.view-spending').getAttribute('data-id');
                     viewSpendingDetails(spendingId);
                 }
-                
-                // Edit payment
+
                 if (e.target.closest('.edit-payment')) {
                     const paymentId = e.target.closest('.edit-payment').getAttribute('data-id');
                     editPayment(paymentId);
                 }
-                
-                // Print payment
+
                 if (e.target.closest('.print-payment')) {
                     const paymentId = e.target.closest('.print-payment').getAttribute('data-id');
                     printPaymentReceipt(paymentId);
@@ -2483,67 +2440,56 @@
         // Setup view and delete event listeners for all modules
         function setupViewDeleteEventListeners() {
             document.addEventListener('click', function(e) {
-                // بینینی گەیاندنەوە
                 if (e.target.closest('.view-return')) {
                     const returnId = e.target.closest('.view-return').getAttribute('data-id');
                     viewReturnDetails(returnId);
                 }
                 
-                // سڕینەوەی گەیاندنەوە
                 if (e.target.closest('.delete-return')) {
                     const returnId = e.target.closest('.delete-return').getAttribute('data-id');
                     deleteReturn(returnId);
                 }
                 
-                // بینینی چاکسازی
                 if (e.target.closest('.view-maintenance')) {
                     const maintenanceId = e.target.closest('.view-maintenance').getAttribute('data-id');
                     viewMaintenanceDetails(maintenanceId);
                 }
                 
-                // بینینی تاوان
                 if (e.target.closest('.view-fine')) {
                     const fineId = e.target.closest('.view-fine').getAttribute('data-id');
                     viewFineDetails(fineId);
                 }
                 
-                // بینینی پارەدان
                 if (e.target.closest('.view-payment')) {
                     const paymentId = e.target.closest('.view-payment').getAttribute('data-id');
                     viewPaymentDetails(paymentId);
                 }
                 
-                // سڕینەوەی پارەدان
                 if (e.target.closest('.delete-payment-record')) {
                     const paymentId = e.target.closest('.delete-payment-record').getAttribute('data-id');
                     deletePaymentRecord(paymentId);
                 }
                 
-                // بینینی کرێ
                 if (e.target.closest('.view-rental')) {
                     const rentalId = e.target.closest('.view-rental').getAttribute('data-id');
                     viewRentalDetails(rentalId);
                 }
 
-                // چاپکردنی سادە
                 if (e.target.closest('.print-invoice-simple')) {
                     const rentalId = e.target.closest('.print-invoice-simple').getAttribute('data-id');
                     printSimpleInvoice(rentalId);
                 }
 
-                // چاپکردنی پێشکەوتوو
                 if (e.target.closest('.print-invoice-detailed')) {
                     const rentalId = e.target.closest('.print-invoice-detailed').getAttribute('data-id');
                     printDetailedInvoice(rentalId);
                 }
 
-                // بینینی سەیارە
                 if (e.target.closest('.view-vehicle')) {
                     const vehicleId = e.target.closest('.view-vehicle').getAttribute('data-id');
                     viewVehicleDetails(vehicleId);
                 }
 
-                // بینینی کڕیار
                 if (e.target.closest('.view-customer')) {
                     const customerId = e.target.closest('.view-customer').getAttribute('data-id');
                     viewCustomerDetails(customerId);
@@ -2658,9 +2604,12 @@
 
         function completeAddVehicle(vehicle) {
             systemData.vehicles.push(vehicle);
-            enhancedSaveDataToStorage();
+            
+            // Use the new saveAndRefresh function
+            saveAndRefresh();
             
             document.getElementById('addVehicleForm').reset();
+            
             showAlert('Vehicle added successfully!', 'success');
         }
 
@@ -2737,7 +2686,9 @@
             vehicle.status = 'rented';
             
             systemData.rentals.push(rental);
-            enhancedSaveDataToStorage();
+            
+            // Use the new saveAndRefresh function
+            saveAndRefresh();
             
             document.getElementById('createRentalForm').reset();
             
@@ -2784,7 +2735,9 @@
             };
             
             systemData.returns.push(returnRecord);
-            enhancedSaveDataToStorage();
+            
+            // Use the new saveAndRefresh function
+            saveAndRefresh();
             
             document.getElementById('returnVehicleForm').reset();
             
@@ -2814,7 +2767,9 @@
             };
             
             systemData.maintenance.push(maintenance);
-            enhancedSaveDataToStorage();
+            
+            // Use the new saveAndRefresh function
+            saveAndRefresh();
             
             document.getElementById('maintenanceForm').reset();
             
@@ -2844,7 +2799,9 @@
             };
             
             systemData.payments.push(payment);
-            enhancedSaveDataToStorage();
+            
+            // Use the new saveAndRefresh function
+            saveAndRefresh();
             
             document.getElementById('addPaymentForm').reset();
             
@@ -3004,7 +2961,9 @@
             };
             
             systemData.finesTaxes.push(fineTax);
-            enhancedSaveDataToStorage();
+            
+            // Use the new saveAndRefresh function
+            saveAndRefresh();
             
             document.getElementById('addFineTaxForm').reset();
             
@@ -3034,7 +2993,7 @@
         }
 
         function completeSaveSettings() {
-            enhancedSaveDataToStorage();
+            saveDataToStorage();
             applySystemSettings();
             showAlert('Settings saved successfully!', 'success');
         }
@@ -3065,7 +3024,7 @@
                 systemData.users[userIndex].password = newPassword;
             }
             
-            enhancedSaveDataToStorage();
+            saveDataToStorage();
             
             document.getElementById('changePasswordForm').reset();
             document.getElementById('changePasswordModal').querySelector('.btn-close').click();
@@ -3098,7 +3057,9 @@
             }
             
             systemData.users.push(user);
-            enhancedSaveDataToStorage();
+            
+            // Use the new saveAndRefresh function
+            saveAndRefresh();
             
             document.getElementById('addUserForm').reset();
             document.getElementById('addUserModal').querySelector('.btn-close').click();
@@ -3183,7 +3144,10 @@
                 }
                 
                 systemData.vehicles = systemData.vehicles.filter(v => v.id !== vehicleId);
-                enhancedSaveDataToStorage();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
+                
                 showAlert('Vehicle deleted successfully!', 'success');
             }
         }
@@ -3197,7 +3161,10 @@
             
             if (confirm('Are you sure you want to delete this maintenance record?')) {
                 systemData.maintenance = systemData.maintenance.filter(m => m.id !== maintenanceId);
-                enhancedSaveDataToStorage();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
+                
                 showAlert('Maintenance record deleted successfully!', 'success');
             }
         }
@@ -3211,7 +3178,10 @@
             
             if (confirm('Are you sure you want to delete this fine/tax record?')) {
                 systemData.finesTaxes = systemData.finesTaxes.filter(f => f.id !== fineId);
-                enhancedSaveDataToStorage();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
+                
                 showAlert('Fine/Tax record deleted successfully!', 'success');
             }
         }
@@ -3230,7 +3200,10 @@
             
             if (confirm('Are you sure you want to delete this user?')) {
                 systemData.users = systemData.users.filter(u => u.username !== username);
-                enhancedSaveDataToStorage();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
+                
                 showAlert('User deleted successfully!', 'success');
             }
         }
@@ -3254,7 +3227,10 @@
             
             if (confirm('Are you sure you want to delete this customer?')) {
                 systemData.customers = systemData.customers.filter(c => c.id !== customerId);
-                enhancedSaveDataToStorage();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
+                
                 showAlert('Customer deleted successfully!', 'success');
             }
         }
@@ -3264,7 +3240,10 @@
             const fine = systemData.finesTaxes.find(f => f.id === fineId);
             if (fine) {
                 fine.status = 'paid';
-                enhancedSaveDataToStorage();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
+                
                 showAlert('Fine/Tax marked as paid!', 'success');
             }
         }
@@ -3691,7 +3670,7 @@
             modal.show();
         }
 
-        // Delete Rental Function
+        // Delete Rental Function - UPDATED
         function deleteRental(rentalId) {
             if (!hasPermission('delete')) {
                 showAlert('You do not have permission to delete rentals!', 'danger');
@@ -3721,7 +3700,9 @@
                 
                 // Remove rental
                 systemData.rentals = systemData.rentals.filter(r => r.id !== rental.id);
-                enhancedSaveDataToStorage();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
                 
                 showAlert('Rental record deleted successfully!', 'success');
             }
@@ -4130,7 +4111,9 @@
                 
                 // Remove return record
                 systemData.returns = systemData.returns.filter(r => r.id !== returnId);
-                enhancedSaveDataToStorage();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
                 
                 showAlert('Return record deleted successfully!', 'success');
             }
@@ -4148,7 +4131,9 @@
             
             if (confirm('Are you sure you want to delete this payment record?')) {
                 systemData.payments = systemData.payments.filter(p => p.id !== paymentId);
-                enhancedSaveDataToStorage();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
                 
                 showAlert('Payment record deleted successfully!', 'success');
             }
@@ -4166,7 +4151,10 @@
             
             if (confirm('Are you sure you want to delete this transfer record?')) {
                 systemData.transfers = systemData.transfers.filter(t => t.id !== transferId);
-                enhancedSaveDataToStorage();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
+                
                 showAlert('Transfer record deleted successfully!', 'success');
             }
         }
@@ -4201,7 +4189,8 @@
                 transfer.editedAt = new Date().toISOString();
                 transfer.editedBy = systemData.currentUser.username;
                 
-                enhancedSaveDataToStorage();
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
                 
                 // گەڕاندنەوەی ڕەفتاری ئاسایی
                 form.onsubmit = originalSubmit;
@@ -4328,80 +4317,14 @@
             }
             systemData.spending.push(spending);
             
-            enhancedSaveDataToStorage();
+            // Use the new saveAndRefresh function
+            saveAndRefresh();
             
             // پاککردنەوەی فۆرم
             document.getElementById('addSpendingForm').reset();
             document.getElementById('spendingDate').value = new Date().toISOString().split('T')[0];
             
             showAlert(`Spending record added successfully! ${amount} ${systemData.settings.currency} deducted from system balance.`, 'success');
-        }
-
-        // فەنکشنی نوێکردنەوەی UIی Spending
-        function updateSpendingUI() {
-            if (!systemData.spending) {
-                systemData.spending = [];
-            }
-            
-            const totalSpending = systemData.spending.reduce((sum, record) => sum + record.amount, 0);
-            const currentBalance = getCurrentSystemBalance();
-            const totalSystemPayments = systemData.rentals.reduce((sum, rental) => sum + rental.advancePayment, 0) + 
-                                       systemData.payments.reduce((sum, payment) => sum + payment.amount, 0);
-            const netProfit = totalSystemPayments - totalSpending;
-            
-            // نوێکردنەوەی ئامارەکان
-            if (document.getElementById('totalSpendingAmount')) {
-                document.getElementById('totalSpendingAmount').textContent = `${totalSpending} ${systemData.settings.currency}`;
-                document.getElementById('currentBalanceAfterSpending').textContent = `${currentBalance} ${systemData.settings.currency}`;
-                document.getElementById('netProfitAmount').textContent = `${netProfit} ${systemData.settings.currency}`;
-                document.getElementById('availableBalanceForSpending').textContent = currentBalance;
-            }
-            
-            // بارکردنی مێژووی Spending
-            loadSpendingHistory();
-        }
-
-        // فەنکشنی بارکردنی مێژووی Spending
-        function loadSpendingHistory() {
-            const spendingHistory = systemData.spending || [];
-            const tableBody = document.getElementById('spendingHistoryTable');
-            
-            if (!tableBody) return;
-            
-            tableBody.innerHTML = '';
-            
-            if (spendingHistory.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="text-center text-muted">No spending records found</td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            spendingHistory.reverse().forEach(spending => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${formatDate(spending.date)}</td>
-                    <td>${spending.amount} ${systemData.settings.currency}</td>
-                    <td>${spending.category}</td>
-                    <td>${spending.description}</td>
-                    <td>${spending.addedBy}</td>
-                    <td>${new Date(spending.timestamp).toLocaleTimeString()}</td>
-                    <td>
-                        <button class="btn btn-sm btn-info view-spending" data-id="${spending.id}">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-warning edit-spending" data-id="${spending.id}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger delete-spending" data-id="${spending.id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
         }
 
         // فەنکشنی بینینی وردەکارییەکانی Spending
@@ -4510,7 +4433,8 @@
                 spending.editedAt = new Date().toISOString();
                 spending.editedBy = systemData.currentUser.username;
                 
-                enhancedSaveDataToStorage();
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
                 
                 // گەڕاندنەوەی ڕەفتاری ئاسایی
                 form.onsubmit = originalSubmit;
@@ -4545,7 +4469,10 @@
             
             if (confirm('Are you sure you want to delete this spending record?')) {
                 systemData.spending = systemData.spending.filter(s => s.id !== spendingId);
-                enhancedSaveDataToStorage();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
+                
                 showAlert('Spending record deleted successfully!', 'success');
             }
         }
@@ -4753,7 +4680,7 @@
             
             systemData.permissions[role] = allPermissions;
             systemData.actionPermissions[role] = actionPermissions;
-            enhancedSaveDataToStorage();
+            saveDataToStorage();
             
             showAlert('Permissions saved successfully!', 'success');
         }
@@ -4814,7 +4741,7 @@
                 // Update role dropdowns
                 updateRoleDropdowns();
                 
-                enhancedSaveDataToStorage();
+                saveDataToStorage();
                 showAlert('Role added successfully!', 'success');
             } else if (roleName) {
                 showAlert('Role already exists!', 'danger');
@@ -4851,7 +4778,7 @@
                 // Update role dropdowns
                 updateRoleDropdowns();
                 
-                enhancedSaveDataToStorage();
+                saveDataToStorage();
                 showAlert('Role deleted successfully!', 'success');
             }
         }
@@ -4904,51 +4831,34 @@
             const actionPermissions = systemData.actionPermissions[userRole] || [];
             
             // پشکنینی ڕێگەی سڕینەوە
-            if (!actionPermissions.includes('delete')) {
-                document.querySelectorAll('.delete-vehicle, .delete-maintenance, .delete-fine, .delete-user, .delete-rental, .delete-return, .delete-payment-record, .delete-transfer, .delete-customer, .delete-spending').forEach(btn => {
-                    btn.style.display = 'none';
-                });
-            }
+            const deleteButtons = document.querySelectorAll('.delete-vehicle, .delete-maintenance, .delete-fine, .delete-user, .delete-rental, .delete-return, .delete-payment-record, .delete-transfer, .delete-customer, .delete-spending');
+            deleteButtons.forEach(btn => {
+                btn.style.display = actionPermissions.includes('delete') ? '' : 'none';
+            });
             
             // پشکنینی ڕێگەی گۆڕانکاری
-            if (!actionPermissions.includes('edit')) {
-                document.querySelectorAll('.edit-vehicle, .edit-customer, .edit-user, .edit-payment, .edit-transfer, .edit-spending').forEach(btn => {
-                    btn.style.display = 'none';
-                });
-            }
+            const editButtons = document.querySelectorAll('.edit-vehicle, .edit-customer, .edit-user, .edit-payment, .edit-transfer, .edit-spending');
+            editButtons.forEach(btn => {
+                btn.style.display = actionPermissions.includes('edit') ? '' : 'none';
+            });
             
             // پشکنینی ڕێگەی زیادکردنی بەکارهێنەر
-            if (!actionPermissions.includes('add_user')) {
-                document.querySelectorAll('[data-bs-target="#addUserModal"]').forEach(btn => {
-                    btn.style.display = 'none';
-                });
-            }
+            const addUserButtons = document.querySelectorAll('[data-bs-target="#addUserModal"]');
+            addUserButtons.forEach(btn => {
+                btn.style.display = actionPermissions.includes('add_user') ? '' : 'none';
+            });
             
             // پشکنینی ڕێگەی زیادکردنی ڕۆڵ
-            if (!actionPermissions.includes('add_role')) {
-                document.getElementById('addNewRole').style.display = 'none';
-            }
+            document.getElementById('addNewRole').style.display = actionPermissions.includes('add_role') ? '' : 'none';
             
             // پشکنینی ڕێگەی سڕینەوەی ڕۆڵ
-            if (!actionPermissions.includes('delete_role')) {
-                document.getElementById('deleteRole').style.display = 'none';
-            }
+            document.getElementById('deleteRole').style.display = actionPermissions.includes('delete_role') ? '' : 'none';
             
             // پشکنینی ڕێگەی گواستنەوەی پارە
-            if (!actionPermissions.includes('transfer_amount')) {
-                document.getElementById('paymentTransferSection').style.display = 'none';
-                document.querySelectorAll('.transfer-amount-btn').forEach(btn => {
-                    btn.style.display = 'none';
-                });
-            }
+            document.getElementById('paymentTransferSection').style.display = actionPermissions.includes('transfer_amount') ? '' : 'none';
             
             // پشکنینی ڕێگەی Spending
-            if (!actionPermissions.includes('spending')) {
-                document.getElementById('spendingSection').style.display = 'none';
-                document.querySelectorAll('.spending-btn').forEach(btn => {
-                    btn.style.display = 'none';
-                });
-            }
+            document.getElementById('spendingSection').style.display = actionPermissions.includes('spending') ? '' : 'none';
         }
 
         // Backup and Restore Functions
@@ -5020,7 +4930,7 @@
                         });
                         
                         // Save to localStorage
-                        enhancedSaveDataToStorage();
+                        saveDataToStorage();
                         
                         // Reload the page to reflect changes
                         location.reload();
@@ -5374,7 +5284,7 @@
             }
             systemData.transfers.push(transfer);
 
-            enhancedSaveDataToStorage();
+            saveDataToStorage();
             return true;
         }
 
@@ -5424,6 +5334,9 @@
             if (transferPaymentToAdmin(amount, description)) {
                 // Reset form
                 document.getElementById('transferPaymentForm').reset();
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
                 
                 showAlert(`Successfully transferred ${amount} ${systemData.settings.currency} to admin!`, 'success');
             }
@@ -5486,6 +5399,132 @@
                 `;
                 tableBody.appendChild(row);
             });
+        }
+
+        // فەنکشنی نوێ بۆ نوێکردنەوەی UIی Spending
+        function updateSpendingUI() {
+            if (!systemData.spending) {
+                systemData.spending = [];
+            }
+            
+            const totalSpending = systemData.spending.reduce((sum, record) => sum + record.amount, 0);
+            const currentBalance = getCurrentSystemBalance();
+            const totalSystemPayments = systemData.rentals.reduce((sum, rental) => sum + rental.advancePayment, 0) + 
+                                       systemData.payments.reduce((sum, payment) => sum + payment.amount, 0);
+            const netProfit = totalSystemPayments - totalSpending;
+            
+            // نوێکردنەوەی ئامارەکان
+            if (document.getElementById('totalSpendingAmount')) {
+                document.getElementById('totalSpendingAmount').textContent = `${totalSpending} ${systemData.settings.currency}`;
+                document.getElementById('currentBalanceAfterSpending').textContent = `${currentBalance} ${systemData.settings.currency}`;
+                document.getElementById('netProfitAmount').textContent = `${netProfit} ${systemData.settings.currency}`;
+                document.getElementById('availableBalanceForSpending').textContent = currentBalance;
+            }
+            
+            // بارکردنی مێژووی Spending
+            loadSpendingHistory();
+        }
+
+        // فەنکشنی بارکردنی مێژووی Spending
+        function loadSpendingHistory() {
+            const spendingHistory = systemData.spending || [];
+            const tableBody = document.getElementById('spendingHistoryTable');
+            
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            
+            if (spendingHistory.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">No spending records found</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            spendingHistory.reverse().forEach(spending => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${formatDate(spending.date)}</td>
+                    <td>${spending.amount} ${systemData.settings.currency}</td>
+                    <td>${spending.category}</td>
+                    <td>${spending.description}</td>
+                    <td>${spending.addedBy}</td>
+                    <td>${new Date(spending.timestamp).toLocaleTimeString()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info view-spending" data-id="${spending.id}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-warning edit-spending" data-id="${spending.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-spending" data-id="${spending.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Edit payment function
+        function editPayment(paymentId) {
+            if (!hasPermission('edit')) {
+                showAlert('You do not have permission to edit payments!', 'danger');
+                return;
+            }
+            
+            const payment = systemData.payments.find(p => p.id === paymentId);
+            if (!payment) return;
+            
+            const customer = systemData.customers.find(c => c.id === payment.customerId);
+            
+            // Populate payment form
+            document.getElementById('paymentCustomerSearch').value = customer.fullName;
+            document.getElementById('paymentAmount').value = payment.amount;
+            document.getElementById('paymentDate').value = payment.date;
+            document.getElementById('paymentType').value = payment.type;
+            document.getElementById('paymentDescription').value = payment.description || '';
+            
+            // Show customer payment details
+            loadCustomerPaymentDetails(customer);
+            
+            // Change form submit behavior to update instead of add
+            const form = document.getElementById('addPaymentForm');
+            const originalSubmit = form.onsubmit;
+            
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                
+                // Update payment
+                payment.amount = parseInt(document.getElementById('paymentAmount').value);
+                payment.date = document.getElementById('paymentDate').value;
+                payment.type = document.getElementById('paymentType').value;
+                payment.description = document.getElementById('paymentDescription').value;
+                
+                // Use the new saveAndRefresh function
+                saveAndRefresh();
+                
+                // Restore original submit behavior
+                form.onsubmit = originalSubmit;
+                form.reset();
+                
+                showAlert('Payment updated successfully!', 'success');
+            };
+            
+            // Change button text
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Update Payment';
+            
+            // Restore original button text when form is reset
+            form.addEventListener('reset', function() {
+                submitButton.textContent = originalText;
+                form.onsubmit = originalSubmit;
+            });
+            
+            showAlert('Payment data loaded for editing. Update and submit to save changes.', 'info');
         }
 
         // Load dashboard data - Updated Version with auto-refresh and system balance
@@ -5589,12 +5628,12 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <h4>${currentSystemBalance}</h4>
-                                    <p>System Balance</p>
-                                    <small class="opacity-75">(Available for transfer)</small>
+                                    <h4>${netProfit}</h4>
+                                    <p>Net Profit</p>
+                                    <small class="opacity-75">(After spending)</small>
                                 </div>
                                 <div class="align-self-center">
-                                    <i class="fas fa-wallet fa-2x"></i>
+                                    <i class="fas fa-chart-line fa-2x"></i>
                                 </div>
                             </div>
                         </div>
@@ -6371,64 +6410,6 @@
                 `;
                 paymentHistoryBody.appendChild(row);
             });
-        }
-
-        // Edit payment function
-        function editPayment(paymentId) {
-            if (!hasPermission('edit')) {
-                showAlert('You do not have permission to edit payments!', 'danger');
-                return;
-            }
-            
-            const payment = systemData.payments.find(p => p.id === paymentId);
-            if (!payment) return;
-            
-            const customer = systemData.customers.find(c => c.id === payment.customerId);
-            
-            // Populate payment form
-            document.getElementById('paymentCustomerSearch').value = customer.fullName;
-            document.getElementById('paymentAmount').value = payment.amount;
-            document.getElementById('paymentDate').value = payment.date;
-            document.getElementById('paymentType').value = payment.type;
-            document.getElementById('paymentDescription').value = payment.description || '';
-            
-            // Show customer payment details
-            loadCustomerPaymentDetails(customer);
-            
-            // Change form submit behavior to update instead of add
-            const form = document.getElementById('addPaymentForm');
-            const originalSubmit = form.onsubmit;
-            
-            form.onsubmit = function(e) {
-                e.preventDefault();
-                
-                // Update payment
-                payment.amount = parseInt(document.getElementById('paymentAmount').value);
-                payment.date = document.getElementById('paymentDate').value;
-                payment.type = document.getElementById('paymentType').value;
-                payment.description = document.getElementById('paymentDescription').value;
-                
-                enhancedSaveDataToStorage();
-                
-                // Restore original submit behavior
-                form.onsubmit = originalSubmit;
-                form.reset();
-                
-                showAlert('Payment updated successfully!', 'success');
-            };
-            
-            // Change button text
-            const submitButton = form.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            submitButton.textContent = 'Update Payment';
-            
-            // Restore original button text when form is reset
-            form.addEventListener('reset', function() {
-                submitButton.textContent = originalText;
-                form.onsubmit = originalSubmit;
-            });
-            
-            showAlert('Payment data loaded for editing. Update and submit to save changes.', 'info');
         }
 
         // View vehicle details
