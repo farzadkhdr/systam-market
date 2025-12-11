@@ -1103,6 +1103,18 @@
                             <div class="stat-change negative"><i class="fas fa-arrow-up"></i> 2,500 د.ع زيادة</div>
                         </div>
                     </div>
+
+                    <!-- پارەی ماوە (نەقدی) -->
+                    <div class="stat-card" id="cashBalanceCard">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-title">پارەی ماوە (نەقدی)</div>
+                            <div class="stat-value cash-balance">0 <span style="font-size: 16px;">د.ع</span></div>
+                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> پارەی ماوە</div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- أحدث الفواتير -->
@@ -1156,7 +1168,7 @@
                             </tr>
                         </thead>
                         <tbody id="cartItems">
-                            <!-- سيتم ملء عناصر السلة ديناميكيا -->
+                            <!-- سيتم ملء عناصر السلة دینامیکیا -->
                         </tbody>
                     </table>
                 </div>
@@ -1164,7 +1176,7 @@
                 <div style="display: flex; justify-content: space-between; margin-top: 30px; flex-wrap: wrap; gap: 20px;">
                     <div style="background: white; padding: 20px; border-radius: 15px; flex: 1; min-width: 300px;">
                         <h3 style="margin-bottom: 15px;">معلومات العميل</h3>
-                        <div class="search-box">
+                        <div class="search-box" style="position: relative;">
                             <input type="text" id="customerSearch" class="search-input" placeholder="ابحث عن العميل..." onkeyup="searchCustomers()">
                             <div id="customerSuggestions" style="display: none; background: white; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto; position: absolute; width: calc(100% - 15px); z-index: 100; margin-top: 5px;"></div>
                         </div>
@@ -1197,10 +1209,6 @@
                         <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                             <span>الخصم:</span>
                             <span style="font-weight: 700;" id="discount">0 د.ع</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <span>الضريبة:</span>
-                            <span style="font-weight: 700;" id="tax">0 د.ع</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 20px; padding-top: 15px; border-top: 2px solid #eee;">
                             <span style="font-size: 18px; font-weight: 700;">الإجمالي النهائي:</span>
@@ -1267,7 +1275,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- سيتم ملء بيانات المخزون ديناميكيا -->
+                            <!-- سيتم ملء بيانات المخزون دینامیکیا -->
                         </tbody>
                     </table>
                 </div>
@@ -1277,29 +1285,136 @@
             <section class="section" id="purchases">
                 <h2 class="section-title"><i class="fas fa-shopping-cart"></i> المشتريات</h2>
                 
-                <div class="search-container">
-                    <div class="search-box">
-                        <input type="text" id="purchaseSearch" class="search-input" placeholder="ابحث عن فاتورة شراء...">
-                        <button class="btn"><i class="fas fa-search"></i> بحث</button>
-                        <button class="btn btn-success" onclick="openAddPurchaseModal()"><i class="fas fa-plus"></i> عملية شراء جديدة</button>
+                <!-- نظام کڕین -->
+                <div class="purchase-operations" style="display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 15px;">
+                        <h3 style="margin-bottom: 15px;">زیادکردنی کاڵای نوێ بۆ کڕین</h3>
+                        
+                        <div class="search-box" style="margin-bottom: 15px; position: relative;">
+                            <input type="text" id="purchaseProductSearch" class="search-input" 
+                                   placeholder="گەڕان بەدوای کاڵا..." 
+                                   onkeyup="searchProductsForPurchase()">
+                            <div id="purchaseProductSuggestions" 
+                                 style="display: none; background: white; border: 1px solid #ddd; 
+                                        border-radius: 10px; max-height: 200px; overflow-y: auto; 
+                                        position: absolute; width: calc(100% - 15px); z-index: 100; 
+                                        margin-top: 5px;"></div>
+                        </div>
+                        
+                        <input type="hidden" id="selectedProductId">
+                        
+                        <div id="selectedPurchaseProduct" style="display: none; margin-bottom: 15px;">
+                            <div style="padding: 15px; background: #f9f9f9; border-radius: 10px;">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div id="purchaseProductIcon" style="font-size: 24px; color: #4361ee;"></div>
+                                    <div>
+                                        <strong id="purchaseProductName"></strong><br>
+                                        <span style="font-size: 14px; color: #777;" id="purchaseProductType"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>بڕی کڕین</label>
+                            <input type="number" id="purchaseQuantity" class="form-control" placeholder="بڕ" min="1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>نرخی کڕین (بۆ یەکە)</label>
+                            <input type="number" id="purchaseUnitPrice" class="form-control" placeholder="نرخ">
+                        </div>
+                        
+                        <button class="btn" onclick="addToPurchaseCart()" style="width: 100%;">
+                            <i class="fas fa-plus"></i> زیادکردن بۆ کڕین
+                        </button>
+                    </div>
+                    
+                    <div style="flex: 2; min-width: 300px; background: white; padding: 20px; border-radius: 15px;">
+                        <h3 style="margin-bottom: 15px;">کارتی کڕین</h3>
+                        
+                        <div class="search-box" style="margin-bottom: 15px; position: relative;">
+                            <input type="text" id="supplierSearchPurchase" class="search-input" 
+                                   placeholder="گەڕان بەدوای مورد..." 
+                                   onkeyup="searchSuppliersForPurchase()">
+                            <div id="supplierSuggestions" 
+                                 style="display: none; background: white; border: 1px solid #ddd; 
+                                        border-radius: 10px; max-height: 200px; overflow-y: auto; 
+                                        position: absolute; width: calc(100% - 15px); z-index: 100; 
+                                        margin-top: 5px;"></div>
+                        </div>
+                        
+                        <div id="selectedSupplierInfo" style="display: none; margin-bottom: 15px;">
+                            <div style="padding: 10px; background: #f9f9f9; border-radius: 10px;">
+                                <strong>موردی دیاریکراو:</strong> <span id="selectedSupplierName"></span><br>
+                                <strong>قەرزی پێشوو:</strong> <span id="supplierPreviousDebt">0</span> د.ع
+                            </div>
+                        </div>
+                        
+                        <div class="table-container" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>کاڵا</th>
+                                        <th>بڕ</th>
+                                        <th>نرخ</th>
+                                        <th>کۆی گشتی</th>
+                                        <th>کردارەکان</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="purchaseCartItems">
+                                    <!-- لەمێژووی کڕین -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>کۆی گشتی کاڵاکان:</span>
+                                <span style="font-weight: 700;" id="purchaseSubtotal">0 د.ع</span>
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                                <label style="flex: 1; min-width: 100px;">
+                                    <input type="radio" name="purchasePaymentType" value="cash" checked> نەقدی
+                                </label>
+                                <label style="flex: 1; min-width: 100px;">
+                                    <input type="radio" name="purchasePaymentType" value="credit"> بە قەرز
+                                </label>
+                            </div>
+                            
+                            <div id="purchaseCreditSection" style="display: none; margin-top: 15px;">
+                                <div class="form-group">
+                                    <label>بەرواری کۆتایی قەرز</label>
+                                    <input type="date" id="purchaseDueDate" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-success" style="width: 100%; margin-top: 20px;" onclick="completePurchase()">
+                                <i class="fas fa-check-circle"></i> تەواوکردنی کڕین
+                            </button>
+                        </div>
                     </div>
                 </div>
                 
+                <!-- مێژووی کڕین -->
                 <div class="table-container">
-                    <table id="purchasesTable">
+                    <h3 style="padding: 20px; margin: 0; border-bottom: 1px solid #eee;">مێژووی کڕین</h3>
+                    <table>
                         <thead>
                             <tr>
-                                <th>رقم الفاتورة</th>
-                                <th>التاريخ</th>
-                                <th>المورد</th>
-                                <th>إجمالي الفاتورة</th>
-                                <th>طريقة الدفع</th>
-                                <th>الحالة</th>
-                                <th>الإجراءات</th>
+                                <th>ژمارەی فاکتۆر</th>
+                                <th>بەروار</th>
+                                <th>مورد</th>
+                                <th>کۆی گشتی</th>
+                                <th>جۆری پارەدان</th>
+                                <th>دۆخ</th>
+                                <th>کردارەکان</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- سيتم ملء بيانات المشتريات ديناميكيا -->
+                        <tbody id="purchaseHistory">
+                            <!-- مێژووی کڕین -->
                         </tbody>
                     </table>
                 </div>
@@ -1338,7 +1453,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات العملاء ديناميكيا -->
+                                <!-- سيتم ملء بيانات العملاء دینامیکیا -->
                             </tbody>
                         </table>
                     </div>
@@ -1368,7 +1483,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات الموردين ديناميكيا -->
+                                <!-- سيتم ملء بيانات الموردين دینامیکیا -->
                             </tbody>
                         </table>
                     </div>
@@ -1409,7 +1524,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات دفعات العملاء ديناميكيا -->
+                                <!-- سيتم ملء بيانات دفعات العملاء دینامیکیا -->
                             </tbody>
                         </table>
                     </div>
@@ -1439,7 +1554,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات دفعات الموردين ديناميكيا -->
+                                <!-- سيتم ملء بيانات دفعات الموردين دینامیکیا -->
                             </tbody>
                         </table>
                     </div>
@@ -1469,7 +1584,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات المصروفات ديناميكيا -->
+                                <!-- سيتم ملء بيانات المصروفات دینامیکیا -->
                             </tbody>
                         </table>
                     </div>
@@ -1502,7 +1617,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- سيتم ملء بيانات الفواتير ديناميكيا -->
+                            <!-- سيتم ملء بيانات الفواتير دینامیکیا -->
                         </tbody>
                     </table>
                 </div>
@@ -1564,7 +1679,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات المستخدمين ديناميكيا -->
+                                <!-- سيتم ملء بيانات المستخدمين دینامیکیا -->
                             </tbody>
                         </table>
                     </div>
@@ -1592,7 +1707,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات الصلاحيات ديناميكيا -->
+                                <!-- سيتم ملء بيانات الصلاحيات دینامیکیا -->
                             </tbody>
                         </table>
                     </div>
@@ -1777,7 +1892,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- سيتم ملء النسخ الاحتياطية ديناميكيا -->
+                                        <!-- سيتم ملء النسخ الاحتياطية دینامیکیا -->
                                     </tbody>
                                 </table>
                             </div>
@@ -1834,7 +1949,7 @@
                 <div class="form-group">
                     <label>اللون</label>
                     <div class="color-suggestions" id="colorSuggestions">
-                        <!-- سيتم ملء اقتراحات الألوان ديناميكيا -->
+                        <!-- سيتم ملء اقتراحات الألوان دینامیکیا -->
                     </div>
                     <input type="text" id="productColor" class="form-control" placeholder="أدخل لون جديد (كود HEX)">
                     <small style="color: #777;">اضغط على لون من القائمة أو أدخل كود HEX جديد</small>
@@ -1869,7 +1984,7 @@
                 <button class="close-modal" onclick="closeModal('printA4Modal')">&times;</button>
             </div>
             <div class="invoice-a4" id="a4InvoiceContent">
-                <!-- سيتم ملء محتوى الفاتورة ديناميكيا -->
+                <!-- سيتم ملء محتوى الفاتورة دینامیکیا -->
             </div>
             <div style="text-align: center; margin-top: 20px;">
                 <button class="btn btn-success" onclick="printA4Invoice()"><i class="fas fa-print"></i> طباعة</button>
@@ -1886,7 +2001,7 @@
                 <button class="close-modal" onclick="closeModal('printBarcodeModal')">&times;</button>
             </div>
             <div class="barcode-container" id="barcodePrintContent">
-                <!-- سيتم ملء محتوى الباركود ديناميكيا -->
+                <!-- سيتم ملء محتوى الباركود دینامیکیا -->
             </div>
             <div style="text-align: center; margin-top: 20px;">
                 <button class="btn btn-success" onclick="printBarcodeOnly()"><i class="fas fa-print"></i> طباعة الباركود</button>
@@ -1910,19 +2025,19 @@
             </div>
             
             <div class="tab-content active" id="customerInfoTab">
-                <!-- سيتم ملء معلومات العميل ديناميكيا -->
+                <!-- سيتم ملء معلومات العميل دینامیکیا -->
             </div>
             
             <div class="tab-content" id="customerInvoicesTab">
-                <!-- سيتم ملء فواتير العميل ديناميكيا -->
+                <!-- سيتم ملء فواتير العميل دینامیکیا -->
             </div>
             
             <div class="tab-content" id="customerPaymentsTab">
-                <!-- سيتم ملء دفعات العميل ديناميكيا -->
+                <!-- سيتم ملء دفعات العميل دینامیکیا -->
             </div>
             
             <div class="tab-content" id="customerReportTab">
-                <!-- سيتم ملء تقرير العميل ديناميكيا -->
+                <!-- سيتم ملء تقرير العميل دینامیکیا -->
             </div>
         </div>
     </div>
@@ -1942,19 +2057,19 @@
             </div>
             
             <div class="tab-content active" id="supplierInfoTab">
-                <!-- سيتم ملء معلومات المورد ديناميكيا -->
+                <!-- سيتم ملء معلومات المورد دینامیکیا -->
             </div>
             
             <div class="tab-content" id="supplierPurchasesTab">
-                <!-- سيتم ملء مشتريات المورد ديناميكيا -->
+                <!-- سيتم ملء مشتريات المورد دینامیکیا -->
             </div>
             
             <div class="tab-content" id="supplierPaymentsTab">
-                <!-- سيتم ملء دفعات المورد ديناميكيا -->
+                <!-- سيتم ملء دفعات المورد دینامیکیا -->
             </div>
             
             <div class="tab-content" id="supplierReportTab">
-                <!-- سيتم ملء تقرير المورد ديناميكيا -->
+                <!-- سيتم ملء تقرير المورد دینامیکیا -->
             </div>
         </div>
     </div>
@@ -1983,7 +2098,9 @@
                 { id: 2, name: "مورد الأجهزة الذكية", phone: "07705678901", email: "contact@smartdevices.com", address: "أربيل", totalPurchases: 3200000, debt: 0, previousDebt: 0 }
             ],
             invoices: [],
-            purchases: [],
+            purchaseCart: [], // کارتی کڕین
+            purchaseInvoices: [], // فاکتورەکانی کڕین
+            currentSupplierId: null, // موردی هەنووکەیی
             customerPayments: [],
             supplierPayments: [],
             expenses: [],
@@ -2053,6 +2170,8 @@
             document.getElementById('password').value = '';
             cart = [];
             currentCustomerId = null;
+            systemData.purchaseCart = [];
+            systemData.currentSupplierId = null;
         });
         
         // تبديل القائمة الجانبية على الأجهزة الصغيرة
@@ -2102,11 +2221,14 @@
             // تحميل الفواتير
             loadInvoices();
             
-            // تحميل المشتريات
-            loadPurchases();
+            // تحميل مێژووی کڕین
+            loadPurchaseHistory();
             
             // تحميل أحدث الفواتير في لوحة التحكم
             loadRecentInvoices();
+            
+            // تحمیل پارەی ماوە
+            updateCashBalance();
             
             // تحميل إعدادات الطباعة
             loadPrintSettings();
@@ -2122,6 +2244,30 @@
             
             // إضافة أحداث للطباعة
             setupPrintEvents();
+            
+            // إضافة أحداث بۆ کڕین
+            setupPurchaseEvents();
+        }
+        
+        // إعداد أحداث بۆ کڕین
+        function setupPurchaseEvents() {
+            const purchasePaymentRadios = document.querySelectorAll('input[name="purchasePaymentType"]');
+            
+            purchasePaymentRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const purchaseCreditSection = document.getElementById('purchaseCreditSection');
+                    if (this.value === 'credit') {
+                        purchaseCreditSection.style.display = 'block';
+                        
+                        // دانانی بەرواری کۆتایی وەک 30 ڕۆژ لە ئێستاوە
+                        const futureDate = new Date();
+                        futureDate.setDate(futureDate.getDate() + 30);
+                        document.getElementById('purchaseDueDate').value = futureDate.toISOString().split('T')[0];
+                    } else {
+                        purchaseCreditSection.style.display = 'none';
+                    }
+                });
+            });
         }
         
         // تحميل المنتجات
@@ -2256,32 +2402,47 @@
             }
         }
         
-        // تحميل المشتريات
-        function loadPurchases() {
-            const purchasesTable = document.querySelector('#purchasesTable tbody');
-            if (purchasesTable) {
-                purchasesTable.innerHTML = '';
-                systemData.purchases.forEach((purchase, index) => {
-                    const supplier = systemData.suppliers.find(s => s.id === purchase.supplierId) || { name: "غير محدد" };
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${purchase.id}</td>
-                        <td>${purchase.date}</td>
-                        <td>${supplier.name}</td>
-                        <td>${purchase.total.toLocaleString()} د.ع</td>
-                        <td>${purchase.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</td>
-                        <td><span style="padding: 5px 10px; border-radius: 20px; background: #4CAF50; color: white;">مكتمل</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-small btn-view" onclick="viewPurchase(${purchase.id})"><i class="fas fa-eye"></i></button>
-                                <button class="btn-small btn-print" onclick="printPurchase(${purchase.id})"><i class="fas fa-print"></i></button>
-                                <button class="btn-small btn-delete" onclick="deletePurchase(${purchase.id})"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </td>
-                    `;
-                    purchasesTable.appendChild(row);
-                });
-            }
+        // تحميل مێژووی کڕین
+        function loadPurchaseHistory() {
+            const historyTable = document.getElementById('purchaseHistory');
+            if (!historyTable) return;
+            
+            historyTable.innerHTML = '';
+            
+            systemData.purchaseInvoices.forEach(invoice => {
+                const supplier = systemData.suppliers.find(s => s.id === invoice.supplierId);
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${invoice.id}</td>
+                    <td>${invoice.date}</td>
+                    <td>${supplier ? supplier.name : 'موردی نەناسراو'}</td>
+                    <td>${invoice.subtotal.toLocaleString()} د.ع</td>
+                    <td>${invoice.paymentType === 'cash' ? 'نەقدی' : 'قەرز'}</td>
+                    <td>
+                        <span style="padding: 5px 10px; border-radius: 20px; 
+                             background: ${invoice.status === 'پارەدراو' ? '#4CAF50' : '#FF9800'}; 
+                             color: white;">
+                            ${invoice.status}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-small btn-view" onclick="viewPurchaseInvoice('${invoice.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-small btn-print" onclick="printPurchaseInvoice('${invoice.id}')">
+                                <i class="fas fa-print"></i>
+                            </button>
+                            <button class="btn-small btn-delete" onclick="deletePurchaseInvoice('${invoice.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                historyTable.appendChild(row);
+            });
         }
         
         // تحميل أحدث الفواتير
@@ -2309,6 +2470,76 @@
                     recentInvoices.appendChild(row);
                 });
             }
+        }
+        
+        // نوێکردنەوەی کارتی کڕین
+        function updatePurchaseCartDisplay() {
+            const purchaseCartItems = document.getElementById('purchaseCartItems');
+            if (!purchaseCartItems) return;
+            
+            purchaseCartItems.innerHTML = '';
+            
+            systemData.purchaseCart.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.unitPrice.toLocaleString()} د.ع</td>
+                    <td>${item.total.toLocaleString()} د.ع</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-small btn-delete" onclick="removeFromPurchaseCart(${item.productId})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                purchaseCartItems.appendChild(row);
+            });
+            
+            // نوێکردنەوەی کۆی گشتی
+            updatePurchaseSubtotal();
+        }
+        
+        // نوێکردنەوەی کۆی گشتی کڕین
+        function updatePurchaseSubtotal() {
+            const purchaseSubtotalElement = document.getElementById('purchaseSubtotal');
+            if (!purchaseSubtotalElement) return;
+            
+            let subtotal = 0;
+            systemData.purchaseCart.forEach(item => {
+                subtotal += item.total;
+            });
+            
+            purchaseSubtotalElement.textContent = subtotal.toLocaleString() + ' د.ع';
+        }
+        
+        // هەژماری پارەی ماوە
+        function updateCashBalance() {
+            let totalSales = 0;
+            let totalPurchasesCash = 0;
+            
+            // کۆکردنەوەی کۆی گشتی فرۆشتەکان
+            systemData.invoices.forEach(invoice => {
+                totalSales += invoice.total;
+            });
+            
+            // کۆکردنەوەی کۆی گشتی کڕینەکان (تەنها نەقدی)
+            systemData.purchaseInvoices.forEach(purchase => {
+                if (purchase.paymentType === 'cash') {
+                    totalPurchasesCash += purchase.subtotal;
+                }
+            });
+            
+            // پارەی ماوە
+            const cashBalance = totalSales - totalPurchasesCash;
+            
+            // نوێکردنەوەی نمایشی پارە لە داشبۆرد
+            const cashElements = document.querySelectorAll('.cash-balance');
+            cashElements.forEach(element => {
+                element.textContent = cashBalance.toLocaleString() + ' د.ع';
+            });
         }
         
         // تحميل إعدادات الطباعة
@@ -2383,13 +2614,17 @@
         
         // إعداد أحداث الطباعة
         function setupPrintEvents() {
-            printSmall.addEventListener('click', function() {
-                printSmallInvoice();
-            });
+            if (printSmall) {
+                printSmall.addEventListener('click', function() {
+                    printSmallInvoice();
+                });
+            }
             
-            printA4.addEventListener('click', function() {
-                openPrintA4Modal();
-            });
+            if (printA4) {
+                printA4.addEventListener('click', function() {
+                    openPrintA4Modal();
+                });
+            }
         }
         
         // البحث عن المنتجات
@@ -2410,7 +2645,7 @@
         }
         
         // البحث عن العملاء
-        function searchCustomers() {
+        window.searchCustomers = function() {
             const searchTerm = document.getElementById('customerSearch').value.toLowerCase();
             const suggestions = document.getElementById('customerSuggestions');
             
@@ -2425,21 +2660,52 @@
             );
             
             suggestions.innerHTML = '';
-            filteredCustomers.forEach(customer => {
+            
+            if (filteredCustomers.length === 0) {
                 const suggestion = document.createElement('div');
                 suggestion.style.padding = '10px';
-                suggestion.style.cursor = 'pointer';
-                suggestion.style.borderBottom = '1px solid #eee';
-                suggestion.innerHTML = `${customer.name} - ${customer.phone}`;
-                suggestion.onclick = function() {
-                    selectCustomer(customer.id);
-                    suggestions.style.display = 'none';
-                };
+                suggestion.style.color = '#777';
+                suggestion.innerHTML = 'کەسێک نەدۆزرایەوە';
                 suggestions.appendChild(suggestion);
-            });
+            } else {
+                filteredCustomers.forEach(customer => {
+                    const suggestion = document.createElement('div');
+                    suggestion.style.padding = '10px';
+                    suggestion.style.cursor = 'pointer';
+                    suggestion.style.borderBottom = '1px solid #eee';
+                    suggestion.style.display = 'flex';
+                    suggestion.style.justifyContent = 'space-between';
+                    suggestion.style.alignItems = 'center';
+                    
+                    suggestion.innerHTML = `
+                        <div>
+                            <strong>${customer.name}</strong>
+                            <div style="font-size: 12px; color: #777;">${customer.phone}</div>
+                        </div>
+                        <div style="font-size: 12px; color: ${customer.debt > 0 ? '#f72585' : '#4cc9f0'}">
+                            ${customer.debt.toLocaleString()} د.ع
+                        </div>
+                    `;
+                    
+                    suggestion.onclick = function() {
+                        selectCustomer(customer.id);
+                        suggestions.style.display = 'none';
+                    };
+                    
+                    suggestion.onmouseenter = function() {
+                        this.style.backgroundColor = '#f5f5f5';
+                    };
+                    
+                    suggestion.onmouseleave = function() {
+                        this.style.backgroundColor = 'white';
+                    };
+                    
+                    suggestions.appendChild(suggestion);
+                });
+            }
             
             suggestions.style.display = 'block';
-        }
+        };
         
         // اختيار عميل
         function selectCustomer(customerId) {
@@ -2582,7 +2848,7 @@
             });
             
             const discount = parseFloat(document.getElementById('discountInput').value) || 0;
-            const tax = subtotal * 0.05; // 5% ضريبة
+            const tax = 0; // لابردنی زەریبە
             
             const total = subtotal - discount + tax;
             
@@ -2626,7 +2892,7 @@
                 subtotal += item.price * item.quantity;
             });
             
-            const tax = subtotal * 0.05;
+            const tax = 0;
             const total = subtotal - discount + tax;
             
             // إنشاء فاتورة
@@ -2666,6 +2932,9 @@
             
             // حفظ البيانات
             saveSystemData();
+            
+            // نوێکردنەوەی پارەی ماوە
+            updateCashBalance();
             
             // طباعة الفاتورة إذا كان الإعداد مفعلاً
             if (systemData.settings.autoPrint) {
@@ -2782,7 +3051,7 @@
             const customer = currentCustomerId ? systemData.customers.find(c => c.id === currentCustomerId) : null;
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const discount = parseFloat(document.getElementById('discountInput').value) || 0;
-            const tax = subtotal * 0.05;
+            const tax = 0;
             const total = subtotal - discount + tax;
             
             const invoiceContent = document.getElementById('a4InvoiceContent');
@@ -2850,10 +3119,6 @@
                             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                                 <span>الخصم:</span>
                                 <span>${discount.toLocaleString()} د.ع</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span>الضريبة (5%):</span>
-                                <span>${tax.toLocaleString()} د.ع</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-top: 10px; border-top: 2px solid #ddd; font-size: 18px; font-weight: bold;">
                                 <span>الإجمالي النهائي:</span>
@@ -3540,29 +3805,448 @@
             }
         };
         
-        // عرض عملية الشراء
-        window.viewPurchase = function(purchaseId) {
-            const purchase = systemData.purchases.find(p => p.id === purchaseId);
-            if (!purchase) return;
+        // گەڕان بەدوای کاڵاکان بۆ کڕین
+        window.searchProductsForPurchase = function() {
+            const searchTerm = document.getElementById('purchaseProductSearch').value.toLowerCase();
+            const suggestions = document.getElementById('purchaseProductSuggestions');
             
-            alert(`عرض فاتورة الشراء ${purchaseId}\n\nفي التطبيق الكامل، سيتم عرض تفاصيل الفاتورة الكاملة.`);
+            if (searchTerm.length === 0) {
+                suggestions.style.display = 'none';
+                return;
+            }
+            
+            const filteredProducts = systemData.products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) || 
+                product.type.toLowerCase().includes(searchTerm)
+            );
+            
+            suggestions.innerHTML = '';
+            
+            if (filteredProducts.length === 0) {
+                const suggestion = document.createElement('div');
+                suggestion.style.padding = '10px';
+                suggestion.style.color = '#777';
+                suggestion.innerHTML = 'کاڵایەک نەدۆزرایەوە';
+                suggestions.appendChild(suggestion);
+            } else {
+                filteredProducts.forEach(product => {
+                    const suggestion = document.createElement('div');
+                    suggestion.style.padding = '10px';
+                    suggestion.style.cursor = 'pointer';
+                    suggestion.style.borderBottom = '1px solid #eee';
+                    suggestion.style.display = 'flex';
+                    suggestion.style.alignItems = 'center';
+                    suggestion.style.gap = '10px';
+                    
+                    suggestion.innerHTML = `
+                        <div style="width: 30px; height: 30px; border-radius: 50%; 
+                                   background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+                                   display: flex; align-items: center; justify-content: center;
+                                   color: #4361ee;">
+                            <i class="fas fa-${product.image}"></i>
+                        </div>
+                        <div>
+                            <strong>${product.name}</strong>
+                            <div style="font-size: 12px; color: #777;">
+                                ${product.type} | بەشی ماوە: ${product.quantity}
+                            </div>
+                        </div>
+                    `;
+                    
+                    suggestion.onclick = function() {
+                        selectProductForPurchase(product.id);
+                        suggestions.style.display = 'none';
+                    };
+                    
+                    suggestions.appendChild(suggestion);
+                });
+            }
+            
+            suggestions.style.display = 'block';
         };
         
-        // طباعة فاتورة الشراء
-        window.printPurchase = function(purchaseId) {
-            const purchase = systemData.purchases.find(p => p.id === purchaseId);
-            if (!purchase) return;
+        // هەڵبژاردنی کاڵا بۆ کڕین
+        function selectProductForPurchase(productId) {
+            const product = systemData.products.find(p => p.id === productId);
+            if (!product) return;
             
-            alert(`طباعة فاتورة الشراء ${purchaseId}\n\nفي التطبيق الكامل، سيتم فتح نافذة الطباعة.`);
+            document.getElementById('purchaseProductSearch').value = product.name;
+            document.getElementById('selectedProductId').value = productId;
+            
+            document.getElementById('purchaseProductName').textContent = product.name;
+            document.getElementById('purchaseProductType').textContent = product.type;
+            document.getElementById('purchaseProductIcon').innerHTML = `<i class="fas fa-${product.image}"></i>`;
+            
+            // دانانی نرخی کڕین وەک نرخێکی سەرەتا
+            document.getElementById('purchaseUnitPrice').value = product.purchasePrice;
+            
+            document.getElementById('selectedPurchaseProduct').style.display = 'block';
+        }
+        
+        // گەڕان بەدوای موردەکان بۆ کڕین
+        window.searchSuppliersForPurchase = function() {
+            const searchTerm = document.getElementById('supplierSearchPurchase').value.toLowerCase();
+            const suggestions = document.getElementById('supplierSuggestions');
+            
+            if (searchTerm.length === 0) {
+                suggestions.style.display = 'none';
+                return;
+            }
+            
+            const filteredSuppliers = systemData.suppliers.filter(supplier => 
+                supplier.name.toLowerCase().includes(searchTerm) || 
+                supplier.phone.includes(searchTerm)
+            );
+            
+            suggestions.innerHTML = '';
+            
+            if (filteredSuppliers.length === 0) {
+                const suggestion = document.createElement('div');
+                suggestion.style.padding = '10px';
+                suggestion.style.color = '#777';
+                suggestion.innerHTML = 'موردێک نەدۆزرایەوە';
+                suggestions.appendChild(suggestion);
+            } else {
+                filteredSuppliers.forEach(supplier => {
+                    const suggestion = document.createElement('div');
+                    suggestion.style.padding = '10px';
+                    suggestion.style.cursor = 'pointer';
+                    suggestion.style.borderBottom = '1px solid #eee';
+                    suggestion.style.display = 'flex';
+                    suggestion.style.justifyContent = 'space-between';
+                    suggestion.style.alignItems = 'center';
+                    
+                    suggestion.innerHTML = `
+                        <div>
+                            <strong>${supplier.name}</strong>
+                            <div style="font-size: 12px; color: #777;">${supplier.phone}</div>
+                        </div>
+                        <div style="font-size: 12px; color: ${supplier.debt > 0 ? '#f72585' : '#4cc9f0'}">
+                            ${supplier.debt.toLocaleString()} د.ع
+                        </div>
+                    `;
+                    
+                    suggestion.onclick = function() {
+                        selectSupplierForPurchase(supplier.id);
+                        suggestions.style.display = 'none';
+                    };
+                    
+                    suggestions.appendChild(suggestion);
+                });
+            }
+            
+            suggestions.style.display = 'block';
         };
         
-        // حذف فاتورة الشراء
-        window.deletePurchase = function(purchaseId) {
-            if (confirm('هل أنت متأكد من حذف فاتورة الشراء هذه؟')) {
-                systemData.purchases = systemData.purchases.filter(p => p.id !== purchaseId);
-                saveSystemData();
-                loadPurchases();
-                alert('تم حذف فاتورة الشراء بنجاح!');
+        // هەڵبژاردنی مورد بۆ کڕین
+        function selectSupplierForPurchase(supplierId) {
+            systemData.currentSupplierId = supplierId;
+            const supplier = systemData.suppliers.find(s => s.id === supplierId);
+            
+            if (supplier) {
+                document.getElementById('supplierSearchPurchase').value = supplier.name;
+                document.getElementById('selectedSupplierName').textContent = supplier.name;
+                document.getElementById('supplierPreviousDebt').textContent = supplier.debt.toLocaleString();
+                
+                document.getElementById('selectedSupplierInfo').style.display = 'block';
+            }
+        }
+        
+        // زیادکردنی کاڵا بۆ کارتی کڕین
+        window.addToPurchaseCart = function() {
+            const productId = parseInt(document.getElementById('selectedProductId').value);
+            const quantity = parseInt(document.getElementById('purchaseQuantity').value);
+            const unitPrice = parseFloat(document.getElementById('purchaseUnitPrice').value);
+            
+            if (!productId || !quantity || !unitPrice) {
+                alert('تکایە زانیاریەکان پڕ بکەرەوە');
+                return;
+            }
+            
+            const product = systemData.products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingItem = systemData.purchaseCart.find(item => item.productId === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+                existingItem.total = existingItem.quantity * existingItem.unitPrice;
+            } else {
+                systemData.purchaseCart.push({
+                    productId: productId,
+                    name: product.name,
+                    type: product.type,
+                    quantity: quantity,
+                    unitPrice: unitPrice,
+                    total: quantity * unitPrice
+                });
+            }
+            
+            updatePurchaseCartDisplay();
+        };
+        
+        // سڕینەوەی کاڵا لە کارتی کڕین
+        window.removeFromPurchaseCart = function(productId) {
+            systemData.purchaseCart = systemData.purchaseCart.filter(item => item.productId !== productId);
+            updatePurchaseCartDisplay();
+        };
+        
+        // تەواوکردنی کڕین
+        window.completePurchase = function() {
+            if (systemData.purchaseCart.length === 0) {
+                alert('کارتی کڕین بەتاڵە');
+                return;
+            }
+            
+            if (!systemData.currentSupplierId) {
+                alert('تکایە موردێک دیاری بکە');
+                return;
+            }
+            
+            const paymentType = document.querySelector('input[name="purchasePaymentType"]:checked').value;
+            const dueDate = document.getElementById('purchaseDueDate').value;
+            
+            let subtotal = 0;
+            systemData.purchaseCart.forEach(item => {
+                subtotal += item.total;
+            });
+            
+            // دروستکردنی فاکتۆری کڕین
+            const purchaseInvoice = {
+                id: `PUR-${Date.now()}`,
+                date: new Date().toLocaleDateString('ar-EG'),
+                supplierId: systemData.currentSupplierId,
+                items: [...systemData.purchaseCart],
+                subtotal: subtotal,
+                paymentType: paymentType,
+                dueDate: paymentType === 'credit' ? dueDate : null,
+                status: paymentType === 'cash' ? 'پارەدراو' : 'قەرز'
+            };
+            
+            // زیادکردن بۆ سیستەم
+            systemData.purchaseInvoices.push(purchaseInvoice);
+            
+            // نوێکردنەوەی کۆی قەرزی مورد
+            const supplier = systemData.suppliers.find(s => s.id === systemData.currentSupplierId);
+            if (supplier) {
+                if (paymentType === 'credit') {
+                    supplier.debt += subtotal;
+                    supplier.previousDebt = supplier.debt - subtotal;
+                }
+                supplier.totalPurchases += subtotal;
+            }
+            
+            // زیادکردنی کاڵاکان بۆ کۆگا
+            systemData.purchaseCart.forEach(item => {
+                const product = systemData.products.find(p => p.id === item.productId);
+                if (product) {
+                    product.quantity += item.quantity;
+                    product.purchasePrice = item.unitPrice; // نوێکردنەوەی نرخی کڕین
+                }
+            });
+            
+            // نوێکردنەوەی پارەی ماوە (ئەگەر نەقدی بێت)
+            if (paymentType === 'cash') {
+                updateCashBalance();
+            }
+            
+            // پاشەکەوتکردن
+            saveSystemData();
+            
+            // پاککردنەوەی کارت
+            systemData.purchaseCart = [];
+            systemData.currentSupplierId = null;
+            
+            // نوێکردنەوەی پیشاندان
+            updatePurchaseCartDisplay();
+            loadInventory();
+            loadSuppliers();
+            loadPurchaseHistory();
+            
+            // پاککردنەوەی خانەکان
+            document.getElementById('purchaseProductSearch').value = '';
+            document.getElementById('selectedProductId').value = '';
+            document.getElementById('purchaseQuantity').value = '';
+            document.getElementById('purchaseUnitPrice').value = '';
+            document.getElementById('selectedPurchaseProduct').style.display = 'none';
+            document.getElementById('supplierSearchPurchase').value = '';
+            document.getElementById('selectedSupplierInfo').style.display = 'none';
+            
+            alert('کڕین بە سەرکەوتویی تەواو بوو!');
+        };
+        
+        // بینینی فاکتۆری کڕین
+        window.viewPurchaseInvoice = function(invoiceId) {
+            const invoice = systemData.purchaseInvoices.find(inv => inv.id === invoiceId);
+            if (!invoice) return;
+            
+            const supplier = systemData.suppliers.find(s => s.id === invoice.supplierId);
+            
+            const invoiceDetails = `
+                <h3>وردەکارییەکانی فاکتۆری کڕین: ${invoiceId}</h3>
+                <p><strong>بەروار:</strong> ${invoice.date}</p>
+                <p><strong>مورد:</strong> ${supplier ? supplier.name : 'موردی نەناسراو'}</p>
+                <p><strong>جۆری پارەدان:</strong> ${invoice.paymentType === 'cash' ? 'نەقدی' : 'قەرز'}</p>
+                ${invoice.dueDate ? `<p><strong>بەرواری کۆتایی قەرز:</strong> ${invoice.dueDate}</p>` : ''}
+                
+                <h4>کاڵاکان:</h4>
+                <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                    <thead>
+                        <tr style="background: #f5f5f5;">
+                            <th style="padding: 10px; border: 1px solid #ddd;">کاڵا</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">بڕ</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">نرخ</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">کۆی گشتی</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${invoice.items.map(item => `
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${item.quantity}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${item.unitPrice.toLocaleString()} د.ع</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${item.total.toLocaleString()} د.ع</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                
+                <div style="text-align: left; font-size: 18px; font-weight: bold;">
+                    کۆی گشتی: ${invoice.subtotal.toLocaleString()} د.ع
+                </div>
+            `;
+            
+            alert(invoiceDetails);
+        };
+        
+        // چاپکردنی فاکتۆری کڕین
+        window.printPurchaseInvoice = function(invoiceId) {
+            const invoice = systemData.purchaseInvoices.find(inv => inv.id === invoiceId);
+            if (!invoice) return;
+            
+            const supplier = systemData.suppliers.find(s => s.id === invoice.supplierId);
+            
+            const printContent = `
+                <div style="font-family: Arial, sans-serif; direction: rtl; padding: 20px;">
+                    <h2 style="text-align: center;">فاکتۆری کڕین</h2>
+                    <hr>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                        <div>
+                            <p><strong>ژمارەی فاکتۆر:</strong> ${invoice.id}</p>
+                            <p><strong>بەروار:</strong> ${invoice.date}</p>
+                        </div>
+                        <div>
+                            <p><strong>مورد:</strong> ${supplier ? supplier.name : 'موردی نەناسراو'}</p>
+                            <p><strong>تەلەفۆن:</strong> ${supplier ? supplier.phone : ''}</p>
+                        </div>
+                    </div>
+                    
+                    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th style="padding: 10px; border: 1px solid #ddd;">کاڵا</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">بڕ</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">نرخ</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">کۆی گشتی</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${invoice.items.map(item => `
+                                <tr>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${item.quantity}</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${item.unitPrice.toLocaleString()} د.ع</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${item.total.toLocaleString()} د.ع</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <div style="text-align: left; font-size: 20px; font-weight: bold; margin-top: 20px;">
+                        کۆی گشتی: ${invoice.subtotal.toLocaleString()} د.ع
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <p><strong>جۆری پارەدان:</strong> ${invoice.paymentType === 'cash' ? 'نەقدی' : 'قەرز'}</p>
+                        ${invoice.dueDate ? `<p><strong>بەرواری کۆتایی قەرز:</strong> ${invoice.dueDate}</p>` : ''}
+                        <p><strong>دۆخ:</strong> ${invoice.status}</p>
+                    </div>
+                    
+                    <hr style="margin-top: 40px;">
+                    <div style="text-align: center; color: #777; margin-top: 20px;">
+                        <p>فاکتۆری کڕین</p>
+                        <p>${systemData.settings.companyName}</p>
+                    </div>
+                </div>
+            `;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>چاپی فاکتۆری کڕین</title>
+                        <style>
+                            @media print {
+                                body { margin: 0; padding: 0; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent}
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 1000);
+                            };
+                        <\/script>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+        };
+        
+        // سڕینەوەی فاکتۆری کڕین
+        window.deletePurchaseInvoice = function(invoiceId) {
+            if (confirm('ئایا دڵنیایت لە سڕینەوەی ئەم فاکتۆرەی کڕین؟')) {
+                const invoiceIndex = systemData.purchaseInvoices.findIndex(inv => inv.id === invoiceId);
+                
+                if (invoiceIndex !== -1) {
+                    // گەڕاندنەوەی کاڵاکان بۆ کۆگا
+                    const invoice = systemData.purchaseInvoices[invoiceIndex];
+                    
+                    invoice.items.forEach(item => {
+                        const product = systemData.products.find(p => p.id === item.productId);
+                        if (product) {
+                            product.quantity -= item.quantity;
+                        }
+                    });
+                    
+                    // گەڕاندنەوەی قەرز لە مورد
+                    if (invoice.paymentType === 'credit' && invoice.supplierId) {
+                        const supplier = systemData.suppliers.find(s => s.id === invoice.supplierId);
+                        if (supplier) {
+                            supplier.debt -= invoice.subtotal;
+                            supplier.totalPurchases -= invoice.subtotal;
+                        }
+                    }
+                    
+                    // سڕینەوەی فاکتۆر
+                    systemData.purchaseInvoices.splice(invoiceIndex, 1);
+                    
+                    // پاشەکەوتکردن
+                    saveSystemData();
+                    
+                    // نوێکردنەوەی پیشاندان
+                    loadPurchaseHistory();
+                    loadInventory();
+                    loadSuppliers();
+                    updateCashBalance();
+                    
+                    alert('فاکتۆری کڕین بە سەرکەوتویی سڕدرایەوە!');
+                }
             }
         };
         
@@ -3626,7 +4310,7 @@
         
         // فتح نافذة إضافة عملية شراء
         window.openAddPurchaseModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة عملية شراء جديدة');
+            alert('نافذة إضافة عملية شراء مدمجة بالفعل في الصفحة');
         };
         
         // فتح نافذة إضافة دفعة عميل
