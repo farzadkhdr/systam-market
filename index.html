@@ -877,6 +877,62 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* نافذة إضافة كائن جديد */
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        .notification.success {
+            background-color: #4CAF50;
+        }
+        
+        .notification.error {
+            background-color: #f44336;
+        }
+        
+        .notification.warning {
+            background-color: #ff9800;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-30px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        
+        .confirmation-modal {
+            max-width: 400px;
+        }
+        
+        .confirmation-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .confirmation-buttons button {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -975,8 +1031,8 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-title">إجمالي المبيعات (شهري)</div>
-                            <div class="stat-value">125,750 <span style="font-size: 16px;">د.ع</span></div>
-                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 12.5% عن الشهر الماضي</div>
+                            <div class="stat-value"><span id="monthlySales">0</span> <span style="font-size: 16px;">د.ع</span></div>
+                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> <span id="monthlySalesChange">0</span>% عن الشهر الماضي</div>
                         </div>
                     </div>
                     
@@ -986,8 +1042,8 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-title">إجمالي المشتريات (شهري)</div>
-                            <div class="stat-value">89,500 <span style="font-size: 16px;">د.ع</span></div>
-                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 8.3% عن الشهر الماضي</div>
+                            <div class="stat-value"><span id="monthlyPurchases">0</span> <span style="font-size: 16px;">د.ع</span></div>
+                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> <span id="monthlyPurchasesChange">0</span>% عن الشهر الماضي</div>
                         </div>
                     </div>
                     
@@ -997,42 +1053,8 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-title">الفرق (المبيعات - المشتريات)</div>
-                            <div class="stat-value">36,250 <span style="font-size: 16px;">د.ع</span></div>
-                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 24.7% عن الشهر الماضي</div>
-                        </div>
-                    </div>
-                    
-                    <!-- إحصائيات الأسبوع -->
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-title">إجمالي المبيعات (أسبوعي)</div>
-                            <div class="stat-value">32,400 <span style="font-size: 16px;">د.ع</span></div>
-                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 5.2% عن الأسبوع الماضي</div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-cart-arrow-down"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-title">إجمالي المشتريات (أسبوعي)</div>
-                            <div class="stat-value">21,800 <span style="font-size: 16px;">د.ع</span></div>
-                            <div class="stat-change negative"><i class="fas fa-arrow-down"></i> 3.1% عن الأسبوع الماضي</div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-title">الفرق (المبيعات - المشتريات)</div>
-                            <div class="stat-value">10,600 <span style="font-size: 16px;">د.ع</span></div>
-                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 18.5% عن الأسبوع الماضي</div>
+                            <div class="stat-value"><span id="monthlyProfit">0</span> <span style="font-size: 16px;">د.ع</span></div>
+                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> <span id="monthlyProfitChange">0</span>% عن الشهر الماضي</div>
                         </div>
                     </div>
                     
@@ -1043,8 +1065,8 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-title">إجمالي المبيعات (اليوم)</div>
-                            <div class="stat-value">5,850 <span style="font-size: 16px;">د.ع</span></div>
-                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 15% عن الأمس</div>
+                            <div class="stat-value"><span id="dailySales">0</span> <span style="font-size: 16px;">د.ع</span></div>
+                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> <span id="dailySalesChange">0</span>% عن الأمس</div>
                         </div>
                     </div>
                     
@@ -1054,8 +1076,8 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-title">إجمالي المشتريات (اليوم)</div>
-                            <div class="stat-value">3,200 <span style="font-size: 16px;">د.ع</span></div>
-                            <div class="stat-change negative"><i class="fas fa-arrow-down"></i> 7% عن الأمس</div>
+                            <div class="stat-value"><span id="dailyPurchases">0</span> <span style="font-size: 16px;">د.ع</span></div>
+                            <div class="stat-change negative"><i class="fas fa-arrow-down"></i> <span id="dailyPurchasesChange">0</span>% عن الأمس</div>
                         </div>
                     </div>
                     
@@ -1065,8 +1087,8 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-title">الفرق (المبيعات - المشتريات)</div>
-                            <div class="stat-value">2,650 <span style="font-size: 16px;">د.ع</span></div>
-                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 42% عن الأمس</div>
+                            <div class="stat-value"><span id="dailyProfit">0</span> <span style="font-size: 16px;">د.ع</span></div>
+                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> <span id="dailyProfitChange">0</span>% عن الأمس</div>
                         </div>
                     </div>
                     
@@ -1077,8 +1099,8 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-title">إجمالي المنتجات في المخزون</div>
-                            <div class="stat-value">1,248</div>
-                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 34 منتج جديد</div>
+                            <div class="stat-value"><span id="totalProducts">0</span></div>
+                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> <span id="newProducts">0</span> منتج جديد</div>
                         </div>
                     </div>
                     
@@ -1088,8 +1110,8 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-title">إجمالي العملاء</div>
-                            <div class="stat-value">342</div>
-                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 12 عميل جديد</div>
+                            <div class="stat-value"><span id="totalCustomers">0</span></div>
+                            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> <span id="newCustomers">0</span> عميل جديد</div>
                         </div>
                     </div>
                     
@@ -1099,8 +1121,8 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-title">إجمالي الديون على العملاء</div>
-                            <div class="stat-value">45,300 <span style="font-size: 16px;">د.ع</span></div>
-                            <div class="stat-change negative"><i class="fas fa-arrow-up"></i> 2,500 د.ع زيادة</div>
+                            <div class="stat-value"><span id="totalDebts">0</span> <span style="font-size: 16px;">د.ع</span></div>
+                            <div class="stat-change negative"><i class="fas fa-arrow-up"></i> <span id="debtIncrease">0</span> د.ع زيادة</div>
                         </div>
                     </div>
                 </div>
@@ -1279,7 +1301,7 @@
                 
                 <div class="search-container">
                     <div class="search-box">
-                        <input type="text" id="purchaseSearch" class="search-input" placeholder="ابحث عن فاتورة شراء...">
+                        <input type="text" id="purchaseSearch" class="search-input" placeholder="ابحث عن فاتورة شراء..." onkeyup="searchPurchases()">
                         <button class="btn"><i class="fas fa-search"></i> بحث</button>
                         <button class="btn btn-success" onclick="openAddPurchaseModal()"><i class="fas fa-plus"></i> عملية شراء جديدة</button>
                     </div>
@@ -1389,7 +1411,7 @@
                 <div class="tab-content active" id="customerPaymentsTab">
                     <div class="search-container">
                         <div class="search-box">
-                            <input type="text" id="customerPaymentSearch" class="search-input" placeholder="ابحث عن دفعة عميل...">
+                            <input type="text" id="customerPaymentSearch" class="search-input" placeholder="ابحث عن دفعة عميل..." onkeyup="searchCustomerPayments()">
                             <button class="btn"><i class="fas fa-search"></i> بحث</button>
                             <button class="btn btn-success" onclick="openAddCustomerPaymentModal()"><i class="fas fa-money-bill"></i> إضافة دفعة عميل</button>
                         </div>
@@ -1409,7 +1431,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات دفعات العملاء ديناميكيا -->
+                                <!-- سيتم ملء بيانات دفعات العملاء دیناميكيا -->
                             </tbody>
                         </table>
                     </div>
@@ -1419,7 +1441,7 @@
                 <div class="tab-content" id="supplierPaymentsTab">
                     <div class="search-container">
                         <div class="search-box">
-                            <input type="text" id="supplierPaymentSearch" class="search-input" placeholder="ابحث عن دفعة مورد...">
+                            <input type="text" id="supplierPaymentSearch" class="search-input" placeholder="ابحث عن دفعة مورد..." onkeyup="searchSupplierPayments()">
                             <button class="btn"><i class="fas fa-search"></i> بحث</button>
                             <button class="btn btn-success" onclick="openAddSupplierPaymentModal()"><i class="fas fa-money-bill"></i> إضافة دفعة مورد</button>
                         </div>
@@ -1449,7 +1471,7 @@
                 <div class="tab-content" id="expensesTab">
                     <div class="search-container">
                         <div class="search-box">
-                            <input type="text" id="expenseSearch" class="search-input" placeholder="ابحث عن مصروف...">
+                            <input type="text" id="expenseSearch" class="search-input" placeholder="ابحث عن مصروف..." onkeyup="searchExpenses()">
                             <button class="btn"><i class="fas fa-search"></i> بحث</button>
                             <button class="btn btn-success" onclick="openAddExpenseModal()"><i class="fas fa-money-bill"></i> إضافة مصروف</button>
                         </div>
@@ -1544,7 +1566,7 @@
                 <div class="tab-content active" id="usersTab">
                     <div class="search-container">
                         <div class="search-box">
-                            <input type="text" id="userSearch" class="search-input" placeholder="ابحث عن مستخدم...">
+                            <input type="text" id="userSearch" class="search-input" placeholder="ابحث عن مستخدم..." onkeyup="searchUsers()">
                             <button class="btn"><i class="fas fa-search"></i> بحث</button>
                             <button class="btn btn-success" onclick="openAddUserModal()"><i class="fas fa-user-plus"></i> إضافة مستخدم جديد</button>
                         </div>
@@ -1574,7 +1596,7 @@
                 <div class="tab-content" id="rolesTab">
                     <div class="search-container">
                         <div class="search-box">
-                            <input type="text" id="roleSearch" class="search-input" placeholder="ابحث عن صلاحية...">
+                            <input type="text" id="roleSearch" class="search-input" placeholder="ابحث عن صلاحية..." onkeyup="searchRoles()">
                             <button class="btn"><i class="fas fa-search"></i> بحث</button>
                             <button class="btn btn-success" onclick="openAddRoleModal()"><i class="fas fa-plus"></i> إضافة صلاحية جديدة</button>
                         </div>
@@ -1799,23 +1821,23 @@
             </div>
             <form id="addProductForm">
                 <div class="form-group">
-                    <label>اسم المنتج</label>
+                    <label>اسم المنتج *</label>
                     <input type="text" id="productName" class="form-control" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>سعر الشراء</label>
-                    <input type="number" id="purchasePrice" class="form-control" required>
+                    <label>سعر الشراء *</label>
+                    <input type="number" id="purchasePrice" class="form-control" required min="0">
                 </div>
                 
                 <div class="form-group">
-                    <label>سعر البيع</label>
-                    <input type="number" id="salePrice" class="form-control" required>
+                    <label>سعر البيع *</label>
+                    <input type="number" id="salePrice" class="form-control" required min="0">
                 </div>
                 
                 <div class="form-group">
-                    <label>الكمية</label>
-                    <input type="number" id="productQuantity" class="form-control" required>
+                    <label>الكمية *</label>
+                    <input type="number" id="productQuantity" class="form-control" required min="0">
                 </div>
                 
                 <div class="form-group">
@@ -1836,8 +1858,7 @@
                     <div class="color-suggestions" id="colorSuggestions">
                         <!-- سيتم ملء اقتراحات الألوان ديناميكيا -->
                     </div>
-                    <input type="text" id="productColor" class="form-control" placeholder="أدخل لون جديد (كود HEX)">
-                    <small style="color: #777;">اضغط على لون من القائمة أو أدخل كود HEX جديد</small>
+                    <input type="text" id="productColor" class="form-control" placeholder="#000000 (كود HEX)">
                 </div>
                 
                 <div class="form-group">
@@ -1856,6 +1877,300 @@
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button type="submit" class="btn btn-success" style="flex: 1;">إضافة المنتج</button>
                     <button type="button" class="btn btn-danger" style="flex: 1;" onclick="closeModal('addProductModal')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- نافذة إضافة عميل -->
+    <div class="modal" id="addCustomerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> إضافة عميل جديد</h3>
+                <button class="close-modal" onclick="closeModal('addCustomerModal')">&times;</button>
+            </div>
+            <form id="addCustomerForm">
+                <div class="form-group">
+                    <label>اسم العميل *</label>
+                    <input type="text" id="customerName" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>رقم الهاتف *</label>
+                    <input type="text" id="customerPhone" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="customerEmail" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>العنوان</label>
+                    <textarea id="customerAddress" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">إضافة العميل</button>
+                    <button type="button" class="btn btn-danger" style="flex: 1;" onclick="closeModal('addCustomerModal')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- نافذة إضافة مورد -->
+    <div class="modal" id="addSupplierModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-truck"></i> إضافة مورد جديد</h3>
+                <button class="close-modal" onclick="closeModal('addSupplierModal')">&times;</button>
+            </div>
+            <form id="addSupplierForm">
+                <div class="form-group">
+                    <label>اسم المورد *</label>
+                    <input type="text" id="supplierName" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>رقم الهاتف *</label>
+                    <input type="text" id="supplierPhone" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="supplierEmail" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>العنوان</label>
+                    <textarea id="supplierAddress" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">إضافة المورد</button>
+                    <button type="button" class="btn btn-danger" style="flex: 1;" onclick="closeModal('addSupplierModal')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- نافذة إضافة عملية شراء -->
+    <div class="modal" id="addPurchaseModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-shopping-cart"></i> عملية شراء جديدة</h3>
+                <button class="close-modal" onclick="closeModal('addPurchaseModal')">&times;</button>
+            </div>
+            <form id="addPurchaseForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>المورد *</label>
+                        <select id="purchaseSupplier" class="form-control" required>
+                            <option value="">اختر مورداً</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>التاريخ *</label>
+                        <input type="date" id="purchaseDate" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>طريقة الدفع *</label>
+                    <div style="display: flex; gap: 20px;">
+                        <label><input type="radio" name="purchasePaymentType" value="cash" checked> نقداً</label>
+                        <label><input type="radio" name="purchasePaymentType" value="credit"> بالدين</label>
+                    </div>
+                </div>
+                
+                <div class="search-container" style="margin-top: 20px;">
+                    <h4>إضافة منتجات للشراء</h4>
+                    <div class="search-box">
+                        <input type="text" id="purchaseProductSearch" class="search-input" placeholder="ابحث عن منتج..." onkeyup="searchPurchaseProducts()">
+                        <button type="button" class="btn" onclick="addProductToPurchase()"><i class="fas fa-plus"></i> إضافة</button>
+                    </div>
+                </div>
+                
+                <div class="table-container" style="max-height: 300px; overflow-y: auto;">
+                    <table id="purchaseItemsTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>المنتج</th>
+                                <th>الكمية</th>
+                                <th>سعر الشراء</th>
+                                <th>الإجمالي</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="purchaseItems">
+                            <!-- سيتم ملء عناصر الشراء هنا -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 10px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="font-size: 18px; font-weight: bold;">المجموع:</span>
+                        <span style="font-size: 20px; font-weight: bold;" id="purchaseTotal">0 د.ع</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>ملاحظات</label>
+                    <textarea id="purchaseNotes" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">حفظ عملية الشراء</button>
+                    <button type="button" class="btn btn-danger" style="flex: 1;" onclick="closeModal('addPurchaseModal')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- نافذة إضافة دفعة عميل -->
+    <div class="modal" id="addCustomerPaymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-money-bill"></i> إضافة دفعة عميل</h3>
+                <button class="close-modal" onclick="closeModal('addCustomerPaymentModal')">&times;</button>
+            </div>
+            <form id="addCustomerPaymentForm">
+                <div class="form-group">
+                    <label>العميل *</label>
+                    <select id="paymentCustomer" class="form-control" required>
+                        <option value="">اختر عميلاً</option>
+                    </select>
+                    <div id="customerDebtInfo" style="margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 5px; display: none;">
+                        <span>الديون الحالية: <span id="customerCurrentDebt">0</span> د.ع</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>المبلغ *</label>
+                    <input type="number" id="paymentAmount" class="form-control" required min="1">
+                </div>
+                
+                <div class="form-group">
+                    <label>التاريخ *</label>
+                    <input type="date" id="paymentDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>طريقة الدفع</label>
+                    <select id="paymentMethod" class="form-control">
+                        <option value="نقدي">نقدي</option>
+                        <option value="تحويل بنكي">تحويل بنكي</option>
+                        <option value="بطاقة ائتمان">بطاقة ائتمان</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>ملاحظات</label>
+                    <textarea id="paymentNotes" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">حفظ الدفعة</button>
+                    <button type="button" class="btn btn-danger" style="flex: 1;" onclick="closeModal('addCustomerPaymentModal')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- نافذة إضافة مصروف -->
+    <div class="modal" id="addExpenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-money-bill-wave"></i> إضافة مصروف</h3>
+                <button class="close-modal" onclick="closeModal('addExpenseModal')">&times;</button>
+            </div>
+            <form id="addExpenseForm">
+                <div class="form-group">
+                    <label>نوع المصروف *</label>
+                    <select id="expenseType" class="form-control" required>
+                        <option value="">اختر نوع المصروف</option>
+                        <option value="إيجار">إيجار</option>
+                        <option value="مرتبات">مرتبات</option>
+                        <option value="كهرباء">كهرباء</option>
+                        <option value="ماء">ماء</option>
+                        <option value="اتصالات">اتصالات</option>
+                        <option value="نقل">نقل</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>المبلغ *</label>
+                    <input type="number" id="expenseAmount" class="form-control" required min="1">
+                </div>
+                
+                <div class="form-group">
+                    <label>التاريخ *</label>
+                    <input type="date" id="expenseDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>المستلم</label>
+                    <input type="text" id="expenseRecipient" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>ملاحظات</label>
+                    <textarea id="expenseNotes" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">حفظ المصروف</button>
+                    <button type="button" class="btn btn-danger" style="flex: 1;" onclick="closeModal('addExpenseModal')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- نافذة إضافة مستخدم -->
+    <div class="modal" id="addUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> إضافة مستخدم جديد</h3>
+                <button class="close-modal" onclick="closeModal('addUserModal')">&times;</button>
+            </div>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label>اسم المستخدم *</label>
+                    <input type="text" id="newUsername" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>الاسم الكامل *</label>
+                    <input type="text" id="newFullName" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>كلمة المرور *</label>
+                    <input type="password" id="newUserPassword" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>تأكيد كلمة المرور *</label>
+                    <input type="password" id="confirmUserPassword" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>الدور *</label>
+                    <select id="userRole" class="form-control" required>
+                        <option value="">اختر دوراً</option>
+                        <option value="مدير">مدير</option>
+                        <option value="موظف">موظف</option>
+                        <option value="مشرف">مشرف</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">إضافة المستخدم</button>
+                    <button type="button" class="btn btn-danger" style="flex: 1;" onclick="closeModal('addUserModal')">إلغاء</button>
                 </div>
             </form>
         </div>
@@ -1946,7 +2261,7 @@
             </div>
             
             <div class="tab-content" id="supplierPurchasesTab">
-                <!-- سيتم ملء مشتريات المورد دينامیکيا -->
+                <!-- سيتم ملء مشتريات المورد ديناميكيا -->
             </div>
             
             <div class="tab-content" id="supplierPaymentsTab">
@@ -1955,6 +2270,23 @@
             
             <div class="tab-content" id="supplierReportTab">
                 <!-- سيتم ملء تقرير المورد ديناميكيا -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- نافذة تأكيد الحذف -->
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content confirmation-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> تأكيد الحذف</h3>
+                <button class="close-modal" onclick="closeModal('confirmationModal')">&times;</button>
+            </div>
+            <div>
+                <p id="confirmationMessage">هل أنت متأكد من حذف هذا العنصر؟</p>
+                <div class="confirmation-buttons">
+                    <button class="btn btn-danger" id="confirmDeleteButton">نعم، احذف</button>
+                    <button class="btn btn-secondary" onclick="closeModal('confirmationModal')">إلغاء</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1974,13 +2306,13 @@
                 { id: 6, name: "تابلت سامسونج تاب S8", purchasePrice: 750000, salePrice: 950000, quantity: 60, type: "تابلت", color: "#808080", barcode: "123456789017", image: "tablet" }
             ],
             customers: [
-                { id: 1, name: "أحمد محمد", phone: "07701234567", email: "ahmed@example.com", address: "بغداد", totalPurchases: 1250000, debt: 150000, previousDebt: 0 },
-                { id: 2, name: "سارة علي", phone: "07702345678", email: "sara@example.com", address: "البصرة", totalPurchases: 850000, debt: 0, previousDebt: 0 },
-                { id: 3, name: "عمر خالد", phone: "07703456789", email: "omar@example.com", address: "الموصل", totalPurchases: 2100000, debt: 300000, previousDebt: 50000 }
+                { id: 1, name: "أحمد محمد", phone: "07701234567", email: "ahmed@example.com", address: "بغداد", totalPurchases: 1250000, debt: 150000, previousDebt: 0, createdAt: "2023-01-15" },
+                { id: 2, name: "سارة علي", phone: "07702345678", email: "sara@example.com", address: "البصرة", totalPurchases: 850000, debt: 0, previousDebt: 0, createdAt: "2023-02-20" },
+                { id: 3, name: "عمر خالد", phone: "07703456789", email: "omar@example.com", address: "الموصل", totalPurchases: 2100000, debt: 300000, previousDebt: 50000, createdAt: "2023-03-10" }
             ],
             suppliers: [
-                { id: 1, name: "شركة الإلكترونيات المتقدمة", phone: "07704567890", email: "info@advanced.com", address: "بغداد", totalPurchases: 5000000, debt: 250000, previousDebt: 0 },
-                { id: 2, name: "مورد الأجهزة الذكية", phone: "07705678901", email: "contact@smartdevices.com", address: "أربيل", totalPurchases: 3200000, debt: 0, previousDebt: 0 }
+                { id: 1, name: "شركة الإلكترونيات المتقدمة", phone: "07704567890", email: "info@advanced.com", address: "بغداد", totalPurchases: 5000000, debt: 250000, previousDebt: 0, createdAt: "2023-01-01" },
+                { id: 2, name: "مورد الأجهزة الذكية", phone: "07705678901", email: "contact@smartdevices.com", address: "أربيل", totalPurchases: 3200000, debt: 0, previousDebt: 0, createdAt: "2023-02-15" }
             ],
             invoices: [],
             purchases: [],
@@ -2023,6 +2355,9 @@
         let cart = [];
         let currentCustomerId = null;
         let invoiceCounter = 1;
+        let purchaseItems = [];
+        let currentEditItem = null;
+        let deleteCallback = null;
 
         // تسجيل الدخول
         loginForm.addEventListener('submit', function(e) {
@@ -2040,19 +2375,23 @@
                 
                 // تحميل بيانات النظام
                 loadSystemData();
+                showNotification('تم تسجيل الدخول بنجاح!', 'success');
             } else {
-                alert('اسم المستخدم أو كلمة المرور غير صحيحة');
+                showNotification('اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
             }
         });
         
         // تسجيل الخروج
         logoutBtn.addEventListener('click', function() {
-            mainSystem.style.display = 'none';
-            loginPage.style.display = 'flex';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            cart = [];
-            currentCustomerId = null;
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                mainSystem.style.display = 'none';
+                loginPage.style.display = 'flex';
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                cart = [];
+                currentCustomerId = null;
+                showNotification('تم تسجيل الخروج بنجاح', 'success');
+            }
         });
         
         // تبديل القائمة الجانبية على الأجهزة الصغيرة
@@ -2077,6 +2416,11 @@
                 // إظهار القسم المختار
                 const sectionId = this.getAttribute('data-section');
                 document.getElementById(sectionId).classList.add('active');
+                
+                // تحديث البيانات عند التبديل بين الأقسام
+                if (sectionId === 'dashboard') {
+                    updateDashboardStats();
+                }
                 
                 // إغلاق القائمة الجانبية على الأجهزة الصغيرة
                 if (window.innerWidth <= 992) {
@@ -2105,14 +2449,23 @@
             // تحميل المشتريات
             loadPurchases();
             
-            // تحميل أحدث الفواتير في لوحة التحكم
-            loadRecentInvoices();
+            // تحميل الدفعات
+            loadCustomerPayments();
             
-            // تحميل إعدادات الطباعة
-            loadPrintSettings();
+            // تحميل المصروفات
+            loadExpenses();
             
-            // تحميل اقتراحات الألوان
-            loadColorSuggestions();
+            // تحميل المستخدمين
+            loadUsers();
+            
+            // تحميل الصلاحيات
+            loadRoles();
+            
+            // تحميل النسخ الاحتياطية
+            loadBackups();
+            
+            // تحديث إحصائيات لوحة التحكم
+            updateDashboardStats();
             
             // إضافة أحداث للتبويبات
             setupTabs();
@@ -2122,6 +2475,15 @@
             
             // إضافة أحداث للطباعة
             setupPrintEvents();
+            
+            // إعداد تواريخ افتراضية
+            setupDefaultDates();
+            
+            // تحميل اقتراحات الألوان
+            loadColorSuggestions();
+            
+            // تحميل إعدادات الطباعة
+            loadPrintSettings();
         }
         
         // تحميل المنتجات
@@ -2138,6 +2500,7 @@
                         <div class="product-name">${product.name}</div>
                         <div class="product-type" style="font-size: 14px; color: #777; margin-bottom: 10px;">${product.type}</div>
                         <div class="product-price">${product.salePrice.toLocaleString()} د.ع</div>
+                        <div style="font-size: 12px; color: #777; margin-bottom: 10px;">المخزون: ${product.quantity}</div>
                         <button class="btn" style="padding: 8px 15px; font-size: 14px;" onclick="addToCart(${product.id})">
                             <i class="fas fa-cart-plus"></i> إضافة للسلة
                         </button>
@@ -2165,7 +2528,7 @@
                     <td>
                         <div class="action-buttons">
                             <button class="btn-small btn-edit" onclick="editProduct(${product.id})"><i class="fas fa-edit"></i></button>
-                            <button class="btn-small btn-delete" onclick="deleteProduct(${product.id})"><i class="fas fa-trash"></i></button>
+                            <button class="btn-small btn-delete" onclick="confirmDelete('product', ${product.id})"><i class="fas fa-trash"></i></button>
                             <button class="btn-small btn-print" onclick="openPrintBarcodeModal(${product.id})"><i class="fas fa-barcode"></i></button>
                         </div>
                     </td>
@@ -2185,13 +2548,13 @@
                         <td>${index + 1}</td>
                         <td>${customer.name}</td>
                         <td>${customer.phone}</td>
-                        <td>${customer.email}</td>
+                        <td>${customer.email || '-'}</td>
                         <td>${customer.totalPurchases.toLocaleString()} د.ع</td>
                         <td>${customer.debt.toLocaleString()} د.ع</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="btn-small btn-edit" onclick="editCustomer(${customer.id})"><i class="fas fa-edit"></i></button>
-                                <button class="btn-small btn-delete" onclick="deleteCustomer(${customer.id})"><i class="fas fa-trash"></i></button>
+                                <button class="btn-small btn-delete" onclick="confirmDelete('customer', ${customer.id})"><i class="fas fa-trash"></i></button>
                                 <button class="btn-small btn-view" onclick="openCustomerDetailsModal(${customer.id})"><i class="fas fa-eye"></i></button>
                             </div>
                         </td>
@@ -2199,6 +2562,9 @@
                     customersTable.appendChild(row);
                 });
             }
+            
+            // تحديث إحصائيات العملاء
+            document.getElementById('totalCustomers').textContent = systemData.customers.length;
         }
         
         // تحميل الموردين
@@ -2212,13 +2578,13 @@
                         <td>${index + 1}</td>
                         <td>${supplier.name}</td>
                         <td>${supplier.phone}</td>
-                        <td>${supplier.email}</td>
+                        <td>${supplier.email || '-'}</td>
                         <td>${supplier.totalPurchases.toLocaleString()} د.ع</td>
                         <td>${supplier.debt.toLocaleString()} د.ع</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="btn-small btn-edit" onclick="editSupplier(${supplier.id})"><i class="fas fa-edit"></i></button>
-                                <button class="btn-small btn-delete" onclick="deleteSupplier(${supplier.id})"><i class="fas fa-trash"></i></button>
+                                <button class="btn-small btn-delete" onclick="confirmDelete('supplier', ${supplier.id})"><i class="fas fa-trash"></i></button>
                                 <button class="btn-small btn-view" onclick="openSupplierDetailsModal(${supplier.id})"><i class="fas fa-eye"></i></button>
                             </div>
                         </td>
@@ -2231,6 +2597,8 @@
         // تحميل الفواتير
         function loadInvoices() {
             const invoicesTable = document.querySelector('#invoicesTable tbody');
+            const recentInvoices = document.getElementById('recentInvoices');
+            
             if (invoicesTable) {
                 invoicesTable.innerHTML = '';
                 systemData.invoices.forEach((invoice, index) => {
@@ -2245,13 +2613,37 @@
                         <td><span style="padding: 5px 10px; border-radius: 20px; background: #4CAF50; color: white;">مكتمل</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn-small btn-view" onclick="viewInvoice(${invoice.id})"><i class="fas fa-eye"></i></button>
-                                <button class="btn-small btn-print" onclick="printInvoice(${invoice.id})"><i class="fas fa-print"></i></button>
-                                <button class="btn-small btn-delete" onclick="deleteInvoice(${invoice.id})"><i class="fas fa-trash"></i></button>
+                                <button class="btn-small btn-view" onclick="viewInvoice('${invoice.id}')"><i class="fas fa-eye"></i></button>
+                                <button class="btn-small btn-print" onclick="printInvoice('${invoice.id}')"><i class="fas fa-print"></i></button>
+                                <button class="btn-small btn-delete" onclick="confirmDelete('invoice', '${invoice.id}')"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     `;
                     invoicesTable.appendChild(row);
+                });
+            }
+            
+            // تحديث أحدث الفواتير
+            if (recentInvoices) {
+                recentInvoices.innerHTML = '';
+                const recent = systemData.invoices.slice(-5).reverse();
+                recent.forEach(invoice => {
+                    const customer = systemData.customers.find(c => c.id === invoice.customerId) || { name: "زائر" };
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${invoice.id}</td>
+                        <td>${invoice.date}</td>
+                        <td>${customer.name}</td>
+                        <td>${invoice.total.toLocaleString()} د.ع</td>
+                        <td>${invoice.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-small btn-view" onclick="viewInvoice('${invoice.id}')"><i class="fas fa-eye"></i></button>
+                                <button class="btn-small btn-print" onclick="printInvoice('${invoice.id}')"><i class="fas fa-print"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    recentInvoices.appendChild(row);
                 });
             }
         }
@@ -2273,9 +2665,9 @@
                         <td><span style="padding: 5px 10px; border-radius: 20px; background: #4CAF50; color: white;">مكتمل</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn-small btn-view" onclick="viewPurchase(${purchase.id})"><i class="fas fa-eye"></i></button>
-                                <button class="btn-small btn-print" onclick="printPurchase(${purchase.id})"><i class="fas fa-print"></i></button>
-                                <button class="btn-small btn-delete" onclick="deletePurchase(${purchase.id})"><i class="fas fa-trash"></i></button>
+                                <button class="btn-small btn-view" onclick="viewPurchase('${purchase.id}')"><i class="fas fa-eye"></i></button>
+                                <button class="btn-small btn-print" onclick="printPurchase('${purchase.id}')"><i class="fas fa-print"></i></button>
+                                <button class="btn-small btn-delete" onclick="confirmDelete('purchase', '${purchase.id}')"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     `;
@@ -2284,30 +2676,116 @@
             }
         }
         
-        // تحميل أحدث الفواتير
-        function loadRecentInvoices() {
-            const recentInvoices = document.getElementById('recentInvoices');
-            if (recentInvoices) {
-                recentInvoices.innerHTML = '';
-                const recent = systemData.invoices.slice(-5).reverse();
-                recent.forEach(invoice => {
-                    const customer = systemData.customers.find(c => c.id === invoice.customerId) || { name: "زائر" };
+        // تحميل دفعات العملاء
+        function loadCustomerPayments() {
+            const customerPaymentsTable = document.querySelector('#customerPaymentsTable tbody');
+            if (customerPaymentsTable) {
+                customerPaymentsTable.innerHTML = '';
+                systemData.customerPayments.forEach((payment, index) => {
+                    const customer = systemData.customers.find(c => c.id === payment.customerId) || { name: "غير معروف" };
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${invoice.id}</td>
-                        <td>${invoice.date}</td>
+                        <td>${index + 1}</td>
                         <td>${customer.name}</td>
-                        <td>${invoice.total.toLocaleString()} د.ع</td>
-                        <td>${invoice.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</td>
+                        <td>${payment.amount.toLocaleString()} د.ع</td>
+                        <td>${payment.date}</td>
+                        <td>${payment.method}</td>
+                        <td>${payment.notes || '-'}</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn-small btn-view" onclick="viewInvoice(${invoice.id})"><i class="fas fa-eye"></i></button>
-                                <button class="btn-small btn-print" onclick="printInvoice(${invoice.id})"><i class="fas fa-print"></i></button>
+                                <button class="btn-small btn-edit" onclick="editCustomerPayment(${payment.id})"><i class="fas fa-edit"></i></button>
+                                <button class="btn-small btn-delete" onclick="confirmDelete('customerPayment', ${payment.id})"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     `;
-                    recentInvoices.appendChild(row);
+                    customerPaymentsTable.appendChild(row);
                 });
+            }
+        }
+        
+        // تحميل المصروفات
+        function loadExpenses() {
+            const expensesTable = document.querySelector('#expensesTable tbody');
+            if (expensesTable) {
+                expensesTable.innerHTML = '';
+                systemData.expenses.forEach((expense, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${expense.type}</td>
+                        <td>${expense.amount.toLocaleString()} د.ع</td>
+                        <td>${expense.date}</td>
+                        <td>${expense.recipient || '-'}</td>
+                        <td>${expense.notes || '-'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-small btn-edit" onclick="editExpense(${expense.id})"><i class="fas fa-edit"></i></button>
+                                <button class="btn-small btn-delete" onclick="confirmDelete('expense', ${expense.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    expensesTable.appendChild(row);
+                });
+            }
+        }
+        
+        // تحميل المستخدمين
+        function loadUsers() {
+            const usersTable = document.querySelector('#usersTable tbody');
+            if (usersTable) {
+                usersTable.innerHTML = '';
+                systemData.users.forEach((user, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${user.username}</td>
+                        <td>${user.fullName}</td>
+                        <td>${user.role}</td>
+                        <td>${user.createdAt}</td>
+                        <td>${user.active ? '<span style="color: green;">نشط</span>' : '<span style="color: red;">غير نشط</span>'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-small btn-edit" onclick="editUser(${user.id})"><i class="fas fa-edit"></i></button>
+                                <button class="btn-small btn-delete" onclick="confirmDelete('user', ${user.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    usersTable.appendChild(row);
+                });
+            }
+        }
+        
+        // تحميل الصلاحيات
+        function loadRoles() {
+            const rolesTable = document.querySelector('#rolesTable tbody');
+            if (rolesTable) {
+                rolesTable.innerHTML = '';
+                const roles = ['مدير', 'موظف', 'مشرف'];
+                roles.forEach((role, index) => {
+                    const userCount = systemData.users.filter(u => u.role === role).length;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${role}</td>
+                        <td>${userCount}</td>
+                        <td>${getRoleDescription(role)}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-small btn-edit" onclick="editRole('${role}')"><i class="fas fa-edit"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    rolesTable.appendChild(row);
+                });
+            }
+        }
+        
+        // تحميل النسخ الاحتياطية
+        function loadBackups() {
+            const backupsTable = document.querySelector('#backupsTable tbody');
+            if (backupsTable) {
+                backupsTable.innerHTML = '';
+                // يمكن إضافة منطق لتحميل النسخ الاحتياطية الفعلية هنا
             }
         }
         
@@ -2392,6 +2870,16 @@
             });
         }
         
+        // إعداد التواريخ الافتراضية
+        function setupDefaultDates() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('creditDueDate').value = today;
+            document.getElementById('reportDate').value = today;
+            document.getElementById('purchaseDate').value = today;
+            document.getElementById('paymentDate').value = today;
+            document.getElementById('expenseDate').value = today;
+        }
+        
         // البحث عن المنتجات
         function searchProducts() {
             const searchTerm = document.getElementById('productSearch').value.toLowerCase();
@@ -2425,18 +2913,26 @@
             );
             
             suggestions.innerHTML = '';
-            filteredCustomers.forEach(customer => {
+            if (filteredCustomers.length === 0) {
                 const suggestion = document.createElement('div');
                 suggestion.style.padding = '10px';
-                suggestion.style.cursor = 'pointer';
-                suggestion.style.borderBottom = '1px solid #eee';
-                suggestion.innerHTML = `${customer.name} - ${customer.phone}`;
-                suggestion.onclick = function() {
-                    selectCustomer(customer.id);
-                    suggestions.style.display = 'none';
-                };
+                suggestion.style.color = '#777';
+                suggestion.innerHTML = 'لا توجد نتائج';
                 suggestions.appendChild(suggestion);
-            });
+            } else {
+                filteredCustomers.forEach(customer => {
+                    const suggestion = document.createElement('div');
+                    suggestion.style.padding = '10px';
+                    suggestion.style.cursor = 'pointer';
+                    suggestion.style.borderBottom = '1px solid #eee';
+                    suggestion.innerHTML = `${customer.name} - ${customer.phone}`;
+                    suggestion.onclick = function() {
+                        selectCustomer(customer.id);
+                        suggestions.style.display = 'none';
+                    };
+                    suggestions.appendChild(suggestion);
+                });
+            }
             
             suggestions.style.display = 'block';
         }
@@ -2446,21 +2942,25 @@
             currentCustomerId = customerId;
             const customer = systemData.customers.find(c => c.id === customerId);
             
-            document.getElementById('customerSearch').value = customer.name;
-            document.getElementById('selectedCustomerName').textContent = customer.name;
-            document.getElementById('customerPreviousDebt').textContent = customer.debt.toLocaleString();
-            
-            document.getElementById('selectedCustomerInfo').style.display = 'block';
+            if (customer) {
+                document.getElementById('customerSearch').value = customer.name;
+                document.getElementById('selectedCustomerName').textContent = customer.name;
+                document.getElementById('customerPreviousDebt').textContent = customer.debt.toLocaleString();
+                document.getElementById('selectedCustomerInfo').style.display = 'block';
+            }
         }
         
         // إضافة منتج للسلة
         window.addToCart = function(productId) {
             const product = systemData.products.find(p => p.id === productId);
-            if (!product) return;
+            if (!product) {
+                showNotification('المنتج غير موجود', 'error');
+                return;
+            }
             
             // التحقق من توفر المنتج
             if (product.quantity <= 0) {
-                alert('المنتج غير متوفر في المخزون');
+                showNotification('المنتج غير متوفر في المخزون', 'error');
                 return;
             }
             
@@ -2468,7 +2968,11 @@
             const existingItem = cart.find(item => item.productId === productId);
             
             if (existingItem) {
-                // زيادة الكمية إذا المنتج موجود
+                // التحقق من توفر الكمية
+                if (existingItem.quantity + 1 > product.quantity) {
+                    showNotification(`الكمية المتاحة: ${product.quantity}`, 'error');
+                    return;
+                }
                 existingItem.quantity += 1;
             } else {
                 // إضافة منتج جديد للسلة
@@ -2483,11 +2987,23 @@
             
             updateCartDisplay();
             updateInvoiceSummary();
+            showNotification('تمت إضافة المنتج إلى السلة', 'success');
         };
         
         // تحديث عرض السلة
         function updateCartDisplay() {
             cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" style="text-align: center; padding: 30px; color: #777;">
+                        السلة فارغة
+                    </td>
+                `;
+                cartItems.appendChild(row);
+                return;
+            }
             
             cart.forEach((item, index) => {
                 const product = systemData.products.find(p => p.id === item.productId);
@@ -2526,7 +3042,7 @@
             if (item.quantity + change <= 0) {
                 removeFromCart(productId);
             } else if (item.quantity + change > product.quantity) {
-                alert(`الكمية المتاحة في المخزون: ${product.quantity}`);
+                showNotification(`الكمية المتاحة في المخزون: ${product.quantity}`, 'error');
             } else {
                 item.quantity += change;
                 updateCartDisplay();
@@ -2545,7 +3061,7 @@
                 const product = systemData.products.find(p => p.id === productId);
                 
                 if (parseInt(newQuantity) > product.quantity) {
-                    alert(`الكمية المتاحة في المخزون: ${product.quantity}`);
+                    showNotification(`الكمية المتاحة في المخزون: ${product.quantity}`, 'error');
                 } else {
                     item.quantity = parseInt(newQuantity);
                     updateCartDisplay();
@@ -2559,10 +3075,16 @@
             cart = cart.filter(item => item.productId !== productId);
             updateCartDisplay();
             updateInvoiceSummary();
+            showNotification('تمت إزالة المنتج من السلة', 'success');
         };
         
         // تفريغ السلة
         window.clearCart = function() {
+            if (cart.length === 0) {
+                showNotification('السلة فارغة بالفعل', 'warning');
+                return;
+            }
+            
             if (confirm('هل أنت متأكد من تفريغ السلة؟')) {
                 cart = [];
                 updateCartDisplay();
@@ -2570,6 +3092,8 @@
                 currentCustomerId = null;
                 document.getElementById('customerSearch').value = '';
                 document.getElementById('selectedCustomerInfo').style.display = 'none';
+                document.getElementById('discountInput').value = '';
+                showNotification('تم تفريغ السلة بنجاح', 'success');
             }
         };
         
@@ -2594,14 +3118,18 @@
         
         // تطبيق خصم
         window.applyDiscount = function(percentage) {
-            let subtotal = 0;
+            if (cart.length === 0) {
+                showNotification('السلة فارغة', 'error');
+                return;
+            }
             
+            let subtotal = 0;
             cart.forEach(item => {
                 subtotal += item.price * item.quantity;
             });
             
             const discount = subtotal * (percentage / 100);
-            document.getElementById('discountInput').value = discount;
+            document.getElementById('discountInput').value = Math.round(discount);
             updateInvoiceSummary();
         };
         
@@ -2613,7 +3141,7 @@
         // إتمام عملية البيع
         window.completeSale = function() {
             if (cart.length === 0) {
-                alert('السلة فارغة. الرجاء إضافة منتجات قبل إتمام البيع.');
+                showNotification('السلة فارغة. الرجاء إضافة منتجات قبل إتمام البيع.', 'error');
                 return;
             }
             
@@ -2629,13 +3157,28 @@
             const tax = subtotal * 0.05;
             const total = subtotal - discount + tax;
             
+            // التحقق من توفر الكميات
+            for (const item of cart) {
+                const product = systemData.products.find(p => p.id === item.productId);
+                if (!product || product.quantity < item.quantity) {
+                    showNotification(`الكمية غير متوفرة للمنتج: ${item.name}`, 'error');
+                    return;
+                }
+            }
+            
             // إنشاء فاتورة
+            const invoiceId = `INV-${Date.now()}`;
             const invoice = {
-                id: `INV-${Date.now()}`,
+                id: invoiceId,
                 date: new Date().toLocaleDateString('ar-EG'),
                 time: new Date().toLocaleTimeString('ar-EG'),
                 customerId: currentCustomerId,
-                items: [...cart],
+                items: [...cart.map(item => ({
+                    productId: item.productId,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity
+                }))],
                 subtotal: subtotal,
                 discount: discount,
                 tax: tax,
@@ -2659,6 +3202,12 @@
                     customer.debt += total;
                     customer.totalPurchases += total;
                 }
+            } else if (currentCustomerId) {
+                // تحديث إجمالي المشتريات للعميل
+                const customer = systemData.customers.find(c => c.id === currentCustomerId);
+                if (customer) {
+                    customer.totalPurchases += total;
+                }
             }
             
             // إضافة الفاتورة إلى النظام
@@ -2671,9 +3220,9 @@
             if (systemData.settings.autoPrint) {
                 printSmallInvoice();
             } else if (systemData.settings.showPrintOptions) {
-                alert('تم إتمام البيع بنجاح. الرجاء اختيار خيار الطباعة.');
+                showNotification('تم إتمام البيع بنجاح. الرجاء اختيار خيار الطباعة.', 'success');
             } else {
-                alert('تم إتمام البيع بنجاح!');
+                showNotification('تم إتمام البيع بنجاح!', 'success');
             }
             
             // إعادة تعيين السلة
@@ -2689,15 +3238,27 @@
             loadInventory();
             loadCustomers();
             loadInvoices();
-            loadRecentInvoices();
+            updateDashboardStats();
         };
         
         // طباعة فاتورة صغيرة
         function printSmallInvoice() {
             if (cart.length === 0) {
-                alert('لا توجد فاتورة للطباعة');
+                showNotification('لا توجد فاتورة للطباعة', 'error');
                 return;
             }
+            
+            // حساب الإجمالي
+            let subtotal = 0;
+            cart.forEach(item => {
+                subtotal += item.price * item.quantity;
+            });
+            
+            const discount = parseFloat(document.getElementById('discountInput').value) || 0;
+            const tax = subtotal * 0.05;
+            const total = subtotal - discount + tax;
+            
+            const customer = currentCustomerId ? systemData.customers.find(c => c.id === currentCustomerId) : null;
             
             const printContent = `
                 <div class="small-invoice">
@@ -2705,6 +3266,7 @@
                         <h3>${systemData.settings.companyName}</h3>
                         <p>${systemData.settings.companyAddress}</p>
                         <p>${systemData.settings.companyPhone}</p>
+                        <hr style="margin: 10px 0;">
                     </div>
                     
                     <div style="border-bottom: 1px dashed #000; margin-bottom: 15px; padding-bottom: 10px;">
@@ -2713,31 +3275,32 @@
                         <p><strong>الوقت:</strong> ${new Date().toLocaleTimeString('ar-EG')}</p>
                     </div>
                     
-                    <table style="width: 100%; margin-bottom: 15px;">
+                    <table style="width: 100%; margin-bottom: 15px; font-size: 12px;">
                         <thead>
                             <tr>
-                                <th style="text-align: right; border-bottom: 1px solid #000;">المنتج</th>
-                                <th style="text-align: center; border-bottom: 1px solid #000;">الكمية</th>
-                                <th style="text-align: left; border-bottom: 1px solid #000;">السعر</th>
+                                <th style="text-align: right; border-bottom: 1px solid #000; padding: 5px;">المنتج</th>
+                                <th style="text-align: center; border-bottom: 1px solid #000; padding: 5px;">الكمية</th>
+                                <th style="text-align: left; border-bottom: 1px solid #000; padding: 5px;">السعر</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${cart.map(item => `
                                 <tr>
-                                    <td style="text-align: right;">${item.name}</td>
-                                    <td style="text-align: center;">${item.quantity}</td>
-                                    <td style="text-align: left;">${item.price.toLocaleString()} د.ع</td>
+                                    <td style="text-align: right; padding: 5px;">${item.name}</td>
+                                    <td style="text-align: center; padding: 5px;">${item.quantity}</td>
+                                    <td style="text-align: left; padding: 5px;">${item.price.toLocaleString()}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
                     
-                    <div style="border-top: 1px dashed #000; padding-top: 10px; margin-bottom: 15px;">
-                        ${currentCustomerId ? `<p><strong>العميل:</strong> ${systemData.customers.find(c => c.id === currentCustomerId).name}</p>` : ''}
-                        <p><strong>الإجمالي:</strong> ${document.getElementById('totalAmount').textContent}</p>
+                    <div style="border-top: 1px dashed #000; padding-top: 10px; margin-bottom: 15px; font-size: 12px;">
+                        ${customer ? `<p><strong>العميل:</strong> ${customer.name}</p>` : ''}
+                        <p><strong>الإجمالي:</strong> ${total.toLocaleString()} د.ع</p>
+                        <p><strong>طريقة الدفع:</strong> ${document.querySelector('input[name="paymentType"]:checked').value === 'cash' ? 'نقداً' : 'بالدين'}</p>
                     </div>
                     
-                    <div style="text-align: center; font-size: 12px; color: #777;">
+                    <div style="text-align: center; font-size: 11px; color: #777;">
                         <p>${systemData.settings.invoiceFooter}</p>
                         <p>شكراً لتعاملكم معنا</p>
                     </div>
@@ -2750,7 +3313,12 @@
                     <head>
                         <title>طباعة الفاتورة</title>
                         <style>
-                            body { font-family: Arial, sans-serif; direction: rtl; }
+                            body { 
+                                font-family: Arial, sans-serif; 
+                                direction: rtl; 
+                                margin: 0;
+                                padding: 10px;
+                            }
                             @media print {
                                 body { margin: 0; padding: 0; }
                             }
@@ -2775,7 +3343,7 @@
         // فتح نافذة طباعة A4
         function openPrintA4Modal() {
             if (cart.length === 0) {
-                alert('لا توجد فاتورة للطباعة');
+                showNotification('لا توجد فاتورة للطباعة', 'error');
                 return;
             }
             
@@ -2784,6 +3352,7 @@
             const discount = parseFloat(document.getElementById('discountInput').value) || 0;
             const tax = subtotal * 0.05;
             const total = subtotal - discount + tax;
+            const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
             
             const invoiceContent = document.getElementById('a4InvoiceContent');
             invoiceContent.innerHTML = `
@@ -2810,7 +3379,7 @@
                             <h3>معلومات العميل</h3>
                             <p><strong>الاسم:</strong> ${customer.name}</p>
                             <p><strong>الهاتف:</strong> ${customer.phone}</p>
-                            <p><strong>البريد:</strong> ${customer.email}</p>
+                            ${customer.email ? `<p><strong>البريد:</strong> ${customer.email}</p>` : ''}
                             <p><strong>الديون السابقة:</strong> ${customer.debt.toLocaleString()} د.ع</p>
                         ` : '<h3>زبون نقدي</h3>'}
                     </div>
@@ -2866,8 +3435,8 @@
                 <div style="border-top: 2px solid #eee; padding-top: 20px; margin-top: 40px;">
                     <div style="display: flex; justify-content: space-between;">
                         <div>
-                            <p><strong>طريقة الدفع:</strong> ${document.querySelector('input[name="paymentType"]:checked').value === 'cash' ? 'نقداً' : 'بالدين'}</p>
-                            ${customer && document.querySelector('input[name="paymentType"]:checked').value === 'credit' ? `
+                            <p><strong>طريقة الدفع:</strong> ${paymentType === 'cash' ? 'نقداً' : 'بالدين'}</p>
+                            ${customer && paymentType === 'credit' ? `
                                 <p><strong>الديون الجديدة:</strong> ${total.toLocaleString()} د.ع</p>
                                 <p><strong>إجمالي الديون:</strong> ${(customer.debt + total).toLocaleString()} د.ع</p>
                             ` : ''}
@@ -2931,6 +3500,19 @@
         // فتح نافذة إضافة منتج
         window.openAddProductModal = function() {
             document.getElementById('addProductForm').reset();
+            document.getElementById('productColor').value = '#000000';
+            currentEditItem = null;
+            
+            // توليد باركود تلقائياً إذا كان الإعداد مفعلاً
+            if (systemData.settings.autoGenerateBarcode) {
+                generateBarcode();
+            }
+            
+            // تغيير النص على الزر
+            const submitBtn = document.querySelector('#addProductForm button[type="submit"]');
+            submitBtn.textContent = 'إضافة المنتج';
+            submitBtn.onclick = null;
+            
             openModal('addProductModal');
         };
         
@@ -2944,41 +3526,86 @@
         document.getElementById('addProductForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const newProduct = {
-                id: systemData.products.length + 1,
-                name: document.getElementById('productName').value,
-                purchasePrice: parseFloat(document.getElementById('purchasePrice').value),
-                salePrice: parseFloat(document.getElementById('salePrice').value),
-                quantity: parseInt(document.getElementById('productQuantity').value),
-                type: document.getElementById('productType').value,
-                color: document.getElementById('productColor').value || '#000000',
-                barcode: document.getElementById('productBarcode').value || Math.floor(100000000000 + Math.random() * 900000000000).toString(),
-                image: 'box' // افتراضي
-            };
+            const productName = document.getElementById('productName').value.trim();
+            const purchasePrice = parseFloat(document.getElementById('purchasePrice').value);
+            const salePrice = parseFloat(document.getElementById('salePrice').value);
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+            const type = document.getElementById('productType').value;
+            const color = document.getElementById('productColor').value || '#000000';
+            const barcode = document.getElementById('productBarcode').value.trim();
             
-            // إضافة اللون الجديد إلى الاقتراحات إذا لم يكن موجوداً
-            if (newProduct.color && !systemData.colorSuggestions.includes(newProduct.color)) {
-                systemData.colorSuggestions.push(newProduct.color);
+            // التحقق من صحة البيانات
+            if (!productName || purchasePrice <= 0 || salePrice <= 0 || quantity < 0) {
+                showNotification('الرجاء ملء جميع الحقول المطلوبة بشكل صحيح', 'error');
+                return;
             }
             
-            systemData.products.push(newProduct);
+            if (salePrice < purchasePrice) {
+                showNotification('سعر البيع يجب أن يكون أكبر من أو يساوي سعر الشراء', 'error');
+                return;
+            }
+            
+            if (currentEditItem) {
+                // تحديث المنتج الموجود
+                const productIndex = systemData.products.findIndex(p => p.id === currentEditItem);
+                if (productIndex !== -1) {
+                    systemData.products[productIndex] = {
+                        ...systemData.products[productIndex],
+                        name: productName,
+                        purchasePrice: purchasePrice,
+                        salePrice: salePrice,
+                        quantity: quantity,
+                        type: type,
+                        color: color,
+                        barcode: barcode || systemData.products[productIndex].barcode
+                    };
+                    showNotification('تم تحديث المنتج بنجاح!', 'success');
+                }
+            } else {
+                // إضافة منتج جديد
+                const newProduct = {
+                    id: systemData.products.length > 0 ? Math.max(...systemData.products.map(p => p.id)) + 1 : 1,
+                    name: productName,
+                    purchasePrice: purchasePrice,
+                    salePrice: salePrice,
+                    quantity: quantity,
+                    type: type,
+                    color: color,
+                    barcode: barcode || Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+                    image: 'box'
+                };
+                
+                // إضافة اللون الجديد إلى الاقتراحات إذا لم يكن موجوداً
+                if (color && !systemData.colorSuggestions.includes(color)) {
+                    systemData.colorSuggestions.push(color);
+                }
+                
+                systemData.products.push(newProduct);
+                showNotification('تم إضافة المنتج بنجاح!', 'success');
+            }
+            
             saveSystemData();
             
             // تحديث العرض
             loadProducts();
             loadInventory();
             loadColorSuggestions();
+            updateDashboardStats();
             
             closeModal('addProductModal');
-            alert('تم إضافة المنتج بنجاح!');
         });
         
         // تعديل منتج
         window.editProduct = function(productId) {
             const product = systemData.products.find(p => p.id === productId);
-            if (!product) return;
+            if (!product) {
+                showNotification('المنتج غير موجود', 'error');
+                return;
+            }
             
-            // فتح نافذة التعديل
+            currentEditItem = productId;
+            
+            // تعبئة البيانات في النموذج
             document.getElementById('productName').value = product.name;
             document.getElementById('purchasePrice').value = product.purchasePrice;
             document.getElementById('salePrice').value = product.salePrice;
@@ -2990,56 +3617,31 @@
             // تغيير النص على الزر
             const submitBtn = document.querySelector('#addProductForm button[type="submit"]');
             submitBtn.textContent = 'تحديث المنتج';
-            submitBtn.onclick = function(e) {
-                e.preventDefault();
-                updateProduct(productId);
-            };
             
             openModal('addProductModal');
         };
         
-        // تحديث المنتج
-        function updateProduct(productId) {
+        // حذف منتج
+        function deleteProduct(productId) {
             const productIndex = systemData.products.findIndex(p => p.id === productId);
             if (productIndex === -1) return;
             
-            systemData.products[productIndex] = {
-                ...systemData.products[productIndex],
-                name: document.getElementById('productName').value,
-                purchasePrice: parseFloat(document.getElementById('purchasePrice').value),
-                salePrice: parseFloat(document.getElementById('salePrice').value),
-                quantity: parseInt(document.getElementById('productQuantity').value),
-                type: document.getElementById('productType').value,
-                color: document.getElementById('productColor').value || '#000000',
-                barcode: document.getElementById('productBarcode').value
-            };
-            
+            systemData.products.splice(productIndex, 1);
             saveSystemData();
             
-            // تحديث العرض
             loadProducts();
             loadInventory();
-            
-            closeModal('addProductModal');
-            alert('تم تحديث المنتج بنجاح!');
-        };
-        
-        // حذف منتج
-        window.deleteProduct = function(productId) {
-            if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
-                systemData.products = systemData.products.filter(p => p.id !== productId);
-                saveSystemData();
-                
-                loadProducts();
-                loadInventory();
-                alert('تم حذف المنتج بنجاح!');
-            }
+            updateDashboardStats();
+            showNotification('تم حذف المنتج بنجاح!', 'success');
         };
         
         // فتح نافذة طباعة الباركود
         window.openPrintBarcodeModal = function(productId) {
             const product = systemData.products.find(p => p.id === productId);
-            if (!product) return;
+            if (!product) {
+                showNotification('المنتج غير موجود', 'error');
+                return;
+            }
             
             const barcodeContent = document.getElementById('barcodePrintContent');
             barcodeContent.innerHTML = `
@@ -3099,10 +3701,779 @@
             printWindow.document.close();
         };
         
+        // فتح نافذة إضافة عميل
+        window.openAddCustomerModal = function() {
+            document.getElementById('addCustomerForm').reset();
+            currentEditItem = null;
+            
+            // تغيير النص على الزر
+            const submitBtn = document.querySelector('#addCustomerForm button[type="submit"]');
+            submitBtn.textContent = 'إضافة العميل';
+            submitBtn.onclick = null;
+            
+            openModal('addCustomerModal');
+        };
+        
+        // إضافة عميل جديد
+        document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const customerName = document.getElementById('customerName').value.trim();
+            const customerPhone = document.getElementById('customerPhone').value.trim();
+            const customerEmail = document.getElementById('customerEmail').value.trim();
+            const customerAddress = document.getElementById('customerAddress').value.trim();
+            
+            // التحقق من صحة البيانات
+            if (!customerName || !customerPhone) {
+                showNotification('الرجاء إدخال الاسم ورقم الهاتف', 'error');
+                return;
+            }
+            
+            // التحقق من عدم تكرار رقم الهاتف
+            const existingCustomer = systemData.customers.find(c => c.phone === customerPhone);
+            if (existingCustomer && !currentEditItem) {
+                showNotification('رقم الهاتف مسجل مسبقاً', 'error');
+                return;
+            }
+            
+            if (currentEditItem) {
+                // تحديث العميل الموجود
+                const customerIndex = systemData.customers.findIndex(c => c.id === currentEditItem);
+                if (customerIndex !== -1) {
+                    systemData.customers[customerIndex] = {
+                        ...systemData.customers[customerIndex],
+                        name: customerName,
+                        phone: customerPhone,
+                        email: customerEmail || systemData.customers[customerIndex].email,
+                        address: customerAddress || systemData.customers[customerIndex].address
+                    };
+                    showNotification('تم تحديث بيانات العميل بنجاح!', 'success');
+                }
+            } else {
+                // إضافة عميل جديد
+                const newCustomer = {
+                    id: systemData.customers.length > 0 ? Math.max(...systemData.customers.map(c => c.id)) + 1 : 1,
+                    name: customerName,
+                    phone: customerPhone,
+                    email: customerEmail || '',
+                    address: customerAddress || '',
+                    totalPurchases: 0,
+                    debt: 0,
+                    previousDebt: 0,
+                    createdAt: new Date().toISOString().split('T')[0]
+                };
+                
+                systemData.customers.push(newCustomer);
+                showNotification('تم إضافة العميل بنجاح!', 'success');
+            }
+            
+            saveSystemData();
+            
+            // تحديث العرض
+            loadCustomers();
+            updateDashboardStats();
+            
+            closeModal('addCustomerModal');
+        });
+        
+        // تعديل عميل
+        window.editCustomer = function(customerId) {
+            const customer = systemData.customers.find(c => c.id === customerId);
+            if (!customer) {
+                showNotification('العميل غير موجود', 'error');
+                return;
+            }
+            
+            currentEditItem = customerId;
+            
+            // تعبئة البيانات في النموذج
+            document.getElementById('customerName').value = customer.name;
+            document.getElementById('customerPhone').value = customer.phone;
+            document.getElementById('customerEmail').value = customer.email || '';
+            document.getElementById('customerAddress').value = customer.address || '';
+            
+            // تغيير النص على الزر
+            const submitBtn = document.querySelector('#addCustomerForm button[type="submit"]');
+            submitBtn.textContent = 'تحديث بيانات العميل';
+            
+            openModal('addCustomerModal');
+        };
+        
+        // حذف عميل
+        function deleteCustomer(customerId) {
+            const customerIndex = systemData.customers.findIndex(c => c.id === customerId);
+            if (customerIndex === -1) return;
+            
+            // التحقق من وجود ديون
+            const customer = systemData.customers[customerIndex];
+            if (customer.debt > 0) {
+                showNotification('لا يمكن حذف عميل لديه ديون', 'error');
+                return;
+            }
+            
+            systemData.customers.splice(customerIndex, 1);
+            saveSystemData();
+            
+            loadCustomers();
+            updateDashboardStats();
+            showNotification('تم حذف العميل بنجاح!', 'success');
+        };
+        
+        // فتح نافذة إضافة مورد
+        window.openAddSupplierModal = function() {
+            document.getElementById('addSupplierForm').reset();
+            currentEditItem = null;
+            
+            // تغيير النص على الزر
+            const submitBtn = document.querySelector('#addSupplierForm button[type="submit"]');
+            submitBtn.textContent = 'إضافة المورد';
+            submitBtn.onclick = null;
+            
+            openModal('addSupplierModal');
+        };
+        
+        // إضافة مورد جديد
+        document.getElementById('addSupplierForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const supplierName = document.getElementById('supplierName').value.trim();
+            const supplierPhone = document.getElementById('supplierPhone').value.trim();
+            const supplierEmail = document.getElementById('supplierEmail').value.trim();
+            const supplierAddress = document.getElementById('supplierAddress').value.trim();
+            
+            // التحقق من صحة البيانات
+            if (!supplierName || !supplierPhone) {
+                showNotification('الرجاء إدخال الاسم ورقم الهاتف', 'error');
+                return;
+            }
+            
+            // التحقق من عدم تكرار رقم الهاتف
+            const existingSupplier = systemData.suppliers.find(s => s.phone === supplierPhone);
+            if (existingSupplier && !currentEditItem) {
+                showNotification('رقم الهاتف مسجل مسبقاً', 'error');
+                return;
+            }
+            
+            if (currentEditItem) {
+                // تحديث المورد الموجود
+                const supplierIndex = systemData.suppliers.findIndex(s => s.id === currentEditItem);
+                if (supplierIndex !== -1) {
+                    systemData.suppliers[supplierIndex] = {
+                        ...systemData.suppliers[supplierIndex],
+                        name: supplierName,
+                        phone: supplierPhone,
+                        email: supplierEmail || systemData.suppliers[supplierIndex].email,
+                        address: supplierAddress || systemData.suppliers[supplierIndex].address
+                    };
+                    showNotification('تم تحديث بيانات المورد بنجاح!', 'success');
+                }
+            } else {
+                // إضافة مورد جديد
+                const newSupplier = {
+                    id: systemData.suppliers.length > 0 ? Math.max(...systemData.suppliers.map(s => s.id)) + 1 : 1,
+                    name: supplierName,
+                    phone: supplierPhone,
+                    email: supplierEmail || '',
+                    address: supplierAddress || '',
+                    totalPurchases: 0,
+                    debt: 0,
+                    previousDebt: 0,
+                    createdAt: new Date().toISOString().split('T')[0]
+                };
+                
+                systemData.suppliers.push(newSupplier);
+                showNotification('تم إضافة المورد بنجاح!', 'success');
+            }
+            
+            saveSystemData();
+            
+            // تحديث العرض
+            loadSuppliers();
+            
+            closeModal('addSupplierModal');
+        };
+        
+        // تعديل مورد
+        window.editSupplier = function(supplierId) {
+            const supplier = systemData.suppliers.find(s => s.id === supplierId);
+            if (!supplier) {
+                showNotification('المورد غير موجود', 'error');
+                return;
+            }
+            
+            currentEditItem = supplierId;
+            
+            // تعبئة البيانات في النموذج
+            document.getElementById('supplierName').value = supplier.name;
+            document.getElementById('supplierPhone').value = supplier.phone;
+            document.getElementById('supplierEmail').value = supplier.email || '';
+            document.getElementById('supplierAddress').value = supplier.address || '';
+            
+            // تغيير النص على الزر
+            const submitBtn = document.querySelector('#addSupplierForm button[type="submit"]');
+            submitBtn.textContent = 'تحديث بيانات المورد';
+            
+            openModal('addSupplierModal');
+        };
+        
+        // حذف مورد
+        function deleteSupplier(supplierId) {
+            const supplierIndex = systemData.suppliers.findIndex(s => s.id === supplierId);
+            if (supplierIndex === -1) return;
+            
+            // التحقق من وجود ديون
+            const supplier = systemData.suppliers[supplierIndex];
+            if (supplier.debt > 0) {
+                showNotification('لا يمكن حذف مورد لديه ديون', 'error');
+                return;
+            }
+            
+            systemData.suppliers.splice(supplierIndex, 1);
+            saveSystemData();
+            
+            loadSuppliers();
+            showNotification('تم حذف المورد بنجاح!', 'success');
+        };
+        
+        // فتح نافذة إضافة عملية شراء
+        window.openAddPurchaseModal = function() {
+            document.getElementById('addPurchaseForm').reset();
+            purchaseItems = [];
+            currentEditItem = null;
+            
+            // تعبئة قائمة الموردين
+            const supplierSelect = document.getElementById('purchaseSupplier');
+            supplierSelect.innerHTML = '<option value="">اختر مورداً</option>';
+            systemData.suppliers.forEach(supplier => {
+                const option = document.createElement('option');
+                option.value = supplier.id;
+                option.textContent = supplier.name;
+                supplierSelect.appendChild(option);
+            });
+            
+            // تحديث قائمة العناصر
+            updatePurchaseItemsDisplay();
+            
+            // إعداد تاريخ اليوم
+            document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
+            
+            openModal('addPurchaseModal');
+        };
+        
+        // البحث عن منتجات للشراء
+        function searchPurchaseProducts() {
+            const searchTerm = document.getElementById('purchaseProductSearch').value.toLowerCase();
+            const suggestions = document.getElementById('purchaseProductSuggestions');
+            
+            // يمكن تطوير هذه الوظيفة لتعرض قائمة منسدلة
+            console.log('بحث عن منتج:', searchTerm);
+        };
+        
+        // إضافة منتج لعملية الشراء
+        function addProductToPurchase() {
+            const searchTerm = document.getElementById('purchaseProductSearch').value.trim();
+            if (!searchTerm) {
+                showNotification('الرجاء إدخال اسم المنتج', 'error');
+                return;
+            }
+            
+            // البحث عن المنتج
+            const product = systemData.products.find(p => 
+                p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                p.barcode === searchTerm
+            );
+            
+            if (!product) {
+                showNotification('المنتج غير موجود', 'error');
+                return;
+            }
+            
+            // التحقق إذا كان المنتج موجود بالفعل في قائمة الشراء
+            const existingItem = purchaseItems.find(item => item.productId === product.id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                purchaseItems.push({
+                    productId: product.id,
+                    name: product.name,
+                    purchasePrice: product.purchasePrice,
+                    quantity: 1
+                });
+            }
+            
+            updatePurchaseItemsDisplay();
+            document.getElementById('purchaseProductSearch').value = '';
+            showNotification('تمت إضافة المنتج', 'success');
+        };
+        
+        // تحديث عرض عناصر الشراء
+        function updatePurchaseItemsDisplay() {
+            const purchaseItemsBody = document.getElementById('purchaseItems');
+            purchaseItemsBody.innerHTML = '';
+            
+            if (purchaseItems.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" style="text-align: center; padding: 20px; color: #777;">
+                        لا توجد منتجات مضافة
+                    </td>
+                `;
+                purchaseItemsBody.appendChild(row);
+                updatePurchaseTotal();
+                return;
+            }
+            
+            purchaseItems.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td>
+                        <input type="number" value="${item.quantity}" min="1" 
+                               style="width: 60px; padding: 5px; text-align: center;"
+                               onchange="updatePurchaseItemQuantity(${index}, this.value)">
+                    </td>
+                    <td>
+                        <input type="number" value="${item.purchasePrice}" min="1" 
+                               style="width: 100px; padding: 5px; text-align: center;"
+                               onchange="updatePurchaseItemPrice(${index}, this.value)">
+                    </td>
+                    <td>${(item.purchasePrice * item.quantity).toLocaleString()} د.ع</td>
+                    <td>
+                        <button class="btn-small btn-delete" onclick="removePurchaseItem(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                purchaseItemsBody.appendChild(row);
+            });
+            
+            updatePurchaseTotal();
+        };
+        
+        // تحديث كمية عنصر الشراء
+        window.updatePurchaseItemQuantity = function(index, quantity) {
+            const qty = parseInt(quantity);
+            if (qty > 0) {
+                purchaseItems[index].quantity = qty;
+                updatePurchaseItemsDisplay();
+            }
+        };
+        
+        // تحديث سعر عنصر الشراء
+        window.updatePurchaseItemPrice = function(index, price) {
+            const prc = parseFloat(price);
+            if (prc > 0) {
+                purchaseItems[index].purchasePrice = prc;
+                updatePurchaseItemsDisplay();
+            }
+        };
+        
+        // إزالة عنصر من الشراء
+        window.removePurchaseItem = function(index) {
+            purchaseItems.splice(index, 1);
+            updatePurchaseItemsDisplay();
+            showNotification('تمت إزالة المنتج', 'success');
+        };
+        
+        // تحديث إجمالي عملية الشراء
+        function updatePurchaseTotal() {
+            let total = 0;
+            purchaseItems.forEach(item => {
+                total += item.purchasePrice * item.quantity;
+            });
+            
+            document.getElementById('purchaseTotal').textContent = total.toLocaleString() + ' د.ع';
+        };
+        
+        // حفظ عملية الشراء
+        document.getElementById('addPurchaseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const supplierId = parseInt(document.getElementById('purchaseSupplier').value);
+            const purchaseDate = document.getElementById('purchaseDate').value;
+            const paymentType = document.querySelector('input[name="purchasePaymentType"]:checked').value;
+            const notes = document.getElementById('purchaseNotes').value;
+            
+            // التحقق من صحة البيانات
+            if (!supplierId) {
+                showNotification('الرجاء اختيار مورد', 'error');
+                return;
+            }
+            
+            if (purchaseItems.length === 0) {
+                showNotification('الرجاء إضافة منتجات للشراء', 'error');
+                return;
+            }
+            
+            if (!purchaseDate) {
+                showNotification('الرجاء إدخال تاريخ الشراء', 'error');
+                return;
+            }
+            
+            // حساب الإجمالي
+            let total = 0;
+            purchaseItems.forEach(item => {
+                total += item.purchasePrice * item.quantity;
+            });
+            
+            // إنشاء عملية شراء
+            const purchaseId = `PUR-${Date.now()}`;
+            const purchase = {
+                id: purchaseId,
+                supplierId: supplierId,
+                date: purchaseDate,
+                items: purchaseItems.map(item => ({
+                    productId: item.productId,
+                    name: item.name,
+                    purchasePrice: item.purchasePrice,
+                    quantity: item.quantity
+                })),
+                total: total,
+                paymentType: paymentType,
+                notes: notes,
+                status: 'مكتمل'
+            };
+            
+            // تحديث المخزون
+            purchaseItems.forEach(item => {
+                const product = systemData.products.find(p => p.id === item.productId);
+                if (product) {
+                    product.quantity += item.quantity;
+                }
+            });
+            
+            // تحديث بيانات المورد إذا كان هناك دين
+            if (paymentType === 'credit') {
+                const supplier = systemData.suppliers.find(s => s.id === supplierId);
+                if (supplier) {
+                    supplier.debt += total;
+                    supplier.totalPurchases += total;
+                }
+            } else {
+                // تحديث إجمالي المشتريات من المورد
+                const supplier = systemData.suppliers.find(s => s.id === supplierId);
+                if (supplier) {
+                    supplier.totalPurchases += total;
+                }
+            }
+            
+            // إضافة عملية الشراء إلى النظام
+            systemData.purchases.push(purchase);
+            
+            saveSystemData();
+            
+            showNotification('تم حفظ عملية الشراء بنجاح!', 'success');
+            
+            // إغلاق النافذة وإعادة التحميل
+            closeModal('addPurchaseModal');
+            loadPurchases();
+            loadInventory();
+            loadSuppliers();
+            updateDashboardStats();
+        };
+        
+        // فتح نافذة إضافة دفعة عميل
+        window.openAddCustomerPaymentModal = function() {
+            document.getElementById('addCustomerPaymentForm').reset();
+            currentEditItem = null;
+            
+            // تعبئة قائمة العملاء
+            const customerSelect = document.getElementById('paymentCustomer');
+            customerSelect.innerHTML = '<option value="">اختر عميلاً</option>';
+            systemData.customers.forEach(customer => {
+                const option = document.createElement('option');
+                option.value = customer.id;
+                option.textContent = `${customer.name} - ${customer.debt.toLocaleString()} د.ع`;
+                customerSelect.appendChild(option);
+            });
+            
+            // إعداد تاريخ اليوم
+            document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
+            
+            // إضافة حدث لتحديث معلومات الديون عند اختيار عميل
+            customerSelect.addEventListener('change', function() {
+                const customerId = parseInt(this.value);
+                const customer = systemData.customers.find(c => c.id === customerId);
+                const debtInfo = document.getElementById('customerDebtInfo');
+                
+                if (customer && customer.debt > 0) {
+                    document.getElementById('customerCurrentDebt').textContent = customer.debt.toLocaleString();
+                    debtInfo.style.display = 'block';
+                } else {
+                    debtInfo.style.display = 'none';
+                }
+            });
+            
+            openModal('addCustomerPaymentModal');
+        };
+        
+        // إضافة دفعة عميل
+        document.getElementById('addCustomerPaymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const customerId = parseInt(document.getElementById('paymentCustomer').value);
+            const amount = parseFloat(document.getElementById('paymentAmount').value);
+            const paymentDate = document.getElementById('paymentDate').value;
+            const method = document.getElementById('paymentMethod').value;
+            const notes = document.getElementById('paymentNotes').value;
+            
+            // التحقق من صحة البيانات
+            if (!customerId) {
+                showNotification('الرجاء اختيار عميل', 'error');
+                return;
+            }
+            
+            if (!amount || amount <= 0) {
+                showNotification('الرجاء إدخال مبلغ صحيح', 'error');
+                return;
+            }
+            
+            if (!paymentDate) {
+                showNotification('الرجاء إدخال تاريخ الدفعة', 'error');
+                return;
+            }
+            
+            // التحقق من عدم تجاوز المبلغ للديون
+            const customer = systemData.customers.find(c => c.id === customerId);
+            if (customer && amount > customer.debt) {
+                showNotification(`المبلغ يتجاوز الديون الحالية (${customer.debt.toLocaleString()} د.ع)`, 'error');
+                return;
+            }
+            
+            // إنشاء دفعة
+            const payment = {
+                id: systemData.customerPayments.length > 0 ? 
+                    Math.max(...systemData.customerPayments.map(p => p.id)) + 1 : 1,
+                customerId: customerId,
+                amount: amount,
+                date: paymentDate,
+                method: method,
+                notes: notes
+            };
+            
+            // تحديث ديون العميل
+            if (customer) {
+                customer.debt -= amount;
+                customer.previousDebt = customer.debt + amount;
+            }
+            
+            // إضافة الدفعة إلى النظام
+            systemData.customerPayments.push(payment);
+            
+            saveSystemData();
+            
+            showNotification('تم حفظ الدفعة بنجاح!', 'success');
+            
+            // إغلاق النافذة وإعادة التحميل
+            closeModal('addCustomerPaymentModal');
+            loadCustomerPayments();
+            loadCustomers();
+            updateDashboardStats();
+        };
+        
+        // فتح نافذة إضافة مصروف
+        window.openAddExpenseModal = function() {
+            document.getElementById('addExpenseForm').reset();
+            currentEditItem = null;
+            
+            // إعداد تاريخ اليوم
+            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+            
+            openModal('addExpenseModal');
+        };
+        
+        // إضافة مصروف
+        document.getElementById('addExpenseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('expenseType').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const expenseDate = document.getElementById('expenseDate').value;
+            const recipient = document.getElementById('expenseRecipient').value.trim();
+            const notes = document.getElementById('expenseNotes').value;
+            
+            // التحقق من صحة البيانات
+            if (!type) {
+                showNotification('الرجاء اختيار نوع المصروف', 'error');
+                return;
+            }
+            
+            if (!amount || amount <= 0) {
+                showNotification('الرجاء إدخال مبلغ صحيح', 'error');
+                return;
+            }
+            
+            if (!expenseDate) {
+                showNotification('الرجاء إدخال تاريخ المصروف', 'error');
+                return;
+            }
+            
+            // إنشاء مصروف
+            const expense = {
+                id: systemData.expenses.length > 0 ? 
+                    Math.max(...systemData.expenses.map(e => e.id)) + 1 : 1,
+                type: type,
+                amount: amount,
+                date: expenseDate,
+                recipient: recipient || '',
+                notes: notes || ''
+            };
+            
+            // إضافة المصروف إلى النظام
+            systemData.expenses.push(expense);
+            
+            saveSystemData();
+            
+            showNotification('تم حفظ المصروف بنجاح!', 'success');
+            
+            // إغلاق النافذة وإعادة التحميل
+            closeModal('addExpenseModal');
+            loadExpenses();
+        };
+        
+        // فتح نافذة إضافة مستخدم
+        window.openAddUserModal = function() {
+            document.getElementById('addUserForm').reset();
+            currentEditItem = null;
+            
+            // تغيير النص على الزر
+            const submitBtn = document.querySelector('#addUserForm button[type="submit"]');
+            submitBtn.textContent = 'إضافة المستخدم';
+            submitBtn.onclick = null;
+            
+            openModal('addUserModal');
+        };
+        
+        // إضافة مستخدم جديد
+        document.getElementById('addUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('newUsername').value.trim();
+            const fullName = document.getElementById('newFullName').value.trim();
+            const password = document.getElementById('newUserPassword').value;
+            const confirmPassword = document.getElementById('confirmUserPassword').value;
+            const role = document.getElementById('userRole').value;
+            
+            // التحقق من صحة البيانات
+            if (!username || !fullName || !password || !role) {
+                showNotification('الرجاء ملء جميع الحقول المطلوبة', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showNotification('كلمات المرور غير متطابقة', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+                return;
+            }
+            
+            // التحقق من عدم تكرار اسم المستخدم
+            const existingUser = systemData.users.find(u => u.username === username);
+            if (existingUser && !currentEditItem) {
+                showNotification('اسم المستخدم مسجل مسبقاً', 'error');
+                return;
+            }
+            
+            if (currentEditItem) {
+                // تحديث المستخدم الموجود
+                const userIndex = systemData.users.findIndex(u => u.id === currentEditItem);
+                if (userIndex !== -1) {
+                    systemData.users[userIndex] = {
+                        ...systemData.users[userIndex],
+                        username: username,
+                        fullName: fullName,
+                        password: password,
+                        role: role
+                    };
+                    showNotification('تم تحديث بيانات المستخدم بنجاح!', 'success');
+                }
+            } else {
+                // إضافة مستخدم جديد
+                const newUser = {
+                    id: systemData.users.length > 0 ? Math.max(...systemData.users.map(u => u.id)) + 1 : 1,
+                    username: username,
+                    password: password,
+                    fullName: fullName,
+                    role: role,
+                    createdAt: new Date().toISOString().split('T')[0],
+                    active: true
+                };
+                
+                systemData.users.push(newUser);
+                showNotification('تم إضافة المستخدم بنجاح!', 'success');
+            }
+            
+            saveSystemData();
+            
+            // تحديث العرض
+            loadUsers();
+            loadRoles();
+            
+            closeModal('addUserModal');
+        };
+        
+        // تعديل مستخدم
+        window.editUser = function(userId) {
+            const user = systemData.users.find(u => u.id === userId);
+            if (!user) {
+                showNotification('المستخدم غير موجود', 'error');
+                return;
+            }
+            
+            currentEditItem = userId;
+            
+            // تعبئة البيانات في النموذج
+            document.getElementById('newUsername').value = user.username;
+            document.getElementById('newFullName').value = user.fullName;
+            document.getElementById('userRole').value = user.role;
+            
+            // إخفاء حقول كلمة المرور
+            document.getElementById('newUserPassword').value = '********';
+            document.getElementById('confirmUserPassword').value = '********';
+            
+            // تغيير النص على الزر
+            const submitBtn = document.querySelector('#addUserForm button[type="submit"]');
+            submitBtn.textContent = 'تحديث بيانات المستخدم';
+            
+            openModal('addUserModal');
+        };
+        
+        // حذف مستخدم
+        function deleteUser(userId) {
+            // التحقق من عدم حذف المستخدم الرئيسي
+            if (userId === 1) {
+                showNotification('لا يمكن حذف المستخدم الرئيسي', 'error');
+                return;
+            }
+            
+            const userIndex = systemData.users.findIndex(u => u.id === userId);
+            if (userIndex === -1) return;
+            
+            systemData.users.splice(userIndex, 1);
+            saveSystemData();
+            
+            loadUsers();
+            loadRoles();
+            showNotification('تم حذف المستخدم بنجاح!', 'success');
+        };
+        
+        // تعديل صلاحية
+        window.editRole = function(role) {
+            showNotification(`تعديل صلاحية ${role} - هذه الوظيفة تحت التطوير`, 'info');
+        };
+        
         // فتح نافذة تفاصيل العميل
         window.openCustomerDetailsModal = function(customerId) {
             const customer = systemData.customers.find(c => c.id === customerId);
-            if (!customer) return;
+            if (!customer) {
+                showNotification('العميل غير موجود', 'error');
+                return;
+            }
             
             // تحميل معلومات العميل
             document.getElementById('customerInfoTab').innerHTML = `
@@ -3118,11 +4489,11 @@
                     </div>
                     <div class="form-group">
                         <label>البريد الإلكتروني</label>
-                        <input type="email" class="form-control" value="${customer.email}" readonly>
+                        <input type="email" class="form-control" value="${customer.email || ''}" readonly>
                     </div>
                     <div class="form-group">
                         <label>العنوان</label>
-                        <textarea class="form-control" readonly>${customer.address}</textarea>
+                        <textarea class="form-control" readonly>${customer.address || ''}</textarea>
                     </div>
                     <div class="form-group">
                         <label>إجمالي المشتريات</label>
@@ -3132,6 +4503,10 @@
                         <label>الديون الحالية</label>
                         <input type="text" class="form-control" value="${customer.debt.toLocaleString()} د.ع" readonly>
                     </div>
+                    <div class="form-group">
+                        <label>تاريخ التسجيل</label>
+                        <input type="text" class="form-control" value="${customer.createdAt}" readonly>
+                    </div>
                 </div>
             `;
             
@@ -3139,34 +4514,107 @@
             const customerInvoices = systemData.invoices.filter(inv => inv.customerId === customerId);
             document.getElementById('customerInvoicesTab').innerHTML = `
                 <div style="padding: 20px;">
-                    <h4>فواتير العميل</h4>
+                    <h4>فواتير العميل (${customerInvoices.length})</h4>
                     ${customerInvoices.length > 0 ? `
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #f5f5f5;">
-                                    <th style="padding: 10px; border: 1px solid #ddd;">رقم الفاتورة</th>
-                                    <th style="padding: 10px; border: 1px solid #ddd;">التاريخ</th>
-                                    <th style="padding: 10px; border: 1px solid #ddd;">الإجمالي</th>
-                                    <th style="padding: 10px; border: 1px solid #ddd;">طريقة الدفع</th>
-                                    <th style="padding: 10px; border: 1px solid #ddd;">الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${customerInvoices.map(invoice => `
-                                    <tr>
-                                        <td style="padding: 10px; border: 1px solid #ddd;">${invoice.id}</td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;">${invoice.date}</td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;">${invoice.total.toLocaleString()} د.ع</td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;">${invoice.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;">
-                                            <button class="btn-small btn-view" onclick="viewInvoice('${invoice.id}')"><i class="fas fa-eye"></i></button>
-                                            <button class="btn-small btn-print" onclick="printInvoice('${invoice.id}')"><i class="fas fa-print"></i></button>
-                                        </td>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f5f5f5;">
+                                        <th style="padding: 10px; border: 1px solid #ddd;">رقم الفاتورة</th>
+                                        <th style="padding: 10px; border: 1px solid #ddd;">التاريخ</th>
+                                        <th style="padding: 10px; border: 1px solid #ddd;">الإجمالي</th>
+                                        <th style="padding: 10px; border: 1px solid #ddd;">طريقة الدفع</th>
+                                        <th style="padding: 10px; border: 1px solid #ddd;">الإجراءات</th>
                                     </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    ` : '<p>لا توجد فواتير لهذا العميل</p>'}
+                                </thead>
+                                <tbody>
+                                    ${customerInvoices.map(invoice => `
+                                        <tr>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${invoice.id}</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${invoice.date}</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${invoice.total.toLocaleString()} د.ع</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${invoice.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">
+                                                <button class="btn-small btn-view" onclick="viewInvoice('${invoice.id}')"><i class="fas fa-eye"></i></button>
+                                                <button class="btn-small btn-print" onclick="printInvoice('${invoice.id}')"><i class="fas fa-print"></i></button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    ` : '<p style="text-align: center; color: #777;">لا توجد فواتير لهذا العميل</p>'}
+                </div>
+            `;
+            
+            // تحميل دفعات العميل
+            const customerPayments = systemData.customerPayments.filter(p => p.customerId === customerId);
+            document.getElementById('customerPaymentsTab').innerHTML = `
+                <div style="padding: 20px;">
+                    <h4>دفعات العميل (${customerPayments.length})</h4>
+                    ${customerPayments.length > 0 ? `
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f5f5f5;">
+                                        <th style="padding: 10px; border: 1px solid #ddd;">المبلغ</th>
+                                        <th style="padding: 10px; border: 1px solid #ddd;">التاريخ</th>
+                                        <th style="padding: 10px; border: 1px solid #ddd;">الطريقة</th>
+                                        <th style="padding: 10px; border: 1px solid #ddd;">ملاحظات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${customerPayments.map(payment => `
+                                        <tr>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${payment.amount.toLocaleString()} د.ع</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${payment.date}</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${payment.method}</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${payment.notes || '-'}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    ` : '<p style="text-align: center; color: #777;">لا توجد دفعات لهذا العميل</p>'}
+                </div>
+            `;
+            
+            // تحميل تقرير العميل
+            document.getElementById('customerReportTab').innerHTML = `
+                <div style="padding: 20px;">
+                    <h4>تقرير العميل</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 12px; color: #777;">عدد الفواتير</div>
+                            <div style="font-size: 24px; font-weight: bold; color: var(--primary);">${customerInvoices.length}</div>
+                        </div>
+                        <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 12px; color: #777;">إجمالي المشتريات</div>
+                            <div style="font-size: 24px; font-weight: bold; color: var(--success);">${customer.totalPurchases.toLocaleString()} د.ع</div>
+                        </div>
+                        <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 12px; color: #777;">الديون الحالية</div>
+                            <div style="font-size: 24px; font-weight: bold; color: ${customer.debt > 0 ? 'var(--danger)' : 'var(--success)'};">${customer.debt.toLocaleString()} د.ع</div>
+                        </div>
+                        <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 12px; color: #777;">متوسط قيمة الفاتورة</div>
+                            <div style="font-size: 24px; font-weight: bold; color: var(--info);">${customerInvoices.length > 0 ? (customer.totalPurchases / customerInvoices.length).toLocaleString() : '0'} د.ع</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h5>آخر 5 فواتير</h5>
+                        ${customerInvoices.slice(-5).reverse().map(invoice => `
+                            <div style="padding: 10px; border-bottom: 1px solid #eee; margin-bottom: 5px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>${invoice.id}</span>
+                                    <span>${invoice.date}</span>
+                                    <span>${invoice.total.toLocaleString()} د.ع</span>
+                                    <span>${invoice.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
             `;
             
@@ -3176,7 +4624,10 @@
         // فتح نافذة تفاصيل المورد
         window.openSupplierDetailsModal = function(supplierId) {
             const supplier = systemData.suppliers.find(s => s.id === supplierId);
-            if (!supplier) return;
+            if (!supplier) {
+                showNotification('المورد غير موجود', 'error');
+                return;
+            }
             
             // تحميل معلومات المورد
             document.getElementById('supplierInfoTab').innerHTML = `
@@ -3192,11 +4643,11 @@
                     </div>
                     <div class="form-group">
                         <label>البريد الإلكتروني</label>
-                        <input type="email" class="form-control" value="${supplier.email}" readonly>
+                        <input type="email" class="form-control" value="${supplier.email || ''}" readonly>
                     </div>
                     <div class="form-group">
                         <label>العنوان</label>
-                        <textarea class="form-control" readonly>${supplier.address}</textarea>
+                        <textarea class="form-control" readonly>${supplier.address || ''}</textarea>
                     </div>
                     <div class="form-group">
                         <label>إجمالي المشتريات</label>
@@ -3206,127 +4657,496 @@
                         <label>الديون الحالية</label>
                         <input type="text" class="form-control" value="${supplier.debt.toLocaleString()} د.ع" readonly>
                     </div>
+                    <div class="form-group">
+                        <label>تاريخ التسجيل</label>
+                        <input type="text" class="form-control" value="${supplier.createdAt}" readonly>
+                    </div>
+                </div>
+            `;
+            
+            // تحميل مشتريات المورد
+            const supplierPurchases = systemData.purchases.filter(p => p.supplierId === supplierId);
+            document.getElementById('supplierPurchasesTab').innerHTML = `
+                <div style="padding: 20px;">
+                    <h4>مشتريات من المورد (${supplierPurchases.length})</h4>
+                    ${supplierPurchases.length > 0 ? `
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f5f5f5;">
+                                        <th style="padding: 10px; border: 1px solid #ddd;">رقم الفاتورة</th>
+                                        <th style="padding: 10px; border: 1px solid #ddd;">التاريخ</th>
+                                        <th style="padding: 10px; border: 1px solid #ddd;">الإجمالي</th>
+                                        <th style="padding: 10px; border: 1px solid #ddd;">طريقة الدفع</th>
+                                        <th style="padding: 10px; border: 1px solid #ddd;">الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${supplierPurchases.map(purchase => `
+                                        <tr>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${purchase.id}</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${purchase.date}</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${purchase.total.toLocaleString()} د.ع</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${purchase.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">
+                                                <button class="btn-small btn-view" onclick="viewPurchase('${purchase.id}')"><i class="fas fa-eye"></i></button>
+                                                <button class="btn-small btn-print" onclick="printPurchase('${purchase.id}')"><i class="fas fa-print"></i></button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    ` : '<p style="text-align: center; color: #777;">لا توجد مشتريات من هذا المورد</p>'}
                 </div>
             `;
             
             openModal('supplierDetailsModal');
         };
         
-        // حفظ البيانات
-        function saveSystemData() {
-            localStorage.setItem('electronicsSalesSystem', JSON.stringify(systemData));
-        }
-        
-        // تحميل البيانات المحفوظة
-        function loadSavedData() {
-            const savedData = localStorage.getItem('electronicsSalesSystem');
-            if (savedData) {
-                systemData = JSON.parse(savedData);
-            }
-        }
-        
-        // فتح نافذة منبثقة
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-        
-        // إغلاق نافذة منبثقة
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-        
-        // تغيير كلمة المرور
-        window.changePassword = function() {
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+        // تأكيد الحذف
+        window.confirmDelete = function(type, id) {
+            let message = '';
+            let itemName = '';
             
-            if (currentPassword !== systemData.users[0].password) {
-                alert('كلمة المرور الحالية غير صحيحة');
+            switch(type) {
+                case 'product':
+                    const product = systemData.products.find(p => p.id === id);
+                    if (!product) return;
+                    message = `هل أنت متأكد من حذف المنتج "${product.name}"؟`;
+                    itemName = product.name;
+                    break;
+                case 'customer':
+                    const customer = systemData.customers.find(c => c.id === id);
+                    if (!customer) return;
+                    message = `هل أنت متأكد من حذف العميل "${customer.name}"؟`;
+                    itemName = customer.name;
+                    break;
+                case 'supplier':
+                    const supplier = systemData.suppliers.find(s => s.id === id);
+                    if (!supplier) return;
+                    message = `هل أنت متأكد من حذف المورد "${supplier.name}"؟`;
+                    itemName = supplier.name;
+                    break;
+                case 'invoice':
+                    const invoice = systemData.invoices.find(inv => inv.id === id);
+                    if (!invoice) return;
+                    message = `هل أنت متأكد من حذف الفاتورة "${id}"؟`;
+                    itemName = id;
+                    break;
+                case 'purchase':
+                    const purchase = systemData.purchases.find(p => p.id === id);
+                    if (!purchase) return;
+                    message = `هل أنت متأكد من حذف فاتورة الشراء "${id}"؟`;
+                    itemName = id;
+                    break;
+                case 'customerPayment':
+                    const payment = systemData.customerPayments.find(p => p.id === id);
+                    if (!payment) return;
+                    message = `هل أنت متأكد من حذف هذه الدفعة؟`;
+                    break;
+                case 'expense':
+                    const expense = systemData.expenses.find(e => e.id === id);
+                    if (!expense) return;
+                    message = `هل أنت متأكد من حذف هذا المصروف؟`;
+                    break;
+                case 'user':
+                    const user = systemData.users.find(u => u.id === id);
+                    if (!user) return;
+                    message = `هل أنت متأكد من حذف المستخدم "${user.username}"؟`;
+                    itemName = user.username;
+                    break;
+                default:
+                    return;
+            }
+            
+            document.getElementById('confirmationMessage').textContent = message;
+            
+            // إعداد دالة الحذف
+            deleteCallback = function() {
+                switch(type) {
+                    case 'product': deleteProduct(id); break;
+                    case 'customer': deleteCustomer(id); break;
+                    case 'supplier': deleteSupplier(id); break;
+                    case 'invoice': deleteInvoice(id); break;
+                    case 'purchase': deletePurchase(id); break;
+                    case 'customerPayment': deleteCustomerPayment(id); break;
+                    case 'expense': deleteExpense(id); break;
+                    case 'user': deleteUser(id); break;
+                }
+            };
+            
+            openModal('confirmationModal');
+        };
+        
+        // إعداد حدث زر التأكيد
+        document.getElementById('confirmDeleteButton').onclick = function() {
+            if (deleteCallback) {
+                deleteCallback();
+                closeModal('confirmationModal');
+                deleteCallback = null;
+            }
+        };
+        
+        // حذف فاتورة
+        function deleteInvoice(invoiceId) {
+            const invoiceIndex = systemData.invoices.findIndex(inv => inv.id === invoiceId);
+            if (invoiceIndex === -1) return;
+            
+            // استعادة الكميات إلى المخزون
+            const invoice = systemData.invoices[invoiceIndex];
+            invoice.items.forEach(item => {
+                const product = systemData.products.find(p => p.id === item.productId);
+                if (product) {
+                    product.quantity += item.quantity;
+                }
+            });
+            
+            // تحديث بيانات العميل إذا كانت الفاتورة بالدين
+            if (invoice.paymentType === 'credit' && invoice.customerId) {
+                const customer = systemData.customers.find(c => c.id === invoice.customerId);
+                if (customer) {
+                    customer.debt -= invoice.total;
+                    customer.totalPurchases -= invoice.total;
+                }
+            } else if (invoice.customerId) {
+                // تحديث إجمالي المشتريات للعميل
+                const customer = systemData.customers.find(c => c.id === invoice.customerId);
+                if (customer) {
+                    customer.totalPurchases -= invoice.total;
+                }
+            }
+            
+            systemData.invoices.splice(invoiceIndex, 1);
+            saveSystemData();
+            
+            loadInvoices();
+            loadInventory();
+            loadCustomers();
+            updateDashboardStats();
+            showNotification('تم حذف الفاتورة بنجاح!', 'success');
+        };
+        
+        // حذف عملية شراء
+        function deletePurchase(purchaseId) {
+            const purchaseIndex = systemData.purchases.findIndex(p => p.id === purchaseId);
+            if (purchaseIndex === -1) return;
+            
+            // خصم الكميات من المخزون
+            const purchase = systemData.purchases[purchaseIndex];
+            purchase.items.forEach(item => {
+                const product = systemData.products.find(p => p.id === item.productId);
+                if (product) {
+                    product.quantity -= item.quantity;
+                }
+            });
+            
+            // تحديث بيانات المورد إذا كانت العملية بالدين
+            if (purchase.paymentType === 'credit' && purchase.supplierId) {
+                const supplier = systemData.suppliers.find(s => s.id === purchase.supplierId);
+                if (supplier) {
+                    supplier.debt -= purchase.total;
+                    supplier.totalPurchases -= purchase.total;
+                }
+            } else if (purchase.supplierId) {
+                // تحديث إجمالي المشتريات من المورد
+                const supplier = systemData.suppliers.find(s => s.id === purchase.supplierId);
+                if (supplier) {
+                    supplier.totalPurchases -= purchase.total;
+                }
+            }
+            
+            systemData.purchases.splice(purchaseIndex, 1);
+            saveSystemData();
+            
+            loadPurchases();
+            loadInventory();
+            loadSuppliers();
+            updateDashboardStats();
+            showNotification('تم حذف فاتورة الشراء بنجاح!', 'success');
+        };
+        
+        // حذف دفعة عميل
+        function deleteCustomerPayment(paymentId) {
+            const paymentIndex = systemData.customerPayments.findIndex(p => p.id === paymentId);
+            if (paymentIndex === -1) return;
+            
+            // استعادة الديون للعميل
+            const payment = systemData.customerPayments[paymentIndex];
+            const customer = systemData.customers.find(c => c.id === payment.customerId);
+            if (customer) {
+                customer.debt += payment.amount;
+            }
+            
+            systemData.customerPayments.splice(paymentIndex, 1);
+            saveSystemData();
+            
+            loadCustomerPayments();
+            loadCustomers();
+            updateDashboardStats();
+            showNotification('تم حذف الدفعة بنجاح!', 'success');
+        };
+        
+        // حذف مصروف
+        function deleteExpense(expenseId) {
+            const expenseIndex = systemData.expenses.findIndex(e => e.id === expenseId);
+            if (expenseIndex === -1) return;
+            
+            systemData.expenses.splice(expenseIndex, 1);
+            saveSystemData();
+            
+            loadExpenses();
+            showNotification('تم حذف المصروف بنجاح!', 'success');
+        };
+        
+        // عرض الفاتورة
+        window.viewInvoice = function(invoiceId) {
+            const invoice = systemData.invoices.find(inv => inv.id === invoiceId);
+            if (!invoice) {
+                showNotification('الفاتورة غير موجودة', 'error');
                 return;
             }
             
-            if (newPassword !== confirmPassword) {
-                alert('كلمة المرور الجديدة وتأكيدها غير متطابقتين');
+            const customer = invoice.customerId ? systemData.customers.find(c => c.id === invoice.customerId) : null;
+            
+            let details = `تفاصيل الفاتورة: ${invoiceId}\n`;
+            details += `التاريخ: ${invoice.date} ${invoice.time}\n`;
+            if (customer) details += `العميل: ${customer.name}\n`;
+            details += `طريقة الدفع: ${invoice.paymentType === 'cash' ? 'نقداً' : 'بالدين'}\n\n`;
+            details += 'المنتجات:\n';
+            
+            invoice.items.forEach((item, index) => {
+                details += `${index + 1}. ${item.name} - ${item.quantity} × ${item.price.toLocaleString()} = ${(item.quantity * item.price).toLocaleString()} د.ع\n`;
+            });
+            
+            details += `\nالإجمالي: ${invoice.total.toLocaleString()} د.ع`;
+            details += `\nالخصم: ${invoice.discount.toLocaleString()} د.ع`;
+            details += `\nالضريبة: ${invoice.tax.toLocaleString()} د.ع`;
+            
+            alert(details);
+        };
+        
+        // طباعة الفاتورة
+        window.printInvoice = function(invoiceId) {
+            const invoice = systemData.invoices.find(inv => inv.id === invoiceId);
+            if (!invoice) {
+                showNotification('الفاتورة غير موجودة', 'error');
                 return;
             }
             
-            systemData.users[0].password = newPassword;
-            saveSystemData();
-            alert('تم تغيير كلمة المرور بنجاح!');
+            const customer = invoice.customerId ? systemData.customers.find(c => c.id === invoice.customerId) : null;
+            
+            const printContent = `
+                <div class="small-invoice">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <h3>${systemData.settings.companyName}</h3>
+                        <p>${systemData.settings.companyAddress}</p>
+                        <p>${systemData.settings.companyPhone}</p>
+                        <hr style="margin: 10px 0;">
+                    </div>
+                    
+                    <div style="border-bottom: 1px dashed #000; margin-bottom: 15px; padding-bottom: 10px;">
+                        <p><strong>رقم الفاتورة:</strong> ${invoice.id}</p>
+                        <p><strong>التاريخ:</strong> ${invoice.date}</p>
+                        <p><strong>الوقت:</strong> ${invoice.time}</p>
+                    </div>
+                    
+                    <table style="width: 100%; margin-bottom: 15px; font-size: 12px;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: right; border-bottom: 1px solid #000; padding: 5px;">المنتج</th>
+                                <th style="text-align: center; border-bottom: 1px solid #000; padding: 5px;">الكمية</th>
+                                <th style="text-align: left; border-bottom: 1px solid #000; padding: 5px;">السعر</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${invoice.items.map(item => `
+                                <tr>
+                                    <td style="text-align: right; padding: 5px;">${item.name}</td>
+                                    <td style="text-align: center; padding: 5px;">${item.quantity}</td>
+                                    <td style="text-align: left; padding: 5px;">${item.price.toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <div style="border-top: 1px dashed #000; padding-top: 10px; margin-bottom: 15px; font-size: 12px;">
+                        ${customer ? `<p><strong>العميل:</strong> ${customer.name}</p>` : ''}
+                        <p><strong>الإجمالي:</strong> ${invoice.total.toLocaleString()} د.ع</p>
+                        <p><strong>طريقة الدفع:</strong> ${invoice.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</p>
+                    </div>
+                    
+                    <div style="text-align: center; font-size: 11px; color: #777;">
+                        <p>${systemData.settings.invoiceFooter}</p>
+                        <p>شكراً لتعاملكم معنا</p>
+                    </div>
+                </div>
+            `;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>طباعة الفاتورة ${invoiceId}</title>
+                        <style>
+                            body { 
+                                font-family: Arial, sans-serif; 
+                                direction: rtl; 
+                                margin: 0;
+                                padding: 10px;
+                            }
+                            @media print {
+                                body { margin: 0; padding: 0; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent}
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 1000);
+                            };
+                        <\/script>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
         };
         
-        // حفظ إعدادات الطباعة
-        window.savePrintSettings = function() {
-            systemData.settings.autoPrint = document.getElementById('autoPrint').checked;
-            systemData.settings.showPrintOptions = document.getElementById('showPrintOptions').checked;
-            systemData.settings.invoiceFooter = document.getElementById('invoiceFooter').value;
-            
-            saveSystemData();
-            alert('تم حفظ إعدادات الطباعة بنجاح!');
-        };
-        
-        // حفظ إعدادات المنتجات
-        window.saveProductSettings = function() {
-            systemData.settings.autoGenerateBarcode = document.getElementById('autoGenerateBarcode').checked;
-            systemData.settings.autoSuggestColors = document.getElementById('autoSuggestColors').checked;
-            systemData.settings.lowStockAlert = document.getElementById('lowStockAlert').checked;
-            systemData.settings.lowStockThreshold = parseInt(document.getElementById('lowStockThreshold').value);
-            
-            saveSystemData();
-            alert('تم حفظ إعدادات المنتجات بنجاح!');
-        };
-        
-        // حفظ إعدادات الشركة
-        window.saveCompanySettings = function() {
-            systemData.settings.companyName = document.getElementById('companyName').value;
-            systemData.settings.companyAddress = document.getElementById('companyAddress').value;
-            systemData.settings.companyPhone = document.getElementById('companyPhone').value;
-            
-            saveSystemData();
-            alert('تم حفظ معلومات الشركة بنجاح!');
-        };
-        
-        // إنشاء نسخة احتياطية
-        window.createBackup = function() {
-            const dataStr = JSON.stringify(systemData, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `backup-${new Date().toISOString().slice(0,10)}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            alert('تم إنشاء النسخة الاحتياطية بنجاح!');
-        };
-        
-        // استعادة نسخة احتياطية
-        window.restoreBackup = function() {
-            const fileInput = document.getElementById('backupFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('الرجاء اختيار ملف النسخة الاحتياطية');
+        // عرض عملية الشراء
+        window.viewPurchase = function(purchaseId) {
+            const purchase = systemData.purchases.find(p => p.id === purchaseId);
+            if (!purchase) {
+                showNotification('فاتورة الشراء غير موجودة', 'error');
                 return;
             }
             
-            if (confirm('هل أنت متأكد من استعادة النسخة الاحتياطية؟ سيتم استبدال جميع البيانات الحالية.')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const restoredData = JSON.parse(e.target.result);
-                        systemData = restoredData;
-                        saveSystemData();
-                        loadSystemData();
-                        alert('تم استعادة النسخة الاحتياطية بنجاح!');
-                    } catch (error) {
-                        alert('خطأ في ملف النسخة الاحتياطية: ' + error.message);
-                    }
-                };
-                reader.readAsText(file);
+            const supplier = systemData.suppliers.find(s => s.id === purchase.supplierId);
+            
+            let details = `تفاصيل فاتورة الشراء: ${purchaseId}\n`;
+            details += `التاريخ: ${purchase.date}\n`;
+            if (supplier) details += `المورد: ${supplier.name}\n`;
+            details += `طريقة الدفع: ${purchase.paymentType === 'cash' ? 'نقداً' : 'بالدين'}\n\n`;
+            details += 'المنتجات:\n';
+            
+            purchase.items.forEach((item, index) => {
+                details += `${index + 1}. ${item.name} - ${item.quantity} × ${item.purchasePrice.toLocaleString()} = ${(item.quantity * item.purchasePrice).toLocaleString()} د.ع\n`;
+            });
+            
+            details += `\nالإجمالي: ${purchase.total.toLocaleString()} د.ع`;
+            if (purchase.notes) details += `\nملاحظات: ${purchase.notes}`;
+            
+            alert(details);
+        };
+        
+        // طباعة فاتورة الشراء
+        window.printPurchase = function(purchaseId) {
+            const purchase = systemData.purchases.find(p => p.id === purchaseId);
+            if (!purchase) {
+                showNotification('فاتورة الشراء غير موجودة', 'error');
+                return;
             }
+            
+            const supplier = systemData.suppliers.find(s => s.id === purchase.supplierId);
+            
+            const printContent = `
+                <div class="small-invoice">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <h3>${systemData.settings.companyName}</h3>
+                        <p>${systemData.settings.companyAddress}</p>
+                        <p>${systemData.settings.companyPhone}</p>
+                        <hr style="margin: 10px 0;">
+                    </div>
+                    
+                    <div style="border-bottom: 1px dashed #000; margin-bottom: 15px; padding-bottom: 10px;">
+                        <p><strong>رقم الفاتورة:</strong> ${purchase.id}</p>
+                        <p><strong>التاريخ:</strong> ${purchase.date}</p>
+                        <p><strong>نوع الفاتورة:</strong> شراء</p>
+                    </div>
+                    
+                    ${supplier ? `
+                        <div style="margin-bottom: 15px;">
+                            <p><strong>المورد:</strong> ${supplier.name}</p>
+                            <p><strong>الهاتف:</strong> ${supplier.phone}</p>
+                        </div>
+                    ` : ''}
+                    
+                    <table style="width: 100%; margin-bottom: 15px; font-size: 12px;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: right; border-bottom: 1px solid #000; padding: 5px;">المنتج</th>
+                                <th style="text-align: center; border-bottom: 1px solid #000; padding: 5px;">الكمية</th>
+                                <th style="text-align: left; border-bottom: 1px solid #000; padding: 5px;">السعر</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${purchase.items.map(item => `
+                                <tr>
+                                    <td style="text-align: right; padding: 5px;">${item.name}</td>
+                                    <td style="text-align: center; padding: 5px;">${item.quantity}</td>
+                                    <td style="text-align: left; padding: 5px;">${item.purchasePrice.toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <div style="border-top: 1px dashed #000; padding-top: 10px; margin-bottom: 15px; font-size: 12px;">
+                        <p><strong>الإجمالي:</strong> ${purchase.total.toLocaleString()} د.ع</p>
+                        <p><strong>طريقة الدفع:</strong> ${purchase.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</p>
+                        ${purchase.notes ? `<p><strong>ملاحظات:</strong> ${purchase.notes}</p>` : ''}
+                    </div>
+                    
+                    <div style="text-align: center; font-size: 11px; color: #777;">
+                        <p>فاتورة شراء</p>
+                        <p>${systemData.settings.companyName}</p>
+                    </div>
+                </div>
+            `;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>طباعة فاتورة الشراء ${purchaseId}</title>
+                        <style>
+                            body { 
+                                font-family: Arial, sans-serif; 
+                                direction: rtl; 
+                                margin: 0;
+                                padding: 10px;
+                            }
+                            @media print {
+                                body { margin: 0; padding: 0; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent}
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 1000);
+                            };
+                        <\/script>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+        };
+        
+        // تعديل دفعة عميل
+        window.editCustomerPayment = function(paymentId) {
+            showNotification('تعديل الدفعة - هذه الوظيفة تحت التطوير', 'info');
+        };
+        
+        // تعديل مصروف
+        window.editExpense = function(expenseId) {
+            showNotification('تعديل المصروف - هذه الوظيفة تحت التطوير', 'info');
         };
         
         // البحث في المخزون
@@ -3339,6 +5159,23 @@
                 const productType = row.cells[6].textContent.toLowerCase();
                 
                 if (productName.includes(searchTerm) || productType.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        };
+        
+        // البحث في المشتريات
+        window.searchPurchases = function() {
+            const searchTerm = document.getElementById('purchaseSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#purchasesTable tbody tr');
+            
+            rows.forEach(row => {
+                const invoiceId = row.cells[0].textContent.toLowerCase();
+                const supplierName = row.cells[2].textContent.toLowerCase();
+                
+                if (invoiceId.includes(searchTerm) || supplierName.includes(searchTerm)) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
@@ -3380,6 +5217,57 @@
             });
         };
         
+        // البحث في دفعات العملاء
+        window.searchCustomerPayments = function() {
+            const searchTerm = document.getElementById('customerPaymentSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#customerPaymentsTable tbody tr');
+            
+            rows.forEach(row => {
+                const customerName = row.cells[1].textContent.toLowerCase();
+                const amount = row.cells[2].textContent.toLowerCase();
+                
+                if (customerName.includes(searchTerm) || amount.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        };
+        
+        // البحث في دفعات الموردين
+        window.searchSupplierPayments = function() {
+            const searchTerm = document.getElementById('supplierPaymentSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#supplierPaymentsTable tbody tr');
+            
+            rows.forEach(row => {
+                const supplierName = row.cells[1].textContent.toLowerCase();
+                const amount = row.cells[2].textContent.toLowerCase();
+                
+                if (supplierName.includes(searchTerm) || amount.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        };
+        
+        // البحث في المصروفات
+        window.searchExpenses = function() {
+            const searchTerm = document.getElementById('expenseSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#expensesTable tbody tr');
+            
+            rows.forEach(row => {
+                const expenseType = row.cells[1].textContent.toLowerCase();
+                const amount = row.cells[2].textContent.toLowerCase();
+                
+                if (expenseType.includes(searchTerm) || amount.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        };
+        
         // البحث في الفواتير
         window.searchInvoices = function() {
             const searchTerm = document.getElementById('invoiceSearch').value.toLowerCase();
@@ -3397,9 +5285,113 @@
             });
         };
         
+        // البحث في المستخدمين
+        window.searchUsers = function() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTable tbody tr');
+            
+            rows.forEach(row => {
+                const username = row.cells[1].textContent.toLowerCase();
+                const fullName = row.cells[2].textContent.toLowerCase();
+                
+                if (username.includes(searchTerm) || fullName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        };
+        
+        // البحث في الصلاحيات
+        window.searchRoles = function() {
+            const searchTerm = document.getElementById('roleSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#rolesTable tbody tr');
+            
+            rows.forEach(row => {
+                const roleName = row.cells[1].textContent.toLowerCase();
+                
+                if (roleName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        };
+        
         // مسح الباركود
         window.scanBarcode = function() {
-            alert('في التطبيق الفعلي، سيتم فتح كاميرا الجهاز لمسح الباركود');
+            showNotification('للاستخدام الفعلي، سيتم فتح كاميرا الجهاز لمسح الباركود', 'info');
+        };
+        
+        // تحديث إحصائيات لوحة التحكم
+        function updateDashboardStats() {
+            // إحصائيات المنتجات
+            document.getElementById('totalProducts').textContent = systemData.products.length;
+            document.getElementById('newProducts').textContent = systemData.products.filter(p => {
+                // يمكن إضافة منطق للتحقق من المنتجات الجديدة
+                return true;
+            }).length;
+            
+            // إحصائيات العملاء
+            document.getElementById('totalCustomers').textContent = systemData.customers.length;
+            
+            // إحصائيات الديون
+            const totalDebts = systemData.customers.reduce((sum, customer) => sum + customer.debt, 0);
+            document.getElementById('totalDebts').textContent = totalDebts.toLocaleString();
+            document.getElementById('debtIncrease').textContent = '0'; // يمكن تطوير هذا
+            
+            // إحصائيات المبيعات والمشتريات (يومية وشهرية)
+            const today = new Date().toISOString().split('T')[0];
+            const currentMonth = new Date().getMonth() + 1;
+            const currentYear = new Date().getFullYear();
+            
+            // حساب المبيعات اليومية
+            const dailySales = systemData.invoices
+                .filter(inv => inv.date === today)
+                .reduce((sum, inv) => sum + inv.total, 0);
+            document.getElementById('dailySales').textContent = dailySales.toLocaleString();
+            
+            // حساب المشتريات اليومية
+            const dailyPurchases = systemData.purchases
+                .filter(p => p.date === today)
+                .reduce((sum, p) => sum + p.total, 0);
+            document.getElementById('dailyPurchases').textContent = dailyPurchases.toLocaleString();
+            
+            // حساب الأرباح اليومية
+            const dailyProfit = dailySales - dailyPurchases;
+            document.getElementById('dailyProfit').textContent = dailyProfit.toLocaleString();
+            
+            // حساب المبيعات الشهرية
+            const monthlySales = systemData.invoices
+                .filter(inv => {
+                    const invoiceDate = new Date(inv.date);
+                    return invoiceDate.getMonth() + 1 === currentMonth && 
+                           invoiceDate.getFullYear() === currentYear;
+                })
+                .reduce((sum, inv) => sum + inv.total, 0);
+            document.getElementById('monthlySales').textContent = monthlySales.toLocaleString();
+            
+            // حساب المشتريات الشهرية
+            const monthlyPurchases = systemData.purchases
+                .filter(p => {
+                    const purchaseDate = new Date(p.date);
+                    return purchaseDate.getMonth() + 1 === currentMonth && 
+                           purchaseDate.getFullYear() === currentYear;
+                })
+                .reduce((sum, p) => sum + p.total, 0);
+            document.getElementById('monthlyPurchases').textContent = monthlyPurchases.toLocaleString();
+            
+            // حساب الأرباح الشهرية
+            const monthlyProfit = monthlySales - monthlyPurchases;
+            document.getElementById('monthlyProfit').textContent = monthlyProfit.toLocaleString();
+            
+            // تحديث النسب المئوية
+            document.getElementById('dailySalesChange').textContent = '0';
+            document.getElementById('dailyPurchasesChange').textContent = '0';
+            document.getElementById('dailyProfitChange').textContent = '0';
+            document.getElementById('monthlySalesChange').textContent = '0';
+            document.getElementById('monthlyPurchasesChange').textContent = '0';
+            document.getElementById('monthlyProfitChange').textContent = '0';
         };
         
         // توليد تقرير
@@ -3407,67 +5399,250 @@
             const reportType = document.getElementById('reportType').value;
             const reportDate = document.getElementById('reportDate').value;
             
+            if (!reportDate) {
+                showNotification('الرجاء اختيار تاريخ', 'error');
+                return;
+            }
+            
             let reportContent = '';
             
             switch(reportType) {
                 case 'daily':
-                    reportContent = '<h3>تقرير المبيعات اليومي</h3>';
+                    reportContent = generateDailyReport(reportDate);
                     break;
                 case 'weekly':
-                    reportContent = '<h3>تقرير المبيعات الأسبوعي</h3>';
+                    reportContent = generateWeeklyReport(reportDate);
                     break;
                 case 'monthly':
-                    reportContent = '<h3>تقرير المبيعات الشهري</h3>';
+                    reportContent = generateMonthlyReport(reportDate);
                     break;
                 case 'yearly':
-                    reportContent = '<h3>تقرير المبيعات السنوي</h3>';
+                    reportContent = generateYearlyReport(reportDate);
                     break;
             }
             
-            // إضافة إحصائيات وهمية
-            reportContent += `
-                <div class="stats-cards" style="margin-top: 20px;">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-shopping-bag"></i>
+            document.getElementById('reportResults').innerHTML = reportContent;
+        };
+        
+        // توليد تقرير يومي
+        function generateDailyReport(date) {
+            const dailyInvoices = systemData.invoices.filter(inv => inv.date === date);
+            const dailyPurchases = systemData.purchases.filter(p => p.date === date);
+            const dailyExpenses = systemData.expenses.filter(e => e.date === date);
+            
+            const totalSales = dailyInvoices.reduce((sum, inv) => sum + inv.total, 0);
+            const totalPurchases = dailyPurchases.reduce((sum, p) => sum + p.total, 0);
+            const totalExpenses = dailyExpenses.reduce((sum, e) => sum + e.amount, 0);
+            const netProfit = totalSales - totalPurchases - totalExpenses;
+            
+            return `
+                <div class="table-container">
+                    <h3 style="padding: 20px; margin: 0;">تقرير المبيعات اليومي - ${date}</h3>
+                    
+                    <div class="stats-cards" style="margin: 20px;">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">إجمالي المبيعات</div>
+                                <div class="stat-value">${totalSales.toLocaleString()} <span style="font-size: 16px;">د.ع</span></div>
+                            </div>
                         </div>
-                        <div class="stat-content">
-                            <div class="stat-title">إجمالي المبيعات</div>
-                            <div class="stat-value">125,750 <span style="font-size: 16px;">د.ع</span></div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-cart-arrow-down"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">إجمالي المشتريات</div>
+                                <div class="stat-value">${totalPurchases.toLocaleString()} <span style="font-size: 16px;">د.ع</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">إجمالي المصروفات</div>
+                                <div class="stat-value">${totalExpenses.toLocaleString()} <span style="font-size: 16px;">د.ع</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">صافي الربح</div>
+                                <div class="stat-value">${netProfit.toLocaleString()} <span style="font-size: 16px;">د.ع</span></div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-cart-arrow-down"></i>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px;">
+                        <div>
+                            <h4>الفواتير اليومية (${dailyInvoices.length})</h4>
+                            ${dailyInvoices.length > 0 ? `
+                                <div style="max-height: 300px; overflow-y: auto;">
+                                    <table style="width: 100%; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="background: #f5f5f5;">
+                                                <th style="padding: 10px; border: 1px solid #ddd;">رقم الفاتورة</th>
+                                                <th style="padding: 10px; border: 1px solid #ddd;">المبلغ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${dailyInvoices.map(invoice => `
+                                                <tr>
+                                                    <td style="padding: 10px; border: 1px solid #ddd;">${invoice.id}</td>
+                                                    <td style="padding: 10px; border: 1px solid #ddd;">${invoice.total.toLocaleString()} د.ع</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ` : '<p style="text-align: center; color: #777;">لا توجد فواتير لهذا اليوم</p>'}
                         </div>
-                        <div class="stat-content">
-                            <div class="stat-title">إجمالي المشتريات</div>
-                            <div class="stat-value">89,500 <span style="font-size: 16px;">د.ع</span></div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-title">صافي الربح</div>
-                            <div class="stat-value">36,250 <span style="font-size: 16px;">د.ع</span></div>
+                        
+                        <div>
+                            <h4>المشتريات اليومية (${dailyPurchases.length})</h4>
+                            ${dailyPurchases.length > 0 ? `
+                                <div style="max-height: 300px; overflow-y: auto;">
+                                    <table style="width: 100%; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="background: #f5f5f5;">
+                                                <th style="padding: 10px; border: 1px solid #ddd;">رقم الفاتورة</th>
+                                                <th style="padding: 10px; border: 1px solid #ddd;">المبلغ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${dailyPurchases.map(purchase => `
+                                                <tr>
+                                                    <td style="padding: 10px; border: 1px solid #ddd;">${purchase.id}</td>
+                                                    <td style="padding: 10px; border: 1px solid #ddd;">${purchase.total.toLocaleString()} د.ع</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ` : '<p style="text-align: center; color: #777;">لا توجد مشتريات لهذا اليوم</p>'}
                         </div>
                     </div>
                 </div>
             `;
+        }
+        
+        // توليد تقرير أسبوعي
+        function generateWeeklyReport(date) {
+            // يمكن تطوير هذه الوظيفة لتوليد تقارير أسبوعية
+            return '<p style="text-align: center; color: #777; padding: 40px;">تقرير أسبوعي - هذه الوظيفة تحت التطوير</p>';
+        }
+        
+        // توليد تقرير شهري
+        function generateMonthlyReport(date) {
+            const dateObj = new Date(date);
+            const month = dateObj.getMonth() + 1;
+            const year = dateObj.getFullYear();
             
-            document.getElementById('reportResults').innerHTML = reportContent;
-        };
+            const monthlyInvoices = systemData.invoices.filter(inv => {
+                const invoiceDate = new Date(inv.date);
+                return invoiceDate.getMonth() + 1 === month && 
+                       invoiceDate.getFullYear() === year;
+            });
+            
+            const monthlyPurchases = systemData.purchases.filter(p => {
+                const purchaseDate = new Date(p.date);
+                return purchaseDate.getMonth() + 1 === month && 
+                       purchaseDate.getFullYear() === year;
+            });
+            
+            const monthlyExpenses = systemData.expenses.filter(e => {
+                const expenseDate = new Date(e.date);
+                return expenseDate.getMonth() + 1 === month && 
+                       expenseDate.getFullYear() === year;
+            });
+            
+            const totalSales = monthlyInvoices.reduce((sum, inv) => sum + inv.total, 0);
+            const totalPurchases = monthlyPurchases.reduce((sum, p) => sum + p.total, 0);
+            const totalExpenses = monthlyExpenses.reduce((sum, e) => sum + e.amount, 0);
+            const netProfit = totalSales - totalPurchases - totalExpenses;
+            
+            const monthNames = [
+                'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+                'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+            ];
+            
+            return `
+                <div class="table-container">
+                    <h3 style="padding: 20px; margin: 0;">تقرير المبيعات الشهري - ${monthNames[month-1]} ${year}</h3>
+                    
+                    <div class="stats-cards" style="margin: 20px;">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">إجمالي المبيعات</div>
+                                <div class="stat-value">${totalSales.toLocaleString()} <span style="font-size: 16px;">د.ع</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-cart-arrow-down"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">إجمالي المشتريات</div>
+                                <div class="stat-value">${totalPurchases.toLocaleString()} <span style="font-size: 16px;">د.ع</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">إجمالي المصروفات</div>
+                                <div class="stat-value">${totalExpenses.toLocaleString()} <span style="font-size: 16px;">د.ع</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">صافي الربح</div>
+                                <div class="stat-value">${netProfit.toLocaleString()} <span style="font-size: 16px;">د.ع</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 20px;">
+                        <h4>ملخص الأداء الشهري</h4>
+                        <p>عدد الفواتير: ${monthlyInvoices.length}</p>
+                        <p>عدد عمليات الشراء: ${monthlyPurchases.length}</p>
+                        <p>عدد المصروفات: ${monthlyExpenses.length}</p>
+                        <p>متوسط المبيعات اليومية: ${(totalSales / 30).toLocaleString()} د.ع</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // توليد تقرير سنوي
+        function generateYearlyReport(date) {
+            // يمكن تطوير هذه الوظيفة لتوليد تقارير سنوية
+            return '<p style="text-align: center; color: #777; padding: 40px;">تقرير سنوي - هذه الوظيفة تحت التطوير</p>';
+        }
         
         // طباعة التقرير
         window.printReport = function() {
             const reportContent = document.getElementById('reportResults').innerHTML;
             
             if (!reportContent) {
-                alert('الرجاء توليد التقرير أولاً');
+                showNotification('الرجاء توليد التقرير أولاً', 'error');
                 return;
             }
             
@@ -3511,148 +5686,185 @@
             linkElement.setAttribute('href', dataUri);
             linkElement.setAttribute('download', exportFileDefaultName);
             linkElement.click();
-        };
-        
-        // عرض الفاتورة
-        window.viewInvoice = function(invoiceId) {
-            const invoice = systemData.invoices.find(inv => inv.id === invoiceId);
-            if (!invoice) return;
             
-            alert(`عرض الفاتورة ${invoiceId}\n\nفي التطبيق الكامل، سيتم عرض تفاصيل الفاتورة الكاملة.`);
+            showNotification('تم تصدير بيانات الفواتير', 'success');
         };
         
-        // طباعة الفاتورة
-        window.printInvoice = function(invoiceId) {
-            const invoice = systemData.invoices.find(inv => inv.id === invoiceId);
-            if (!invoice) return;
+        // تغيير كلمة المرور
+        window.changePassword = function() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
             
-            alert(`طباعة الفاتورة ${invoiceId}\n\nفي التطبيق الكامل، سيتم فتح نافذة الطباعة.`);
-        };
-        
-        // حذف الفاتورة
-        window.deleteInvoice = function(invoiceId) {
-            if (confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) {
-                systemData.invoices = systemData.invoices.filter(inv => inv.id !== invoiceId);
-                saveSystemData();
-                loadInvoices();
-                loadRecentInvoices();
-                alert('تم حذف الفاتورة بنجاح!');
+            if (currentPassword !== systemData.users[0].password) {
+                showNotification('كلمة المرور الحالية غير صحيحة', 'error');
+                return;
             }
-        };
-        
-        // عرض عملية الشراء
-        window.viewPurchase = function(purchaseId) {
-            const purchase = systemData.purchases.find(p => p.id === purchaseId);
-            if (!purchase) return;
             
-            alert(`عرض فاتورة الشراء ${purchaseId}\n\nفي التطبيق الكامل، سيتم عرض تفاصيل الفاتورة الكاملة.`);
-        };
-        
-        // طباعة فاتورة الشراء
-        window.printPurchase = function(purchaseId) {
-            const purchase = systemData.purchases.find(p => p.id === purchaseId);
-            if (!purchase) return;
+            if (newPassword !== confirmPassword) {
+                showNotification('كلمة المرور الجديدة وتأكيدها غير متطابقتين', 'error');
+                return;
+            }
             
-            alert(`طباعة فاتورة الشراء ${purchaseId}\n\nفي التطبيق الكامل، سيتم فتح نافذة الطباعة.`);
-        };
-        
-        // حذف فاتورة الشراء
-        window.deletePurchase = function(purchaseId) {
-            if (confirm('هل أنت متأكد من حذف فاتورة الشراء هذه؟')) {
-                systemData.purchases = systemData.purchases.filter(p => p.id !== purchaseId);
-                saveSystemData();
-                loadPurchases();
-                alert('تم حذف فاتورة الشراء بنجاح!');
+            if (newPassword.length < 6) {
+                showNotification('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+                return;
             }
-        };
-        
-        // تعديل عميل
-        window.editCustomer = function(customerId) {
-            const customer = systemData.customers.find(c => c.id === customerId);
-            if (!customer) return;
             
-            const newName = prompt('الاسم الجديد:', customer.name);
-            if (newName) {
-                customer.name = newName;
-                saveSystemData();
-                loadCustomers();
-                alert('تم تحديث بيانات العميل بنجاح!');
-            }
-        };
-        
-        // حذف عميل
-        window.deleteCustomer = function(customerId) {
-            if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
-                systemData.customers = systemData.customers.filter(c => c.id !== customerId);
-                saveSystemData();
-                loadCustomers();
-                alert('تم حذف العميل بنجاح!');
-            }
-        };
-        
-        // تعديل مورد
-        window.editSupplier = function(supplierId) {
-            const supplier = systemData.suppliers.find(s => s.id === supplierId);
-            if (!supplier) return;
+            systemData.users[0].password = newPassword;
+            saveSystemData();
+            showNotification('تم تغيير كلمة المرور بنجاح!', 'success');
             
-            const newName = prompt('اسم المورد الجديد:', supplier.name);
-            if (newName) {
-                supplier.name = newName;
-                saveSystemData();
-                loadSuppliers();
-                alert('تم تحديث بيانات المورد بنجاح!');
+            // مسح الحقول
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        };
+        
+        // حفظ إعدادات الطباعة
+        window.savePrintSettings = function() {
+            systemData.settings.autoPrint = document.getElementById('autoPrint').checked;
+            systemData.settings.showPrintOptions = document.getElementById('showPrintOptions').checked;
+            systemData.settings.showBarcodeInInvoice = document.getElementById('showBarcodeInInvoice').checked;
+            systemData.settings.invoiceFooter = document.getElementById('invoiceFooter').value;
+            
+            saveSystemData();
+            showNotification('تم حفظ إعدادات الطباعة بنجاح!', 'success');
+        };
+        
+        // حفظ إعدادات المنتجات
+        window.saveProductSettings = function() {
+            systemData.settings.autoGenerateBarcode = document.getElementById('autoGenerateBarcode').checked;
+            systemData.settings.autoSuggestColors = document.getElementById('autoSuggestColors').checked;
+            systemData.settings.lowStockAlert = document.getElementById('lowStockAlert').checked;
+            systemData.settings.lowStockThreshold = parseInt(document.getElementById('lowStockThreshold').value) || 10;
+            
+            saveSystemData();
+            showNotification('تم حفظ إعدادات المنتجات بنجاح!', 'success');
+        };
+        
+        // حفظ إعدادات الشركة
+        window.saveCompanySettings = function() {
+            systemData.settings.companyName = document.getElementById('companyName').value.trim() || 'متجر الإلكترونيات';
+            systemData.settings.companyAddress = document.getElementById('companyAddress').value.trim() || 'بغداد - المنصور';
+            systemData.settings.companyPhone = document.getElementById('companyPhone').value.trim() || '07700000000';
+            
+            saveSystemData();
+            showNotification('تم حفظ معلومات الشركة بنجاح!', 'success');
+        };
+        
+        // إنشاء نسخة احتياطية
+        window.createBackup = function() {
+            const dataStr = JSON.stringify(systemData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `backup-${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('تم إنشاء النسخة الاحتياطية بنجاح!', 'success');
+        };
+        
+        // استعادة نسخة احتياطية
+        window.restoreBackup = function() {
+            const fileInput = document.getElementById('backupFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showNotification('الرجاء اختيار ملف النسخة الاحتياطية', 'error');
+                return;
             }
-        };
-        
-        // حذف مورد
-        window.deleteSupplier = function(supplierId) {
-            if (confirm('هل أنت متأكد من حذف هذا المورد؟')) {
-                systemData.suppliers = systemData.suppliers.filter(s => s.id !== supplierId);
-                saveSystemData();
-                loadSuppliers();
-                alert('تم حذف المورد بنجاح!');
+            
+            if (!confirm('هل أنت متأكد من استعادة النسخة الاحتياطية؟ سيتم استبدال جميع البيانات الحالية.')) {
+                return;
             }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const restoredData = JSON.parse(e.target.result);
+                    systemData = restoredData;
+                    saveSystemData();
+                    loadSystemData();
+                    showNotification('تم استعادة النسخة الاحتياطية بنجاح!', 'success');
+                    fileInput.value = '';
+                } catch (error) {
+                    showNotification('خطأ في ملف النسخة الاحتياطية: ' + error.message, 'error');
+                }
+            };
+            reader.onerror = function() {
+                showNotification('خطأ في قراءة الملف', 'error');
+            };
+            reader.readAsText(file);
         };
         
-        // فتح نافذة إضافة عميل
-        window.openAddCustomerModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة عميل جديد');
-        };
+        // حفظ البيانات
+        function saveSystemData() {
+            try {
+                localStorage.setItem('electronicsSalesSystem', JSON.stringify(systemData));
+            } catch (error) {
+                showNotification('خطأ في حفظ البيانات: ' + error.message, 'error');
+            }
+        }
         
-        // فتح نافذة إضافة مورد
-        window.openAddSupplierModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مورد جديد');
-        };
+        // تحميل البيانات المحفوظة
+        function loadSavedData() {
+            try {
+                const savedData = localStorage.getItem('electronicsSalesSystem');
+                if (savedData) {
+                    systemData = JSON.parse(savedData);
+                }
+            } catch (error) {
+                console.log('لا توجد بيانات محفوظة أو هناك خطأ في التحميل');
+            }
+        }
         
-        // فتح نافذة إضافة عملية شراء
-        window.openAddPurchaseModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة عملية شراء جديدة');
-        };
+        // الحصول على وصف الصلاحية
+        function getRoleDescription(role) {
+            switch(role) {
+                case 'مدير':
+                    return 'صلاحيات كاملة على النظام';
+                case 'مشرف':
+                    return 'إدارة المبيعات والمشتريات والتقارير';
+                case 'موظف':
+                    return 'إدارة المبيعات والمخزون فقط';
+                default:
+                    return 'صلاحيات محدودة';
+            }
+        }
         
-        // فتح نافذة إضافة دفعة عميل
-        window.openAddCustomerPaymentModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة دفعة عميل');
-        };
+        // إظهار الإشعارات
+        function showNotification(message, type) {
+            // إزالة الإشعارات السابقة
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // إزالة الإشعار بعد 3 ثوان
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
         
-        // فتح نافذة إضافة دفعة مورد
-        window.openAddSupplierPaymentModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة دفعة مورد');
-        };
+        // فتح نافذة منبثقة
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
         
-        // فتح نافذة إضافة مصروف
-        window.openAddExpenseModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مصروف');
-        };
-        
-        // فتح نافذة إضافة مستخدم
-        window.openAddUserModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مستخدم جديد');
-        };
-        
-        // فتح نافذة إضافة صلاحية
-        window.openAddRoleModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة صلاحية جديدة');
-        };
+        // إغلاق نافذة منبثقة
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
         
         // تحميل النظام عند فتح الصفحة
         window.addEventListener('load', function() {
