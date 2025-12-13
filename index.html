@@ -1279,7 +1279,7 @@
                 
                 <div class="search-container">
                     <div class="search-box">
-                        <input type="text" id="purchaseSearch" class="search-input" placeholder="ابحث عن فاتورة شراء..." onkeyup="searchPurchaseInvoices()">
+                        <input type="text" id="purchaseSearch" class="search-input" placeholder="ابحث عن فاتورة شراء...">
                         <button class="btn"><i class="fas fa-search"></i> بحث</button>
                         <button class="btn btn-success" onclick="openAddPurchaseModal()"><i class="fas fa-plus"></i> عملية شراء جديدة</button>
                     </div>
@@ -1946,7 +1946,7 @@
             </div>
             
             <div class="tab-content" id="supplierPurchasesTab">
-                <!-- سيتم ملء مشتريات المورد ديناميكيا -->
+                <!-- سيتم ملء مشتريات المورد دينامیکيا -->
             </div>
             
             <div class="tab-content" id="supplierPaymentsTab">
@@ -1958,311 +1958,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- نافذة إضافة عميل جديد -->
-    <div class="modal" id="addCustomerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-user-plus"></i> إضافة عميل جديد</h3>
-                <button class="close-modal" onclick="closeModal('addCustomerModal')">&times;</button>
-            </div>
-            
-            <form id="addCustomerForm">
-                <div class="form-group">
-                    <label>الاسم الكامل *</label>
-                    <input type="text" id="newCustomerName" class="form-control" placeholder="أدخل الاسم الكامل" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>رقم الهاتف *</label>
-                    <input type="tel" id="newCustomerPhone" class="form-control" placeholder="أدخل رقم الهاتف" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>البريد الإلكتروني (اختياري)</label>
-                    <input type="email" id="newCustomerEmail" class="form-control" placeholder="أدخل البريد الإلكتروني">
-                </div>
-                
-                <div class="form-group">
-                    <label>العنوان (اختياري)</label>
-                    <textarea id="newCustomerAddress" class="form-control" rows="3" placeholder="أدخل العنوان"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>الديون السابقة (اختياري)</label>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <input type="number" id="newCustomerPreviousDebt" class="form-control" placeholder="مبلغ الديون السابقة" value="0" style="flex: 1;">
-                        <span>د.ع</span>
-                    </div>
-                    <small style="color: #777;">إذا كان العميل مديناً من قبل، أدخل المبلغ هنا</small>
-                </div>
-                
-                <div class="form-group">
-                    <label>ملاحظات إضافية (اختياري)</label>
-                    <textarea id="newCustomerNotes" class="form-control" rows="3" placeholder="ملاحظات إضافية عن العميل"></textarea>
-                </div>
-                
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button type="submit" class="btn btn-success" style="flex: 1;">حفظ العميل</button>
-                    <button type="button" class="btn btn-danger" style="flex: 1;" onclick="closeModal('addCustomerModal')">إلغاء</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- نافذة إضافة مورد جديد -->
-    <div class="modal" id="addSupplierModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-truck"></i> إضافة مورد جديد</h3>
-                <button class="close-modal" onclick="closeModal('addSupplierModal')">&times;</button>
-            </div>
-            
-            <form id="addSupplierForm">
-                <div class="form-group">
-                    <label>اسم المورد / الشركة *</label>
-                    <input type="text" id="newSupplierName" class="form-control" placeholder="أدخل اسم المورد أو الشركة" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>رقم الهاتف *</label>
-                    <input type="tel" id="newSupplierPhone" class="form-control" placeholder="أدخل رقم الهاتف" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>البريد الإلكتروني (اختياري)</label>
-                    <input type="email" id="newSupplierEmail" class="form-control" placeholder="أدخل البريد الإلكتروني">
-                </div>
-                
-                <div class="form-group">
-                    <label>العنوان (اختياري)</label>
-                    <textarea id="newSupplierAddress" class="form-control" rows="3" placeholder="أدخل العنوان"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>نوع المورد (اختياري)</label>
-                    <select id="newSupplierType" class="form-control">
-                        <option value="مورد إلكترونيات">مورد إلكترونيات</option>
-                        <option value="مورد هواتف">مورد هواتف</option>
-                        <option value="مورد أجهزة كمبيوتر">مورد أجهزة كمبيوتر</option>
-                        <option value="مورد قطع غيار">مورد قطع غيار</option>
-                        <option value="مورد عام">مورد عام</option>
-                        <option value="أخرى">أخرى</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>الديون الحالية للمورد (اختياري)</label>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <input type="number" id="newSupplierDebt" class="form-control" placeholder="مبلغ الديون الحالية" value="0" style="flex: 1;">
-                        <span>د.ع</span>
-                    </div>
-                    <small style="color: #777;">إذا كنت مديناً للمورد من قبل، أدخل المبلغ هنا</small>
-                </div>
-                
-                <div class="form-group">
-                    <label>ملاحظات إضافية (اختياري)</label>
-                    <textarea id="newSupplierNotes" class="form-control" rows="3" placeholder="ملاحظات إضافية عن المورد"></textarea>
-                </div>
-                
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button type="submit" class="btn btn-success" style="flex: 1;">حفظ المورد</button>
-                    <button type="button" class="btn btn-danger" style="flex: 1;" onclick="closeModal('addSupplierModal')">إلغاء</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- نافذة إضافة عملية شراء -->
-    <div class="modal" id="addPurchaseModal">
-        <div class="modal-content" style="max-width: 900px;">
-            <div class="modal-header">
-                <h3><i class="fas fa-shopping-cart"></i> عملية شراء جديدة</h3>
-                <button class="close-modal" onclick="closeModal('addPurchaseModal')">&times;</button>
-            </div>
-            
-            <div class="tabs">
-                <div class="tab active" data-tab="purchaseInfo">معلومات الشراء</div>
-                <div class="tab" data-tab="purchaseItems">المنتجات</div>
-                <div class="tab" data-tab="purchaseSummary">الملخص</div>
-            </div>
-            
-            <!-- تبويب معلومات الشراء -->
-            <div class="tab-content active" id="purchaseInfoTab">
-                <div style="padding: 20px;">
-                    <div class="form-group">
-                        <label>اختر المورد *</label>
-                        <div class="search-box">
-                            <input type="text" id="supplierSearchPurchase" class="search-input" placeholder="ابحث عن المورد..." onkeyup="searchSuppliersForPurchase()" required>
-                            <button type="button" class="btn" onclick="openAddSupplierModalFromPurchase()"><i class="fas fa-plus"></i> مورد جديد</button>
-                        </div>
-                        <div id="supplierSuggestionsPurchase" style="display: none; background: white; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto; position: absolute; width: calc(100% - 30px); z-index: 100; margin-top: 5px;"></div>
-                    </div>
-                    
-                    <div id="selectedSupplierInfoPurchase" style="margin-top: 15px; display: none;">
-                        <div style="padding: 15px; background: #f0f8ff; border-radius: 10px;">
-                            <h4>معلومات المورد المحدد</h4>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                                <div><strong>الاسم:</strong> <span id="selectedSupplierName">-</span></div>
-                                <div><strong>الهاتف:</strong> <span id="selectedSupplierPhone">-</span></div>
-                                <div><strong>النوع:</strong> <span id="selectedSupplierType">-</span></div>
-                                <div><strong>الديون الحالية:</strong> <span id="selectedSupplierDebt">0</span> د.ع</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>تاريخ الشراء *</label>
-                        <input type="date" id="purchaseDate" class="form-control" value="${new Date().toISOString().split('T')[0]}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>طريقة الدفع *</label>
-                        <div style="display: flex; gap: 20px; margin-top: 10px;">
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="radio" name="purchasePaymentType" value="cash" checked> نقداً
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="radio" name="purchasePaymentType" value="credit"> بالدين
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div id="purchaseCreditSection" style="display: none; margin-top: 20px; padding: 15px; background: #fff8e1; border-radius: 10px;">
-                        <h4>معلومات الدين</h4>
-                        <div class="form-group">
-                            <label>تاريخ الاستحقاق</label>
-                            <input type="date" id="purchaseDueDate" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>ملاحظات على الدين (اختياري)</label>
-                            <textarea id="purchaseCreditNotes" class="form-control" rows="2" placeholder="ملاحظات إضافية حول الدين..."></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>ملاحظات عامة (اختياري)</label>
-                        <textarea id="purchaseNotes" class="form-control" rows="3" placeholder="ملاحظات إضافية حول عملية الشراء..."></textarea>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                        <button class="btn" onclick="switchTab('purchaseItemsTab')">
-                            <i class="fas fa-arrow-right"></i> التالي إلى المنتجات
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- تبويب المنتجات -->
-            <div class="tab-content" id="purchaseItemsTab">
-                <div style="padding: 20px;">
-                    <div class="search-container" style="margin-bottom: 20px;">
-                        <div class="search-box">
-                            <input type="text" id="productSearchPurchase" class="search-input" placeholder="ابحث عن المنتج بالاسم أو النوع..." onkeyup="searchProductsForPurchase()">
-                            <button class="btn" onclick="refreshProductsForPurchase()"><i class="fas fa-sync-alt"></i> تحديث</button>
-                        </div>
-                    </div>
-                    
-                    <div id="purchaseProductsGrid" class="products-grid" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px; padding: 10px; border: 1px solid #eee; border-radius: 10px;">
-                        <!-- سيتم ملء المنتجات ديناميكيا -->
-                    </div>
-                    
-                    <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                        <h4 style="margin-bottom: 10px;">سلة مشتريات المنتجات</h4>
-                        <div class="table-container" style="background: white;">
-                            <table style="width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>المنتج</th>
-                                        <th>النوع</th>
-                                        <th>الكمية</th>
-                                        <th>سعر الشراء</th>
-                                        <th>سعر البيع الحالي</th>
-                                        <th>سعر البيع الجديد</th>
-                                        <th>الإجمالي</th>
-                                        <th>الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="purchaseCartItems">
-                                    <!-- سيتم ملء عناصر سلة المشتريات ديناميكيا -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                        <button class="btn" onclick="switchTab('purchaseInfoTab')">
-                            <i class="fas fa-arrow-left"></i> السابق
-                        </button>
-                        <button class="btn" onclick="switchTab('purchaseSummaryTab')">
-                            التالي إلى الملخص <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- تبويب الملخص -->
-            <div class="tab-content" id="purchaseSummaryTab">
-                <div style="padding: 20px;">
-                    <div style="background: #f0f8ff; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                        <h4>ملخص عملية الشراء</h4>
-                        
-                        <div id="purchaseSummaryInfo" style="margin-top: 15px;">
-                            <!-- سيتم ملء معلومات الملخص ديناميكيا -->
-                        </div>
-                    </div>
-                    
-                    <div style="background: #fff8e1; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                        <h4>إجماليات الفاتورة</h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                            <div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                    <span>إجمالي المنتجات:</span>
-                                    <span style="font-weight: 700;" id="purchaseSubtotal">0 د.ع</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                    <span>الخصم:</span>
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <input type="number" id="purchaseDiscountInput" style="width: 120px; padding: 5px; border: 1px solid #ddd; border-radius: 5px;" value="0" onchange="updatePurchaseSummary()">
-                                        <span>د.ع</span>
-                                    </div>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 2px solid #ddd;">
-                                    <span style="font-size: 18px; font-weight: 700;">الإجمالي النهائي:</span>
-                                    <span style="font-size: 20px; font-weight: 800; color: var(--primary);" id="purchaseTotalAmount">0 د.ع</span>
-                                </div>
-                            </div>
-                            
-                            <div style="border-right: 2px solid #eee; padding-right: 20px;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                    <span>عدد المنتجات:</span>
-                                    <span id="purchaseProductsCount">0</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                    <span>إجمالي الكميات:</span>
-                                    <span id="purchaseTotalQuantity">0</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                    <span>طريقة الدفع:</span>
-                                    <span id="purchasePaymentMethod">نقداً</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                        <button class="btn" onclick="switchTab('purchaseItemsTab')">
-                            <i class="fas fa-arrow-left"></i> السابق
-                        </button>
-                        <button class="btn btn-success" onclick="completePurchase()">
-                            <i class="fas fa-check-circle"></i> إتمام عملية الشراء
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
         // بيانات النظام
@@ -2271,22 +1966,21 @@
                 { id: 1, username: "admin", password: "farzad1234", fullName: "مدير النظام", role: "مدير", createdAt: "2023-01-01", active: true }
             ],
             products: [
-                { id: 1, name: "هاتف سامسونج جالاكسي S23", purchasePrice: 1000000, salePrice: 1250000, quantity: 50, type: "هواتف", color: "#000000", barcode: "123456789012", image: "mobile-alt" },
+                { id: 1, name: "هاتف سامسونج جالاكسي S23", purchasePrice: 1000000, salePrice: 1250000, quantity: 50, type: "هواتف", color: "#000000", barcode: "123456789012", image: "mobile" },
                 { id: 2, name: "لاب توب ديل XPS 13", purchasePrice: 1500000, salePrice: 1850000, quantity: 30, type: "أجهزة كمبيوتر", color: "#808080", barcode: "123456789013", image: "laptop" },
                 { id: 3, name: "سماعات سوني WH-1000XM5", purchasePrice: 350000, salePrice: 450000, quantity: 100, type: "سماعات", color: "#000000", barcode: "123456789014", image: "headphones" },
-                { id: 4, name: "ساعة أبل ووتش سيريز 8", purchasePrice: 600000, salePrice: 750000, quantity: 40, type: "ساعات ذكية", color: "#FFFFFF", barcode: "123456789015", image: "clock" },
+                { id: 4, name: "ساعة أبل ووتش سيريز 8", purchasePrice: 600000, salePrice: 750000, quantity: 40, type: "ساعات ذكية", color: "#FFFFFF", barcode: "123456789015", image: "smartwatch" },
                 { id: 5, name: "كاميرا كانون EOS R6", purchasePrice: 2500000, salePrice: 3200000, quantity: 20, type: "كاميرات", color: "#000000", barcode: "123456789016", image: "camera" },
-                { id: 6, name: "تابلت سامسونج تاب S8", purchasePrice: 750000, salePrice: 950000, quantity: 60, type: "تابلت", color: "#808080", barcode: "123456789017", image: "tablet-alt" }
+                { id: 6, name: "تابلت سامسونج تاب S8", purchasePrice: 750000, salePrice: 950000, quantity: 60, type: "تابلت", color: "#808080", barcode: "123456789017", image: "tablet" }
             ],
             customers: [
-                { id: 1, name: "أحمد محمد", phone: "07701234567", email: "ahmed@example.com", address: "بغداد", totalPurchases: 1250000, debt: 150000, previousDebt: 0, notes: "", createdAt: "2023-01-15", active: true },
-                { id: 2, name: "سارة علي", phone: "07702345678", email: "sara@example.com", address: "البصرة", totalPurchases: 850000, debt: 0, previousDebt: 0, notes: "", createdAt: "2023-02-10", active: true },
-                { id: 3, name: "عمر خالد", phone: "07703456789", email: "omar@example.com", address: "الموصل", totalPurchases: 2100000, debt: 300000, previousDebt: 50000, notes: "", createdAt: "2023-03-05", active: true }
+                { id: 1, name: "أحمد محمد", phone: "07701234567", email: "ahmed@example.com", address: "بغداد", totalPurchases: 1250000, debt: 150000, previousDebt: 0 },
+                { id: 2, name: "سارة علي", phone: "07702345678", email: "sara@example.com", address: "البصرة", totalPurchases: 850000, debt: 0, previousDebt: 0 },
+                { id: 3, name: "عمر خالد", phone: "07703456789", email: "omar@example.com", address: "الموصل", totalPurchases: 2100000, debt: 300000, previousDebt: 50000 }
             ],
             suppliers: [
-                { id: 1, name: "شركة الإلكترونيات المتقدمة", phone: "07704567890", email: "info@advanced.com", address: "بغداد", type: "مورد إلكترونيات", totalPurchases: 5000000, debt: 250000, previousDebt: 0, notes: "", createdAt: "2023-01-01", active: true },
-                { id: 2, name: "مورد الأجهزة الذكية", phone: "07705678901", email: "contact@smartdevices.com", address: "أربيل", type: "مورد هواتف", totalPurchases: 3200000, debt: 0, previousDebt: 0, notes: "", createdAt: "2023-02-15", active: true },
-                { id: 3, name: "شركة الكمبيوتر المتطور", phone: "07706789012", email: "info@computer.com", address: "بغداد", type: "مورد أجهزة كمبيوتر", totalPurchases: 1800000, debt: 120000, previousDebt: 120000, notes: "مورد جيد للمعدات المكتبية", createdAt: "2023-03-20", active: true }
+                { id: 1, name: "شركة الإلكترونيات المتقدمة", phone: "07704567890", email: "info@advanced.com", address: "بغداد", totalPurchases: 5000000, debt: 250000, previousDebt: 0 },
+                { id: 2, name: "مورد الأجهزة الذكية", phone: "07705678901", email: "contact@smartdevices.com", address: "أربيل", totalPurchases: 3200000, debt: 0, previousDebt: 0 }
             ],
             invoices: [],
             purchases: [],
@@ -2330,15 +2024,6 @@
         let currentCustomerId = null;
         let invoiceCounter = 1;
 
-        // بيانات سلة المشتريات
-        let purchaseCart = [];
-        let selectedPurchaseSupplierId = null;
-        let currentPurchaseSupplier = null;
-
-        // ============================================
-        // نظام الدخول والخروج
-        // ============================================
-
         // تسجيل الدخول
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -2368,9 +2053,6 @@
             document.getElementById('password').value = '';
             cart = [];
             currentCustomerId = null;
-            purchaseCart = [];
-            selectedPurchaseSupplierId = null;
-            currentPurchaseSupplier = null;
         });
         
         // تبديل القائمة الجانبية على الأجهزة الصغيرة
@@ -2402,10 +2084,6 @@
                 }
             });
         });
-        
-        // ============================================
-        // تحميل بيانات النظام
-        // ============================================
         
         // تحميل بيانات النظام
         function loadSystemData() {
@@ -2446,20 +2124,15 @@
             setupPrintEvents();
         }
         
-        // ============================================
-        // نظام المنتجات والمخزون
-        // ============================================
-        
         // تحميل المنتجات
         function loadProducts() {
             productsGrid.innerHTML = '';
             systemData.products.forEach(product => {
-                const productIcon = getProductIcon(product.type);
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
-                    <div class="product-img" style="background: linear-gradient(135deg, ${product.color || '#4361ee'}, #3a0ca3);">
-                        <i class="fas fa-${productIcon}" style="color: white;"></i>
+                    <div class="product-img">
+                        <i class="fas fa-${product.image}"></i>
                     </div>
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
@@ -2474,37 +2147,21 @@
             });
         }
         
-        // الحصول على أيقونة المنتج حسب النوع
-        function getProductIcon(type) {
-            const icons = {
-                'هواتف': 'mobile-alt',
-                'أجهزة كمبيوتر': 'laptop',
-                'سماعات': 'headphones',
-                'ساعات ذكية': 'clock',
-                'كاميرات': 'camera',
-                'تابلت': 'tablet-alt',
-                'أخرى': 'box'
-            };
-            
-            return icons[type] || 'box';
-        }
-        
         // تحميل المخزون
         function loadInventory() {
             const inventoryTable = document.querySelector('#inventoryTable tbody');
             inventoryTable.innerHTML = '';
             systemData.products.forEach((product, index) => {
-                const productIcon = getProductIcon(product.type);
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${product.name}</td>
-                    <td><i class="fas fa-${productIcon}" style="font-size: 24px; color: ${product.color || '#4361ee'};"></i></td>
+                    <td><i class="fas fa-${product.image}" style="font-size: 24px;"></i></td>
                     <td>${product.quantity}</td>
                     <td>${product.purchasePrice.toLocaleString()} د.ع</td>
                     <td>${product.salePrice.toLocaleString()} د.ع</td>
                     <td>${product.type}</td>
-                    <td><div style="width: 20px; height: 20px; background: ${product.color || '#000000'}; border-radius: 50%;"></div></td>
+                    <td><div style="width: 20px; height: 20px; background: ${product.color}; border-radius: 50%;"></div></td>
                     <td>
                         <div class="action-buttons">
                             <button class="btn-small btn-edit" onclick="editProduct(${product.id})"><i class="fas fa-edit"></i></button>
@@ -2517,10 +2174,6 @@
             });
         }
         
-        // ============================================
-        // نظام العملاء والموردين
-        // ============================================
-        
         // تحميل العملاء
         function loadCustomers() {
             const customersTable = document.querySelector('#customersTable tbody');
@@ -2532,13 +2185,9 @@
                         <td>${index + 1}</td>
                         <td>${customer.name}</td>
                         <td>${customer.phone}</td>
-                        <td>${customer.email || '-'}</td>
+                        <td>${customer.email}</td>
                         <td>${customer.totalPurchases.toLocaleString()} د.ع</td>
-                        <td>
-                            <span style="color: ${customer.debt > 0 ? '#e74c3c' : '#2ecc71'}; font-weight: bold;">
-                                ${customer.debt.toLocaleString()} د.ع
-                            </span>
-                        </td>
+                        <td>${customer.debt.toLocaleString()} د.ع</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="btn-small btn-edit" onclick="editCustomer(${customer.id})"><i class="fas fa-edit"></i></button>
@@ -2563,13 +2212,9 @@
                         <td>${index + 1}</td>
                         <td>${supplier.name}</td>
                         <td>${supplier.phone}</td>
-                        <td>${supplier.email || '-'}</td>
+                        <td>${supplier.email}</td>
                         <td>${supplier.totalPurchases.toLocaleString()} د.ع</td>
-                        <td>
-                            <span style="color: ${supplier.debt > 0 ? '#e74c3c' : '#2ecc71'}; font-weight: bold;">
-                                ${supplier.debt.toLocaleString()} د.ع
-                            </span>
-                        </td>
+                        <td>${supplier.debt.toLocaleString()} د.ع</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="btn-small btn-edit" onclick="editSupplier(${supplier.id})"><i class="fas fa-edit"></i></button>
@@ -2582,10 +2227,6 @@
                 });
             }
         }
-        
-        // ============================================
-        // نظام الفواتير
-        // ============================================
         
         // تحميل الفواتير
         function loadInvoices() {
@@ -2620,50 +2261,21 @@
             const purchasesTable = document.querySelector('#purchasesTable tbody');
             if (purchasesTable) {
                 purchasesTable.innerHTML = '';
-                
-                if (systemData.purchases.length === 0) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td colspan="7" style="text-align: center; padding: 30px; color: #777;">
-                            <i class="fas fa-shopping-cart" style="font-size: 40px; margin-bottom: 15px;"></i>
-                            <p>لا توجد فواتير شراء بعد</p>
-                            <button class="btn" onclick="openAddPurchaseModal()" style="margin-top: 10px;">
-                                <i class="fas fa-plus"></i> إضافة عملية شراء جديدة
-                            </button>
-                        </td>
-                    `;
-                    purchasesTable.appendChild(row);
-                    return;
-                }
-                
                 systemData.purchases.forEach((purchase, index) => {
-                    const supplier = systemData.suppliers.find(s => s.id === purchase.supplierId) || { 
-                        name: "غير محدد", 
-                        phone: "-" 
-                    };
+                    const supplier = systemData.suppliers.find(s => s.id === purchase.supplierId) || { name: "غير محدد" };
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${purchase.id}</td>
                         <td>${purchase.date}</td>
                         <td>${supplier.name}</td>
                         <td>${purchase.total.toLocaleString()} د.ع</td>
-                        <td>
-                            <span style="padding: 5px 10px; border-radius: 20px; background: ${purchase.paymentType === 'cash' ? '#4CAF50' : '#FF9800'}; color: white;">
-                                ${purchase.paymentType === 'cash' ? 'نقداً' : 'بالدين'}
-                            </span>
-                        </td>
-                        <td><span style="padding: 5px 10px; border-radius: 20px; background: #4CAF50; color: white;">${purchase.status}</span></td>
+                        <td>${purchase.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</td>
+                        <td><span style="padding: 5px 10px; border-radius: 20px; background: #4CAF50; color: white;">مكتمل</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn-small btn-view" onclick="viewPurchase('${purchase.id}')" title="عرض التفاصيل">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn-small btn-print" onclick="printPurchase('${purchase.id}')" title="طباعة">
-                                    <i class="fas fa-print"></i>
-                                </button>
-                                <button class="btn-small btn-delete" onclick="deletePurchase('${purchase.id}')" title="حذف">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <button class="btn-small btn-view" onclick="viewPurchase(${purchase.id})"><i class="fas fa-eye"></i></button>
+                                <button class="btn-small btn-print" onclick="printPurchase(${purchase.id})"><i class="fas fa-print"></i></button>
+                                <button class="btn-small btn-delete" onclick="deletePurchase(${purchase.id})"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     `;
@@ -2698,10 +2310,6 @@
                 });
             }
         }
-        
-        // ============================================
-        // الإعدادات
-        // ============================================
         
         // تحميل إعدادات الطباعة
         function loadPrintSettings() {
@@ -2783,10 +2391,6 @@
                 openPrintA4Modal();
             });
         }
-        
-        // ============================================
-        // نظام البيع (نقطة البيع)
-        // ============================================
         
         // البحث عن المنتجات
         function searchProducts() {
@@ -3088,787 +2692,6 @@
             loadRecentInvoices();
         };
         
-        // ============================================
-        // نظام الشراء (المشتريات)
-        // ============================================
-        
-        // فتح نافذة إضافة عملية شراء
-        window.openAddPurchaseModal = function() {
-            // إعادة تعيين البيانات
-            purchaseCart = [];
-            selectedPurchaseSupplierId = null;
-            currentPurchaseSupplier = null;
-            
-            // إعادة تعيين الحقول
-            document.getElementById('supplierSearchPurchase').value = '';
-            document.getElementById('selectedSupplierInfoPurchase').style.display = 'none';
-            document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('purchaseDueDate').value = '';
-            document.getElementById('purchaseCreditNotes').value = '';
-            document.getElementById('purchaseNotes').value = '';
-            document.getElementById('purchaseDiscountInput').value = '0';
-            
-            // تفعيل الدفع النقدي كخيار افتراضي
-            document.querySelector('input[name="purchasePaymentType"][value="cash"]').checked = true;
-            document.getElementById('purchaseCreditSection').style.display = 'none';
-            
-            // تحميل المنتجات للشراء
-            loadProductsForPurchase();
-            
-            // تحديث السلة
-            updatePurchaseCartDisplay();
-            
-            // تحديث الملخص
-            updatePurchaseSummary();
-            
-            // التبديل إلى التبويب الأول
-            switchTab('purchaseInfoTab');
-            
-            // فتح النافذة
-            openModal('addPurchaseModal');
-        };
-        
-        // تحميل المنتجات للشراء مع صورها
-        function loadProductsForPurchase() {
-            const productsGrid = document.getElementById('purchaseProductsGrid');
-            productsGrid.innerHTML = '';
-            
-            if (systemData.products.length === 0) {
-                productsGrid.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #777;">
-                        <i class="fas fa-box-open" style="font-size: 50px; margin-bottom: 15px;"></i>
-                        <p>لا توجد منتجات في النظام</p>
-                        <button class="btn" onclick="openAddProductModal()" style="margin-top: 10px;">
-                            <i class="fas fa-plus"></i> إضافة منتج جديد
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-            
-            systemData.products.forEach(product => {
-                const productIcon = getProductIcon(product.type);
-                
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.innerHTML = `
-                    <div class="product-img" style="background: linear-gradient(135deg, ${product.color || '#4361ee'}, #3a0ca3);">
-                        <i class="fas fa-${productIcon}" style="color: white;"></i>
-                    </div>
-                    <div class="product-info">
-                        <div class="product-name">${product.name}</div>
-                        <div class="product-type" style="font-size: 14px; color: #777; margin-bottom: 5px;">
-                            <i class="fas fa-tag"></i> ${product.type}
-                        </div>
-                        <div style="font-size: 14px; color: #555; margin-bottom: 5px;">
-                            <i class="fas fa-box"></i> المتاح: ${product.quantity}
-                        </div>
-                        <div class="product-price" style="color: #f72585; margin-bottom: 10px;">
-                            شراء: ${product.purchasePrice.toLocaleString()} د.ع
-                        </div>
-                        <div style="font-size: 14px; color: #4361ee; margin-bottom: 15px;">
-                            بيع: ${product.salePrice.toLocaleString()} د.ع
-                        </div>
-                        <button class="btn" style="padding: 8px 15px; font-size: 14px; width: 100%;" onclick="addToPurchaseCart(${product.id})">
-                            <i class="fas fa-cart-plus"></i> إضافة للشراء
-                        </button>
-                    </div>
-                `;
-                productsGrid.appendChild(productCard);
-            });
-        }
-        
-        // البحث عن موردين للشراء
-        window.searchSuppliersForPurchase = function() {
-            const searchTerm = document.getElementById('supplierSearchPurchase').value.toLowerCase().trim();
-            const suggestions = document.getElementById('supplierSuggestionsPurchase');
-            
-            if (searchTerm.length === 0) {
-                suggestions.style.display = 'none';
-                return;
-            }
-            
-            const filteredSuppliers = systemData.suppliers.filter(supplier => 
-                supplier.name.toLowerCase().includes(searchTerm) || 
-                supplier.phone.includes(searchTerm) ||
-                (supplier.type && supplier.type.toLowerCase().includes(searchTerm))
-            );
-            
-            suggestions.innerHTML = '';
-            
-            if (filteredSuppliers.length === 0) {
-                const suggestion = document.createElement('div');
-                suggestion.style.padding = '10px';
-                suggestion.style.color = '#777';
-                suggestion.style.textAlign = 'center';
-                suggestion.innerHTML = 'لا توجد نتائج';
-                suggestions.appendChild(suggestion);
-            } else {
-                filteredSuppliers.forEach(supplier => {
-                    const suggestion = document.createElement('div');
-                    suggestion.style.padding = '10px';
-                    suggestion.style.cursor = 'pointer';
-                    suggestion.style.borderBottom = '1px solid #eee';
-                    suggestion.style.transition = 'background 0.2s';
-                    suggestion.innerHTML = `
-                        <div style="font-weight: bold;">${supplier.name}</div>
-                        <div style="font-size: 12px; color: #666;">${supplier.phone} | ${supplier.type || 'غير محدد'}</div>
-                        <div style="font-size: 12px; color: ${supplier.debt > 0 ? '#e74c3c' : '#27ae60'};">
-                            الديون: ${supplier.debt.toLocaleString()} د.ع
-                        </div>
-                    `;
-                    suggestion.onmouseover = function() { this.style.background = '#f5f5f5'; };
-                    suggestion.onmouseout = function() { this.style.background = 'white'; };
-                    suggestion.onclick = function() {
-                        selectSupplierForPurchase(supplier.id);
-                        suggestions.style.display = 'none';
-                    };
-                    suggestions.appendChild(suggestion);
-                });
-            }
-            
-            suggestions.style.display = 'block';
-        };
-        
-        // اختيار مورد للشراء
-        function selectSupplierForPurchase(supplierId) {
-            selectedPurchaseSupplierId = supplierId;
-            currentPurchaseSupplier = systemData.suppliers.find(s => s.id === supplierId);
-            
-            if (!currentPurchaseSupplier) return;
-            
-            document.getElementById('supplierSearchPurchase').value = currentPurchaseSupplier.name;
-            
-            // تحديث معلومات المورد
-            document.getElementById('selectedSupplierName').textContent = currentPurchaseSupplier.name;
-            document.getElementById('selectedSupplierPhone').textContent = currentPurchaseSupplier.phone;
-            document.getElementById('selectedSupplierType').textContent = currentPurchaseSupplier.type || 'غير محدد';
-            document.getElementById('selectedSupplierDebt').textContent = currentPurchaseSupplier.debt.toLocaleString();
-            
-            document.getElementById('selectedSupplierInfoPurchase').style.display = 'block';
-            
-            // تحديث خيارات الدفع
-            setupPurchasePaymentOptions();
-        };
-        
-        // إعداد خيارات الدفع للمشتريات
-        function setupPurchasePaymentOptions() {
-            const creditRadio = document.querySelector('input[name="purchasePaymentType"][value="credit"]');
-            const cashRadio = document.querySelector('input[name="purchasePaymentType"][value="cash"]');
-            const creditSection = document.getElementById('purchaseCreditSection');
-            
-            creditRadio.onchange = function() {
-                if (this.checked) {
-                    creditSection.style.display = 'block';
-                    
-                    // تعيين تاريخ الاستحقاق افتراضياً (30 يوم من الآن)
-                    const dueDate = new Date();
-                    dueDate.setDate(dueDate.getDate() + 30);
-                    document.getElementById('purchaseDueDate').value = dueDate.toISOString().split('T')[0];
-                }
-            };
-            
-            cashRadio.onchange = function() {
-                if (this.checked) {
-                    creditSection.style.display = 'none';
-                }
-            };
-            
-            // تحديث طريقة الدفع في الملخص
-            updatePurchasePaymentMethod();
-        }
-        
-        // البحث عن منتجات للشراء
-        window.searchProductsForPurchase = function() {
-            const searchTerm = document.getElementById('productSearchPurchase').value.toLowerCase();
-            const products = document.querySelectorAll('#purchaseProductsGrid .product-card');
-            
-            products.forEach(product => {
-                const productName = product.querySelector('.product-name').textContent.toLowerCase();
-                const productType = product.querySelector('.product-type').textContent.toLowerCase();
-                
-                if (productName.includes(searchTerm) || productType.includes(searchTerm)) {
-                    product.style.display = 'block';
-                } else {
-                    product.style.display = 'none';
-                }
-            });
-        };
-        
-        // تحديث قائمة المنتجات
-        window.refreshProductsForPurchase = function() {
-            loadProductsForPurchase();
-            document.getElementById('productSearchPurchase').value = '';
-        };
-        
-        // إضافة منتج إلى سلة الشراء
-        window.addToPurchaseCart = function(productId) {
-            const product = systemData.products.find(p => p.id === productId);
-            if (!product) return;
-            
-            // التحقق إذا كان المنتج موجوداً بالفعل في السلة
-            const existingItem = purchaseCart.find(item => item.productId === productId);
-            
-            if (existingItem) {
-                // زيادة الكمية إذا المنتج موجود
-                existingItem.quantity += 1;
-            } else {
-                // إضافة منتج جديد للسلة
-                purchaseCart.push({
-                    productId: productId,
-                    name: product.name,
-                    purchasePrice: product.purchasePrice,
-                    salePrice: product.salePrice,
-                    newSalePrice: product.salePrice, // سعر البيع الجديد (يمكن تعديله)
-                    quantity: 1,
-                    type: product.type,
-                    currentStock: product.quantity
-                });
-            }
-            
-            updatePurchaseCartDisplay();
-            updatePurchaseSummary();
-        };
-        
-        // تحديث عرض سلة الشراء
-        function updatePurchaseCartDisplay() {
-            const cartItems = document.getElementById('purchaseCartItems');
-            cartItems.innerHTML = '';
-            
-            if (purchaseCart.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td colspan="9" style="text-align: center; padding: 20px; color: #777;">
-                        <i class="fas fa-shopping-cart" style="font-size: 30px; margin-bottom: 10px;"></i>
-                        <p>سلة المشتريات فارغة</p>
-                    </td>
-                `;
-                cartItems.appendChild(row);
-                return;
-            }
-            
-            purchaseCart.forEach((item, index) => {
-                const product = systemData.products.find(p => p.id === item.productId);
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td><strong>${item.name}</strong></td>
-                    <td>${item.type}</td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 5px;">
-                            <button class="btn-small" onclick="updatePurchaseCartQuantity(${item.productId}, -1)" style="padding: 2px 8px; background: #ddd; border: none;">-</button>
-                            <input type="number" value="${item.quantity}" min="1" style="width: 60px; text-align: center; padding: 5px; border: 1px solid #ddd; border-radius: 5px;" 
-                                   onchange="changePurchaseQuantity(${item.productId}, this.value)">
-                            <button class="btn-small" onclick="updatePurchaseCartQuantity(${item.productId}, 1)" style="padding: 2px 8px; background: #ddd; border: none;">+</button>
-                        </div>
-                    </td>
-                    <td>
-                        <input type="number" value="${item.purchasePrice}" min="0" style="width: 100px; text-align: center; padding: 5px; border: 1px solid #ddd; border-radius: 5px;" 
-                               onchange="changePurchasePrice(${item.productId}, this.value)">
-                        د.ع
-                    </td>
-                    <td style="color: #777;">
-                        ${item.salePrice.toLocaleString()} د.ع
-                    </td>
-                    <td>
-                        <input type="number" value="${item.newSalePrice}" min="0" style="width: 100px; text-align: center; padding: 5px; border: 1px solid #4CAF50; border-radius: 5px;" 
-                               onchange="changeSalePrice(${item.productId}, this.value)">
-                        د.ع
-                    </td>
-                    <td><strong>${(item.purchasePrice * item.quantity).toLocaleString()} د.ع</strong></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn-small btn-delete" onclick="removeFromPurchaseCart(${item.productId})" title="حذف">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                cartItems.appendChild(row);
-            });
-        }
-        
-        // تحديث كمية المنتج في سلة الشراء
-        window.updatePurchaseCartQuantity = function(productId, change) {
-            const item = purchaseCart.find(item => item.productId === productId);
-            if (!item) return;
-            
-            const newQuantity = item.quantity + change;
-            
-            if (newQuantity <= 0) {
-                removeFromPurchaseCart(productId);
-            } else {
-                item.quantity = newQuantity;
-                updatePurchaseCartDisplay();
-                updatePurchaseSummary();
-            }
-        };
-        
-        // تغيير كمية المنتج
-        window.changePurchaseQuantity = function(productId, newQuantity) {
-            const item = purchaseCart.find(item => item.productId === productId);
-            if (!item) return;
-            
-            newQuantity = parseInt(newQuantity);
-            if (isNaN(newQuantity) || newQuantity <= 0) {
-                newQuantity = 1;
-            }
-            
-            item.quantity = newQuantity;
-            updatePurchaseCartDisplay();
-            updatePurchaseSummary();
-        };
-        
-        // تغيير سعر الشراء
-        window.changePurchasePrice = function(productId, newPrice) {
-            const item = purchaseCart.find(item => item.productId === productId);
-            if (!item) return;
-            
-            newPrice = parseFloat(newPrice);
-            if (isNaN(newPrice) || newPrice < 0) {
-                newPrice = item.purchasePrice;
-            }
-            
-            item.purchasePrice = newPrice;
-            updatePurchaseCartDisplay();
-            updatePurchaseSummary();
-        };
-        
-        // تغيير سعر البيع
-        window.changeSalePrice = function(productId, newPrice) {
-            const item = purchaseCart.find(item => item.productId === productId);
-            if (!item) return;
-            
-            newPrice = parseFloat(newPrice);
-            if (isNaN(newPrice) || newPrice < 0) {
-                newPrice = item.salePrice;
-            }
-            
-            item.newSalePrice = newPrice;
-            updatePurchaseCartDisplay();
-        };
-        
-        // إزالة منتج من سلة الشراء
-        window.removeFromPurchaseCart = function(productId) {
-            if (confirm('هل تريد حذف هذا المنتج من سلة المشتريات؟')) {
-                purchaseCart = purchaseCart.filter(item => item.productId !== productId);
-                updatePurchaseCartDisplay();
-                updatePurchaseSummary();
-            }
-        };
-        
-        // التبديل بين التبويبات
-        window.switchTab = function(tabId) {
-            // التحقق من البيانات قبل التبديل
-            if (tabId === 'purchaseItemsTab') {
-                if (!selectedPurchaseSupplierId) {
-                    alert('الرجاء اختيار مورد أولاً');
-                    return;
-                }
-            }
-            
-            if (tabId === 'purchaseSummaryTab') {
-                if (purchaseCart.length === 0) {
-                    alert('الرجاء إضافة منتجات للشراء أولاً');
-                    return;
-                }
-            }
-            
-            // إخفاء جميع التبويبات
-            document.querySelectorAll('#addPurchaseModal .tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // إزالة النشاط من جميع التبويبات
-            document.querySelectorAll('#addPurchaseModal .tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // إظهار التبويب المحدد
-            document.getElementById(tabId).classList.add('active');
-            
-            // تفعيل تبويب القائمة
-            const tabName = tabId.replace('Tab', '');
-            document.querySelector(`#addPurchaseModal .tab[data-tab="${tabName}"]`).classList.add('active');
-            
-            // تحديث الملخص إذا كنا في تبويب الملخص
-            if (tabId === 'purchaseSummaryTab') {
-                updatePurchaseSummaryInfo();
-                updatePurchasePaymentMethod();
-            }
-        };
-        
-        // تحديث معلومات الملخص
-        function updatePurchaseSummaryInfo() {
-            const summaryDiv = document.getElementById('purchaseSummaryInfo');
-            
-            let supplierInfo = '';
-            if (currentPurchaseSupplier) {
-                supplierInfo = `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                        <div><strong>المورد:</strong> ${currentPurchaseSupplier.name}</div>
-                        <div><strong>الهاتف:</strong> ${currentPurchaseSupplier.phone}</div>
-                        <div><strong>النوع:</strong> ${currentPurchaseSupplier.type || 'غير محدد'}</div>
-                        <div><strong>الديون قبل الشراء:</strong> ${currentPurchaseSupplier.debt.toLocaleString()} د.ع</div>
-                    </div>
-                `;
-            }
-            
-            const paymentType = document.querySelector('input[name="purchasePaymentType"]:checked').value;
-            const paymentInfo = paymentType === 'cash' ? 'نقداً' : 'بالدين';
-            
-            // حساب إجمالي الكميات
-            const totalQuantity = purchaseCart.reduce((sum, item) => sum + item.quantity, 0);
-            
-            summaryDiv.innerHTML = `
-                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0;">
-                    ${supplierInfo}
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-                        <strong>طريقة الدفع:</strong> ${paymentInfo}<br>
-                        <strong>عدد المنتجات:</strong> ${purchaseCart.length}<br>
-                        <strong>إجمالي الكميات:</strong> ${totalQuantity}<br>
-                        <strong>تاريخ الشراء:</strong> ${document.getElementById('purchaseDate').value}
-                    </div>
-                </div>
-            `;
-            
-            // تحديث العناصر الأخرى
-            document.getElementById('purchaseProductsCount').textContent = purchaseCart.length;
-            document.getElementById('purchaseTotalQuantity').textContent = totalQuantity;
-        }
-        
-        // تحديث طريقة الدفع في الملخص
-        function updatePurchasePaymentMethod() {
-            const paymentType = document.querySelector('input[name="purchasePaymentType"]:checked').value;
-            const paymentText = paymentType === 'cash' ? 'نقداً' : 'بالدين';
-            document.getElementById('purchasePaymentMethod').textContent = paymentText;
-        }
-        
-        // تحديث ملخص الشراء
-        function updatePurchaseSummary() {
-            let subtotal = 0;
-            
-            purchaseCart.forEach(item => {
-                subtotal += item.purchasePrice * item.quantity;
-            });
-            
-            const discount = parseFloat(document.getElementById('purchaseDiscountInput').value) || 0;
-            const total = subtotal - discount;
-            
-            document.getElementById('purchaseSubtotal').textContent = subtotal.toLocaleString() + ' د.ع';
-            document.getElementById('purchaseTotalAmount').textContent = total.toLocaleString() + ' د.ع';
-        }
-        
-        // إتمام عملية الشراء
-        window.completePurchase = function() {
-            if (!selectedPurchaseSupplierId) {
-                alert('الرجاء اختيار مورد');
-                switchTab('purchaseInfoTab');
-                return;
-            }
-            
-            if (purchaseCart.length === 0) {
-                alert('الرجاء إضافة منتجات للشراء');
-                switchTab('purchaseItemsTab');
-                return;
-            }
-            
-            // حساب الإجماليات
-            let subtotal = 0;
-            purchaseCart.forEach(item => {
-                subtotal += item.purchasePrice * item.quantity;
-            });
-            
-            const discount = parseFloat(document.getElementById('purchaseDiscountInput').value) || 0;
-            const total = subtotal - discount;
-            
-            const paymentType = document.querySelector('input[name="purchasePaymentType"]:checked').value;
-            const supplier = systemData.suppliers.find(s => s.id === selectedPurchaseSupplierId);
-            
-            if (!supplier) {
-                alert('المورد غير موجود');
-                return;
-            }
-            
-            // تحديث بيانات المورد
-            if (paymentType === 'credit') {
-                // إذا كان الدفع بالدين، أضف المبلغ إلى ديوني للمورد
-                supplier.debt += total;
-                alert(`تم إضافة ${total.toLocaleString()} د.ع إلى ديون المورد ${supplier.name}\nإجمالي الديون الآن: ${supplier.debt.toLocaleString()} د.ع`);
-            } else {
-                // إذا كان الدفع نقداً، اخفض من إجمالي المبيعات في الداشبورد
-                // سيتم التعامل مع هذا في تحديث الإحصائيات
-            }
-            
-            // تحديث إجمالي مشتريات المورد
-            supplier.totalPurchases += total;
-            
-            // تحديث المخزون وأسعار المنتجات
-            purchaseCart.forEach(item => {
-                const product = systemData.products.find(p => p.id === item.productId);
-                if (product) {
-                    // زيادة الكمية في المخزون
-                    product.quantity += item.quantity;
-                    
-                    // تحديث سعر الشراء
-                    product.purchasePrice = item.purchasePrice;
-                    
-                    // تحديث سعر البيع إذا تم تغييره
-                    if (item.newSalePrice !== item.salePrice) {
-                        product.salePrice = item.newSalePrice;
-                    }
-                }
-            });
-            
-            // إنشاء فاتورة الشراء
-            const purchase = {
-                id: `PUR-${Date.now()}`,
-                date: document.getElementById('purchaseDate').value || new Date().toISOString().split('T')[0],
-                supplierId: selectedPurchaseSupplierId,
-                supplierName: supplier.name,
-                items: purchaseCart.map(item => ({
-                    productId: item.productId,
-                    name: item.name,
-                    purchasePrice: item.purchasePrice,
-                    salePrice: item.newSalePrice,
-                    quantity: item.quantity,
-                    type: item.type
-                })),
-                subtotal: subtotal,
-                discount: discount,
-                total: total,
-                paymentType: paymentType,
-                dueDate: paymentType === 'credit' ? document.getElementById('purchaseDueDate').value : null,
-                notes: document.getElementById('purchaseNotes').value,
-                creditNotes: paymentType === 'credit' ? document.getElementById('purchaseCreditNotes').value : null,
-                status: 'مكتمل',
-                createdAt: new Date().toISOString()
-            };
-            
-            // إضافة فاتورة الشراء للنظام
-            systemData.purchases.push(purchase);
-            
-            // حفظ البيانات
-            saveSystemData();
-            
-            // تحديث جميع العروض
-            loadInventory();
-            loadSuppliers();
-            loadPurchases();
-            updateDashboardStats();
-            
-            // إغلاق النافذة
-            closeModal('addPurchaseModal');
-            
-            // رسالة نجاح
-            const successMessage = `
-                تم إتمام عملية الشراء بنجاح!
-                
-                رقم الفاتورة: ${purchase.id}
-                المورد: ${supplier.name}
-                الإجمالي: ${total.toLocaleString()} د.ع
-                طريقة الدفع: ${paymentType === 'cash' ? 'نقداً' : 'بالدين'}
-                ${paymentType === 'credit' ? `الديون الجديدة: ${total.toLocaleString()} د.ع\nإجمالي ديون المورد الآن: ${supplier.debt.toLocaleString()} د.ع` : ''}
-            `;
-            
-            alert(successMessage);
-            
-            // إذا كان الدفع نقداً، اعرض ملاحظة حول تأثيرها على الداشبورد
-            if (paymentType === 'cash') {
-                alert('ملاحظة: تم خصم قيمة الشراء النقدي من إجمالي المبيعات في لوحة التحكم');
-            }
-        };
-        
-        // ============================================
-        // نظام العملاء والموردين
-        // ============================================
-        
-        // فتح نافذة إضافة عميل جديد
-        window.openAddCustomerModal = function() {
-            // إعادة تعيين الحقول
-            document.getElementById('addCustomerForm').reset();
-            document.getElementById('newCustomerPreviousDebt').value = '0';
-            
-            // فتح النافذة
-            openModal('addCustomerModal');
-        };
-        
-        // فتح نافذة إضافة مورد جديد
-        window.openAddSupplierModal = function() {
-            // إعادة تعيين الحقول
-            document.getElementById('addSupplierForm').reset();
-            document.getElementById('newSupplierDebt').value = '0';
-            document.getElementById('newSupplierType').value = 'مورد إلكترونيات';
-            
-            // فتح النافذة
-            openModal('addSupplierModal');
-        };
-        
-        // إضافة عميل جديد
-        document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // التحقق من البيانات
-            const name = document.getElementById('newCustomerName').value.trim();
-            const phone = document.getElementById('newCustomerPhone').value.trim();
-            const email = document.getElementById('newCustomerEmail').value.trim();
-            const address = document.getElementById('newCustomerAddress').value.trim();
-            const previousDebt = parseFloat(document.getElementById('newCustomerPreviousDebt').value) || 0;
-            const notes = document.getElementById('newCustomerNotes').value.trim();
-            
-            if (!name || !phone) {
-                alert('الرجاء إدخال الاسم ورقم الهاتف');
-                return;
-            }
-            
-            // التحقق إذا كان العميل موجوداً بالفعل
-            const existingCustomer = systemData.customers.find(c => 
-                c.phone === phone || (email && c.email === email)
-            );
-            
-            if (existingCustomer) {
-                alert('العميل موجود بالفعل في النظام');
-                return;
-            }
-            
-            // إنشاء عميل جديد
-            const newCustomer = {
-                id: systemData.customers.length > 0 ? Math.max(...systemData.customers.map(c => c.id)) + 1 : 1,
-                name: name,
-                phone: phone,
-                email: email || '',
-                address: address || '',
-                totalPurchases: 0,
-                debt: previousDebt, // الديون السابقة
-                previousDebt: previousDebt,
-                notes: notes || '',
-                createdAt: new Date().toISOString().split('T')[0],
-                active: true
-            };
-            
-            // إضافة العميل للنظام
-            systemData.customers.push(newCustomer);
-            
-            // حفظ البيانات
-            saveSystemData();
-            
-            // تحديث العرض
-            loadCustomers();
-            
-            // إغلاق النافذة
-            closeModal('addCustomerModal');
-            
-            // رسالة نجاح
-            alert(`تم إضافة العميل "${name}" بنجاح!\n\nرقم الهاتف: ${phone}\nالديون السابقة: ${previousDebt.toLocaleString()} د.ع`);
-        });
-        
-        // إضافة مورد جديد
-        document.getElementById('addSupplierForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // التحقق من البيانات
-            const name = document.getElementById('newSupplierName').value.trim();
-            const phone = document.getElementById('newSupplierPhone').value.trim();
-            const email = document.getElementById('newSupplierEmail').value.trim();
-            const address = document.getElementById('newSupplierAddress').value.trim();
-            const type = document.getElementById('newSupplierType').value;
-            const debt = parseFloat(document.getElementById('newSupplierDebt').value) || 0;
-            const notes = document.getElementById('newSupplierNotes').value.trim();
-            
-            if (!name || !phone) {
-                alert('الرجاء إدخال اسم المورد ورقم الهاتف');
-                return;
-            }
-            
-            // التحقق إذا كان المورد موجوداً بالفعل
-            const existingSupplier = systemData.suppliers.find(s => 
-                s.phone === phone || (email && s.email === email)
-            );
-            
-            if (existingSupplier) {
-                alert('المورد موجود بالفعل في النظام');
-                return;
-            }
-            
-            // إنشاء مورد جديد
-            const newSupplier = {
-                id: systemData.suppliers.length > 0 ? Math.max(...systemData.suppliers.map(s => s.id)) + 1 : 1,
-                name: name,
-                phone: phone,
-                email: email || '',
-                address: address || '',
-                type: type,
-                totalPurchases: 0,
-                debt: debt, // الديون التي أنا مدين بها للمورد
-                previousDebt: debt,
-                notes: notes || '',
-                createdAt: new Date().toISOString().split('T')[0],
-                active: true
-            };
-            
-            // إضافة المورد للنظام
-            systemData.suppliers.push(newSupplier);
-            
-            // حفظ البيانات
-            saveSystemData();
-            
-            // تحديث العرض
-            loadSuppliers();
-            
-            // إغلاق النافذة
-            closeModal('addSupplierModal');
-            
-            // رسالة نجاح
-            alert(`تم إضافة المورد "${name}" بنجاح!\n\nرقم الهاتف: ${phone}\nنوع المورد: ${type}\nالديون الحالية: ${debt.toLocaleString()} د.ع`);
-        });
-        
-        // فتح نافذة إضافة مورد من خلال المشتريات
-        window.openAddSupplierModalFromPurchase = function() {
-            // إغلاق نافذة المشتريات أولاً
-            closeModal('addPurchaseModal');
-            
-            // فتح نافذة إضافة مورد
-            setTimeout(() => {
-                openAddSupplierModal();
-            }, 300);
-        };
-        
-        // ============================================
-        // النظام العام
-        // ============================================
-        
-        // حفظ البيانات
-        function saveSystemData() {
-            localStorage.setItem('electronicsSalesSystem', JSON.stringify(systemData));
-        }
-        
-        // تحميل البيانات المحفوظة
-        function loadSavedData() {
-            const savedData = localStorage.getItem('electronicsSalesSystem');
-            if (savedData) {
-                systemData = JSON.parse(savedData);
-            }
-        }
-        
-        // فتح نافذة منبثقة
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-        
-        // إغلاق نافذة منبثقة
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-        
-        // ============================================
-        // دوال إضافية
-        // ============================================
-        
-        // مسح الباركود
-        window.scanBarcode = function() {
-            alert('في التطبيق الفعلي، سيتم فتح كاميرا الجهاز لمسح الباركود');
-        };
-        
         // طباعة فاتورة صغيرة
         function printSmallInvoice() {
             if (cart.length === 0) {
@@ -3949,224 +2772,161 @@
             printWindow.document.close();
         }
         
-        // تحميل النظام عند فتح الصفحة
-        window.addEventListener('load', function() {
-            // تحميل البيانات المحفوظة
-            loadSavedData();
-            
-            // إخفاء النظام الرئيسي وإظهار صفحة الدخول
-            mainSystem.style.display = 'none';
-            loginPage.style.display = 'flex';
-            
-            // أنيميشن للبطاقات
-            setTimeout(() => {
-                document.querySelectorAll('.stat-card').forEach((card, index) => {
-                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                });
-            }, 500);
-        });
-        
-        // إغلاق النوافذ المنبثقة عند النقر خارجها
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('active');
-                }
-            });
-        });
-        
-        // ============================================
-        // دوال النسخ الاحتياطي والإعدادات
-        // ============================================
-        
-        // تغيير كلمة المرور
-        window.changePassword = function() {
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (currentPassword !== systemData.users[0].password) {
-                alert('كلمة المرور الحالية غير صحيحة');
+        // فتح نافذة طباعة A4
+        function openPrintA4Modal() {
+            if (cart.length === 0) {
+                alert('لا توجد فاتورة للطباعة');
                 return;
             }
             
-            if (newPassword !== confirmPassword) {
-                alert('كلمة المرور الجديدة وتأكيدها غير متطابقتين');
-                return;
-            }
+            const customer = currentCustomerId ? systemData.customers.find(c => c.id === currentCustomerId) : null;
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const discount = parseFloat(document.getElementById('discountInput').value) || 0;
+            const tax = subtotal * 0.05;
+            const total = subtotal - discount + tax;
             
-            systemData.users[0].password = newPassword;
-            saveSystemData();
-            alert('تم تغيير كلمة المرور بنجاح!');
-        };
-        
-        // حفظ إعدادات الطباعة
-        window.savePrintSettings = function() {
-            systemData.settings.autoPrint = document.getElementById('autoPrint').checked;
-            systemData.settings.showPrintOptions = document.getElementById('showPrintOptions').checked;
-            systemData.settings.invoiceFooter = document.getElementById('invoiceFooter').value;
-            
-            saveSystemData();
-            alert('تم حفظ إعدادات الطباعة بنجاح!');
-        };
-        
-        // حفظ إعدادات المنتجات
-        window.saveProductSettings = function() {
-            systemData.settings.autoGenerateBarcode = document.getElementById('autoGenerateBarcode').checked;
-            systemData.settings.autoSuggestColors = document.getElementById('autoSuggestColors').checked;
-            systemData.settings.lowStockAlert = document.getElementById('lowStockAlert').checked;
-            systemData.settings.lowStockThreshold = parseInt(document.getElementById('lowStockThreshold').value);
-            
-            saveSystemData();
-            alert('تم حفظ إعدادات المنتجات بنجاح!');
-        };
-        
-        // حفظ إعدادات الشركة
-        window.saveCompanySettings = function() {
-            systemData.settings.companyName = document.getElementById('companyName').value;
-            systemData.settings.companyAddress = document.getElementById('companyAddress').value;
-            systemData.settings.companyPhone = document.getElementById('companyPhone').value;
-            
-            saveSystemData();
-            alert('تم حفظ معلومات الشركة بنجاح!');
-        };
-        
-        // إنشاء نسخة احتياطية
-        window.createBackup = function() {
-            const dataStr = JSON.stringify(systemData, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `backup-${new Date().toISOString().slice(0,10)}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            alert('تم إنشاء النسخة الاحتياطية بنجاح!');
-        };
-        
-        // استعادة نسخة احتياطية
-        window.restoreBackup = function() {
-            const fileInput = document.getElementById('backupFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('الرجاء اختيار ملف النسخة الاحتياطية');
-                return;
-            }
-            
-            if (confirm('هل أنت متأكد من استعادة النسخة الاحتياطية؟ سيتم استبدال جميع البيانات الحالية.')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const restoredData = JSON.parse(e.target.result);
-                        systemData = restoredData;
-                        saveSystemData();
-                        loadSystemData();
-                        alert('تم استعادة النسخة الاحتياطية بنجاح!');
-                    } catch (error) {
-                        alert('خطأ في ملف النسخة الاحتياطية: ' + error.message);
-                    }
-                };
-                reader.readAsText(file);
-            }
-        };
-        
-        // ============================================
-        // دوال البحث
-        // ============================================
-        
-        // البحث في المخزون
-        window.searchInventory = function() {
-            const searchTerm = document.getElementById('inventorySearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#inventoryTable tbody tr');
-            
-            rows.forEach(row => {
-                const productName = row.cells[1].textContent.toLowerCase();
-                const productType = row.cells[6].textContent.toLowerCase();
+            const invoiceContent = document.getElementById('a4InvoiceContent');
+            invoiceContent.innerHTML = `
+                <div class="invoice-header">
+                    <div>
+                        <h2>${systemData.settings.companyName}</h2>
+                        <p>${systemData.settings.companyAddress}</p>
+                        <p>${systemData.settings.companyPhone}</p>
+                    </div>
+                    <div class="invoice-logo">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                </div>
                 
-                if (productName.includes(searchTerm) || productType.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        };
-        
-        // البحث في قائمة العملاء
-        window.searchCustomerList = function() {
-            const searchTerm = document.getElementById('customerListSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#customersTable tbody tr');
-            
-            rows.forEach(row => {
-                const customerName = row.cells[1].textContent.toLowerCase();
-                const customerPhone = row.cells[2].textContent.toLowerCase();
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                    <div>
+                        <h3>فاتورة بيع</h3>
+                        <p><strong>رقم الفاتورة:</strong> INV-${Date.now()}</p>
+                        <p><strong>التاريخ:</strong> ${new Date().toLocaleDateString('ar-EG')}</p>
+                        <p><strong>الوقت:</strong> ${new Date().toLocaleTimeString('ar-EG')}</p>
+                    </div>
+                    <div>
+                        ${customer ? `
+                            <h3>معلومات العميل</h3>
+                            <p><strong>الاسم:</strong> ${customer.name}</p>
+                            <p><strong>الهاتف:</strong> ${customer.phone}</p>
+                            <p><strong>البريد:</strong> ${customer.email}</p>
+                            <p><strong>الديون السابقة:</strong> ${customer.debt.toLocaleString()} د.ع</p>
+                        ` : '<h3>زبون نقدي</h3>'}
+                    </div>
+                </div>
                 
-                if (customerName.includes(searchTerm) || customerPhone.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        };
-        
-        // البحث في الموردين
-        window.searchSuppliers = function() {
-            const searchTerm = document.getElementById('supplierSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#suppliersTable tbody tr');
-            
-            rows.forEach(row => {
-                const supplierName = row.cells[1].textContent.toLowerCase();
-                const supplierPhone = row.cells[2].textContent.toLowerCase();
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                    <thead>
+                        <tr style="background: #f5f5f5;">
+                            <th style="padding: 10px; text-align: right; border: 1px solid #ddd;">#</th>
+                            <th style="padding: 10px; text-align: right; border: 1px solid #ddd;">المنتج</th>
+                            <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">الكمية</th>
+                            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">السعر</th>
+                            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">الإجمالي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${cart.map((item, index) => `
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${index + 1}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
+                                <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">${item.quantity}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${item.price.toLocaleString()} د.ع</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${(item.price * item.quantity).toLocaleString()} د.ع</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
                 
-                if (supplierName.includes(searchTerm) || supplierPhone.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        };
-        
-        // البحث في الفواتير
-        window.searchInvoices = function() {
-            const searchTerm = document.getElementById('invoiceSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#invoicesTable tbody tr');
-            
-            rows.forEach(row => {
-                const invoiceId = row.cells[0].textContent.toLowerCase();
-                const customerName = row.cells[2].textContent.toLowerCase();
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                    <div style="flex: 1;"></div>
+                    <div style="flex: 1;">
+                        <div style="background: #f9f9f9; padding: 20px; border-radius: 10px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>إجمالي المنتجات:</span>
+                                <span>${subtotal.toLocaleString()} د.ع</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>الخصم:</span>
+                                <span>${discount.toLocaleString()} د.ع</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>الضريبة (5%):</span>
+                                <span>${tax.toLocaleString()} د.ع</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-top: 10px; border-top: 2px solid #ddd; font-size: 18px; font-weight: bold;">
+                                <span>الإجمالي النهائي:</span>
+                                <span>${total.toLocaleString()} د.ع</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
-                if (invoiceId.includes(searchTerm) || customerName.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        };
-        
-        // البحث في فواتير الشراء
-        window.searchPurchaseInvoices = function() {
-            const searchTerm = document.getElementById('purchaseSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#purchasesTable tbody tr');
+                <div style="border-top: 2px solid #eee; padding-top: 20px; margin-top: 40px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>
+                            <p><strong>طريقة الدفع:</strong> ${document.querySelector('input[name="paymentType"]:checked').value === 'cash' ? 'نقداً' : 'بالدين'}</p>
+                            ${customer && document.querySelector('input[name="paymentType"]:checked').value === 'credit' ? `
+                                <p><strong>الديون الجديدة:</strong> ${total.toLocaleString()} د.ع</p>
+                                <p><strong>إجمالي الديون:</strong> ${(customer.debt + total).toLocaleString()} د.ع</p>
+                            ` : ''}
+                        </div>
+                        <div style="text-align: left;">
+                            <p>التوقيع: ________________</p>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px; color: #777; font-size: 14px;">
+                        <p>${systemData.settings.invoiceFooter}</p>
+                        <p>شكراً لتعاملكم معنا</p>
+                    </div>
+                </div>
+            `;
             
-            rows.forEach(row => {
-                const invoiceId = row.cells[0].textContent.toLowerCase();
-                const supplierName = row.cells[2].textContent.toLowerCase();
-                
-                if (invoiceId.includes(searchTerm) || supplierName.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        };
+            openModal('printA4Modal');
+        }
         
-        // ============================================
-        // دوال إضافية للمنتجات
-        // ============================================
+        // طباعة فاتورة A4
+        function printA4Invoice() {
+            const printContent = document.getElementById('a4InvoiceContent').innerHTML;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>طباعة فاتورة A4</title>
+                        <style>
+                            body { 
+                                font-family: Arial, sans-serif; 
+                                direction: rtl; 
+                                margin: 0;
+                                padding: 0;
+                            }
+                            @page {
+                                size: A4;
+                                margin: 20mm;
+                            }
+                            @media print {
+                                body { margin: 0; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent}
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 1000);
+                            };
+                        <\/script>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
         
         // فتح نافذة إضافة منتج
         window.openAddProductModal = function() {
@@ -4276,417 +3036,6 @@
             }
         };
         
-        // ============================================
-        // دوال إضافية للعملاء والموردين
-        // ============================================
-        
-        // تعديل عميل
-        window.editCustomer = function(customerId) {
-            const customer = systemData.customers.find(c => c.id === customerId);
-            if (!customer) return;
-            
-            const newName = prompt('الاسم الجديد:', customer.name);
-            if (!newName || newName.trim() === '') {
-                alert('الاسم مطلوب');
-                return;
-            }
-            
-            const newPhone = prompt('رقم الهاتف الجديد:', customer.phone);
-            if (!newPhone || newPhone.trim() === '') {
-                alert('رقم الهاتف مطلوب');
-                return;
-            }
-            
-            const newDebt = prompt('الديون الحالية:', customer.debt.toString());
-            const debtValue = parseFloat(newDebt) || 0;
-            
-            // تحديث بيانات العميل
-            customer.name = newName.trim();
-            customer.phone = newPhone.trim();
-            customer.debt = debtValue;
-            
-            // حفظ البيانات
-            saveSystemData();
-            
-            // تحديث العرض
-            loadCustomers();
-            
-            alert('تم تحديث بيانات العميل بنجاح!');
-        };
-        
-        // حذف عميل
-        window.deleteCustomer = function(customerId) {
-            const customer = systemData.customers.find(c => c.id === customerId);
-            if (!customer) return;
-            
-            if (confirm(`هل أنت متأكد من حذف العميل "${customer.name}"؟\n\nرقم الهاتف: ${customer.phone}\nالديون الحالية: ${customer.debt.toLocaleString()} د.ع`)) {
-                // التحقق إذا كان للعميل ديون
-                if (customer.debt > 0) {
-                    if (!confirm('هذا العميل لديه ديون. هل تريد المتابعة مع الحذف؟')) {
-                        return;
-                    }
-                }
-                
-                systemData.customers = systemData.customers.filter(c => c.id !== customerId);
-                saveSystemData();
-                loadCustomers();
-                alert('تم حذف العميل بنجاح!');
-            }
-        };
-        
-        // تعديل مورد
-        window.editSupplier = function(supplierId) {
-            const supplier = systemData.suppliers.find(s => s.id === supplierId);
-            if (!supplier) return;
-            
-            const newName = prompt('اسم المورد الجديد:', supplier.name);
-            if (!newName || newName.trim() === '') {
-                alert('اسم المورد مطلوب');
-                return;
-            }
-            
-            const newPhone = prompt('رقم الهاتف الجديد:', supplier.phone);
-            if (!newPhone || newPhone.trim() === '') {
-                alert('رقم الهاتف مطلوب');
-                return;
-            }
-            
-            const newType = prompt('نوع المورد الجديد:', supplier.type);
-            const newDebt = prompt('الديون الحالية:', supplier.debt.toString());
-            const debtValue = parseFloat(newDebt) || 0;
-            
-            // تحديث بيانات المورد
-            supplier.name = newName.trim();
-            supplier.phone = newPhone.trim();
-            supplier.type = newType ? newType.trim() : supplier.type;
-            supplier.debt = debtValue;
-            
-            // حفظ البيانات
-            saveSystemData();
-            
-            // تحديث العرض
-            loadSuppliers();
-            
-            alert('تم تحديث بيانات المورد بنجاح!');
-        };
-        
-        // حذف مورد
-        window.deleteSupplier = function(supplierId) {
-            const supplier = systemData.suppliers.find(s => s.id === supplierId);
-            if (!supplier) return;
-            
-            if (confirm(`هل أنت متأكد من حذف المورد "${supplier.name}"؟\n\nرقم الهاتف: ${supplier.phone}\nالديون الحالية: ${supplier.debt.toLocaleString()} د.ع`)) {
-                // التحقق إذا كان هناك ديون للمورد
-                if (supplier.debt > 0) {
-                    if (!confirm('هناك ديون لهذا المورد. هل تريد المتابعة مع الحذف؟')) {
-                        return;
-                    }
-                }
-                
-                systemData.suppliers = systemData.suppliers.filter(s => s.id !== supplierId);
-                saveSystemData();
-                loadSuppliers();
-                alert('تم حذف المورد بنجاح!');
-            }
-        };
-        
-        // ============================================
-        // دوال الفواتير والمشتريات
-        // ============================================
-        
-        // تصدير الفواتير
-        window.exportInvoices = function() {
-            const dataStr = JSON.stringify(systemData.invoices, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `invoices-${new Date().toISOString().slice(0,10)}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-        };
-        
-        // عرض الفاتورة
-        window.viewInvoice = function(invoiceId) {
-            const invoice = systemData.invoices.find(inv => inv.id === invoiceId);
-            if (!invoice) return;
-            
-            alert(`عرض الفاتورة ${invoiceId}\n\nفي التطبيق الكامل، سيتم عرض تفاصيل الفاتورة الكاملة.`);
-        };
-        
-        // طباعة الفاتورة
-        window.printInvoice = function(invoiceId) {
-            const invoice = systemData.invoices.find(inv => inv.id === invoiceId);
-            if (!invoice) return;
-            
-            alert(`طباعة الفاتورة ${invoiceId}\n\nفي التطبيق الكامل، سيتم فتح نافذة الطباعة.`);
-        };
-        
-        // حذف الفاتورة
-        window.deleteInvoice = function(invoiceId) {
-            if (confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) {
-                systemData.invoices = systemData.invoices.filter(inv => inv.id !== invoiceId);
-                saveSystemData();
-                loadInvoices();
-                loadRecentInvoices();
-                alert('تم حذف الفاتورة بنجاح!');
-            }
-        };
-        
-        // عرض فاتورة شراء
-        window.viewPurchase = function(purchaseId) {
-            const purchase = systemData.purchases.find(p => p.id === purchaseId);
-            if (!purchase) {
-                alert('فاتورة الشراء غير موجودة');
-                return;
-            }
-            
-            const supplier = systemData.suppliers.find(s => s.id === purchase.supplierId);
-            
-            let itemsHTML = '';
-            purchase.items.forEach((item, index) => {
-                itemsHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${item.name}</td>
-                        <td>${item.type}</td>
-                        <td>${item.quantity}</td>
-                        <td>${item.purchasePrice.toLocaleString()} د.ع</td>
-                        <td>${(item.purchasePrice * item.quantity).toLocaleString()} د.ع</td>
-                    </tr>
-                `;
-            });
-            
-            const modalContent = `
-                <div class="modal-content" style="max-width: 800px;">
-                    <div class="modal-header">
-                        <h3><i class="fas fa-file-invoice"></i> فاتورة شراء #${purchase.id}</h3>
-                        <button class="close-modal" onclick="closeModal('viewPurchaseModal')">&times;</button>
-                    </div>
-                    
-                    <div style="padding: 20px;">
-                        <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                                <div>
-                                    <h4>معلومات الفاتورة</h4>
-                                    <p><strong>رقم الفاتورة:</strong> ${purchase.id}</p>
-                                    <p><strong>التاريخ:</strong> ${purchase.date}</p>
-                                    <p><strong>طريقة الدفع:</strong> ${purchase.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</p>
-                                    ${purchase.dueDate ? `<p><strong>تاريخ الاستحقاق:</strong> ${purchase.dueDate}</p>` : ''}
-                                </div>
-                                <div>
-                                    <h4>معلومات المورد</h4>
-                                    <p><strong>الاسم:</strong> ${supplier?.name || 'غير معروف'}</p>
-                                    <p><strong>الهاتف:</strong> ${supplier?.phone || '-'}</p>
-                                    <p><strong>النوع:</strong> ${supplier?.type || '-'}</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="table-container">
-                            <h4>المنتجات المشتراة</h4>
-                            <table style="width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>المنتج</th>
-                                        <th>النوع</th>
-                                        <th>الكمية</th>
-                                        <th>سعر الشراء</th>
-                                        <th>الإجمالي</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${itemsHTML}
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <div style="background: #fff8e1; padding: 20px; border-radius: 10px; margin-top: 20px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span>إجمالي المنتجات:</span>
-                                <span>${purchase.subtotal.toLocaleString()} د.ع</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span>الخصم:</span>
-                                <span>${purchase.discount.toLocaleString()} د.ع</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 2px solid #ddd; font-size: 18px; font-weight: bold;">
-                                <span>الإجمالي النهائي:</span>
-                                <span>${purchase.total.toLocaleString()} د.ع</span>
-                            </div>
-                        </div>
-                        
-                        ${purchase.notes ? `
-                            <div style="margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 10px;">
-                                <h4>ملاحظات:</h4>
-                                <p>${purchase.notes}</p>
-                            </div>
-                        ` : ''}
-                        
-                        <div style="display: flex; gap: 10px; margin-top: 20px;">
-                            <button class="btn btn-print" onclick="printPurchase('${purchaseId}')" style="flex: 1;">
-                                <i class="fas fa-print"></i> طباعة الفاتورة
-                            </button>
-                            <button class="btn btn-danger" onclick="deletePurchase('${purchaseId}')" style="flex: 1;">
-                                <i class="fas fa-trash"></i> حذف الفاتورة
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            // إنشاء نافذة عرض ديناميكية
-            const modalDiv = document.createElement('div');
-            modalDiv.className = 'modal active';
-            modalDiv.id = 'viewPurchaseModal';
-            modalDiv.innerHTML = modalContent;
-            document.body.appendChild(modalDiv);
-            
-            // إضافة حدث لإغلاق النافذة عند النقر خارجها
-            modalDiv.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.remove();
-                }
-            });
-        };
-        
-        // طباعة فاتورة شراء
-        window.printPurchase = function(purchaseId) {
-            const purchase = systemData.purchases.find(p => p.id === purchaseId);
-            if (!purchase) return;
-            
-            const supplier = systemData.suppliers.find(s => s.id === purchase.supplierId);
-            
-            let itemsHTML = '';
-            purchase.items.forEach((item, index) => {
-                itemsHTML += `
-                    <tr>
-                        <td style="padding: 8px; border: 1px solid #ddd;">${index + 1}</td>
-                        <td style="padding: 8px; border: 1px solid #ddd;">${item.name}</td>
-                        <td style="padding: 8px; border: 1px solid #ddd;">${item.quantity}</td>
-                        <td style="padding: 8px; border: 1px solid #ddd;">${item.purchasePrice.toLocaleString()} د.ع</td>
-                        <td style="padding: 8px; border: 1px solid #ddd;">${(item.purchasePrice * item.quantity).toLocaleString()} د.ع</td>
-                    </tr>
-                `;
-            });
-            
-            const printContent = `
-                <html>
-                    <head>
-                        <title>فاتورة شراء #${purchase.id}</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; direction: rtl; margin: 20px; }
-                            .header { text-align: center; margin-bottom: 30px; }
-                            .info { display: flex; justify-content: space-between; margin-bottom: 30px; }
-                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-                            th { background: #f5f5f5; padding: 10px; border: 1px solid #ddd; }
-                            .total { background: #fff8e1; padding: 20px; border-radius: 10px; }
-                            @media print {
-                                body { margin: 0; padding: 10mm; }
-                                .no-print { display: none; }
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="header">
-                            <h2>${systemData.settings.companyName}</h2>
-                            <h3>فاتورة شراء</h3>
-                        </div>
-                        
-                        <div class="info">
-                            <div>
-                                <p><strong>رقم الفاتورة:</strong> ${purchase.id}</p>
-                                <p><strong>التاريخ:</strong> ${purchase.date}</p>
-                                <p><strong>طريقة الدفع:</strong> ${purchase.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</p>
-                            </div>
-                            <div>
-                                <p><strong>المورد:</strong> ${supplier?.name || 'غير معروف'}</p>
-                                <p><strong>الهاتف:</strong> ${supplier?.phone || '-'}</p>
-                            </div>
-                        </div>
-                        
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>المنتج</th>
-                                    <th>الكمية</th>
-                                    <th>سعر الشراء</th>
-                                    <th>الإجمالي</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${itemsHTML}
-                            </tbody>
-                        </table>
-                        
-                        <div class="total">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span>إجمالي المنتجات:</span>
-                                <span>${purchase.subtotal.toLocaleString()} د.ع</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span>الخصم:</span>
-                                <span>${purchase.discount.toLocaleString()} د.ع</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 2px solid #ddd; font-size: 18px; font-weight: bold;">
-                                <span>الإجمالي النهائي:</span>
-                                <span>${purchase.total.toLocaleString()} د.ع</span>
-                            </div>
-                        </div>
-                        
-                        <div class="no-print" style="text-align: center; margin-top: 30px;">
-                            <button onclick="window.print()" style="padding: 10px 20px; background: #4361ee; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                                طباعة الفاتورة
-                            </button>
-                        </div>
-                        
-                        <script>
-                            window.onload = function() {
-                                window.print();
-                            };
-                        </script>
-                    </body>
-                </html>
-            `;
-            
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(printContent);
-            printWindow.document.close();
-        };
-        
-        // حذف فاتورة شراء
-        window.deletePurchase = function(purchaseId) {
-            const purchase = systemData.purchases.find(p => p.id === purchaseId);
-            if (!purchase) return;
-            
-            if (!confirm(`هل أنت متأكد من حذف فاتورة الشراء #${purchaseId}؟\n\nهذا الإجراء لا يمكن التراجع عنه!`)) {
-                return;
-            }
-            
-            // إزالة الفاتورة
-            systemData.purchases = systemData.purchases.filter(p => p.id !== purchaseId);
-            
-            // تحديث البيانات
-            saveSystemData();
-            loadPurchases();
-            updateDashboardStats();
-            
-            // إغلاق نافذة العرض إذا كانت مفتوحة
-            const viewModal = document.getElementById('viewPurchaseModal');
-            if (viewModal) {
-                viewModal.remove();
-            }
-            
-            alert('تم حذف فاتورة الشراء بنجاح!');
-        };
-        
-        // ============================================
-        // دوال إضافية
-        // ============================================
-        
         // فتح نافذة طباعة الباركود
         window.openPrintBarcodeModal = function(productId) {
             const product = systemData.products.find(p => p.id === productId);
@@ -4748,185 +3097,6 @@
                 </html>
             `);
             printWindow.document.close();
-        };
-        
-        // تحديث إحصائيات الداشبورد
-        function updateDashboardStats() {
-            // حساب إجمالي المشتريات النقدية لهذا اليوم
-            const today = new Date().toISOString().split('T')[0];
-            const todayCashPurchases = systemData.purchases
-                .filter(p => p.date === today && p.paymentType === 'cash')
-                .reduce((sum, p) => sum + p.total, 0);
-            
-            // حساب إجمالي المشتريات النقدية لهذا الشهر
-            const currentMonth = new Date().getMonth() + 1;
-            const currentYear = new Date().getFullYear();
-            const monthlyCashPurchases = systemData.purchases
-                .filter(p => {
-                    const purchaseDate = new Date(p.date);
-                    return purchaseDate.getMonth() + 1 === currentMonth && 
-                           purchaseDate.getFullYear() === currentYear &&
-                           p.paymentType === 'cash';
-                })
-                .reduce((sum, p) => sum + p.total, 0);
-            
-            // تحديث الإحصائيات في الداشبورد
-            console.log(`المشتريات النقدية اليوم: ${todayCashPurchases.toLocaleString()} د.ع`);
-            console.log(`المشتريات النقدية الشهرية: ${monthlyCashPurchases.toLocaleString()} د.ع`);
-            
-            // تحديث الإحصائيات في الجداول
-            updateDashboardTables();
-        }
-        
-        // تحديث جداول الداشبورد
-        function updateDashboardTables() {
-            // هذا المثال يظهر كيفية تحديث الإحصائيات
-            // يمكنك تعديله حسب احتياجاتك
-            const monthlyPurchaseElement = document.querySelector('.stat-card:nth-child(2) .stat-value');
-            if (monthlyPurchaseElement) {
-                const currentMonth = new Date().getMonth() + 1;
-                const currentYear = new Date().getFullYear();
-                const monthlyPurchases = systemData.purchases
-                    .filter(p => {
-                        const purchaseDate = new Date(p.date);
-                        return purchaseDate.getMonth() + 1 === currentMonth && 
-                               purchaseDate.getFullYear() === currentYear;
-                    })
-                    .reduce((sum, p) => sum + p.total, 0);
-                
-                monthlyPurchaseElement.innerHTML = `${monthlyPurchases.toLocaleString()} <span style="font-size: 16px;">د.ع</span>`;
-            }
-        }
-        
-        // ============================================
-        // دوال التقارير
-        // ============================================
-        
-        // توليد تقرير
-        window.generateReport = function() {
-            const reportType = document.getElementById('reportType').value;
-            const reportDate = document.getElementById('reportDate').value;
-            
-            let reportContent = '';
-            
-            switch(reportType) {
-                case 'daily':
-                    reportContent = '<h3>تقرير المبيعات اليومي</h3>';
-                    break;
-                case 'weekly':
-                    reportContent = '<h3>تقرير المبيعات الأسبوعي</h3>';
-                    break;
-                case 'monthly':
-                    reportContent = '<h3>تقرير المبيعات الشهري</h3>';
-                    break;
-                case 'yearly':
-                    reportContent = '<h3>تقرير المبيعات السنوي</h3>';
-                    break;
-            }
-            
-            // إضافة إحصائيات وهمية
-            reportContent += `
-                <div class="stats-cards" style="margin-top: 20px;">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-title">إجمالي المبيعات</div>
-                            <div class="stat-value">125,750 <span style="font-size: 16px;">د.ع</span></div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-cart-arrow-down"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-title">إجمالي المشتريات</div>
-                            <div class="stat-value">89,500 <span style="font-size: 16px;">د.ع</span></div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-title">صافي الربح</div>
-                            <div class="stat-value">36,250 <span style="font-size: 16px;">د.ع</span></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('reportResults').innerHTML = reportContent;
-        };
-        
-        // طباعة التقرير
-        window.printReport = function() {
-            const reportContent = document.getElementById('reportResults').innerHTML;
-            
-            if (!reportContent) {
-                alert('الرجاء توليد التقرير أولاً');
-                return;
-            }
-            
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>طباعة التقرير</title>
-                        <style>
-                            body { 
-                                font-family: Arial, sans-serif; 
-                                direction: rtl; 
-                                padding: 20px;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        ${reportContent}
-                        <script>
-                            window.onload = function() {
-                                window.print();
-                                setTimeout(function() {
-                                    window.close();
-                                }, 1000);
-                            };
-                        <\/script>
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-        };
-        
-        // ============================================
-        // دوال أخرى
-        // ============================================
-        
-        // فتح نافذة إضافة دفعة عميل
-        window.openAddCustomerPaymentModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة دفعة عميل');
-        };
-        
-        // فتح نافذة إضافة دفعة مورد
-        window.openAddSupplierPaymentModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة دفعة مورد');
-        };
-        
-        // فتح نافذة إضافة مصروف
-        window.openAddExpenseModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مصروف');
-        };
-        
-        // فتح نافذة إضافة مستخدم
-        window.openAddUserModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مستخدم جديد');
-        };
-        
-        // فتح نافذة إضافة صلاحية
-        window.openAddRoleModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة صلاحية جديدة');
         };
         
         // فتح نافذة تفاصيل العميل
@@ -5041,6 +3211,476 @@
             
             openModal('supplierDetailsModal');
         };
+        
+        // حفظ البيانات
+        function saveSystemData() {
+            localStorage.setItem('electronicsSalesSystem', JSON.stringify(systemData));
+        }
+        
+        // تحميل البيانات المحفوظة
+        function loadSavedData() {
+            const savedData = localStorage.getItem('electronicsSalesSystem');
+            if (savedData) {
+                systemData = JSON.parse(savedData);
+            }
+        }
+        
+        // فتح نافذة منبثقة
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+        
+        // إغلاق نافذة منبثقة
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // تغيير كلمة المرور
+        window.changePassword = function() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (currentPassword !== systemData.users[0].password) {
+                alert('كلمة المرور الحالية غير صحيحة');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alert('كلمة المرور الجديدة وتأكيدها غير متطابقتين');
+                return;
+            }
+            
+            systemData.users[0].password = newPassword;
+            saveSystemData();
+            alert('تم تغيير كلمة المرور بنجاح!');
+        };
+        
+        // حفظ إعدادات الطباعة
+        window.savePrintSettings = function() {
+            systemData.settings.autoPrint = document.getElementById('autoPrint').checked;
+            systemData.settings.showPrintOptions = document.getElementById('showPrintOptions').checked;
+            systemData.settings.invoiceFooter = document.getElementById('invoiceFooter').value;
+            
+            saveSystemData();
+            alert('تم حفظ إعدادات الطباعة بنجاح!');
+        };
+        
+        // حفظ إعدادات المنتجات
+        window.saveProductSettings = function() {
+            systemData.settings.autoGenerateBarcode = document.getElementById('autoGenerateBarcode').checked;
+            systemData.settings.autoSuggestColors = document.getElementById('autoSuggestColors').checked;
+            systemData.settings.lowStockAlert = document.getElementById('lowStockAlert').checked;
+            systemData.settings.lowStockThreshold = parseInt(document.getElementById('lowStockThreshold').value);
+            
+            saveSystemData();
+            alert('تم حفظ إعدادات المنتجات بنجاح!');
+        };
+        
+        // حفظ إعدادات الشركة
+        window.saveCompanySettings = function() {
+            systemData.settings.companyName = document.getElementById('companyName').value;
+            systemData.settings.companyAddress = document.getElementById('companyAddress').value;
+            systemData.settings.companyPhone = document.getElementById('companyPhone').value;
+            
+            saveSystemData();
+            alert('تم حفظ معلومات الشركة بنجاح!');
+        };
+        
+        // إنشاء نسخة احتياطية
+        window.createBackup = function() {
+            const dataStr = JSON.stringify(systemData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `backup-${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            alert('تم إنشاء النسخة الاحتياطية بنجاح!');
+        };
+        
+        // استعادة نسخة احتياطية
+        window.restoreBackup = function() {
+            const fileInput = document.getElementById('backupFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('الرجاء اختيار ملف النسخة الاحتياطية');
+                return;
+            }
+            
+            if (confirm('هل أنت متأكد من استعادة النسخة الاحتياطية؟ سيتم استبدال جميع البيانات الحالية.')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const restoredData = JSON.parse(e.target.result);
+                        systemData = restoredData;
+                        saveSystemData();
+                        loadSystemData();
+                        alert('تم استعادة النسخة الاحتياطية بنجاح!');
+                    } catch (error) {
+                        alert('خطأ في ملف النسخة الاحتياطية: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        };
+        
+        // البحث في المخزون
+        window.searchInventory = function() {
+            const searchTerm = document.getElementById('inventorySearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#inventoryTable tbody tr');
+            
+            rows.forEach(row => {
+                const productName = row.cells[1].textContent.toLowerCase();
+                const productType = row.cells[6].textContent.toLowerCase();
+                
+                if (productName.includes(searchTerm) || productType.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        };
+        
+        // البحث في قائمة العملاء
+        window.searchCustomerList = function() {
+            const searchTerm = document.getElementById('customerListSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#customersTable tbody tr');
+            
+            rows.forEach(row => {
+                const customerName = row.cells[1].textContent.toLowerCase();
+                const customerPhone = row.cells[2].textContent.toLowerCase();
+                
+                if (customerName.includes(searchTerm) || customerPhone.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        };
+        
+        // البحث في الموردين
+        window.searchSuppliers = function() {
+            const searchTerm = document.getElementById('supplierSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#suppliersTable tbody tr');
+            
+            rows.forEach(row => {
+                const supplierName = row.cells[1].textContent.toLowerCase();
+                const supplierPhone = row.cells[2].textContent.toLowerCase();
+                
+                if (supplierName.includes(searchTerm) || supplierPhone.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        };
+        
+        // البحث في الفواتير
+        window.searchInvoices = function() {
+            const searchTerm = document.getElementById('invoiceSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#invoicesTable tbody tr');
+            
+            rows.forEach(row => {
+                const invoiceId = row.cells[0].textContent.toLowerCase();
+                const customerName = row.cells[2].textContent.toLowerCase();
+                
+                if (invoiceId.includes(searchTerm) || customerName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        };
+        
+        // مسح الباركود
+        window.scanBarcode = function() {
+            alert('في التطبيق الفعلي، سيتم فتح كاميرا الجهاز لمسح الباركود');
+        };
+        
+        // توليد تقرير
+        window.generateReport = function() {
+            const reportType = document.getElementById('reportType').value;
+            const reportDate = document.getElementById('reportDate').value;
+            
+            let reportContent = '';
+            
+            switch(reportType) {
+                case 'daily':
+                    reportContent = '<h3>تقرير المبيعات اليومي</h3>';
+                    break;
+                case 'weekly':
+                    reportContent = '<h3>تقرير المبيعات الأسبوعي</h3>';
+                    break;
+                case 'monthly':
+                    reportContent = '<h3>تقرير المبيعات الشهري</h3>';
+                    break;
+                case 'yearly':
+                    reportContent = '<h3>تقرير المبيعات السنوي</h3>';
+                    break;
+            }
+            
+            // إضافة إحصائيات وهمية
+            reportContent += `
+                <div class="stats-cards" style="margin-top: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-title">إجمالي المبيعات</div>
+                            <div class="stat-value">125,750 <span style="font-size: 16px;">د.ع</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-cart-arrow-down"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-title">إجمالي المشتريات</div>
+                            <div class="stat-value">89,500 <span style="font-size: 16px;">د.ع</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-title">صافي الربح</div>
+                            <div class="stat-value">36,250 <span style="font-size: 16px;">د.ع</span></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('reportResults').innerHTML = reportContent;
+        };
+        
+        // طباعة التقرير
+        window.printReport = function() {
+            const reportContent = document.getElementById('reportResults').innerHTML;
+            
+            if (!reportContent) {
+                alert('الرجاء توليد التقرير أولاً');
+                return;
+            }
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>طباعة التقرير</title>
+                        <style>
+                            body { 
+                                font-family: Arial, sans-serif; 
+                                direction: rtl; 
+                                padding: 20px;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${reportContent}
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 1000);
+                            };
+                        <\/script>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+        };
+        
+        // تصدير الفواتير
+        window.exportInvoices = function() {
+            const dataStr = JSON.stringify(systemData.invoices, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `invoices-${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        };
+        
+        // عرض الفاتورة
+        window.viewInvoice = function(invoiceId) {
+            const invoice = systemData.invoices.find(inv => inv.id === invoiceId);
+            if (!invoice) return;
+            
+            alert(`عرض الفاتورة ${invoiceId}\n\nفي التطبيق الكامل، سيتم عرض تفاصيل الفاتورة الكاملة.`);
+        };
+        
+        // طباعة الفاتورة
+        window.printInvoice = function(invoiceId) {
+            const invoice = systemData.invoices.find(inv => inv.id === invoiceId);
+            if (!invoice) return;
+            
+            alert(`طباعة الفاتورة ${invoiceId}\n\nفي التطبيق الكامل، سيتم فتح نافذة الطباعة.`);
+        };
+        
+        // حذف الفاتورة
+        window.deleteInvoice = function(invoiceId) {
+            if (confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) {
+                systemData.invoices = systemData.invoices.filter(inv => inv.id !== invoiceId);
+                saveSystemData();
+                loadInvoices();
+                loadRecentInvoices();
+                alert('تم حذف الفاتورة بنجاح!');
+            }
+        };
+        
+        // عرض عملية الشراء
+        window.viewPurchase = function(purchaseId) {
+            const purchase = systemData.purchases.find(p => p.id === purchaseId);
+            if (!purchase) return;
+            
+            alert(`عرض فاتورة الشراء ${purchaseId}\n\nفي التطبيق الكامل، سيتم عرض تفاصيل الفاتورة الكاملة.`);
+        };
+        
+        // طباعة فاتورة الشراء
+        window.printPurchase = function(purchaseId) {
+            const purchase = systemData.purchases.find(p => p.id === purchaseId);
+            if (!purchase) return;
+            
+            alert(`طباعة فاتورة الشراء ${purchaseId}\n\nفي التطبيق الكامل، سيتم فتح نافذة الطباعة.`);
+        };
+        
+        // حذف فاتورة الشراء
+        window.deletePurchase = function(purchaseId) {
+            if (confirm('هل أنت متأكد من حذف فاتورة الشراء هذه؟')) {
+                systemData.purchases = systemData.purchases.filter(p => p.id !== purchaseId);
+                saveSystemData();
+                loadPurchases();
+                alert('تم حذف فاتورة الشراء بنجاح!');
+            }
+        };
+        
+        // تعديل عميل
+        window.editCustomer = function(customerId) {
+            const customer = systemData.customers.find(c => c.id === customerId);
+            if (!customer) return;
+            
+            const newName = prompt('الاسم الجديد:', customer.name);
+            if (newName) {
+                customer.name = newName;
+                saveSystemData();
+                loadCustomers();
+                alert('تم تحديث بيانات العميل بنجاح!');
+            }
+        };
+        
+        // حذف عميل
+        window.deleteCustomer = function(customerId) {
+            if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
+                systemData.customers = systemData.customers.filter(c => c.id !== customerId);
+                saveSystemData();
+                loadCustomers();
+                alert('تم حذف العميل بنجاح!');
+            }
+        };
+        
+        // تعديل مورد
+        window.editSupplier = function(supplierId) {
+            const supplier = systemData.suppliers.find(s => s.id === supplierId);
+            if (!supplier) return;
+            
+            const newName = prompt('اسم المورد الجديد:', supplier.name);
+            if (newName) {
+                supplier.name = newName;
+                saveSystemData();
+                loadSuppliers();
+                alert('تم تحديث بيانات المورد بنجاح!');
+            }
+        };
+        
+        // حذف مورد
+        window.deleteSupplier = function(supplierId) {
+            if (confirm('هل أنت متأكد من حذف هذا المورد؟')) {
+                systemData.suppliers = systemData.suppliers.filter(s => s.id !== supplierId);
+                saveSystemData();
+                loadSuppliers();
+                alert('تم حذف المورد بنجاح!');
+            }
+        };
+        
+        // فتح نافذة إضافة عميل
+        window.openAddCustomerModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة عميل جديد');
+        };
+        
+        // فتح نافذة إضافة مورد
+        window.openAddSupplierModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مورد جديد');
+        };
+        
+        // فتح نافذة إضافة عملية شراء
+        window.openAddPurchaseModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة عملية شراء جديدة');
+        };
+        
+        // فتح نافذة إضافة دفعة عميل
+        window.openAddCustomerPaymentModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة دفعة عميل');
+        };
+        
+        // فتح نافذة إضافة دفعة مورد
+        window.openAddSupplierPaymentModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة دفعة مورد');
+        };
+        
+        // فتح نافذة إضافة مصروف
+        window.openAddExpenseModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مصروف');
+        };
+        
+        // فتح نافذة إضافة مستخدم
+        window.openAddUserModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مستخدم جديد');
+        };
+        
+        // فتح نافذة إضافة صلاحية
+        window.openAddRoleModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة صلاحية جديدة');
+        };
+        
+        // تحميل النظام عند فتح الصفحة
+        window.addEventListener('load', function() {
+            // تحميل البيانات المحفوظة
+            loadSavedData();
+            
+            // إخفاء النظام الرئيسي وإظهار صفحة الدخول
+            mainSystem.style.display = 'none';
+            loginPage.style.display = 'flex';
+            
+            // أنيميشن للبطاقات
+            setTimeout(() => {
+                document.querySelectorAll('.stat-card').forEach((card, index) => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                });
+            }, 500);
+        });
+        
+        // إغلاق النوافذ المنبثقة عند النقر خارجها
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
     </script>
 </body>
 </html>
