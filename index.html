@@ -1439,7 +1439,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات دفعات الموردين دیناميكيا -->
+                                <!-- سيتم ملء بيانات دفعات الموردين ديناميكيا -->
                             </tbody>
                         </table>
                     </div>
@@ -1469,7 +1469,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات المصروفات دیناميكيا -->
+                                <!-- سيتم ملء بيانات المصروفات ديناميكيا -->
                             </tbody>
                         </table>
                     </div>
@@ -1502,7 +1502,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- سيتم ملء بيانات الفواتير دیناميكيا -->
+                            <!-- سيتم ملء بيانات الفواتير ديناميكيا -->
                         </tbody>
                     </table>
                 </div>
@@ -1564,7 +1564,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات المستخدمين دیناميكيا -->
+                                <!-- سيتم ملء بيانات المستخدمين ديناميكيا -->
                             </tbody>
                         </table>
                     </div>
@@ -1592,7 +1592,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- سيتم ملء بيانات الصلاحيات دیناميكيا -->
+                                <!-- سيتم ملء بيانات الصلاحيات ديناميكيا -->
                             </tbody>
                         </table>
                     </div>
@@ -1777,7 +1777,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- سيتم ملء النسخ الاحتياطية دیناميكيا -->
+                                        <!-- سيتم ملء النسخ الاحتياطية ديناميكيا -->
                                     </tbody>
                                 </table>
                             </div>
@@ -1834,7 +1834,7 @@
                 <div class="form-group">
                     <label>اللون</label>
                     <div class="color-suggestions" id="colorSuggestions">
-                        <!-- سيتم ملء اقتراحات الألوان دیناميكيا -->
+                        <!-- سيتم ملء اقتراحات الألوان ديناميكيا -->
                     </div>
                     <input type="text" id="productColor" class="form-control" placeholder="أدخل لون جديد (كود HEX)">
                     <small style="color: #777;">اضغط على لون من القائمة أو أدخل كود HEX جديد</small>
@@ -1869,7 +1869,7 @@
                 <button class="close-modal" onclick="closeModal('printA4Modal')">&times;</button>
             </div>
             <div class="invoice-a4" id="a4InvoiceContent">
-                <!-- سيتم ملء محتوى الفاتورة دیناميكيا -->
+                <!-- سيتم ملء محتوى الفاتورة ديناميكيا -->
             </div>
             <div style="text-align: center; margin-top: 20px;">
                 <button class="btn btn-success" onclick="printA4Invoice()"><i class="fas fa-print"></i> طباعة</button>
@@ -1886,7 +1886,7 @@
                 <button class="close-modal" onclick="closeModal('printBarcodeModal')">&times;</button>
             </div>
             <div class="barcode-container" id="barcodePrintContent">
-                <!-- سيتم ملء محتوى الباركود دیناميكيا -->
+                <!-- سيتم ملء محتوى الباركود ديناميكيا -->
             </div>
             <div style="text-align: center; margin-top: 20px;">
                 <button class="btn btn-success" onclick="printBarcodeOnly()"><i class="fas fa-print"></i> طباعة الباركود</button>
@@ -1910,19 +1910,19 @@
             </div>
             
             <div class="tab-content active" id="customerInfoTab">
-                <!-- سيتم ملء معلومات العميل دیناميكيا -->
+                <!-- سيتم ملء معلومات العميل ديناميكيا -->
             </div>
             
             <div class="tab-content" id="customerInvoicesTab">
-                <!-- سيتم ملء فواتير العميل دیناميكيا -->
+                <!-- سيتم ملء فواتير العميل ديناميكيا -->
             </div>
             
             <div class="tab-content" id="customerPaymentsTab">
-                <!-- سيتم ملء دفعات العميل دیناميكيا -->
+                <!-- سيتم ملء دفعات العميل ديناميكيا -->
             </div>
             
             <div class="tab-content" id="customerReportTab">
-                <!-- سيتم ملء تقرير العميل دیناميكيا -->
+                <!-- سيتم ملء تقرير العميل ديناميكيا -->
             </div>
         </div>
     </div>
@@ -1942,20 +1942,102 @@
             </div>
             
             <div class="tab-content active" id="supplierInfoTab">
-                <!-- سيتم ملء معلومات المورد دیناميكيا -->
+                <!-- سيتم ملء معلومات المورد ديناميكيا -->
             </div>
             
             <div class="tab-content" id="supplierPurchasesTab">
-                <!-- سيتم ملء مشتريات المورد دیناميكيا -->
+                <!-- سيتم ملء مشتريات المورد ديناميكيا -->
             </div>
             
             <div class="tab-content" id="supplierPaymentsTab">
-                <!-- سيتم ملء دفعات المورد دیناميكيا -->
+                <!-- سيتم ملء دفعات المورد دینامیکيا -->
             </div>
             
             <div class="tab-content" id="supplierReportTab">
-                <!-- سيتم ملء تقرير المورد دیناميكيا -->
+                <!-- سيتم ملء تقرير المورد دینامیکيا -->
             </div>
+        </div>
+    </div>
+    
+    <!-- نافذة إضافة عميل -->
+    <div class="modal" id="addCustomerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> إضافة عميل جديد</h3>
+                <button class="close-modal" onclick="closeModal('addCustomerModal')">&times;</button>
+            </div>
+            <form id="addCustomerForm">
+                <div class="form-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="customerFullName" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="text" id="customerPhone" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="customerEmail" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>العنوان</label>
+                    <textarea id="customerAddress" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>ملاحظات</label>
+                    <textarea id="customerNotes" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">إضافة العميل</button>
+                    <button type="button" class="btn btn-danger" style="flex: 1;" onclick="closeModal('addCustomerModal')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- نافذة إضافة مورد -->
+    <div class="modal" id="addSupplierModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-truck"></i> إضافة مورد جديد</h3>
+                <button class="close-modal" onclick="closeModal('addSupplierModal')">&times;</button>
+            </div>
+            <form id="addSupplierForm">
+                <div class="form-group">
+                    <label>اسم المورد</label>
+                    <input type="text" id="supplierName" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="text" id="supplierPhone" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="supplierEmail" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>العنوان</label>
+                    <textarea id="supplierAddress" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>الملاحظات</label>
+                    <textarea id="supplierNotes" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">إضافة المورد</button>
+                    <button type="button" class="btn btn-danger" style="flex: 1;" onclick="closeModal('addSupplierModal')">إلغاء</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1974,13 +2056,13 @@
                 { id: 6, name: "تابلت سامسونج تاب S8", purchasePrice: 750000, salePrice: 950000, quantity: 60, type: "تابلت", color: "#808080", barcode: "123456789017", image: "tablet" }
             ],
             customers: [
-                { id: 1, name: "أحمد محمد", phone: "07701234567", email: "ahmed@example.com", address: "بغداد", totalPurchases: 1250000, debt: 150000, previousDebt: 0 },
-                { id: 2, name: "سارة علي", phone: "07702345678", email: "sara@example.com", address: "البصرة", totalPurchases: 850000, debt: 0, previousDebt: 0 },
-                { id: 3, name: "عمر خالد", phone: "07703456789", email: "omar@example.com", address: "الموصل", totalPurchases: 2100000, debt: 300000, previousDebt: 50000 }
+                { id: 1, name: "أحمد محمد", phone: "07701234567", email: "ahmed@example.com", address: "بغداد", totalPurchases: 1250000, debt: 150000, previousDebt: 0, notes: "" },
+                { id: 2, name: "سارة علي", phone: "07702345678", email: "sara@example.com", address: "البصرة", totalPurchases: 850000, debt: 0, previousDebt: 0, notes: "" },
+                { id: 3, name: "عمر خالد", phone: "07703456789", email: "omar@example.com", address: "الموصل", totalPurchases: 2100000, debt: 300000, previousDebt: 50000, notes: "" }
             ],
             suppliers: [
-                { id: 1, name: "شركة الإلكترونيات المتقدمة", phone: "07704567890", email: "info@advanced.com", address: "بغداد", totalPurchases: 5000000, debt: 250000, previousDebt: 0 },
-                { id: 2, name: "مورد الأجهزة الذكية", phone: "07705678901", email: "contact@smartdevices.com", address: "أربيل", totalPurchases: 3200000, debt: 0, previousDebt: 0 }
+                { id: 1, name: "شركة الإلكترونيات المتقدمة", phone: "07704567890", email: "info@advanced.com", address: "بغداد", totalPurchases: 5000000, debt: 250000, previousDebt: 0, notes: "" },
+                { id: 2, name: "مورد الأجهزة الذكية", phone: "07705678901", email: "contact@smartdevices.com", address: "أربيل", totalPurchases: 3200000, debt: 0, previousDebt: 0, notes: "" }
             ],
             invoices: [],
             purchases: [],
@@ -2002,8 +2084,7 @@
             colorSuggestions: [
                 '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF',
                 '#FFA500', '#800080', '#008080', '#FFC0CB', '#A52A2A', '#808080'
-            ],
-            cashInDrawer: 50000 // بڕی پارەی نقدی بەردەست
+            ]
         };
 
         // العناصر الرئيسية في DOM
@@ -2106,6 +2187,18 @@
             // تحميل المشتريات
             loadPurchases();
             
+            // تحميل الدفعات والمصروفات
+            loadPaymentsAndExpenses();
+            
+            // تحميل المستخدمين
+            loadUsers();
+            
+            // تحميل الصلاحيات
+            loadRoles();
+            
+            // تحميل النسخ الاحتياطية
+            loadBackups();
+            
             // تحميل أحدث الفواتير في لوحة التحكم
             loadRecentInvoices();
             
@@ -2123,6 +2216,9 @@
             
             // إضافة أحداث للطباعة
             setupPrintEvents();
+            
+            // إضافة أحداث النماذج
+            setupForms();
         }
         
         // تحميل المنتجات
@@ -2151,28 +2247,30 @@
         // تحميل المخزون
         function loadInventory() {
             const inventoryTable = document.querySelector('#inventoryTable tbody');
-            inventoryTable.innerHTML = '';
-            systemData.products.forEach((product, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${product.name}</td>
-                    <td><i class="fas fa-${product.image}" style="font-size: 24px;"></i></td>
-                    <td>${product.quantity}</td>
-                    <td>${product.purchasePrice.toLocaleString()} د.ع</td>
-                    <td>${product.salePrice.toLocaleString()} د.ع</td>
-                    <td>${product.type}</td>
-                    <td><div style="width: 20px; height: 20px; background: ${product.color}; border-radius: 50%;"></div></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn-small btn-edit" onclick="editProduct(${product.id})"><i class="fas fa-edit"></i></button>
-                            <button class="btn-small btn-delete" onclick="deleteProduct(${product.id})"><i class="fas fa-trash"></i></button>
-                            <button class="btn-small btn-print" onclick="openPrintBarcodeModal(${product.id})"><i class="fas fa-barcode"></i></button>
-                        </div>
-                    </td>
-                `;
-                inventoryTable.appendChild(row);
-            });
+            if (inventoryTable) {
+                inventoryTable.innerHTML = '';
+                systemData.products.forEach((product, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${product.name}</td>
+                        <td><i class="fas fa-${product.image}" style="font-size: 24px;"></i></td>
+                        <td>${product.quantity}</td>
+                        <td>${product.purchasePrice.toLocaleString()} د.ع</td>
+                        <td>${product.salePrice.toLocaleString()} د.ع</td>
+                        <td>${product.type}</td>
+                        <td><div style="width: 20px; height: 20px; background: ${product.color}; border-radius: 50%;"></div></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-small btn-edit" onclick="editProduct(${product.id})"><i class="fas fa-edit"></i></button>
+                                <button class="btn-small btn-delete" onclick="deleteProduct(${product.id})"><i class="fas fa-trash"></i></button>
+                                <button class="btn-small btn-print" onclick="openPrintBarcodeModal(${product.id})"><i class="fas fa-barcode"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    inventoryTable.appendChild(row);
+                });
+            }
         }
         
         // تحميل العملاء
@@ -2232,6 +2330,8 @@
         // تحميل الفواتير
         function loadInvoices() {
             const invoicesTable = document.querySelector('#invoicesTable tbody');
+            const recentInvoices = document.getElementById('recentInvoices');
+            
             if (invoicesTable) {
                 invoicesTable.innerHTML = '';
                 systemData.invoices.forEach((invoice, index) => {
@@ -2253,6 +2353,29 @@
                         </td>
                     `;
                     invoicesTable.appendChild(row);
+                });
+            }
+            
+            if (recentInvoices) {
+                recentInvoices.innerHTML = '';
+                const recent = systemData.invoices.slice(-5).reverse();
+                recent.forEach(invoice => {
+                    const customer = systemData.customers.find(c => c.id === invoice.customerId) || { name: "زائر" };
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${invoice.id}</td>
+                        <td>${invoice.date}</td>
+                        <td>${customer.name}</td>
+                        <td>${invoice.total.toLocaleString()} د.ع</td>
+                        <td>${invoice.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-small btn-view" onclick="viewInvoice(${invoice.id})"><i class="fas fa-eye"></i></button>
+                                <button class="btn-small btn-print" onclick="printInvoice(${invoice.id})"><i class="fas fa-print"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    recentInvoices.appendChild(row);
                 });
             }
         }
@@ -2285,29 +2408,169 @@
             }
         }
         
-        // تحميل أحدث الفواتير
-        function loadRecentInvoices() {
-            const recentInvoices = document.getElementById('recentInvoices');
-            if (recentInvoices) {
-                recentInvoices.innerHTML = '';
-                const recent = systemData.invoices.slice(-5).reverse();
-                recent.forEach(invoice => {
-                    const customer = systemData.customers.find(c => c.id === invoice.customerId) || { name: "زائر" };
+        // تحميل الدفعات والمصروفات
+        function loadPaymentsAndExpenses() {
+            // دفعات العملاء
+            const customerPaymentsTable = document.querySelector('#customerPaymentsTable tbody');
+            if (customerPaymentsTable) {
+                customerPaymentsTable.innerHTML = '';
+                systemData.customerPayments.forEach((payment, index) => {
+                    const customer = systemData.customers.find(c => c.id === payment.customerId) || { name: "غير معروف" };
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${invoice.id}</td>
-                        <td>${invoice.date}</td>
+                        <td>${index + 1}</td>
                         <td>${customer.name}</td>
-                        <td>${invoice.total.toLocaleString()} د.ع</td>
-                        <td>${invoice.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</td>
+                        <td>${payment.amount.toLocaleString()} د.ع</td>
+                        <td>${payment.date}</td>
+                        <td>${payment.method}</td>
+                        <td>${payment.notes || ''}</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn-small btn-view" onclick="viewInvoice(${invoice.id})"><i class="fas fa-eye"></i></button>
-                                <button class="btn-small btn-print" onclick="printInvoice(${invoice.id})"><i class="fas fa-print"></i></button>
+                                <button class="btn-small btn-edit" onclick="editCustomerPayment(${index})"><i class="fas fa-edit"></i></button>
+                                <button class="btn-small btn-delete" onclick="deleteCustomerPayment(${index})"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     `;
-                    recentInvoices.appendChild(row);
+                    customerPaymentsTable.appendChild(row);
+                });
+            }
+            
+            // دفعات الموردين
+            const supplierPaymentsTable = document.querySelector('#supplierPaymentsTable tbody');
+            if (supplierPaymentsTable) {
+                supplierPaymentsTable.innerHTML = '';
+                systemData.supplierPayments.forEach((payment, index) => {
+                    const supplier = systemData.suppliers.find(s => s.id === payment.supplierId) || { name: "غير معروف" };
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${supplier.name}</td>
+                        <td>${payment.amount.toLocaleString()} د.ع</td>
+                        <td>${payment.date}</td>
+                        <td>${payment.method}</td>
+                        <td>${payment.notes || ''}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-small btn-edit" onclick="editSupplierPayment(${index})"><i class="fas fa-edit"></i></button>
+                                <button class="btn-small btn-delete" onclick="deleteSupplierPayment(${index})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    supplierPaymentsTable.appendChild(row);
+                });
+            }
+            
+            // المصروفات
+            const expensesTable = document.querySelector('#expensesTable tbody');
+            if (expensesTable) {
+                expensesTable.innerHTML = '';
+                systemData.expenses.forEach((expense, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${expense.type}</td>
+                        <td>${expense.amount.toLocaleString()} د.ع</td>
+                        <td>${expense.date}</td>
+                        <td>${expense.receiver}</td>
+                        <td>${expense.notes || ''}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-small btn-edit" onclick="editExpense(${index})"><i class="fas fa-edit"></i></button>
+                                <button class="btn-small btn-delete" onclick="deleteExpense(${index})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    expensesTable.appendChild(row);
+                });
+            }
+        }
+        
+        // تحميل المستخدمين
+        function loadUsers() {
+            const usersTable = document.querySelector('#usersTable tbody');
+            if (usersTable) {
+                usersTable.innerHTML = '';
+                systemData.users.forEach((user, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${user.username}</td>
+                        <td>${user.fullName}</td>
+                        <td>${user.role}</td>
+                        <td>${user.createdAt}</td>
+                        <td><span style="padding: 5px 10px; border-radius: 20px; background: ${user.active ? '#4CAF50' : '#f44336'}; color: white;">${user.active ? 'نشط' : 'معطل'}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-small btn-edit" onclick="editUser(${index})"><i class="fas fa-edit"></i></button>
+                                <button class="btn-small btn-delete" onclick="deleteUser(${index})"><i class="fas fa-trash"></i></button>
+                                <button class="btn-small ${user.active ? 'btn-warning' : 'btn-success'}" onclick="toggleUserStatus(${index})">
+                                    <i class="fas fa-${user.active ? 'ban' : 'check'}"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    usersTable.appendChild(row);
+                });
+            }
+        }
+        
+        // تحميل الصلاحيات
+        function loadRoles() {
+            const rolesTable = document.querySelector('#rolesTable tbody');
+            if (rolesTable) {
+                rolesTable.innerHTML = '';
+                const roles = [
+                    { id: 1, name: "مدير", userCount: systemData.users.filter(u => u.role === "مدير").length, description: "صلاحيات كاملة على النظام" },
+                    { id: 2, name: "مندوب مبيعات", userCount: systemData.users.filter(u => u.role === "مندوب مبيعات").length, description: "صلاحيات المبيعات والفاتورة" },
+                    { id: 3, name: "مدير المخزون", userCount: systemData.users.filter(u => u.role === "مدير المخزون").length, description: "صلاحيات إدارة المخزون والمشتريات" }
+                ];
+                
+                roles.forEach((role, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${role.name}</td>
+                        <td>${role.userCount}</td>
+                        <td>${role.description}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-small btn-edit" onclick="editRole(${role.id})"><i class="fas fa-edit"></i></button>
+                                <button class="btn-small btn-delete" onclick="deleteRole(${role.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    rolesTable.appendChild(row);
+                });
+            }
+        }
+        
+        // تحميل النسخ الاحتياطية
+        function loadBackups() {
+            const backupsTable = document.querySelector('#backupsTable tbody');
+            if (backupsTable) {
+                backupsTable.innerHTML = '';
+                // بيانات وهمية للنسخ الاحتياطية
+                const backups = [
+                    { id: 1, name: "backup-2024-01-15.json", date: "2024-01-15", size: "2.5 MB" },
+                    { id: 2, name: "backup-2024-01-10.json", date: "2024-01-10", size: "2.3 MB" },
+                    { id: 3, name: "backup-2024-01-05.json", date: "2024-01-05", size: "2.1 MB" }
+                ];
+                
+                backups.forEach((backup, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${backup.name}</td>
+                        <td>${backup.date}</td>
+                        <td>${backup.size}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-small btn-success" onclick="downloadBackup(${backup.id})"><i class="fas fa-download"></i></button>
+                                <button class="btn-small btn-delete" onclick="deleteBackup(${backup.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    backupsTable.appendChild(row);
                 });
             }
         }
@@ -2393,6 +2656,31 @@
             });
         }
         
+        // إعداد أحداث النماذج
+        function setupForms() {
+            // نموذج إضافة منتج
+            document.getElementById('addProductForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addNewProduct();
+            });
+            
+            // نموذج إضافة عميل
+            if (document.getElementById('addCustomerForm')) {
+                document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    addNewCustomer();
+                });
+            }
+            
+            // نموذج إضافة مورد
+            if (document.getElementById('addSupplierForm')) {
+                document.getElementById('addSupplierForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    addNewSupplier();
+                });
+            }
+        }
+        
         // البحث عن المنتجات
         function searchProducts() {
             const searchTerm = document.getElementById('productSearch').value.toLowerCase();
@@ -2426,44 +2714,18 @@
             );
             
             suggestions.innerHTML = '';
-            
-            if (filteredCustomers.length === 0) {
+            filteredCustomers.forEach(customer => {
                 const suggestion = document.createElement('div');
                 suggestion.style.padding = '10px';
-                suggestion.style.color = '#777';
-                suggestion.innerHTML = 'لا توجد نتائج';
+                suggestion.style.cursor = 'pointer';
+                suggestion.style.borderBottom = '1px solid #eee';
+                suggestion.innerHTML = `${customer.name} - ${customer.phone}`;
+                suggestion.onclick = function() {
+                    selectCustomer(customer.id);
+                    suggestions.style.display = 'none';
+                };
                 suggestions.appendChild(suggestion);
-            } else {
-                filteredCustomers.forEach(customer => {
-                    const suggestion = document.createElement('div');
-                    suggestion.style.padding = '10px';
-                    suggestion.style.cursor = 'pointer';
-                    suggestion.style.borderBottom = '1px solid #eee';
-                    suggestion.style.transition = 'background 0.2s';
-                    
-                    suggestion.innerHTML = `
-                        <div style="font-weight: 600;">${customer.name}</div>
-                        <div style="font-size: 12px; color: #777;">${customer.phone}</div>
-                        <div style="font-size: 12px; color: #777;">إجمالي المشتريات: ${customer.totalPurchases.toLocaleString()} د.ع</div>
-                        <div style="font-size: 12px; color: #f72585;">الديون: ${customer.debt.toLocaleString()} د.ع</div>
-                    `;
-                    
-                    suggestion.onmouseover = function() {
-                        this.style.background = '#f5f7fb';
-                    };
-                    
-                    suggestion.onmouseout = function() {
-                        this.style.background = 'white';
-                    };
-                    
-                    suggestion.onclick = function() {
-                        selectCustomer(customer.id);
-                        suggestions.style.display = 'none';
-                    };
-                    
-                    suggestions.appendChild(suggestion);
-                });
-            }
+            });
             
             suggestions.style.display = 'block';
         }
@@ -2473,25 +2735,11 @@
             currentCustomerId = customerId;
             const customer = systemData.customers.find(c => c.id === customerId);
             
-            if (customer) {
-                document.getElementById('customerSearch').value = customer.name;
-                document.getElementById('selectedCustomerName').textContent = customer.name;
-                document.getElementById('customerPreviousDebt').textContent = customer.debt.toLocaleString();
-                document.getElementById('selectedCustomerInfo').style.display = 'block';
-                
-                // تنسيق دەستکاریەکان بەپێی قەرز
-                if (customer.debt > 0) {
-                    document.getElementById('selectedCustomerInfo').style.background = 'linear-gradient(135deg, #fff5f7, #ffeef1)';
-                    document.getElementById('selectedCustomerInfo').style.border = '1px solid #f72585';
-                    document.getElementById('selectedCustomerInfo').style.padding = '10px';
-                    document.getElementById('selectedCustomerInfo').style.borderRadius = '10px';
-                } else {
-                    document.getElementById('selectedCustomerInfo').style.background = '#f9f9f9';
-                    document.getElementById('selectedCustomerInfo').style.border = 'none';
-                    document.getElementById('selectedCustomerInfo').style.padding = '10px';
-                    document.getElementById('selectedCustomerInfo').style.borderRadius = '10px';
-                }
-            }
+            document.getElementById('customerSearch').value = customer.name;
+            document.getElementById('selectedCustomerName').textContent = customer.name;
+            document.getElementById('customerPreviousDebt').textContent = customer.debt.toLocaleString();
+            
+            document.getElementById('selectedCustomerInfo').style.display = 'block';
         }
         
         // إضافة منتج للسلة
@@ -2518,8 +2766,7 @@
                     name: product.name,
                     price: product.salePrice,
                     quantity: 1,
-                    type: product.type,
-                    image: product.image
+                    type: product.type
                 });
             }
             
@@ -2537,20 +2784,12 @@
                 row.setAttribute('data-product-id', item.productId);
                 row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-${item.image}" style="font-size: 20px; color: var(--primary);"></i>
-                            <div>
-                                <div style="font-weight: 600;">${item.name}</div>
-                                <small style="color: #777; font-size: 12px;">${item.type}</small>
-                            </div>
-                        </div>
-                    </td>
+                    <td>${item.name}</td>
                     <td>${item.price.toLocaleString()} د.ع</td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <button class="btn-small" onclick="updateCartQuantity(${item.productId}, -1)" style="padding: 2px 8px;">-</button>
-                            <span style="font-weight: 600;">${item.quantity}</span>
+                            <span>${item.quantity}</span>
                             <button class="btn-small" onclick="updateCartQuantity(${item.productId}, 1)" style="padding: 2px 8px;">+</button>
                         </div>
                     </td>
@@ -2660,15 +2899,6 @@
             updateInvoiceSummary();
         };
         
-        // التحقق من توفر النقدية
-        window.checkCashAvailability = function(requiredAmount) {
-            if (requiredAmount > systemData.cashInDrawer) {
-                alert(`المبلغ المطلوب (${requiredAmount.toLocaleString()} د.ع) أكبر من الرصيد النقدي المتاح (${systemData.cashInDrawer.toLocaleString()} د.ع)`);
-                return false;
-            }
-            return true;
-        };
-        
         // إتمام عملية البيع
         window.completeSale = function() {
             if (cart.length === 0) {
@@ -2686,125 +2916,59 @@
             });
             
             const tax = subtotal * 0.05;
-            let total = subtotal - discount + tax;
+            const total = subtotal - discount + tax;
             
-            // حالة الدفع نقداً
-            if (paymentType === 'cash') {
-                // طلب مبلغ الدفع
-                const cashPayment = prompt(`إجمالي الفاتورة: ${total.toLocaleString()} د.ع\nأدخل المبلغ المدفوع نقداً:`);
-                
-                if (cashPayment && !isNaN(cashPayment)) {
-                    const cash = parseFloat(cashPayment);
-                    
-                    if (cash >= total) {
-                        // التحقق من توفر النقدية
-                        if (!checkCashAvailability(total)) {
-                            return;
-                        }
-                        
-                        // خصم المبلغ من النقدية المتاحة
-                        systemData.cashInDrawer -= total;
-                        
-                        const change = cash - total;
-                        
-                        // إنشاء فاتورة
-                        const invoice = {
-                            id: `INV-${Date.now()}`,
-                            date: new Date().toLocaleDateString('ar-EG'),
-                            time: new Date().toLocaleTimeString('ar-EG'),
-                            customerId: currentCustomerId,
-                            items: [...cart],
-                            subtotal: subtotal,
-                            discount: discount,
-                            tax: tax,
-                            total: total,
-                            paymentType: paymentType,
-                            paymentAmount: cash,
-                            change: change,
-                            status: 'مكتمل'
-                        };
-                        
-                        // تحديث المخزون
-                        cart.forEach(item => {
-                            const product = systemData.products.find(p => p.id === item.productId);
-                            if (product) {
-                                product.quantity -= item.quantity;
-                            }
-                        });
-                        
-                        // إضافة الفاتورة إلى النظام
-                        systemData.invoices.push(invoice);
-                        
-                        // حفظ البيانات
-                        saveSystemData();
-                        
-                        // عرض معلومات الدفع
-                        alert(`تم الدفع نقداً بنجاح\nالمبلغ المدفوع: ${cash.toLocaleString()} د.ع\nإجمالي الفاتورة: ${total.toLocaleString()} د.ع\nالباقي: ${change.toLocaleString()} د.ع\nالرصيد النقدي الحالي: ${systemData.cashInDrawer.toLocaleString()} د.ع`);
-                        
-                        // طباعة الفاتورة إذا كان الإعداد مفعلاً
-                        if (systemData.settings.autoPrint) {
-                            printSmallInvoice();
-                        }
-                        
-                    } else {
-                        alert('المبلغ المدفوع أقل من إجمالي الفاتورة');
-                        return;
-                    }
-                } else {
-                    alert('المبلغ غير صالح');
-                    return;
+            // إنشاء فاتورة
+            const invoice = {
+                id: `INV-${Date.now()}`,
+                date: new Date().toLocaleDateString('ar-EG'),
+                time: new Date().toLocaleTimeString('ar-EG'),
+                customerId: currentCustomerId,
+                items: [...cart],
+                subtotal: subtotal,
+                discount: discount,
+                tax: tax,
+                total: total,
+                paymentType: paymentType,
+                status: 'مكتمل'
+            };
+            
+            // تحديث المخزون
+            cart.forEach(item => {
+                const product = systemData.products.find(p => p.id === item.productId);
+                if (product) {
+                    product.quantity -= item.quantity;
+                }
+            });
+            
+            // تحديث بيانات العميل إذا كان هناك دين
+            if (paymentType === 'credit' && currentCustomerId) {
+                const customer = systemData.customers.find(c => c.id === currentCustomerId);
+                if (customer) {
+                    customer.debt += total;
+                    customer.totalPurchases += total;
+                }
+            } else if (currentCustomerId) {
+                // تحديث إجمالي مشتريات العميل حتى لو كان الدفع نقداً
+                const customer = systemData.customers.find(c => c.id === currentCustomerId);
+                if (customer) {
+                    customer.totalPurchases += total;
                 }
             }
             
-            // حالة الدفع بالدين
-            else if (paymentType === 'credit') {
-                if (!currentCustomerId) {
-                    alert('الرجاء اختيار عميل للبيع بالدين');
-                    return;
-                }
-                
-                const customer = systemData.customers.find(c => c.id === currentCustomerId);
-                
-                if (customer) {
-                    // إضافة الدين إلى ديون العميل
-                    const previousDebt = customer.debt;
-                    customer.debt += total;
-                    customer.totalPurchases += total;
-                    
-                    // إنشاء فاتورة
-                    const invoice = {
-                        id: `INV-${Date.now()}`,
-                        date: new Date().toLocaleDateString('ar-EG'),
-                        time: new Date().toLocaleTimeString('ar-EG'),
-                        customerId: currentCustomerId,
-                        items: [...cart],
-                        subtotal: subtotal,
-                        discount: discount,
-                        tax: tax,
-                        total: total,
-                        paymentType: paymentType,
-                        previousDebt: previousDebt,
-                        newDebt: customer.debt,
-                        status: 'مكتمل'
-                    };
-                    
-                    // تحديث المخزون
-                    cart.forEach(item => {
-                        const product = systemData.products.find(p => p.id === item.productId);
-                        if (product) {
-                            product.quantity -= item.quantity;
-                        }
-                    });
-                    
-                    // إضافة الفاتورة إلى النظام
-                    systemData.invoices.push(invoice);
-                    
-                    // حفظ البيانات
-                    saveSystemData();
-                    
-                    // عرض معلومات الدين
-                    alert(`تم البيع بالدين بنجاح\nتمت إضافة ${total.toLocaleString()} د.ع إلى ديون العميل ${customer.name}\nالديون السابقة: ${previousDebt.toLocaleString()} د.ع\nإجمالي الديون الحالية: ${customer.debt.toLocaleString()} د.ع`);
-                }
+            // إضافة الفاتورة إلى النظام
+            systemData.invoices.push(invoice);
+            
+            // حفظ البيانات
+            saveSystemData();
+            
+            // طباعة الفاتورة إذا كان الإعداد مفعلاً
+            if (systemData.settings.autoPrint) {
+                printSmallInvoice();
+            } else if (systemData.settings.showPrintOptions) {
+                alert('تم إتمام البيع بنجاح. الرجاء اختيار خيار الطباعة.');
+            } else {
+                alert('تم إتمام البيع بنجاح!');
             }
             
             // إعادة تعيين السلة
@@ -2820,7 +2984,6 @@
             loadInventory();
             loadCustomers();
             loadInvoices();
-            loadRecentInvoices();
         };
         
         // طباعة فاتورة صغيرة
@@ -2831,34 +2994,11 @@
             }
             
             const customer = currentCustomerId ? systemData.customers.find(c => c.id === currentCustomerId) : null;
-            const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const discount = parseFloat(document.getElementById('discountInput').value) || 0;
-            
-            let subtotal = 0;
-            cart.forEach(item => {
-                subtotal += item.price * item.quantity;
-            });
-            
             const tax = subtotal * 0.05;
             const total = subtotal - discount + tax;
-            
-            // إنشاء قسم الدفع
-            let paymentSection = '';
-            if (paymentType === 'cash') {
-                const cash = total; // باستخدام المبلغ الإجمالي كمبلغ مدفوع
-                const change = 0;
-                paymentSection = `
-                    <p><strong>طريقة الدفع:</strong> نقداً</p>
-                    <p><strong>المبلغ المدفوع:</strong> ${cash.toLocaleString()} د.ع</p>
-                    <p><strong>الباقي:</strong> ${change.toLocaleString()} د.ع</p>
-                `;
-            } else {
-                paymentSection = `
-                    <p><strong>طريقة الدفع:</strong> بالدين</p>
-                    ${customer ? `<p><strong>ديون العميل الجديدة:</strong> ${total.toLocaleString()} د.ع</p>` : ''}
-                    ${customer ? `<p><strong>إجمالي الديون:</strong> ${(customer.debt + total).toLocaleString()} د.ع</p>` : ''}
-                `;
-            }
+            const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
             
             const printContent = `
                 <div class="small-invoice">
@@ -2886,13 +3026,7 @@
                         <tbody>
                             ${cart.map(item => `
                                 <tr>
-                                    <td style="text-align: right;">
-                                        <div style="display: flex; align-items: center; gap: 5px;">
-                                            <i class="fas fa-${item.image}" style="font-size: 12px;"></i>
-                                            ${item.name}
-                                        </div>
-                                        <small style="color: #777; font-size: 10px;">${item.type}</small>
-                                    </td>
+                                    <td style="text-align: right;">${item.name}</td>
                                     <td style="text-align: center;">${item.quantity}</td>
                                     <td style="text-align: left;">${item.price.toLocaleString()} د.ع</td>
                                     <td style="text-align: left;">${(item.price * item.quantity).toLocaleString()} د.ع</td>
@@ -2902,12 +3036,9 @@
                     </table>
                     
                     <div style="border-top: 1px dashed #000; padding-top: 10px; margin-bottom: 15px;">
-                        ${currentCustomerId ? `<p><strong>العميل:</strong> ${systemData.customers.find(c => c.id === currentCustomerId).name}</p>` : ''}
-                        <p><strong>إجمالي المنتجات:</strong> ${subtotal.toLocaleString()} د.ع</p>
-                        <p><strong>الخصم:</strong> ${discount.toLocaleString()} د.ع</p>
-                        <p><strong>الضريبة:</strong> ${tax.toLocaleString()} د.ع</p>
-                        <p><strong>الإجمالي النهائي:</strong> ${total.toLocaleString()} د.ع</p>
-                        ${paymentSection}
+                        ${customer ? `<p><strong>العميل:</strong> ${customer.name}</p>` : ''}
+                        <p><strong>طريقة الدفع:</strong> ${paymentType === 'cash' ? 'نقداً' : 'بالدين'}</p>
+                        <p><strong>الإجمالي:</strong> ${total.toLocaleString()} د.ع</p>
                     </div>
                     
                     <div style="text-align: center; font-size: 12px; color: #777;">
@@ -2923,19 +3054,9 @@
                     <head>
                         <title>طباعة الفاتورة</title>
                         <style>
-                            body { 
-                                font-family: Arial, sans-serif; 
-                                direction: rtl; 
-                                margin: 0;
-                                padding: 20px;
-                            }
+                            body { font-family: Arial, sans-serif; direction: rtl; }
                             @media print {
                                 body { margin: 0; padding: 0; }
-                                .small-invoice {
-                                    width: 80mm;
-                                    padding: 10px;
-                                    font-size: 12px;
-                                }
                             }
                         </style>
                     </head>
@@ -2967,6 +3088,7 @@
             const discount = parseFloat(document.getElementById('discountInput').value) || 0;
             const tax = subtotal * 0.05;
             const total = subtotal - discount + tax;
+            const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
             
             const invoiceContent = document.getElementById('a4InvoiceContent');
             invoiceContent.innerHTML = `
@@ -3049,8 +3171,8 @@
                 <div style="border-top: 2px solid #eee; padding-top: 20px; margin-top: 40px;">
                     <div style="display: flex; justify-content: space-between;">
                         <div>
-                            <p><strong>طريقة الدفع:</strong> ${document.querySelector('input[name="paymentType"]:checked').value === 'cash' ? 'نقداً' : 'بالدين'}</p>
-                            ${customer && document.querySelector('input[name="paymentType"]:checked').value === 'credit' ? `
+                            <p><strong>طريقة الدفع:</strong> ${paymentType === 'cash' ? 'نقداً' : 'بالدين'}</p>
+                            ${customer && paymentType === 'credit' ? `
                                 <p><strong>الديون الجديدة:</strong> ${total.toLocaleString()} د.ع</p>
                                 <p><strong>إجمالي الديون:</strong> ${(customer.debt + total).toLocaleString()} د.ع</p>
                             ` : ''}
@@ -3114,6 +3236,9 @@
         // فتح نافذة إضافة منتج
         window.openAddProductModal = function() {
             document.getElementById('addProductForm').reset();
+            const submitBtn = document.querySelector('#addProductForm button[type="submit"]');
+            submitBtn.textContent = 'إضافة المنتج';
+            submitBtn.onclick = null;
             openModal('addProductModal');
         };
         
@@ -3124,11 +3249,9 @@
         };
         
         // إضافة منتج جديد
-        document.getElementById('addProductForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
+        function addNewProduct() {
             const newProduct = {
-                id: systemData.products.length + 1,
+                id: systemData.products.length > 0 ? Math.max(...systemData.products.map(p => p.id)) + 1 : 1,
                 name: document.getElementById('productName').value,
                 purchasePrice: parseFloat(document.getElementById('purchasePrice').value),
                 salePrice: parseFloat(document.getElementById('salePrice').value),
@@ -3138,6 +3261,18 @@
                 barcode: document.getElementById('productBarcode').value || Math.floor(100000000000 + Math.random() * 900000000000).toString(),
                 image: 'box' // افتراضي
             };
+            
+            // تحديد الأيقونة المناسبة بناءً على النوع
+            const typeIcons = {
+                'هواتف': 'mobile',
+                'أجهزة كمبيوتر': 'laptop',
+                'سماعات': 'headphones',
+                'ساعات ذكية': 'smartwatch',
+                'كاميرات': 'camera',
+                'تابلت': 'tablet',
+                'أخرى': 'box'
+            };
+            newProduct.image = typeIcons[newProduct.type] || 'box';
             
             // إضافة اللون الجديد إلى الاقتراحات إذا لم يكن موجوداً
             if (newProduct.color && !systemData.colorSuggestions.includes(newProduct.color)) {
@@ -3154,7 +3289,7 @@
             
             closeModal('addProductModal');
             alert('تم إضافة المنتج بنجاح!');
-        });
+        }
         
         // تعديل منتج
         window.editProduct = function(productId) {
@@ -3186,6 +3321,18 @@
             const productIndex = systemData.products.findIndex(p => p.id === productId);
             if (productIndex === -1) return;
             
+            const typeIcons = {
+                'هواتف': 'mobile',
+                'أجهزة كمبيوتر': 'laptop',
+                'سماعات': 'headphones',
+                'ساعات ذكية': 'smartwatch',
+                'كاميرات': 'camera',
+                'تابلت': 'tablet',
+                'أخرى': 'box'
+            };
+            
+            const newImage = typeIcons[document.getElementById('productType').value] || 'box';
+            
             systemData.products[productIndex] = {
                 ...systemData.products[productIndex],
                 name: document.getElementById('productName').value,
@@ -3194,7 +3341,8 @@
                 quantity: parseInt(document.getElementById('productQuantity').value),
                 type: document.getElementById('productType').value,
                 color: document.getElementById('productColor').value || '#000000',
-                barcode: document.getElementById('productBarcode').value
+                barcode: document.getElementById('productBarcode').value,
+                image: newImage
             };
             
             saveSystemData();
@@ -3308,6 +3456,10 @@
                         <textarea class="form-control" readonly>${customer.address}</textarea>
                     </div>
                     <div class="form-group">
+                        <label>ملاحظات</label>
+                        <textarea class="form-control" readonly>${customer.notes || ''}</textarea>
+                    </div>
+                    <div class="form-group">
                         <label>إجمالي المشتريات</label>
                         <input type="text" class="form-control" value="${customer.totalPurchases.toLocaleString()} د.ع" readonly>
                     </div>
@@ -3353,6 +3505,96 @@
                 </div>
             `;
             
+            // تحميل دفعات العميل
+            const customerPayments = systemData.customerPayments.filter(p => p.customerId === customerId);
+            document.getElementById('customerPaymentsTab').innerHTML = `
+                <div style="padding: 20px;">
+                    <h4>دفعات العميل</h4>
+                    ${customerPayments.length > 0 ? `
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f5f5f5;">
+                                    <th style="padding: 10px; border: 1px solid #ddd;">#</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">المبلغ</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">التاريخ</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">الطريقة</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${customerPayments.map((payment, index) => `
+                                    <tr>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${index + 1}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${payment.amount.toLocaleString()} د.ع</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${payment.date}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${payment.method}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${payment.notes || ''}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    ` : '<p>لا توجد دفعات مسجلة لهذا العميل</p>'}
+                </div>
+            `;
+            
+            // تحميل تقرير العميل
+            const totalPaid = customerPayments.reduce((sum, payment) => sum + payment.amount, 0);
+            const balance = customer.debt - totalPaid;
+            
+            document.getElementById('customerReportTab').innerHTML = `
+                <div style="padding: 20px;">
+                    <h4>تقرير العميل</h4>
+                    <div class="stats-cards" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">إجمالي المشتريات</div>
+                                <div class="stat-value">${customer.totalPurchases.toLocaleString()} د.ع</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">إجمالي الديون</div>
+                                <div class="stat-value">${customer.debt.toLocaleString()} د.ع</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">المدفوعات</div>
+                                <div class="stat-value">${totalPaid.toLocaleString()} د.ع</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">الرصيد المستحق</div>
+                                <div class="stat-value">${balance.toLocaleString()} د.ع</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <h5>ملخص النشاط</h5>
+                        <p>عدد الفواتير: ${customerInvoices.length}</p>
+                        <p>عدد الدفعات: ${customerPayments.length}</p>
+                        <p>متوسط قيمة الفاتورة: ${customerInvoices.length > 0 ? (customer.totalPurchases / customerInvoices.length).toLocaleString() : 0} د.ع</p>
+                    </div>
+                </div>
+            `;
+            
             openModal('customerDetailsModal');
         };
         
@@ -3382,6 +3624,10 @@
                         <textarea class="form-control" readonly>${supplier.address}</textarea>
                     </div>
                     <div class="form-group">
+                        <label>ملاحظات</label>
+                        <textarea class="form-control" readonly>${supplier.notes || ''}</textarea>
+                    </div>
+                    <div class="form-group">
                         <label>إجمالي المشتريات</label>
                         <input type="text" class="form-control" value="${supplier.totalPurchases.toLocaleString()} د.ع" readonly>
                     </div>
@@ -3392,7 +3638,224 @@
                 </div>
             `;
             
+            // تحميل مشتريات المورد
+            const supplierPurchases = systemData.purchases.filter(p => p.supplierId === supplierId);
+            document.getElementById('supplierPurchasesTab').innerHTML = `
+                <div style="padding: 20px;">
+                    <h4>مشتريات من المورد</h4>
+                    ${supplierPurchases.length > 0 ? `
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f5f5f5;">
+                                    <th style="padding: 10px; border: 1px solid #ddd;">رقم الفاتورة</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">التاريخ</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">الإجمالي</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">طريقة الدفع</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${supplierPurchases.map(purchase => `
+                                    <tr>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${purchase.id}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${purchase.date}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${purchase.total.toLocaleString()} د.ع</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${purchase.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">
+                                            <button class="btn-small btn-view" onclick="viewPurchase('${purchase.id}')"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-small btn-print" onclick="printPurchase('${purchase.id}')"><i class="fas fa-print"></i></button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    ` : '<p>لا توجد مشتريات مسجلة من هذا المورد</p>'}
+                </div>
+            `;
+            
+            // تحميل دفعات المورد
+            const supplierPayments = systemData.supplierPayments.filter(p => p.supplierId === supplierId);
+            document.getElementById('supplierPaymentsTab').innerHTML = `
+                <div style="padding: 20px;">
+                    <h4>دفعات للمورد</h4>
+                    ${supplierPayments.length > 0 ? `
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f5f5f5;">
+                                    <th style="padding: 10px; border: 1px solid #ddd;">#</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">المبلغ</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">التاريخ</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">الطريقة</th>
+                                    <th style="padding: 10px; border: 1px solid #ddd;">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${supplierPayments.map((payment, index) => `
+                                    <tr>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${index + 1}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${payment.amount.toLocaleString()} د.ع</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${payment.date}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${payment.method}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${payment.notes || ''}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    ` : '<p>لا توجد دفعات مسجلة لهذا المورد</p>'}
+                </div>
+            `;
+            
+            // تحميل تقرير المورد
+            const totalPaid = supplierPayments.reduce((sum, payment) => sum + payment.amount, 0);
+            const balance = supplier.debt - totalPaid;
+            
+            document.getElementById('supplierReportTab').innerHTML = `
+                <div style="padding: 20px;">
+                    <h4>تقرير المورد</h4>
+                    <div class="stats-cards" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">إجمالي المشتريات</div>
+                                <div class="stat-value">${supplier.totalPurchases.toLocaleString()} د.ع</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">إجمالي الديون</div>
+                                <div class="stat-value">${supplier.debt.toLocaleString()} د.ع</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">المدفوعات</div>
+                                <div class="stat-value">${totalPaid.toLocaleString()} د.ع</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">الرصيد المستحق</div>
+                                <div class="stat-value">${balance.toLocaleString()} د.ع</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <h5>ملخص النشاط</h5>
+                        <p>عدد فواتير الشراء: ${supplierPurchases.length}</p>
+                        <p>عدد الدفعات: ${supplierPayments.length}</p>
+                        <p>متوسط قيمة الفاتورة: ${supplierPurchases.length > 0 ? (supplier.totalPurchases / supplierPurchases.length).toLocaleString() : 0} د.ع</p>
+                    </div>
+                </div>
+            `;
+            
             openModal('supplierDetailsModal');
+        };
+        
+        // فتح نافذة إضافة عميل
+        window.openAddCustomerModal = function() {
+            document.getElementById('addCustomerForm').reset();
+            openModal('addCustomerModal');
+        };
+        
+        // إضافة عميل جديد
+        function addNewCustomer() {
+            const newCustomer = {
+                id: systemData.customers.length > 0 ? Math.max(...systemData.customers.map(c => c.id)) + 1 : 1,
+                name: document.getElementById('customerFullName').value,
+                phone: document.getElementById('customerPhone').value,
+                email: document.getElementById('customerEmail').value || '',
+                address: document.getElementById('customerAddress').value || '',
+                totalPurchases: 0,
+                debt: 0,
+                previousDebt: 0,
+                notes: document.getElementById('customerNotes').value || ''
+            };
+            
+            systemData.customers.push(newCustomer);
+            saveSystemData();
+            
+            loadCustomers();
+            closeModal('addCustomerModal');
+            alert('تم إضافة العميل بنجاح!');
+        };
+        
+        // فتح نافذة إضافة مورد
+        window.openAddSupplierModal = function() {
+            document.getElementById('addSupplierForm').reset();
+            openModal('addSupplierModal');
+        };
+        
+        // إضافة مورد جديد
+        function addNewSupplier() {
+            const newSupplier = {
+                id: systemData.suppliers.length > 0 ? Math.max(...systemData.suppliers.map(s => s.id)) + 1 : 1,
+                name: document.getElementById('supplierName').value,
+                phone: document.getElementById('supplierPhone').value,
+                email: document.getElementById('supplierEmail').value || '',
+                address: document.getElementById('supplierAddress').value || '',
+                totalPurchases: 0,
+                debt: 0,
+                previousDebt: 0,
+                notes: document.getElementById('supplierNotes').value || ''
+            };
+            
+            systemData.suppliers.push(newSupplier);
+            saveSystemData();
+            
+            loadSuppliers();
+            closeModal('addSupplierModal');
+            alert('تم إضافة المورد بنجاح!');
+        };
+        
+        // فتح نافذة إضافة عملية شراء
+        window.openAddPurchaseModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة عملية شراء جديدة');
+            // هنا يمكن إضافة كود لفتح نافذة إضافة عملية شراء
+        };
+        
+        // فتح نافذة إضافة دفعة عميل
+        window.openAddCustomerPaymentModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة دفعة عميل');
+            // هنا يمكن إضافة كود لفتح نافذة إضافة دفعة عميل
+        };
+        
+        // فتح نافذة إضافة دفعة مورد
+        window.openAddSupplierPaymentModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة دفعة مورد');
+            // هنا يمكن إضافة كود لفتح نافذة إضافة دفعة مورد
+        };
+        
+        // فتح نافذة إضافة مصروف
+        window.openAddExpenseModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مصروف');
+            // هنا يمكن إضافة كود لفتح نافذة إضافة مصروف
+        };
+        
+        // فتح نافذة إضافة مستخدم
+        window.openAddUserModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مستخدم جديد');
+            // هنا يمكن إضافة كود لفتح نافذة إضافة مستخدم
+        };
+        
+        // فتح نافذة إضافة صلاحية
+        window.openAddRoleModal = function() {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة صلاحية جديدة');
+            // هنا يمكن إضافة كود لفتح نافذة إضافة صلاحية
         };
         
         // حفظ البيانات
@@ -3443,6 +3906,7 @@
         window.savePrintSettings = function() {
             systemData.settings.autoPrint = document.getElementById('autoPrint').checked;
             systemData.settings.showPrintOptions = document.getElementById('showPrintOptions').checked;
+            systemData.settings.showBarcodeInInvoice = document.getElementById('showBarcodeInInvoice').checked;
             systemData.settings.invoiceFooter = document.getElementById('invoiceFooter').value;
             
             saveSystemData();
@@ -3509,6 +3973,19 @@
                     }
                 };
                 reader.readAsText(file);
+            }
+        };
+        
+        // تحميل النسخة الاحتياطية
+        window.downloadBackup = function(backupId) {
+            alert('في التطبيق الكامل، سيتم تحميل النسخة الاحتياطية');
+        };
+        
+        // حذف النسخة الاحتياطية
+        window.deleteBackup = function(backupId) {
+            if (confirm('هل أنت متأكد من حذف هذه النسخة الاحتياطية؟')) {
+                alert('في التطبيق الكامل، سيتم حذف النسخة الاحتياطية');
+                loadBackups();
             }
         };
         
@@ -3640,6 +4117,30 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="table-container" style="margin-top: 30px;">
+                    <h3 style="padding: 20px; margin: 0; border-bottom: 1px solid #eee;">تفاصيل التقرير</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>عدد الفواتير</th>
+                                <th>إجمالي المبيعات</th>
+                                <th>إجمالي المشتريات</th>
+                                <th>صافي الربح</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${reportDate || new Date().toLocaleDateString('ar-EG')}</td>
+                                <td>15</td>
+                                <td>125,750 د.ع</td>
+                                <td>89,500 د.ع</td>
+                                <td>36,250 د.ع</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             `;
             
             document.getElementById('reportResults').innerHTML = reportContent;
@@ -3701,7 +4202,70 @@
             const invoice = systemData.invoices.find(inv => inv.id === invoiceId);
             if (!invoice) return;
             
+            const customer = systemData.customers.find(c => c.id === invoice.customerId) || { name: "زائر" };
+            
+            let invoiceDetails = `
+                <div style="padding: 20px;">
+                    <h3>تفاصيل الفاتورة: ${invoiceId}</h3>
+                    <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                        <p><strong>التاريخ:</strong> ${invoice.date}</p>
+                        <p><strong>الوقت:</strong> ${invoice.time || 'غير محدد'}</p>
+                        <p><strong>العميل:</strong> ${customer.name}</p>
+                        <p><strong>طريقة الدفع:</strong> ${invoice.paymentType === 'cash' ? 'نقداً' : 'بالدين'}</p>
+                        <p><strong>الحالة:</strong> ${invoice.status}</p>
+                    </div>
+                    
+                    <h4>تفاصيل المنتجات</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th style="padding: 10px; border: 1px solid #ddd;">#</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">المنتج</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">الكمية</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">السعر</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">الإجمالي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${invoice.items.map((item, index) => `
+                                <tr>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${index + 1}</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${item.quantity}</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${item.price.toLocaleString()} د.ع</td>
+                                    <td style="padding: 10px; border: 1px solid #ddd;">${(item.price * item.quantity).toLocaleString()} د.ع</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <div style="background: #f9f9f9; padding: 15px; border-radius: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>إجمالي المنتجات:</span>
+                            <span>${invoice.subtotal.toLocaleString()} د.ع</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>الخصم:</span>
+                            <span>${invoice.discount.toLocaleString()} د.ع</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>الضريبة:</span>
+                            <span>${invoice.tax.toLocaleString()} د.ع</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-top: 10px; border-top: 2px solid #ddd; font-size: 18px; font-weight: bold;">
+                            <span>الإجمالي النهائي:</span>
+                            <span>${invoice.total.toLocaleString()} د.ع</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
             alert(`عرض الفاتورة ${invoiceId}\n\nفي التطبيق الكامل، سيتم عرض تفاصيل الفاتورة الكاملة.`);
+            
+            // يمكن استبدال alert بنافذة منبثقة لعرض التفاصيل
+            // const modalContent = document.createElement('div');
+            // modalContent.innerHTML = invoiceDetails;
+            // يمكن فتح نافذة منبثقة لعرض التفاصيل
         };
         
         // طباعة الفاتورة
@@ -3718,7 +4282,6 @@
                 systemData.invoices = systemData.invoices.filter(inv => inv.id !== invoiceId);
                 saveSystemData();
                 loadInvoices();
-                loadRecentInvoices();
                 alert('تم حذف الفاتورة بنجاح!');
             }
         };
@@ -3797,44 +4360,100 @@
             }
         };
         
-        // فتح نافذة إضافة عميل
-        window.openAddCustomerModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة عميل جديد');
+        // تعديل دفعة عميل
+        window.editCustomerPayment = function(paymentIndex) {
+            const payment = systemData.customerPayments[paymentIndex];
+            if (!payment) return;
+            
+            alert('في التطبيق الكامل، سيتم فتح نافذة لتعديل دفعة العميل');
         };
         
-        // فتح نافذة إضافة مورد
-        window.openAddSupplierModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مورد جديد');
+        // حذف دفعة عميل
+        window.deleteCustomerPayment = function(paymentIndex) {
+            if (confirm('هل أنت متأكد من حذف هذه الدفعة؟')) {
+                systemData.customerPayments.splice(paymentIndex, 1);
+                saveSystemData();
+                loadPaymentsAndExpenses();
+                alert('تم حذف الدفعة بنجاح!');
+            }
         };
         
-        // فتح نافذة إضافة عملية شراء
-        window.openAddPurchaseModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة عملية شراء جديدة');
+        // تعديل دفعة مورد
+        window.editSupplierPayment = function(paymentIndex) {
+            const payment = systemData.supplierPayments[paymentIndex];
+            if (!payment) return;
+            
+            alert('في التطبيق الكامل، سيتم فتح نافذة لتعديل دفعة المورد');
         };
         
-        // فتح نافذة إضافة دفعة عميل
-        window.openAddCustomerPaymentModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة دفعة عميل');
+        // حذف دفعة مورد
+        window.deleteSupplierPayment = function(paymentIndex) {
+            if (confirm('هل أنت متأكد من حذف هذه الدفعة؟')) {
+                systemData.supplierPayments.splice(paymentIndex, 1);
+                saveSystemData();
+                loadPaymentsAndExpenses();
+                alert('تم حذف الدفعة بنجاح!');
+            }
         };
         
-        // فتح نافذة إضافة دفعة مورد
-        window.openAddSupplierPaymentModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة دفعة مورد');
+        // تعديل مصروف
+        window.editExpense = function(expenseIndex) {
+            const expense = systemData.expenses[expenseIndex];
+            if (!expense) return;
+            
+            alert('في التطبيق الكامل، سيتم فتح نافذة لتعديل المصروف');
         };
         
-        // فتح نافذة إضافة مصروف
-        window.openAddExpenseModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مصروف');
+        // حذف مصروف
+        window.deleteExpense = function(expenseIndex) {
+            if (confirm('هل أنت متأكد من حذف هذا المصروف؟')) {
+                systemData.expenses.splice(expenseIndex, 1);
+                saveSystemData();
+                loadPaymentsAndExpenses();
+                alert('تم حذف المصروف بنجاح!');
+            }
         };
         
-        // فتح نافذة إضافة مستخدم
-        window.openAddUserModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة مستخدم جديد');
+        // تعديل مستخدم
+        window.editUser = function(userIndex) {
+            const user = systemData.users[userIndex];
+            if (!user) return;
+            
+            alert('في التطبيق الكامل، سيتم فتح نافذة لتعديل بيانات المستخدم');
         };
         
-        // فتح نافذة إضافة صلاحية
-        window.openAddRoleModal = function() {
-            alert('في التطبيق الكامل، سيتم فتح نافذة لإضافة صلاحية جديدة');
+        // حذف مستخدم
+        window.deleteUser = function(userIndex) {
+            if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+                systemData.users.splice(userIndex, 1);
+                saveSystemData();
+                loadUsers();
+                alert('تم حذف المستخدم بنجاح!');
+            }
+        };
+        
+        // تغيير حالة المستخدم
+        window.toggleUserStatus = function(userIndex) {
+            const user = systemData.users[userIndex];
+            if (!user) return;
+            
+            user.active = !user.active;
+            saveSystemData();
+            loadUsers();
+            alert(`تم ${user.active ? 'تفعيل' : 'تعطيل'} المستخدم بنجاح!`);
+        };
+        
+        // تعديل صلاحية
+        window.editRole = function(roleId) {
+            alert('في التطبيق الكامل، سيتم فتح نافذة لتعديل الصلاحية');
+        };
+        
+        // حذف صلاحية
+        window.deleteRole = function(roleId) {
+            if (confirm('هل أنت متأكد من حذف هذه الصلاحية؟')) {
+                alert('في التطبيق الكامل، سيتم حذف الصلاحية');
+                loadRoles();
+            }
         };
         
         // تحميل النظام عند فتح الصفحة
