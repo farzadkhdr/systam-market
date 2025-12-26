@@ -1093,16 +1093,16 @@
             <form id="loginForm" class="login-form">
                 <div class="input-group">
                     <label for="username"><i class="fas fa-user"></i> ناوی بەکارهێنەر</label>
-                    <input type="text" id="username" placeholder="ناوی بەکارهێنەر" value="farzad">
+                    <input type="text" id="username" placeholder="ناوی بەکارهێنەر">
                 </div>
                 
                 <div class="input-group">
                     <label for="password"><i class="fas fa-lock"></i> وشەی نهێنی</label>
-                    <input type="password" id="password" placeholder="وشەی نهێنی" value="farzad1234">
+                    <input type="password" id="password" placeholder="وشەی نهێنی">
                 </div>
                 
                 <div class="input-group remember">
-                    <input type="checkbox" id="remember" checked>
+                    <input type="checkbox" id="remember">
                     <label for="remember">لەبیرم مەکە</label>
                 </div>
                 
@@ -1162,7 +1162,7 @@
                 <li class="nav-item">
                     <a href="#" class="nav-link" data-section="payment">
                         <i class="fas fa-money-bill-wave"></i>
-                        پارەواسڵکردن و سەرفکردن
+                        پارەواسڵکردن
                     </a>
                 </li>
                 <li class="nav-item">
@@ -1355,7 +1355,7 @@
                             </ul>
                             
                             <div class="payment-options">
-                                <div class="payment-option selected" data-payment="cash">
+                                <div class="payment-option" data-payment="cash">
                                     <i class="fas fa-money-bill-wave fa-2x"></i>
                                     <h4>نەقدی</h4>
                                     <p>پارەی رەت</p>
@@ -1441,7 +1441,7 @@
                             </ul>
                             
                             <div class="payment-options">
-                                <div class="payment-option selected" data-payment="cash">
+                                <div class="payment-option" data-payment="cash">
                                     <i class="fas fa-money-bill-wave fa-2x"></i>
                                     <h4>نەقدی</h4>
                                     <p>پارەی رەت</p>
@@ -1671,7 +1671,7 @@
                                     <select id="expenseType">
                                         <option value="partner">شەریکەکان</option>
                                         <option value="customer">کەسەکان</option>
-                                        <option value="other" selected>هۆکاری تر</option>
+                                        <option value="other">هۆکاری تر</option>
                                     </select>
                                 </div>
                                 
@@ -2150,6 +2150,7 @@
         </div>
     </div>
 
+    <!-- هەموو JavaScript لێرە -->
     <script>
         // داتای نموونەیی بۆ سیستمەکە
         const sampleData = {
@@ -2201,7 +2202,7 @@
         let selectedPayment = "cash";
         let selectedCustomer = null;
 
-        // کۆدی چوونەژوورەوە - چێکی کردنی پێشگریمانە
+        // کۆدی چوونەژوورەوە
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -2210,8 +2211,7 @@
             
             // چێکی کردنی ناوی بەکارهێنەر و وشەی نهێنی
             if (username && password) {
-                // پێشگریمانە: هەر ناو و وشەی نهێنێک کار دەکات
-                if (username && password) {
+                if (username === 'farzad' && password === 'farzad1234') {
                     currentUser = username;
                     
                     // نیشاندانی پەڕەی سەرەکی و شاردنەوەی پەڕەی چوونەژوورەوە
@@ -2219,96 +2219,22 @@
                     document.getElementById('mainPage').style.display = 'flex';
                     
                     // زیادکردنی ناوی بەکارهێنەر
-                    document.getElementById('currentUser').textContent = username || 'فەرزاد';
+                    document.getElementById('currentUser').textContent = 'فەرزاد';
                     
                     // زیادکردنی داتای نموونەیی
                     populateSampleData();
                     
                     // چالاککردنی داشبۆرد وەک یەکەم بەش
                     showSection('dashboard');
+                } else {
+                    alert('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە! تکایە دووبارە هەوڵ بدەرەوە.\n\nتێبینی: ناوی بەکارهێنەر: farzad\nوشەی نهێنی: farzad1234');
                 }
             } else {
                 alert('تکایە هەردوو خانە پڕ بکەرەوە!');
             }
         });
 
-        // دەستپێکردنی خۆکار - چوونەژوورەوەی ئۆتۆماتیکی
-        window.addEventListener('load', function() {
-            // چوونەژوورەوەی ئۆتۆماتیکی
-            setTimeout(function() {
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('mainPage').style.display = 'flex';
-                document.getElementById('currentUser').textContent = 'فەرزاد';
-                
-                populateSampleData();
-                showSection('dashboard');
-                
-                // دەستپێکردنی یەکەم بەشەکان
-                const firstNavLink = document.querySelector('.nav-link[data-section="dashboard"]');
-                if (firstNavLink) {
-                    firstNavLink.classList.add('active');
-                }
-                
-                const firstTabBtn = document.querySelector('.tab-btn[data-tab="newSale"]');
-                if (firstTabBtn) {
-                    firstTabBtn.classList.add('active');
-                }
-                
-                const firstPurchaseTab = document.querySelector('#purchaseSection .tab-btn[data-tab="newPurchase"]');
-                if (firstPurchaseTab) {
-                    firstPurchaseTab.classList.add('active');
-                }
-                
-                const firstPaymentTab = document.querySelector('.tab-btn[data-tab="debtPayment"]');
-                if (firstPaymentTab) {
-                    firstPaymentTab.classList.add('active');
-                }
-                
-                const firstInventoryTab = document.querySelector('.inventory-tab[data-inventory-tab="products"]');
-                if (firstInventoryTab) {
-                    firstInventoryTab.classList.add('active');
-                }
-                
-                const firstPaymentOption = document.querySelector('.payment-option[data-payment="cash"]');
-                if (firstPaymentOption) {
-                    firstPaymentOption.classList.add('selected');
-                }
-                
-                const firstCustomerTab = document.querySelector('.tab-btn[data-tab="customersList"]');
-                if (firstCustomerTab) {
-                    firstCustomerTab.classList.add('active');
-                }
-                
-                const firstPartnerTab = document.querySelector('.tab-btn[data-tab="partnersList"]');
-                if (firstPartnerTab) {
-                    firstPartnerTab.classList.add('active');
-                }
-                
-                // دەستپێکردنی جۆری سەرفکردن
-                if (document.getElementById('expenseType')) {
-                    document.getElementById('expenseType').value = 'other';
-                    document.getElementById('expenseOtherSection').style.display = 'block';
-                }
-                
-                // دەستپێکردنی بەرواری ئەمرۆ
-                const today = new Date().toISOString().split('T')[0];
-                if (document.getElementById('paymentDateInput')) {
-                    document.getElementById('paymentDateInput').value = today;
-                }
-                if (document.getElementById('expenseDate')) {
-                    document.getElementById('expenseDate').value = today;
-                }
-                
-                updateCartDisplay();
-                updatePurchaseCartDisplay();
-                updateDashboardCash();
-                updatePaymentHistoryDisplay();
-                updateExpenseHistoryDisplay();
-                calculateMonthlyExpense();
-            }, 1000);
-        });
-
-        // فەنکشنی نیشاندانی بەش
+        // فانکشنی نیشاندانی بەش
         function showSection(sectionId) {
             // لابردنی چالاکی لە هەموو بەشەکان
             document.querySelectorAll('.content-section').forEach(section => {
@@ -4824,6 +4750,71 @@
                 alert('مێژووی سەرفکردن نوێ کرایەوە!');
             });
         }
+
+        // دەستپێکردنی سیستم
+        window.addEventListener('load', function() {
+            const firstNavLink = document.querySelector('.nav-link[data-section="dashboard"]');
+            if (firstNavLink) {
+                firstNavLink.classList.add('active');
+            }
+            
+            const firstTabBtn = document.querySelector('.tab-btn[data-tab="newSale"]');
+            if (firstTabBtn) {
+                firstTabBtn.classList.add('active');
+            }
+            
+            const firstPurchaseTab = document.querySelector('#purchaseSection .tab-btn[data-tab="newPurchase"]');
+            if (firstPurchaseTab) {
+                firstPurchaseTab.classList.add('active');
+            }
+            
+            const firstPaymentTab = document.querySelector('.tab-btn[data-tab="debtPayment"]');
+            if (firstPaymentTab) {
+                firstPaymentTab.classList.add('active');
+            }
+            
+            const firstInventoryTab = document.querySelector('.inventory-tab[data-inventory-tab="products"]');
+            if (firstInventoryTab) {
+                firstInventoryTab.classList.add('active');
+            }
+            
+            const firstPaymentOption = document.querySelector('.payment-option[data-payment="cash"]');
+            if (firstPaymentOption) {
+                firstPaymentOption.classList.add('selected');
+            }
+            
+            const firstCustomerTab = document.querySelector('.tab-btn[data-tab="customersList"]');
+            if (firstCustomerTab) {
+                firstCustomerTab.classList.add('active');
+            }
+            
+            const firstPartnerTab = document.querySelector('.tab-btn[data-tab="partnersList"]');
+            if (firstPartnerTab) {
+                firstPartnerTab.classList.add('active');
+            }
+            
+            // دەستپێکردنی جۆری سەرفکردن
+            if (document.getElementById('expenseType')) {
+                document.getElementById('expenseType').value = 'other';
+                document.getElementById('expenseOtherSection').style.display = 'block';
+            }
+            
+            // دەستپێکردنی بەرواری ئەمرۆ
+            const today = new Date().toISOString().split('T')[0];
+            if (document.getElementById('paymentDateInput')) {
+                document.getElementById('paymentDateInput').value = today;
+            }
+            if (document.getElementById('expenseDate')) {
+                document.getElementById('expenseDate').value = today;
+            }
+            
+            updateCartDisplay();
+            updatePurchaseCartDisplay();
+            updateDashboardCash();
+            updatePaymentHistoryDisplay();
+            updateExpenseHistoryDisplay();
+            calculateMonthlyExpense();
+        });
     </script>
 </body>
 </html>
