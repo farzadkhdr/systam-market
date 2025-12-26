@@ -1026,6 +1026,365 @@
             margin-top: 40px;
         }
         
+        /* جوڵاوی مینو لەگەڵ ماوس */
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar:hover {
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+        
+        .nav-link:hover::before {
+            right: 0;
+        }
+        
+        .nav-link:hover {
+            transform: translateX(-5px);
+            color: white;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-link.active:hover {
+            transform: translateX(-5px);
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-link i {
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover i {
+            transform: scale(1.2);
+        }
+        
+        /* جوڵاوی دوگمەکان */
+        .menu-toggle, .logout-btn, .btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-toggle:hover, .logout-btn:hover, .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn:hover::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            20% {
+                transform: scale(25, 25);
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(40, 40);
+            }
+        }
+        
+        /* جوڵاوی کارتەکان */
+        .card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover .card-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+        
+        /* جوڵاوی لیستەکان */
+        .list-item {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .list-item:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* جوڵاوی تاباتەکان */
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn:hover:not(.active) {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .inventory-tab:hover:not(.active) {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        /* جوڵاوی هەڵبژاردنەکانی پارەدان */
+        .payment-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .payment-option:hover:not(.selected) {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: var(--info);
+        }
+        
+        /* جوڵاوی فورم خانەکان */
+        input, select, textarea {
+            transition: all 0.3s ease;
+        }
+        
+        input:hover, select:hover {
+            border-color: var(--info);
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+        
+        input:focus, select:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 149, 239, 0.3);
+        }
+        
+        /* جوڵاوی لۆگۆ */
+        .logo {
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .logo:hover {
+            transform: scale(1.1);
+            text-shadow: 2px 2px 8px rgba(67, 97, 238, 0.3);
+        }
+        
+        /* جوڵاوی نیشانەکانی بەکارهێنەر */
+        .user-info {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .user-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: #e0e0e0;
+        }
+        
+        /* جوڵاوی سەرەوە */
+        .header {
+            transition: all 0.3s ease;
+        }
+        
+        .header:hover {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* جوڵاوی پێشنیارەکان */
+        .suggestion-item {
+            transition: all 0.3s ease;
+        }
+        
+        .suggestion-item:hover {
+            transform: translateX(-5px);
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* جوڵاوی کاڵا لە سەبەتە */
+        .cart-item {
+            transition: all 0.3s ease;
+        }
+        
+        .cart-item:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* جوڵاوی ئایکۆنی کاڵا لە سەبەتە */
+        .cart-item-image {
+            transition: all 0.3s ease;
+        }
+        
+        .cart-item:hover .cart-item-image {
+            transform: rotate(15deg) scale(1.1);
+        }
+        
+        /* جوڵاوی مۆدال */
+        .modal-content {
+            transition: all 0.3s ease;
+        }
+        
+        .modal.active .modal-content {
+            animation: modalBounce 0.5s ease;
+        }
+        
+        @keyframes modalBounce {
+            0% {
+                transform: scale(0.8) translateY(30px);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.05) translateY(-5px);
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* جوڵاوی دەرکەوتنی بەشەکان */
+        .content-section.active {
+            animation: sectionFadeIn 0.5s ease;
+        }
+        
+        @keyframes sectionFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* جوڵاوی فاکتوورەکان لە مۆدال */
+        .invoice-table tr {
+            transition: all 0.3s ease;
+        }
+        
+        .invoice-table tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+            transform: translateX(-5px);
+        }
+        
+        /* جوڵاوی پرێنت ئۆپشنەکان */
+        .print-options .btn {
+            transition: all 0.3s ease;
+        }
+        
+        .print-options .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+        }
+        
+        /* جوڵاوی سەرەوەی لیست */
+        .list-header h3 {
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .list-header:hover h3 {
+            transform: translateX(-5px);
+            color: var(--primary);
+        }
+        
+        /* جوڵاوی دوگمەکانی لیست */
+        .list-actions button {
+            transition: all 0.3s ease;
+        }
+        
+        .list-actions button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* جوڵاوی گەڕان */
+        .search-box input:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* جوڵاوی ئایکۆنی گەڕان */
+        .search-box i {
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:hover i {
+            color: var(--primary);
+            transform: scale(1.2);
+        }
+        
+        /* جوڵاوی دوگمەی داخستنی مێنیو لەسەر مۆبایل */
+        .close-sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        .close-sidebar:hover {
+            transform: rotate(90deg);
+            color: var(--danger);
+        }
+        
+        /* جوڵاوی داشبۆرد کارتەکان بە تێکەڵ */
+        .dashboard-cards:hover .card:not(:hover) {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+        
+        /* جوڵاوی سەبەتەی پارەواسڵکردن */
+        .payment-option i {
+            transition: all 0.3s ease;
+        }
+        
+        .payment-option:hover i {
+            transform: scale(1.2);
+        }
+        
+        /* جوڵاوی هێڵی سەرەوەی کارت */
+        .card::before {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover::before {
+            height: 8px;
+            background: linear-gradient(to right, var(--primary), var(--success));
+        }
+        
         /* وەڵامی مۆبایل */
         @media (max-width: 992px) {
             .sidebar {
@@ -1093,16 +1452,16 @@
             <form id="loginForm" class="login-form">
                 <div class="input-group">
                     <label for="username"><i class="fas fa-user"></i> ناوی بەکارهێنەر</label>
-                    <input type="text" id="username" placeholder="ناوی بەکارهێنەر" value="farzad">
+                    <input type="text" id="username" placeholder="ناوی بەکارهێنەر">
                 </div>
                 
                 <div class="input-group">
                     <label for="password"><i class="fas fa-lock"></i> وشەی نهێنی</label>
-                    <input type="password" id="password" placeholder="وشەی نهێنی" value="farzad1234">
+                    <input type="password" id="password" placeholder="وشەی نهێنی">
                 </div>
                 
                 <div class="input-group remember">
-                    <input type="checkbox" id="remember" checked>
+                    <input type="checkbox" id="remember">
                     <label for="remember">لەبیرم مەکە</label>
                 </div>
                 
@@ -1162,7 +1521,13 @@
                 <li class="nav-item">
                     <a href="#" class="nav-link" data-section="payment">
                         <i class="fas fa-money-bill-wave"></i>
-                        پارەواسڵکردن و سەرفکردن
+                        پارەواسڵکردن
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="partnerExpense">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        سەرف و حیسابی شەریکەکان
                     </a>
                 </li>
                 <li class="nav-item">
@@ -1355,7 +1720,7 @@
                             </ul>
                             
                             <div class="payment-options">
-                                <div class="payment-option selected" data-payment="cash">
+                                <div class="payment-option" data-payment="cash">
                                     <i class="fas fa-money-bill-wave fa-2x"></i>
                                     <h4>نەقدی</h4>
                                     <p>پارەی رەت</p>
@@ -1441,7 +1806,7 @@
                             </ul>
                             
                             <div class="payment-options">
-                                <div class="payment-option selected" data-payment="cash">
+                                <div class="payment-option" data-payment="cash">
                                     <i class="fas fa-money-bill-wave fa-2x"></i>
                                     <h4>نەقدی</h4>
                                     <p>پارەی رەت</p>
@@ -1671,7 +2036,7 @@
                                     <select id="expenseType">
                                         <option value="partner">شەریکەکان</option>
                                         <option value="customer">کەسەکان</option>
-                                        <option value="other" selected>هۆکاری تر</option>
+                                        <option value="other">هۆکاری تر</option>
                                     </select>
                                 </div>
                                 
@@ -1781,6 +2146,182 @@
                             </ul>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- بەشی سەرف و حیسابی شەریکەکان -->
+            <section id="partnerExpenseSection" class="content-section">
+                <h2 class="section-title">سەرف و حیسابی شەریکەکان</h2>
+                
+                <div class="sale-purchase-container">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="expenseToPartner">سەرف بۆ شەریک</button>
+                        <button class="tab-btn" data-tab="expenseToCustomer">سەرف بۆ کەس</button>
+                        <button class="tab-btn" data-tab="expenseOther">سەرف بۆ هۆکی تر</button>
+                    </div>
+                    
+                    <!-- بەشی ١: سەرف بۆ شەریک -->
+                    <div class="tab-content active" id="expenseToPartner">
+                        <div class="item-form">
+                            <h3 style="margin-bottom: 20px;">سەرفکردنی پارە بۆ شەریک</h3>
+                            
+                            <div class="search-container">
+                                <div class="search-box">
+                                    <input type="text" id="expensePartnerSearchMain" placeholder="گەڕان بەدوای ناوی شەریک...">
+                                    <i class="fas fa-search"></i>
+                                    <div class="suggestions" id="expensePartnerSuggestionsMain"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="selectedPartnerInfoMain" style="display: none; margin-top: 20px;">
+                                <div class="list-box">
+                                    <div class="list-header">
+                                        <h3>زانیاری شەریک</h3>
+                                    </div>
+                                    <div style="padding: 20px;">
+                                        <p><strong>ناوی شەریک:</strong> <span id="selectedPartnerNameMain"></span></p>
+                                        <p><strong>ژمارەی موبایل:</strong> <span id="selectedPartnerPhoneMain"></span></p>
+                                        <p><strong>کۆی قەرزی ئێستا:</strong> <span id="selectedPartnerDebtMain"></span> دینار</p>
+                                        <p><strong>کۆی پارەی واسڵکراو:</strong> <span id="selectedPartnerPaidMain"></span> دینار</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row" style="margin-top: 30px;">
+                                <div class="form-group">
+                                    <label for="expenseToPartnerAmount">بڕی پارەی سەرفکردن</label>
+                                    <input type="number" id="expenseToPartnerAmount" placeholder="بڕی پارە بە دینار" min="1">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="expenseToPartnerDate">بەرواری سەرفکردن</label>
+                                    <input type="date" id="expenseToPartnerDate" value="${new Date().toISOString().split('T')[0]}">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="expenseToPartnerReason">هۆکاری سەرفکردن (ئارەزوومەندانە)</label>
+                                    <input type="text" id="expenseToPartnerReason" placeholder="هۆکی سەرفکردن">
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons" style="margin-top: 30px;">
+                                <button class="btn btn-success" id="submitExpenseToPartnerBtn">
+                                    <i class="fas fa-check-circle"></i> تۆمارکردنی سەرفکردن بۆ شەریک
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی ٢: سەرف بۆ کەس -->
+                    <div class="tab-content" id="expenseToCustomer">
+                        <div class="item-form">
+                            <h3 style="margin-bottom: 20px;">سەرفکردنی پارە بۆ کەس</h3>
+                            
+                            <div class="search-container">
+                                <div class="search-box">
+                                    <input type="text" id="expenseCustomerSearchMain" placeholder="گەڕان بەدوای ناوی کەس...">
+                                    <i class="fas fa-search"></i>
+                                    <div class="suggestions" id="expenseCustomerSuggestionsMain"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="selectedCustomerInfoMain" style="display: none; margin-top: 20px;">
+                                <div class="list-box">
+                                    <div class="list-header">
+                                        <h3>زانیاری کەس</h3>
+                                    </div>
+                                    <div style="padding: 20px;">
+                                        <p><strong>ناوی کەس:</strong> <span id="selectedCustomerNameMain"></span></p>
+                                        <p><strong>ژمارەی موبایل:</strong> <span id="selectedCustomerPhoneMain"></span></p>
+                                        <p><strong>کۆی قەرزی ئێستا:</strong> <span id="selectedCustomerDebtMain"></span> دینار</p>
+                                        <p><strong>کۆی پارەی واسڵکراو:</strong> <span id="selectedCustomerPaidMain"></span> دینار</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row" style="margin-top: 30px;">
+                                <div class="form-group">
+                                    <label for="expenseToCustomerAmount">بڕی پارەی سەرفکردن</label>
+                                    <input type="number" id="expenseToCustomerAmount" placeholder="بڕی پارە بە دینار" min="1">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="expenseToCustomerDate">بەرواری سەرفکردن</label>
+                                    <input type="date" id="expenseToCustomerDate" value="${new Date().toISOString().split('T')[0]}">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="expenseToCustomerReason">هۆکاری سەرفکردن (ئارەزوومەندانە)</label>
+                                    <input type="text" id="expenseToCustomerReason" placeholder="هۆکی سەرفکردن">
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons" style="margin-top: 30px;">
+                                <button class="btn btn-success" id="submitExpenseToCustomerBtn">
+                                    <i class="fas fa-check-circle"></i> تۆمارکردنی سەرفکردن بۆ کەس
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی ٣: سەرف بۆ هۆکی تر -->
+                    <div class="tab-content" id="expenseOther">
+                        <div class="item-form">
+                            <h3 style="margin-bottom: 20px;">سەرفکردنی پارە بۆ هۆکی تر</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="otherExpenseAmount">بڕی پارەی سەرفکردن</label>
+                                    <input type="number" id="otherExpenseAmount" placeholder="بڕی پارە بە دینار" min="1">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="otherExpenseDate">بەرواری سەرفکردن</label>
+                                    <input type="date" id="otherExpenseDate" value="${new Date().toISOString().split('T')[0]}">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="otherExpenseCategory">پۆلی سەرفکردن</label>
+                                    <select id="otherExpenseCategory">
+                                        <option value="rent">کرێ</option>
+                                        <option value="salary">مووچە</option>
+                                        <option value="utility">کەرەستە</option>
+                                        <option value="transport">گواستنەوە</option>
+                                        <option value="maintenance">چاکسازی</option>
+                                        <option value="marketing">بازرگانی</option>
+                                        <option value="office">ئۆفیس</option>
+                                        <option value="other">هی تر</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="otherExpenseDescription">پێناسە (هۆکاری سەرفکردن)</label>
+                                    <input type="text" id="otherExpenseDescription" placeholder="پێناسەی سەرفکردن">
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons" style="margin-top: 30px;">
+                                <button class="btn btn-success" id="submitOtherExpenseBtn">
+                                    <i class="fas fa-check-circle"></i> تۆمارکردنی سەرفکردن
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- لیستی مێژووی سەرفکردن -->
+                <div class="list-box" style="margin-top: 40px;">
+                    <div class="list-header">
+                        <h3>مێژووی سەرفکردن</h3>
+                        <div class="list-actions">
+                            <button id="refreshExpenseHistoryMain">نوێکردنەوە</button>
+                        </div>
+                    </div>
+                    <ul class="list-items" id="expenseHistoryMainList">
+                        <!-- مێژووی سەرفکردن لێرە زیاد دەکرێن -->
+                    </ul>
                 </div>
             </section>
 
@@ -2150,6 +2691,7 @@
         </div>
     </div>
 
+    <!-- هەموو JavaScript لێرە -->
     <script>
         // داتای نموونەیی بۆ سیستمەکە
         const sampleData = {
@@ -2201,7 +2743,7 @@
         let selectedPayment = "cash";
         let selectedCustomer = null;
 
-        // کۆدی چوونەژوورەوە - چێکی کردنی پێشگریمانە
+        // کۆدی چوونەژوورەوە
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -2210,8 +2752,7 @@
             
             // چێکی کردنی ناوی بەکارهێنەر و وشەی نهێنی
             if (username && password) {
-                // پێشگریمانە: هەر ناو و وشەی نهێنێک کار دەکات
-                if (username && password) {
+                if (username === 'farzad' && password === 'farzad1234') {
                     currentUser = username;
                     
                     // نیشاندانی پەڕەی سەرەکی و شاردنەوەی پەڕەی چوونەژوورەوە
@@ -2219,96 +2760,22 @@
                     document.getElementById('mainPage').style.display = 'flex';
                     
                     // زیادکردنی ناوی بەکارهێنەر
-                    document.getElementById('currentUser').textContent = username || 'فەرزاد';
+                    document.getElementById('currentUser').textContent = 'فەرزاد';
                     
                     // زیادکردنی داتای نموونەیی
                     populateSampleData();
                     
                     // چالاککردنی داشبۆرد وەک یەکەم بەش
                     showSection('dashboard');
+                } else {
+                    alert('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە! تکایە دووبارە هەوڵ بدەرەوە.\n\nتێبینی: ناوی بەکارهێنەر: farzad\nوشەی نهێنی: farzad1234');
                 }
             } else {
                 alert('تکایە هەردوو خانە پڕ بکەرەوە!');
             }
         });
 
-        // دەستپێکردنی خۆکار - چوونەژوورەوەی ئۆتۆماتیکی
-        window.addEventListener('load', function() {
-            // چوونەژوورەوەی ئۆتۆماتیکی
-            setTimeout(function() {
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('mainPage').style.display = 'flex';
-                document.getElementById('currentUser').textContent = 'فەرزاد';
-                
-                populateSampleData();
-                showSection('dashboard');
-                
-                // دەستپێکردنی یەکەم بەشەکان
-                const firstNavLink = document.querySelector('.nav-link[data-section="dashboard"]');
-                if (firstNavLink) {
-                    firstNavLink.classList.add('active');
-                }
-                
-                const firstTabBtn = document.querySelector('.tab-btn[data-tab="newSale"]');
-                if (firstTabBtn) {
-                    firstTabBtn.classList.add('active');
-                }
-                
-                const firstPurchaseTab = document.querySelector('#purchaseSection .tab-btn[data-tab="newPurchase"]');
-                if (firstPurchaseTab) {
-                    firstPurchaseTab.classList.add('active');
-                }
-                
-                const firstPaymentTab = document.querySelector('.tab-btn[data-tab="debtPayment"]');
-                if (firstPaymentTab) {
-                    firstPaymentTab.classList.add('active');
-                }
-                
-                const firstInventoryTab = document.querySelector('.inventory-tab[data-inventory-tab="products"]');
-                if (firstInventoryTab) {
-                    firstInventoryTab.classList.add('active');
-                }
-                
-                const firstPaymentOption = document.querySelector('.payment-option[data-payment="cash"]');
-                if (firstPaymentOption) {
-                    firstPaymentOption.classList.add('selected');
-                }
-                
-                const firstCustomerTab = document.querySelector('.tab-btn[data-tab="customersList"]');
-                if (firstCustomerTab) {
-                    firstCustomerTab.classList.add('active');
-                }
-                
-                const firstPartnerTab = document.querySelector('.tab-btn[data-tab="partnersList"]');
-                if (firstPartnerTab) {
-                    firstPartnerTab.classList.add('active');
-                }
-                
-                // دەستپێکردنی جۆری سەرفکردن
-                if (document.getElementById('expenseType')) {
-                    document.getElementById('expenseType').value = 'other';
-                    document.getElementById('expenseOtherSection').style.display = 'block';
-                }
-                
-                // دەستپێکردنی بەرواری ئەمرۆ
-                const today = new Date().toISOString().split('T')[0];
-                if (document.getElementById('paymentDateInput')) {
-                    document.getElementById('paymentDateInput').value = today;
-                }
-                if (document.getElementById('expenseDate')) {
-                    document.getElementById('expenseDate').value = today;
-                }
-                
-                updateCartDisplay();
-                updatePurchaseCartDisplay();
-                updateDashboardCash();
-                updatePaymentHistoryDisplay();
-                updateExpenseHistoryDisplay();
-                calculateMonthlyExpense();
-            }, 1000);
-        });
-
-        // فەنکشنی نیشاندانی بەش
+        // فانکشنی نیشاندانی بەش
         function showSection(sectionId) {
             // لابردنی چالاکی لە هەموو بەشەکان
             document.querySelectorAll('.content-section').forEach(section => {
@@ -2562,6 +3029,7 @@
             
             // نوێکردنەوەی مێژووی سەرفکردن
             updateExpenseHistoryDisplay();
+            updateExpenseHistoryMainDisplay();
         }
 
         // فانکشنی بینینی وردەکارییەکانی کەس
@@ -4722,6 +5190,7 @@
                 // نوێکردنەوەی داشبۆرد و لیستەکان
                 populateSampleData();
                 updateExpenseHistoryDisplay();
+                updateExpenseHistoryMainDisplay();
                 
                 alert(`سەرفکردنەکە بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
             });
@@ -4810,6 +5279,7 @@
                     updateDashboardCash();
                     populateSampleData();
                     updateExpenseHistoryDisplay();
+                    updateExpenseHistoryMainDisplay();
                     
                     alert('سەرفکردنەکە بە سەرکەوتوویی سڕایەوە!');
                 }
@@ -4821,9 +5291,486 @@
         if (refreshExpenseHistoryBtn) {
             refreshExpenseHistoryBtn.addEventListener('click', function() {
                 updateExpenseHistoryDisplay();
+                updateExpenseHistoryMainDisplay();
                 alert('مێژووی سەرفکردن نوێ کرایەوە!');
             });
         }
+
+        // ==============================================
+        // بەشی سەرف و حیسابی شەریکەکان - فەنکشنە نوێیەکان
+        // ==============================================
+
+        // گەڕان بەدوای شەریکەکان (بەشی سەرف بۆ شەریک)
+        const expensePartnerSearchMain = document.getElementById('expensePartnerSearchMain');
+        if (expensePartnerSearchMain) {
+            expensePartnerSearchMain.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                const suggestions = document.getElementById('expensePartnerSuggestionsMain');
+                
+                if (!suggestions) return;
+                
+                if (query.length < 2) {
+                    suggestions.style.display = 'none';
+                    document.getElementById('selectedPartnerInfoMain').style.display = 'none';
+                    return;
+                }
+                
+                const filteredPartners = sampleData.partners.filter(p => 
+                    p.name.toLowerCase().includes(query)
+                );
+                
+                suggestions.innerHTML = '';
+                
+                if (filteredPartners.length === 0) {
+                    suggestions.style.display = 'none';
+                    document.getElementById('selectedPartnerInfoMain').style.display = 'none';
+                    return;
+                }
+                
+                filteredPartners.forEach(partner => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.innerHTML = `
+                        <div><strong>${partner.name}</strong></div>
+                        <div style="font-size: 0.9rem; color: var(--gray);">
+                            ${partner.phone} | قەرزی ئێستا: ${partner.debt.toLocaleString()} دینار
+                        </div>
+                    `;
+                    
+                    div.addEventListener('click', function() {
+                        document.getElementById('expensePartnerSearchMain').value = partner.name;
+                        
+                        // نیشاندانی زانیاری شەریک
+                        document.getElementById('selectedPartnerNameMain').textContent = partner.name;
+                        document.getElementById('selectedPartnerPhoneMain').textContent = partner.phone;
+                        document.getElementById('selectedPartnerDebtMain').textContent = partner.debt.toLocaleString();
+                        
+                        // دۆزینەوەی پارەی واسڵ کراو
+                        const totalPaid = sampleData.paymentHistory
+                            .filter(p => p.debtorId === partner.id && p.debtorType === 'partner')
+                            .reduce((sum, payment) => sum + payment.amount, 0);
+                        
+                        document.getElementById('selectedPartnerPaidMain').textContent = totalPaid.toLocaleString();
+                        document.getElementById('selectedPartnerInfoMain').style.display = 'block';
+                        document.getElementById('selectedPartnerInfoMain').setAttribute('data-partner-id', partner.id);
+                        
+                        suggestions.style.display = 'none';
+                    });
+                    
+                    suggestions.appendChild(div);
+                });
+                
+                suggestions.style.display = 'block';
+            });
+        }
+
+        // گەڕان بەدوای کەسەکان (بەشی سەرف بۆ کەس)
+        const expenseCustomerSearchMain = document.getElementById('expenseCustomerSearchMain');
+        if (expenseCustomerSearchMain) {
+            expenseCustomerSearchMain.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                const suggestions = document.getElementById('expenseCustomerSuggestionsMain');
+                
+                if (!suggestions) return;
+                
+                if (query.length < 2) {
+                    suggestions.style.display = 'none';
+                    document.getElementById('selectedCustomerInfoMain').style.display = 'none';
+                    return;
+                }
+                
+                const filteredCustomers = sampleData.customers.filter(c => 
+                    c.name.toLowerCase().includes(query)
+                );
+                
+                suggestions.innerHTML = '';
+                
+                if (filteredCustomers.length === 0) {
+                    suggestions.style.display = 'none';
+                    document.getElementById('selectedCustomerInfoMain').style.display = 'none';
+                    return;
+                }
+                
+                filteredCustomers.forEach(customer => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.innerHTML = `
+                        <div><strong>${customer.name}</strong></div>
+                        <div style="font-size: 0.9rem; color: var(--gray);">
+                            ${customer.phone} | قەرزی ئێستا: ${customer.debt.toLocaleString()} دینار
+                        </div>
+                    `;
+                    
+                    div.addEventListener('click', function() {
+                        document.getElementById('expenseCustomerSearchMain').value = customer.name;
+                        
+                        // نیشاندانی زانیاری کەس
+                        document.getElementById('selectedCustomerNameMain').textContent = customer.name;
+                        document.getElementById('selectedCustomerPhoneMain').textContent = customer.phone;
+                        document.getElementById('selectedCustomerDebtMain').textContent = customer.debt.toLocaleString();
+                        
+                        // دۆزینەوەی پارەی واسڵ کراو
+                        const totalPaid = sampleData.paymentHistory
+                            .filter(p => p.debtorId === customer.id && p.debtorType === 'customer')
+                            .reduce((sum, payment) => sum + payment.amount, 0);
+                        
+                        document.getElementById('selectedCustomerPaidMain').textContent = totalPaid.toLocaleString();
+                        document.getElementById('selectedCustomerInfoMain').style.display = 'block';
+                        document.getElementById('selectedCustomerInfoMain').setAttribute('data-customer-id', customer.id);
+                        
+                        suggestions.style.display = 'none';
+                    });
+                    
+                    suggestions.appendChild(div);
+                });
+                
+                suggestions.style.display = 'block';
+            });
+        }
+
+        // تۆمارکردنی سەرفکردن بۆ شەریک
+        const submitExpenseToPartnerBtn = document.getElementById('submitExpenseToPartnerBtn');
+        if (submitExpenseToPartnerBtn) {
+            submitExpenseToPartnerBtn.addEventListener('click', function() {
+                const partnerId = parseInt(document.getElementById('selectedPartnerInfoMain').getAttribute('data-partner-id'));
+                const amount = parseInt(document.getElementById('expenseToPartnerAmount').value);
+                const date = document.getElementById('expenseToPartnerDate').value;
+                const reason = document.getElementById('expenseToPartnerReason').value;
+                
+                if (!partnerId) {
+                    alert('تکایە شەریکێک هەڵبژێرە!');
+                    return;
+                }
+                
+                if (!amount || amount <= 0) {
+                    alert('تکایە بڕی پارەی سەرفکردن پڕ بکەرەوە!');
+                    return;
+                }
+                
+                if (amount > sampleData.cashBalance) {
+                    alert(`بڕی سەرفکردن نابێت لە کۆی پارەی واسڵ کراو زیاتر بێت! کۆی پارەی واسڵ کراو: ${sampleData.cashBalance.toLocaleString()} دینار`);
+                    return;
+                }
+                
+                const partner = sampleData.partners.find(p => p.id === partnerId);
+                if (!partner) {
+                    alert('شەریکەکە نەدۆزرایەوە!');
+                    return;
+                }
+                
+                // دروستکردنی تۆمارەکە بۆ مێژووی سەرفکردن
+                const expenseRecord = {
+                    id: sampleData.expenseHistory.length + 1,
+                    type: 'partner',
+                    partnerId: partnerId,
+                    partnerName: partner.name,
+                    amount: amount,
+                    date: date,
+                    reason: reason || `سەرفکردن بۆ شەریک: ${partner.name}`,
+                    description: reason || `سەرفکردن بۆ شەریک: ${partner.name}`,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // کەمکردنەوەی قەرز لە شەریک
+                partner.debt -= amount;
+                if (partner.debt < 0) partner.debt = 0;
+                
+                // کەمکردنەوەی پارە لە کۆی نەقدی
+                sampleData.cashBalance -= amount;
+                
+                // تۆمارکردنی لە مێژوو
+                sampleData.expenseHistory.unshift(expenseRecord);
+                
+                // نوێکردنەوەی داشبۆرد
+                updateDashboardCash();
+                
+                // نوێکردنەوەی زانیاری شەریک
+                const totalPaid = sampleData.paymentHistory
+                    .filter(p => p.debtorId === partner.id && p.debtorType === 'partner')
+                    .reduce((sum, payment) => sum + payment.amount, 0);
+                
+                document.getElementById('selectedPartnerDebtMain').textContent = partner.debt.toLocaleString();
+                document.getElementById('selectedPartnerPaidMain').textContent = totalPaid.toLocaleString();
+                
+                // پاککردنەوەی خانەکان
+                document.getElementById('expenseToPartnerAmount').value = '';
+                document.getElementById('expenseToPartnerReason').value = '';
+                
+                // نوێکردنەوەی داشبۆرد و لیستەکان
+                populateSampleData();
+                updateExpenseHistoryDisplay();
+                updateExpenseHistoryMainDisplay();
+                
+                alert(`سەرفکردن بۆ شەریک بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
+            });
+        }
+
+        // تۆمارکردنی سەرفکردن بۆ کەس
+        const submitExpenseToCustomerBtn = document.getElementById('submitExpenseToCustomerBtn');
+        if (submitExpenseToCustomerBtn) {
+            submitExpenseToCustomerBtn.addEventListener('click', function() {
+                const customerId = parseInt(document.getElementById('selectedCustomerInfoMain').getAttribute('data-customer-id'));
+                const amount = parseInt(document.getElementById('expenseToCustomerAmount').value);
+                const date = document.getElementById('expenseToCustomerDate').value;
+                const reason = document.getElementById('expenseToCustomerReason').value;
+                
+                if (!customerId) {
+                    alert('تکایە کەسێک هەڵبژێرە!');
+                    return;
+                }
+                
+                if (!amount || amount <= 0) {
+                    alert('تکایە بڕی پارەی سەرفکردن پڕ بکەرەوە!');
+                    return;
+                }
+                
+                if (amount > sampleData.cashBalance) {
+                    alert(`بڕی سەرفکردن نابێت لە کۆی پارەی واسڵ کراو زیاتر بێت! کۆی پارەی واسڵ کراو: ${sampleData.cashBalance.toLocaleString()} دینار`);
+                    return;
+                }
+                
+                const customer = sampleData.customers.find(c => c.id === customerId);
+                if (!customer) {
+                    alert('کەسەکە نەدۆزرایەوە!');
+                    return;
+                }
+                
+                // دروستکردنی تۆمارەکە بۆ مێژووی سەرفکردن
+                const expenseRecord = {
+                    id: sampleData.expenseHistory.length + 1,
+                    type: 'customer',
+                    customerId: customerId,
+                    customerName: customer.name,
+                    amount: amount,
+                    date: date,
+                    reason: reason || `سەرفکردن بۆ کەس: ${customer.name}`,
+                    description: reason || `سەرفکردن بۆ کەس: ${customer.name}`,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // کەمکردنەوەی قەرز لە کەس
+                customer.debt -= amount;
+                if (customer.debt < 0) customer.debt = 0;
+                
+                // کەمکردنەوەی پارە لە کۆی نەقدی
+                sampleData.cashBalance -= amount;
+                
+                // تۆمارکردنی لە مێژوو
+                sampleData.expenseHistory.unshift(expenseRecord);
+                
+                // نوێکردنەوەی داشبۆرد
+                updateDashboardCash();
+                
+                // نوێکردنەوەی زانیاری کەس
+                const totalPaid = sampleData.paymentHistory
+                    .filter(p => p.debtorId === customer.id && p.debtorType === 'customer')
+                    .reduce((sum, payment) => sum + payment.amount, 0);
+                
+                document.getElementById('selectedCustomerDebtMain').textContent = customer.debt.toLocaleString();
+                document.getElementById('selectedCustomerPaidMain').textContent = totalPaid.toLocaleString();
+                
+                // پاککردنەوەی خانەکان
+                document.getElementById('expenseToCustomerAmount').value = '';
+                document.getElementById('expenseToCustomerReason').value = '';
+                
+                // نوێکردنەوەی داشبۆرد و لیستەکان
+                populateSampleData();
+                updateExpenseHistoryDisplay();
+                updateExpenseHistoryMainDisplay();
+                
+                alert(`سەرفکردن بۆ کەس بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
+            });
+        }
+
+        // تۆمارکردنی سەرفکردن بۆ هۆکی تر
+        const submitOtherExpenseBtn = document.getElementById('submitOtherExpenseBtn');
+        if (submitOtherExpenseBtn) {
+            submitOtherExpenseBtn.addEventListener('click', function() {
+                const amount = parseInt(document.getElementById('otherExpenseAmount').value);
+                const date = document.getElementById('otherExpenseDate').value;
+                const category = document.getElementById('otherExpenseCategory').value;
+                const description = document.getElementById('otherExpenseDescription').value;
+                
+                if (!amount || amount <= 0) {
+                    alert('تکایە بڕی پارەی سەرفکردن پڕ بکەرەوە!');
+                    return;
+                }
+                
+                if (amount > sampleData.cashBalance) {
+                    alert(`بڕی سەرفکردن نابێت لە کۆی پارەی واسڵ کراو زیاتر بێت! کۆی پارەی واسڵ کراو: ${sampleData.cashBalance.toLocaleString()} دینار`);
+                    return;
+                }
+                
+                if (!description.trim()) {
+                    alert('تکایە پێناسەی سەرفکردن پڕ بکەرەوە!');
+                    return;
+                }
+                
+                // دروستکردنی تۆمارەکە بۆ مێژووی سەرفکردن
+                const expenseRecord = {
+                    id: sampleData.expenseHistory.length + 1,
+                    type: 'other',
+                    amount: amount,
+                    date: date,
+                    category: category,
+                    description: description,
+                    reason: description,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // کەمکردنەوەی پارە لە کۆی نەقدی
+                sampleData.cashBalance -= amount;
+                
+                // تۆمارکردنی لە مێژوو
+                sampleData.expenseHistory.unshift(expenseRecord);
+                
+                // نوێکردنەوەی داشبۆرد
+                updateDashboardCash();
+                
+                // پاککردنەوەی خانەکان
+                document.getElementById('otherExpenseAmount').value = '';
+                document.getElementById('otherExpenseDescription').value = '';
+                
+                // نوێکردنەوەی داشبۆرد و لیستەکان
+                populateSampleData();
+                updateExpenseHistoryDisplay();
+                updateExpenseHistoryMainDisplay();
+                
+                alert(`سەرفکردن بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
+            });
+        }
+
+        // نوێکردنەوەی لیستی مێژووی سەرفکردن (لە بەشی سەرف و حیسابی شەریکەکان)
+        function updateExpenseHistoryMainDisplay() {
+            const expenseHistoryMainList = document.getElementById('expenseHistoryMainList');
+            if (!expenseHistoryMainList) return;
+            
+            expenseHistoryMainList.innerHTML = '';
+            
+            if (sampleData.expenseHistory.length === 0) {
+                expenseHistoryMainList.innerHTML = '<li class="list-item">هیچ مێژوویەکی سەرفکردن نییە</li>';
+                return;
+            }
+            
+            sampleData.expenseHistory.forEach(expense => {
+                const li = document.createElement('li');
+                li.className = 'list-item';
+                
+                // دروستکردنی پێناسە بەپێی جۆری سەرفکردن
+                let description = expense.description;
+                let icon = 'fa-money-bill-wave';
+                let typeText = '';
+                
+                if (expense.type === 'partner') {
+                    icon = 'fa-handshake';
+                    typeText = `بۆ شەریک: ${expense.partnerName}`;
+                } else if (expense.type === 'customer') {
+                    icon = 'fa-user';
+                    typeText = `بۆ کەس: ${expense.customerName}`;
+                } else if (expense.type === 'other') {
+                    icon = 'fa-file-invoice-dollar';
+                    typeText = `بۆ هۆکی تر`;
+                }
+                
+                li.innerHTML = `
+                    <div>
+                        <div class="item-name">${description}</div>
+                        <div style="font-size: 0.9rem; color: var(--gray);">
+                            <i class="fas ${icon}"></i> ${expense.date} | ${typeText}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="item-value" style="color: var(--warning);">${expense.amount.toLocaleString()} دینار</div>
+                        <div style="margin-top: 10px;">
+                            <button class="btn btn-danger btn-sm" onclick="deleteExpense(${expense.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                expenseHistoryMainList.appendChild(li);
+            });
+        }
+
+        // نوێکردنەوەی لیستی سەرفکردن
+        const refreshExpenseHistoryMainBtn = document.getElementById('refreshExpenseHistoryMain');
+        if (refreshExpenseHistoryMainBtn) {
+            refreshExpenseHistoryMainBtn.addEventListener('click', function() {
+                updateExpenseHistoryMainDisplay();
+                alert('مێژووی سەرفکردن نوێ کرایەوە!');
+            });
+        }
+
+        // دەستپێکردنی سیستم
+        window.addEventListener('load', function() {
+            const firstNavLink = document.querySelector('.nav-link[data-section="dashboard"]');
+            if (firstNavLink) {
+                firstNavLink.classList.add('active');
+            }
+            
+            const firstTabBtn = document.querySelector('.tab-btn[data-tab="newSale"]');
+            if (firstTabBtn) {
+                firstTabBtn.classList.add('active');
+            }
+            
+            const firstPurchaseTab = document.querySelector('#purchaseSection .tab-btn[data-tab="newPurchase"]');
+            if (firstPurchaseTab) {
+                firstPurchaseTab.classList.add('active');
+            }
+            
+            const firstPaymentTab = document.querySelector('.tab-btn[data-tab="debtPayment"]');
+            if (firstPaymentTab) {
+                firstPaymentTab.classList.add('active');
+            }
+            
+            const partnerExpenseTab = document.querySelector('.tab-btn[data-tab="expenseToPartner"]');
+            if (partnerExpenseTab) {
+                partnerExpenseTab.classList.add('active');
+            }
+            
+            const firstInventoryTab = document.querySelector('.inventory-tab[data-inventory-tab="products"]');
+            if (firstInventoryTab) {
+                firstInventoryTab.classList.add('active');
+            }
+            
+            const firstPaymentOption = document.querySelector('.payment-option[data-payment="cash"]');
+            if (firstPaymentOption) {
+                firstPaymentOption.classList.add('selected');
+            }
+            
+            const firstCustomerTab = document.querySelector('.tab-btn[data-tab="customersList"]');
+            if (firstCustomerTab) {
+                firstCustomerTab.classList.add('active');
+            }
+            
+            const firstPartnerTab = document.querySelector('.tab-btn[data-tab="partnersList"]');
+            if (firstPartnerTab) {
+                firstPartnerTab.classList.add('active');
+            }
+            
+            // دەستپێکردنی جۆری سەرفکردن
+            if (document.getElementById('expenseType')) {
+                document.getElementById('expenseType').value = 'other';
+                document.getElementById('expenseOtherSection').style.display = 'block';
+            }
+            
+            // دەستپێکردنی بەرواری ئەمرۆ
+            const today = new Date().toISOString().split('T')[0];
+            if (document.getElementById('paymentDateInput')) {
+                document.getElementById('paymentDateInput').value = today;
+            }
+            if (document.getElementById('expenseDate')) {
+                document.getElementById('expenseDate').value = today;
+            }
+            
+            updateCartDisplay();
+            updatePurchaseCartDisplay();
+            updateDashboardCash();
+            updatePaymentHistoryDisplay();
+            updateExpenseHistoryDisplay();
+            updateExpenseHistoryMainDisplay();
+            calculateMonthlyExpense();
+        });
     </script>
 </body>
 </html>
