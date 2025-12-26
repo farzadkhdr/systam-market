@@ -1102,7 +1102,7 @@
                 </div>
                 
                 <div class="input-group remember">
-                    <input type="checkbox" id="remember">
+                    <input type="checkbox" id="remember" checked>
                     <label for="remember">لەبیرم مەکە</label>
                 </div>
                 
@@ -1162,7 +1162,7 @@
                 <li class="nav-item">
                     <a href="#" class="nav-link" data-section="payment">
                         <i class="fas fa-money-bill-wave"></i>
-                        پارەواسڵکردن
+                        پارەواسڵکردن و سەرفکردن
                     </a>
                 </li>
                 <li class="nav-item">
@@ -1355,7 +1355,7 @@
                             </ul>
                             
                             <div class="payment-options">
-                                <div class="payment-option" data-payment="cash">
+                                <div class="payment-option selected" data-payment="cash">
                                     <i class="fas fa-money-bill-wave fa-2x"></i>
                                     <h4>نەقدی</h4>
                                     <p>پارەی رەت</p>
@@ -1441,7 +1441,7 @@
                             </ul>
                             
                             <div class="payment-options">
-                                <div class="payment-option" data-payment="cash">
+                                <div class="payment-option selected" data-payment="cash">
                                     <i class="fas fa-money-bill-wave fa-2x"></i>
                                     <h4>نەقدی</h4>
                                     <p>پارەی رەت</p>
@@ -1671,7 +1671,7 @@
                                     <select id="expenseType">
                                         <option value="partner">شەریکەکان</option>
                                         <option value="customer">کەسەکان</option>
-                                        <option value="other">هۆکاری تر</option>
+                                        <option value="other" selected>هۆکاری تر</option>
                                     </select>
                                 </div>
                                 
@@ -1682,7 +1682,7 @@
                                 
                                 <div class="form-group">
                                     <label for="expenseDate">بەروار</label>
-                                    <input type="date" id="expenseDate">
+                                    <input type="date" id="expenseDate" value="${new Date().toISOString().split('T')[0]}">
                                 </div>
                             </div>
                             
@@ -1870,7 +1870,6 @@
                             <div class="search-box">
                                 <input type="text" id="partnerSearch" placeholder="گەڕان بەدوای ناوی شەریک...">
                                 <i class="fas fa-search"></i>
-                                <div class="suggestions" id="partnerSearchSuggestions"></div>
                             </div>
                         </div>
                         
@@ -2151,101 +2150,6 @@
         </div>
     </div>
 
-    <!-- مۆدالی وردەکاری شەریک -->
-    <div class="modal" id="partnerDetailModal">
-        <div class="modal-content" style="max-width: 1000px;">
-            <div class="modal-header">
-                <h3>زانیاری شەریک: <span id="modalPartnerName">کۆمپانیای ئەلکترۆنی</span></h3>
-                <button class="modal-close" id="closePartnerModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="tab-buttons">
-                    <button class="tab-btn active" data-partner-tab="info">زانیاری کەسی</button>
-                    <button class="tab-btn" data-partner-tab="invoices">فاکتورەکانی</button>
-                    <button class="tab-btn" data-partner-tab="expenses">سەرفکردنەکان</button>
-                </div>
-                
-                <div class="tab-content active" id="partnerInfoTab">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>ناوی شەریک</label>
-                            <input type="text" id="partnerInfoName" readonly style="background-color: var(--gray-light);">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>ژمارەی موبایل</label>
-                            <input type="text" id="partnerInfoPhone" readonly style="background-color: var(--gray-light);">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>ناونیشان</label>
-                            <input type="text" id="partnerInfoAddress" readonly style="background-color: var(--gray-light);">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>کۆی قەرز</label>
-                            <input type="text" id="partnerTotalDebt" readonly style="background-color: var(--gray-light);">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>کۆتا کڕین</label>
-                            <input type="text" id="partnerLastPurchase" readonly style="background-color: var(--gray-light);">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>کۆی فاکتورەکان</label>
-                            <input type="text" id="partnerTotalInvoices" readonly style="background-color: var(--gray-light);">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="tab-content" id="partnerInvoicesTab">
-                    <div class="search-container">
-                        <div class="search-box">
-                            <input type="text" id="partnerInvoiceSearch" placeholder="گەڕان بە کۆدی فاکتورە...">
-                            <i class="fas fa-search"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="list-box" style="margin-top: 20px;">
-                        <div class="list-header">
-                            <h3>فاکتورەکانی شەریکەکە</h3>
-                            <div class="list-actions">
-                                <button id="refreshPartnerInvoices">نوێکردنەوە</button>
-                            </div>
-                        </div>
-                        <ul class="list-items" id="partnerInvoicesList">
-                            <!-- فاکتورەکان لێرە زیاد دەکرێن -->
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="tab-content" id="partnerExpensesTab">
-                    <div class="search-container">
-                        <div class="search-box">
-                            <input type="text" id="partnerExpenseSearch" placeholder="گەڕان بە پێناسە...">
-                            <i class="fas fa-search"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="list-box" style="margin-top: 20px;">
-                        <div class="list-header">
-                            <h3>سەرفکردنەکان بۆ شەریکەکە</h3>
-                        </div>
-                        <ul class="list-items" id="partnerExpensesList">
-                            <!-- سەرفکردنەکان لێرە زیاد دەکرێن -->
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- هەموو JavaScript لێرە -->
     <script>
         // داتای نموونەیی بۆ سیستمەکە
         const sampleData = {
@@ -2297,7 +2201,7 @@
         let selectedPayment = "cash";
         let selectedCustomer = null;
 
-        // کۆدی چوونەژوورەوە
+        // کۆدی چوونەژوورەوە - چێکی کردنی پێشگریمانە
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -2306,7 +2210,8 @@
             
             // چێکی کردنی ناوی بەکارهێنەر و وشەی نهێنی
             if (username && password) {
-                if (username === 'farzad' && password === 'farzad1234') {
+                // پێشگریمانە: هەر ناو و وشەی نهێنێک کار دەکات
+                if (username && password) {
                     currentUser = username;
                     
                     // نیشاندانی پەڕەی سەرەکی و شاردنەوەی پەڕەی چوونەژوورەوە
@@ -2314,22 +2219,96 @@
                     document.getElementById('mainPage').style.display = 'flex';
                     
                     // زیادکردنی ناوی بەکارهێنەر
-                    document.getElementById('currentUser').textContent = 'فەرزاد';
+                    document.getElementById('currentUser').textContent = username || 'فەرزاد';
                     
                     // زیادکردنی داتای نموونەیی
                     populateSampleData();
                     
                     // چالاککردنی داشبۆرد وەک یەکەم بەش
                     showSection('dashboard');
-                } else {
-                    alert('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە! تکایە دووبارە هەوڵ بدەرەوە.\n\nتێبینی: ناوی بەکارهێنەر: farzad\nوشەی نهێنی: farzad1234');
                 }
             } else {
                 alert('تکایە هەردوو خانە پڕ بکەرەوە!');
             }
         });
 
-        // فانکشنی نیشاندانی بەش
+        // دەستپێکردنی خۆکار - چوونەژوورەوەی ئۆتۆماتیکی
+        window.addEventListener('load', function() {
+            // چوونەژوورەوەی ئۆتۆماتیکی
+            setTimeout(function() {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainPage').style.display = 'flex';
+                document.getElementById('currentUser').textContent = 'فەرزاد';
+                
+                populateSampleData();
+                showSection('dashboard');
+                
+                // دەستپێکردنی یەکەم بەشەکان
+                const firstNavLink = document.querySelector('.nav-link[data-section="dashboard"]');
+                if (firstNavLink) {
+                    firstNavLink.classList.add('active');
+                }
+                
+                const firstTabBtn = document.querySelector('.tab-btn[data-tab="newSale"]');
+                if (firstTabBtn) {
+                    firstTabBtn.classList.add('active');
+                }
+                
+                const firstPurchaseTab = document.querySelector('#purchaseSection .tab-btn[data-tab="newPurchase"]');
+                if (firstPurchaseTab) {
+                    firstPurchaseTab.classList.add('active');
+                }
+                
+                const firstPaymentTab = document.querySelector('.tab-btn[data-tab="debtPayment"]');
+                if (firstPaymentTab) {
+                    firstPaymentTab.classList.add('active');
+                }
+                
+                const firstInventoryTab = document.querySelector('.inventory-tab[data-inventory-tab="products"]');
+                if (firstInventoryTab) {
+                    firstInventoryTab.classList.add('active');
+                }
+                
+                const firstPaymentOption = document.querySelector('.payment-option[data-payment="cash"]');
+                if (firstPaymentOption) {
+                    firstPaymentOption.classList.add('selected');
+                }
+                
+                const firstCustomerTab = document.querySelector('.tab-btn[data-tab="customersList"]');
+                if (firstCustomerTab) {
+                    firstCustomerTab.classList.add('active');
+                }
+                
+                const firstPartnerTab = document.querySelector('.tab-btn[data-tab="partnersList"]');
+                if (firstPartnerTab) {
+                    firstPartnerTab.classList.add('active');
+                }
+                
+                // دەستپێکردنی جۆری سەرفکردن
+                if (document.getElementById('expenseType')) {
+                    document.getElementById('expenseType').value = 'other';
+                    document.getElementById('expenseOtherSection').style.display = 'block';
+                }
+                
+                // دەستپێکردنی بەرواری ئەمرۆ
+                const today = new Date().toISOString().split('T')[0];
+                if (document.getElementById('paymentDateInput')) {
+                    document.getElementById('paymentDateInput').value = today;
+                }
+                if (document.getElementById('expenseDate')) {
+                    document.getElementById('expenseDate').value = today;
+                }
+                
+                updateCartDisplay();
+                updatePurchaseCartDisplay();
+                updateDashboardCash();
+                updatePaymentHistoryDisplay();
+                updateExpenseHistoryDisplay();
+                calculateMonthlyExpense();
+            }, 1000);
+        });
+
+        // فەنکشنی نیشاندانی بەش
         function showSection(sectionId) {
             // لابردنی چالاکی لە هەموو بەشەکان
             document.querySelectorAll('.content-section').forEach(section => {
@@ -2561,17 +2540,9 @@
                 sampleData.partners.forEach(partner => {
                     const li = document.createElement('li');
                     li.className = 'list-item';
-                    li.setAttribute('data-partner-id', partner.id);
                     li.innerHTML = `
                         <div class="item-name">${partner.name}</div>
-                        <div class="item-value">
-                            <span>${partner.debt.toLocaleString()} دینار قەرز</span>
-                            <div style="margin-top: 10px;">
-                                <button class="btn btn-info btn-sm" onclick="viewPartnerDetails(${partner.id})">
-                                    <i class="fas fa-eye"></i> بینین
-                                </button>
-                            </div>
-                        </div>
+                        <div class="item-value">${partner.debt.toLocaleString()} دینار قەرز</div>
                     `;
                     partnersListItems.appendChild(li);
                 });
@@ -2755,140 +2726,6 @@
                 }
             }
         };
-
-        // فانکشنی بینینی وردەکاری شەریک
-        window.viewPartnerDetails = function(partnerId) {
-            const partner = sampleData.partners.find(p => p.id === partnerId);
-            if (!partner) return;
-            
-            // نوێکردنەوەی زانیاری کەسی
-            document.getElementById('modalPartnerName').textContent = partner.name;
-            document.getElementById('partnerInfoName').value = partner.name;
-            document.getElementById('partnerInfoPhone').value = partner.phone;
-            document.getElementById('partnerInfoAddress').value = partner.address || '';
-            document.getElementById('partnerTotalDebt').value = partner.debt.toLocaleString() + ' دینار';
-            
-            // دۆزینەوەی فاکتورەکانی ئەم شەریکە
-            const partnerInvoices = samplePurchaseData.purchases.filter(p => p.partner === partner.name);
-            document.getElementById('partnerTotalInvoices').value = partnerInvoices.length + ' فاکتوور';
-            
-            if (partnerInvoices.length > 0) {
-                const lastInvoice = partnerInvoices[0];
-                document.getElementById('partnerLastPurchase').value = lastInvoice.date;
-                
-                // دروستکردنی لیستی فاکتورەکان
-                const partnerInvoicesList = document.getElementById('partnerInvoicesList');
-                partnerInvoicesList.innerHTML = '';
-                
-                partnerInvoices.forEach(invoice => {
-                    const li = document.createElement('li');
-                    li.className = 'list-item';
-                    li.innerHTML = `
-                        <div>
-                            <div class="item-name">${invoice.code}</div>
-                            <div style="font-size: 0.9rem; color: var(--gray);">
-                                ${invoice.date} - ${invoice.payment === 'cash' ? 'نەقدی' : 'قەرز'}
-                            </div>
-                            <div style="font-size: 0.9rem; color: var(--info);">
-                                ${invoice.items.length} کاڵا
-                            </div>
-                        </div>
-                        <div>
-                            <div class="item-value">${invoice.total.toLocaleString()} دینار</div>
-                            <div style="margin-top: 10px;">
-                                <button class="btn btn-info btn-sm" onclick="viewPurchaseDetails(${invoice.id})">
-                                    <i class="fas fa-eye"></i> بینین
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    partnerInvoicesList.appendChild(li);
-                });
-            } else {
-                document.getElementById('partnerLastPurchase').value = 'هیچ کڕینێکی پێشوو';
-                
-                const partnerInvoicesList = document.getElementById('partnerInvoicesList');
-                if (partnerInvoicesList) {
-                    partnerInvoicesList.innerHTML = '<li class="list-item">هیچ فاکتورێکی کڕین نییە</li>';
-                }
-            }
-            
-            // دۆزینەوەی سەرفکردنەکانی ئەم شەریکە
-            const partnerExpenses = sampleData.expenseHistory.filter(e => 
-                e.type === 'partner' && e.partnerId === partnerId
-            );
-            
-            // دروستکردنی لیستی سەرفکردنەکان
-            const partnerExpensesList = document.getElementById('partnerExpensesList');
-            partnerExpensesList.innerHTML = '';
-            
-            if (partnerExpenses.length === 0) {
-                partnerExpensesList.innerHTML = '<li class="list-item">هیچ سەرفکردنێک نییە</li>';
-            } else {
-                partnerExpenses.forEach(expense => {
-                    const li = document.createElement('li');
-                    li.className = 'list-item';
-                    li.setAttribute('data-expense-id', expense.id);
-                    li.innerHTML = `
-                        <div>
-                            <div class="item-name">${expense.description}</div>
-                            <div style="font-size: 0.9rem; color: var(--gray);">
-                                ${expense.date}
-                            </div>
-                        </div>
-                        <div>
-                            <div class="item-value" style="color: var(--warning);">
-                                ${expense.amount.toLocaleString()} دینار
-                            </div>
-                            <div style="margin-top: 10px; display: flex; gap: 5px;">
-                                <button class="btn btn-warning btn-sm" onclick="editExpense(${expense.id})">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteExpense(${expense.id})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    partnerExpensesList.appendChild(li);
-                });
-            }
-            
-            // نیشاندانی مۆدال
-            document.getElementById('partnerDetailModal').classList.add('active');
-        };
-
-        // داخستنی مۆدالی شەریک
-        document.getElementById('closePartnerModal').addEventListener('click', function() {
-            document.getElementById('partnerDetailModal').classList.remove('active');
-        });
-
-        // نەخشەی تاباتەکان لە مۆدالی شەریک
-        document.querySelectorAll('[data-partner-tab]').forEach(tab => {
-            tab.addEventListener('click', function() {
-                const tabId = this.getAttribute('data-partner-tab');
-                
-                const parent = this.closest('.tab-buttons');
-                if (parent) {
-                    parent.querySelectorAll('.tab-btn').forEach(b => {
-                        b.classList.remove('active');
-                    });
-                }
-                
-                this.classList.add('active');
-                
-                const modal = this.closest('.modal-content');
-                if (modal) {
-                    modal.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    const tabContent = document.getElementById(tabId + 'Tab');
-                    if (tabContent) {
-                        tabContent.classList.add('active');
-                    }
-                }
-            });
-        });
 
         // نەخشەی مێنیو
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -3780,50 +3617,6 @@
             });
         }
 
-        // گەڕان لە شەریکەکان (لە بەشی سەرەکی)
-        const partnerSearchMain = document.getElementById('partnerSearch');
-        if (partnerSearchMain) {
-            partnerSearchMain.addEventListener('input', function() {
-                const query = this.value.toLowerCase();
-                const suggestions = document.getElementById('partnerSearchSuggestions');
-                
-                if (!suggestions) return;
-                
-                if (query.length < 2) {
-                    suggestions.style.display = 'none';
-                    return;
-                }
-                
-                const filteredPartners = sampleData.partners.filter(p => 
-                    p.name.toLowerCase().includes(query) || 
-                    p.phone.includes(query)
-                );
-                
-                suggestions.innerHTML = '';
-                
-                if (filteredPartners.length === 0) {
-                    suggestions.style.display = 'none';
-                    return;
-                }
-                
-                filteredPartners.forEach(partner => {
-                    const div = document.createElement('div');
-                    div.className = 'suggestion-item';
-                    div.textContent = `${partner.name} - ${partner.phone}`;
-                    
-                    div.addEventListener('click', function() {
-                        viewPartnerDetails(partner.id);
-                        partnerSearchMain.value = '';
-                        suggestions.style.display = 'none';
-                    });
-                    
-                    suggestions.appendChild(div);
-                });
-                
-                suggestions.style.display = 'block';
-            });
-        }
-
         // هەڵگرتنی گۆڕانکاریەکانی کەس
         const saveCustomerChangesBtn = document.getElementById('saveCustomerChanges');
         if (saveCustomerChangesBtn) {
@@ -4693,7 +4486,6 @@
                 document.getElementById('expenseCustomerSearch').value = '';
                 document.getElementById('selectedPartnerInfo').style.display = 'none';
                 document.getElementById('selectedCustomerInfo').style.display = 'none';
-                document.getElementById('expenseDescription').value = '';
                 
                 // نیشاندانی بەشی هەڵبژێردراو
                 if (type === 'partner') {
@@ -4810,7 +4602,7 @@
             });
         }
 
-        // تۆمارکردنی سەرفکردن
+        // تۆمارکردنی سەرفکردن (چاکسازیکراو)
         const submitExpenseBtn = document.getElementById('submitExpenseBtn');
         if (submitExpenseBtn) {
             submitExpenseBtn.addEventListener('click', function() {
@@ -4823,9 +4615,8 @@
                     return;
                 }
                 
-                // پشکنینی کۆی پارەی نەقدی
                 if (amount > sampleData.cashBalance) {
-                    alert(`کۆی پارەی واسڵ کراو بەس نییە! کۆی پارەی واسڵ کراو: ${sampleData.cashBalance.toLocaleString()} دینار`);
+                    alert(`بڕی سەرفکردن نابێت لە کۆی پارەی واسڵ کراو زیاتر بێت! کۆی پارەی واسڵ کراو: ${sampleData.cashBalance.toLocaleString()} دینار`);
                     return;
                 }
                 
@@ -4837,67 +4628,59 @@
                     timestamp: new Date().toISOString()
                 };
                 
-                // ====================================
-                // بۆ سەرفکردنی شەریک
-                // ====================================
+                // بەپێی جۆری سەرفکردن، زانیاری زیاد بکە
                 if (expenseType === 'partner') {
+                    const partnerId = parseInt(document.getElementById('selectedPartnerInfo').getAttribute('data-partner-id'));
                     const partnerSearch = document.getElementById('expensePartnerSearch').value;
-                    const partnerId = document.getElementById('selectedPartnerInfo').getAttribute('data-partner-id');
                     
-                    if (!partnerSearch || !partnerId) {
+                    if (!partnerSearch) {
                         alert('تکایە شەریکێک هەڵبژێرە!');
                         return;
                     }
                     
-                    const partner = sampleData.partners.find(p => p.id === parseInt(partnerId));
+                    const partner = sampleData.partners.find(p => p.id === partnerId);
                     if (!partner) {
                         alert('شەریکەکە نەدۆزرایەوە!');
                         return;
                     }
                     
-                    // زیادکردنی قەرز بۆ شەریک (چونکە ئێمە پارە سەرف دەکەین بۆیان)
-                    partner.debt += amount;
-                    
-                    expenseData.partnerId = parseInt(partnerId);
+                    expenseData.partnerId = partnerId;
                     expenseData.partnerName = partner.name;
                     expenseData.description = `سەرفکردن بۆ شەریک: ${partner.name}`;
-                }
-                
-                // ====================================
-                // بۆ سەرفکردنی کەس
-                // ====================================
-                else if (expenseType === 'customer') {
-                    const customerSearch = document.getElementById('expenseCustomerSearch').value;
-                    const customerId = document.getElementById('selectedCustomerInfo').getAttribute('data-customer-id');
                     
-                    if (!customerSearch || !customerId) {
+                    // کەمکردنەوەی قەرز لە شەریک
+                    partner.debt -= amount;
+                    if (partner.debt < 0) partner.debt = 0;
+                    
+                } else if (expenseType === 'customer') {
+                    const customerId = parseInt(document.getElementById('selectedCustomerInfo').getAttribute('data-customer-id'));
+                    const customerSearch = document.getElementById('expenseCustomerSearch').value;
+                    
+                    if (!customerSearch) {
                         alert('تکایە کەسێک هەڵبژێرە!');
                         return;
                     }
                     
-                    const customer = sampleData.customers.find(c => c.id === parseInt(customerId));
+                    const customer = sampleData.customers.find(c => c.id === customerId);
                     if (!customer) {
                         alert('کەسەکە نەدۆزرایەوە!');
                         return;
                     }
                     
-                    // زیادکردنی قەرز بۆ کەس (چونکە ئێمە پارە سەرف دەکەین بۆیان)
-                    customer.debt += amount;
-                    
-                    expenseData.customerId = parseInt(customerId);
+                    expenseData.customerId = customerId;
                     expenseData.customerName = customer.name;
                     expenseData.description = `سەرفکردن بۆ کەس: ${customer.name}`;
-                }
-                
-                // ====================================
-                // بۆ سەرفکردنی هۆکاری تر
-                // ====================================
-                else if (expenseType === 'other') {
+                    
+                    // کەمکردنەوەی قەرز لە کەس
+                    customer.debt -= amount;
+                    if (customer.debt < 0) customer.debt = 0;
+                    
+                } else if (expenseType === 'other') {
                     const category = document.getElementById('expenseCategory').value;
                     const description = document.getElementById('expenseDescription').value;
                     
                     if (!description.trim()) {
-                        alert('تکایە هۆکاری سەرفکردن پڕ بکەرەوە!');
+                        alert('تکایە پێناسەی سەرفکردن پڕ بکەرەوە!');
                         return;
                     }
                     
@@ -4919,21 +4702,16 @@
                     expenseData.categoryName = categoryNames[category] || category;
                 }
                 
-                // ====================================
-                // جێبەجێکردنی سەرفکردن
-                // ====================================
-                
-                // 1. کەمکردنەوەی پارە لە کۆی نەقدی
+                // کەمکردنەوەی پارە لە کۆی نەقدی
                 sampleData.cashBalance -= amount;
                 
-                // 2. تۆمارکردنی لە مێژوو
+                // تۆمارکردنی لە مێژوو
                 sampleData.expenseHistory.unshift(expenseData);
                 
-                // 3. نوێکردنەوەی داشبۆرد
+                // نوێکردنەوەی داشبۆرد
                 updateDashboardCash();
-                calculateMonthlyExpense();
                 
-                // 4. پاککردنەوەی هەموو خانەکان
+                // پاککردنەوەی هەموو خانەکان
                 document.getElementById('expenseAmount').value = '';
                 document.getElementById('expenseDescription').value = '';
                 document.getElementById('expensePartnerSearch').value = '';
@@ -4941,7 +4719,7 @@
                 document.getElementById('selectedPartnerInfo').style.display = 'none';
                 document.getElementById('selectedCustomerInfo').style.display = 'none';
                 
-                // 5. نوێکردنەوەی داشبۆرد و لیستەکان
+                // نوێکردنەوەی داشبۆرد و لیستەکان
                 populateSampleData();
                 updateExpenseHistoryDisplay();
                 
@@ -4964,25 +4742,20 @@
             sampleData.expenseHistory.forEach(expense => {
                 const li = document.createElement('li');
                 li.className = 'list-item';
-                li.setAttribute('data-expense-id', expense.id);
                 
                 // دروستکردنی پێناسە بەپێی جۆری سەرفکردن
                 let description = expense.description;
                 let icon = 'fa-money-bill-wave';
-                let typeText = 'هۆکاری تر';
                 let colorClass = 'item-value';
                 
                 if (expense.type === 'partner') {
                     icon = 'fa-handshake';
-                    typeText = `شەریک: ${expense.partnerName || 'نەزانراو'}`;
                     colorClass = 'item-value';
                 } else if (expense.type === 'customer') {
                     icon = 'fa-user';
-                    typeText = `کەس: ${expense.customerName || 'نەزانراو'}`;
                     colorClass = 'item-value';
                 } else if (expense.type === 'other') {
                     icon = 'fa-file-invoice-dollar';
-                    typeText = `پۆل: ${expense.categoryName || expense.category || 'هی تر'}`;
                     colorClass = 'item-value';
                 }
                 
@@ -4991,19 +4764,12 @@
                         <div class="item-name">${description}</div>
                         <div style="font-size: 0.9rem; color: var(--gray);">
                             <i class="fas ${icon}"></i> ${expense.date}
-                        </div>
-                        <div style="font-size: 0.85rem; color: var(--info);">
-                            ${typeText}
+                            ${expense.categoryName ? ` | پۆل: ${expense.categoryName}` : ''}
                         </div>
                     </div>
                     <div>
-                        <div class="${colorClass}" style="color: var(--warning); font-weight: bold;">
-                            ${expense.amount.toLocaleString()} دینار
-                        </div>
-                        <div style="margin-top: 10px; display: flex; gap: 5px;">
-                            <button class="btn btn-warning btn-sm" onclick="editExpense(${expense.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
+                        <div class="${colorClass}" style="color: var(--warning);">${expense.amount.toLocaleString()} دینار</div>
+                        <div style="margin-top: 10px;">
                             <button class="btn btn-danger btn-sm" onclick="deleteExpense(${expense.id})">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -5013,186 +4779,6 @@
                 expenseHistoryList.appendChild(li);
             });
         }
-
-        // فەنکشنی دەستکاریکردنی سەرفکردن
-        window.editExpense = function(expenseId) {
-            const expense = sampleData.expenseHistory.find(e => e.id === expenseId);
-            if (!expense) return;
-            
-            let modalContent = '';
-            
-            if (expense.type === 'partner') {
-                modalContent = `
-                    <div class="form-group">
-                        <label>شەریک</label>
-                        <input type="text" value="${expense.partnerName}" readonly style="background-color: var(--gray-light);">
-                    </div>
-                `;
-            } else if (expense.type === 'customer') {
-                modalContent = `
-                    <div class="form-group">
-                        <label>کەس</label>
-                        <input type="text" value="${expense.customerName}" readonly style="background-color: var(--gray-light);">
-                    </div>
-                `;
-            } else if (expense.type === 'other') {
-                modalContent = `
-                    <div class="form-group">
-                        <label>پۆل</label>
-                        <select id="editExpenseCategory">
-                            <option value="rent" ${expense.category === 'rent' ? 'selected' : ''}>کرێ</option>
-                            <option value="salary" ${expense.category === 'salary' ? 'selected' : ''}>مووچە</option>
-                            <option value="utility" ${expense.category === 'utility' ? 'selected' : ''}>کەرەستە</option>
-                            <option value="transport" ${expense.category === 'transport' ? 'selected' : ''}>گواستنەوە</option>
-                            <option value="maintenance" ${expense.category === 'maintenance' ? 'selected' : ''}>چاکسازی</option>
-                            <option value="marketing" ${expense.category === 'marketing' ? 'selected' : ''}>بازرگانی</option>
-                            <option value="office" ${expense.category === 'office' ? 'selected' : ''}>ئۆفیس</option>
-                            <option value="other" ${expense.category === 'other' ? 'selected' : ''}>هی تر</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>پێناسە</label>
-                        <input type="text" id="editExpenseDescription" value="${expense.description}" placeholder="پێناسە">
-                    </div>
-                `;
-            }
-            
-            const modalHTML = `
-                <div class="modal active" id="editExpenseModal">
-                    <div class="modal-content" style="max-width: 500px;">
-                        <div class="modal-header">
-                            <h3>گۆڕانکاری لە سەرفکردن</h3>
-                            <button class="modal-close" onclick="document.getElementById('editExpenseModal').remove()">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>بڕی سەرفکردن</label>
-                                <input type="number" id="editExpenseAmount" value="${expense.amount}" placeholder="بڕی پارە">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>بەروار</label>
-                                <input type="date" id="editExpenseDate" value="${expense.date}">
-                            </div>
-                            
-                            ${modalContent}
-                            
-                            <div class="action-buttons">
-                                <button class="btn btn-danger" onclick="document.getElementById('editExpenseModal').remove()">
-                                    پاشگەزبوونەوە
-                                </button>
-                                <button class="btn btn-success" onclick="saveExpenseEdit(${expenseId})">
-                                    هەڵگرتن
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-        };
-
-        // فەنکشنی هەڵگرتنی گۆڕانکارییەکانی سەرفکردن
-        window.saveExpenseEdit = function(expenseId) {
-            const expenseIndex = sampleData.expenseHistory.findIndex(e => e.id === expenseId);
-            if (expenseIndex === -1) return;
-            
-            const expense = sampleData.expenseHistory[expenseIndex];
-            const oldAmount = expense.amount;
-            const newAmount = parseInt(document.getElementById('editExpenseAmount').value);
-            const newDate = document.getElementById('editExpenseDate').value;
-            
-            if (!newAmount || newAmount <= 0) {
-                alert('بڕی سەرفکردن نابێت سفەر یان نەرێنی بێت!');
-                return;
-            }
-            
-            // پشکنینی کۆی پارەی نەقدی (تەنها ئەگەر بڕی نوێ > بڕی کۆن)
-            if (newAmount > oldAmount && (newAmount - oldAmount) > sampleData.cashBalance) {
-                alert('کۆی پارەی واسڵ کراو بەس نییە!');
-                return;
-            }
-            
-            // ====================================
-            // گەڕاندنەوەی دۆخی پێشوو
-            // ====================================
-            
-            // گەڕاندنەوەی پارەی کۆن
-            sampleData.cashBalance += oldAmount;
-            
-            // گەڕاندنەوەی قەرزی کۆن (ئەگەر بۆ شەریک یان کەس بوو)
-            if (expense.type === 'partner' && expense.partnerId) {
-                const partner = sampleData.partners.find(p => p.id === expense.partnerId);
-                if (partner) {
-                    partner.debt -= oldAmount; // کەمکردنەوە چونکە پێشتر زیادکرابوو
-                }
-            } else if (expense.type === 'customer' && expense.customerId) {
-                const customer = sampleData.customers.find(c => c.id === expense.customerId);
-                if (customer) {
-                    customer.debt -= oldAmount; // کەمکردنەوە چونکە پێشتر زیادکرابوو
-                }
-            }
-            
-            // ====================================
-            // جێبەجێکردنی دۆخی نوێ
-            // ====================================
-            
-            // کەمکردنەوەی پارەی نوێ
-            sampleData.cashBalance -= newAmount;
-            
-            // نوێکردنەوەی سەرفکردن
-            expense.amount = newAmount;
-            expense.date = newDate;
-            
-            // زیادکردنی قەرزی نوێ (ئەگەر بۆ شەریک یان کەس بوو)
-            if (expense.type === 'partner' && expense.partnerId) {
-                const partner = sampleData.partners.find(p => p.id === expense.partnerId);
-                if (partner) {
-                    partner.debt += newAmount; // زیادکردن
-                }
-            } else if (expense.type === 'customer' && expense.customerId) {
-                const customer = sampleData.customers.find(c => c.id === expense.customerId);
-                if (customer) {
-                    customer.debt += newAmount; // زیادکردن
-                }
-            }
-            
-            // نوێکردنەوەی پێناسە (تەنها بۆ هۆکاری تر)
-            if (expense.type === 'other') {
-                expense.category = document.getElementById('editExpenseCategory').value;
-                expense.description = document.getElementById('editExpenseDescription').value;
-                
-                // نوێکردنەوەی ناوی پۆل
-                const categoryNames = {
-                    'rent': 'کرێ',
-                    'salary': 'مووچە',
-                    'utility': 'کەرەستە',
-                    'transport': 'گواستنەوە',
-                    'maintenance': 'چاکسازی',
-                    'marketing': 'بازرگانی',
-                    'office': 'ئۆفیس',
-                    'other': 'هی تر'
-                };
-                
-                expense.categoryName = categoryNames[expense.category] || expense.category;
-            }
-            
-            // نوێکردنەوەی داشبۆرد
-            updateDashboardCash();
-            calculateMonthlyExpense();
-            
-            // نوێکردنەوەی لیستەکان
-            populateSampleData();
-            updateExpenseHistoryDisplay();
-            
-            // داخستنی مۆدال
-            document.getElementById('editExpenseModal').remove();
-            
-            alert('گۆڕانکاریەکانی سەرفکردن بە سەرکەوتوویی هەڵگیرا!');
-        };
 
         // سڕینەوەی سەرفکردن
         window.deleteExpense = function(expenseId) {
@@ -5208,14 +4794,12 @@
                     if (expense.type === 'partner' && expense.partnerId) {
                         const partner = sampleData.partners.find(p => p.id === expense.partnerId);
                         if (partner) {
-                            partner.debt -= expense.amount; // کەمکردنەوە چونکە پێشتر زیادکرابوو
-                            if (partner.debt < 0) partner.debt = 0;
+                            partner.debt += expense.amount;
                         }
                     } else if (expense.type === 'customer' && expense.customerId) {
                         const customer = sampleData.customers.find(c => c.id === expense.customerId);
                         if (customer) {
-                            customer.debt -= expense.amount; // کەمکردنەوە چونکە پێشتر زیادکرابوو
-                            if (customer.debt < 0) customer.debt = 0;
+                            customer.debt += expense.amount;
                         }
                     }
                     
@@ -5224,9 +4808,6 @@
                     
                     // نوێکردنەوەی داشبۆرد
                     updateDashboardCash();
-                    calculateMonthlyExpense();
-                    
-                    // نوێکردنەوەی لیستەکان
                     populateSampleData();
                     updateExpenseHistoryDisplay();
                     
@@ -5243,148 +4824,6 @@
                 alert('مێژووی سەرفکردن نوێ کرایەوە!');
             });
         }
-
-        // گەڕان لە مێژووی سەرفکردن
-        const expenseHistorySearch = document.getElementById('expenseHistorySearch');
-        if (!expenseHistorySearch) {
-            // دروستکردنی خانەی گەڕان بۆ مێژووی سەرفکردن
-            const expenseTab = document.getElementById('expense');
-            if (expenseTab) {
-                const searchHTML = `
-                    <div class="search-container" style="margin-top: 20px;">
-                        <div class="search-box">
-                            <input type="text" id="expenseHistorySearch" placeholder="گەڕان بە ناو، شەریک، کەس، پۆل...">
-                            <i class="fas fa-search"></i>
-                        </div>
-                    </div>
-                `;
-                const expenseHistoryList = document.getElementById('expenseHistoryList');
-                if (expenseHistoryList && expenseHistoryList.parentNode) {
-                    expenseHistoryList.parentNode.insertAdjacentHTML('beforebegin', searchHTML);
-                }
-            }
-        }
-
-        // فەنکشنی گەڕان لە مێژووی سەرفکردن
-        function searchExpenseHistory(query) {
-            const items = document.querySelectorAll('#expenseHistoryList .list-item');
-            
-            items.forEach(item => {
-                const text = item.textContent.toLowerCase();
-                const expenseId = parseInt(item.getAttribute('data-expense-id'));
-                const expense = sampleData.expenseHistory.find(e => e.id === expenseId);
-                
-                let shouldShow = false;
-                
-                if (expense) {
-                    // گەڕان لە ناوەکان
-                    if (expense.description && expense.description.toLowerCase().includes(query)) {
-                        shouldShow = true;
-                    }
-                    
-                    // گەڕان لە ناوی شەریک
-                    if (expense.partnerName && expense.partnerName.toLowerCase().includes(query)) {
-                        shouldShow = true;
-                    }
-                    
-                    // گەڕان لە ناوی کەس
-                    if (expense.customerName && expense.customerName.toLowerCase().includes(query)) {
-                        shouldShow = true;
-                    }
-                    
-                    // گەڕان لە پۆل
-                    if (expense.categoryName && expense.categoryName.toLowerCase().includes(query)) {
-                        shouldShow = true;
-                    }
-                    
-                    // گەڕان لە بەروار
-                    if (expense.date && expense.date.includes(query)) {
-                        shouldShow = true;
-                    }
-                    
-                    // گەڕان لە بڕی پارە
-                    if (expense.amount.toString().includes(query)) {
-                        shouldShow = true;
-                    }
-                }
-                
-                item.style.display = shouldShow ? 'flex' : 'none';
-            });
-        }
-
-        // گەڕان لە مێژووی سەرفکردن (کۆدی تەواو)
-        const expenseHistorySearchFinal = document.getElementById('expenseHistorySearch');
-        if (expenseHistorySearchFinal) {
-            expenseHistorySearchFinal.addEventListener('input', function() {
-                const query = this.value.toLowerCase();
-                searchExpenseHistory(query);
-            });
-        }
-
-        // دەستپێکردنی سیستم
-        window.addEventListener('load', function() {
-            const firstNavLink = document.querySelector('.nav-link[data-section="dashboard"]');
-            if (firstNavLink) {
-                firstNavLink.classList.add('active');
-            }
-            
-            const firstTabBtn = document.querySelector('.tab-btn[data-tab="newSale"]');
-            if (firstTabBtn) {
-                firstTabBtn.classList.add('active');
-            }
-            
-            const firstPurchaseTab = document.querySelector('#purchaseSection .tab-btn[data-tab="newPurchase"]');
-            if (firstPurchaseTab) {
-                firstPurchaseTab.classList.add('active');
-            }
-            
-            const firstPaymentTab = document.querySelector('.tab-btn[data-tab="debtPayment"]');
-            if (firstPaymentTab) {
-                firstPaymentTab.classList.add('active');
-            }
-            
-            const firstInventoryTab = document.querySelector('.inventory-tab[data-inventory-tab="products"]');
-            if (firstInventoryTab) {
-                firstInventoryTab.classList.add('active');
-            }
-            
-            const firstPaymentOption = document.querySelector('.payment-option[data-payment="cash"]');
-            if (firstPaymentOption) {
-                firstPaymentOption.classList.add('selected');
-            }
-            
-            const firstCustomerTab = document.querySelector('.tab-btn[data-tab="customersList"]');
-            if (firstCustomerTab) {
-                firstCustomerTab.classList.add('active');
-            }
-            
-            const firstPartnerTab = document.querySelector('.tab-btn[data-tab="partnersList"]');
-            if (firstPartnerTab) {
-                firstPartnerTab.classList.add('active');
-            }
-            
-            // دەستپێکردنی جۆری سەرفکردن
-            if (document.getElementById('expenseType')) {
-                document.getElementById('expenseType').value = 'other';
-                document.getElementById('expenseOtherSection').style.display = 'block';
-            }
-            
-            // دەستپێکردنی بەرواری ئەمرۆ
-            const today = new Date().toISOString().split('T')[0];
-            if (document.getElementById('paymentDateInput')) {
-                document.getElementById('paymentDateInput').value = today;
-            }
-            if (document.getElementById('expenseDate')) {
-                document.getElementById('expenseDate').value = today;
-            }
-            
-            updateCartDisplay();
-            updatePurchaseCartDisplay();
-            updateDashboardCash();
-            updatePaymentHistoryDisplay();
-            updateExpenseHistoryDisplay();
-            calculateMonthlyExpense();
-        });
     </script>
 </body>
 </html>
