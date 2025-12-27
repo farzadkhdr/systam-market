@@ -321,22 +321,6 @@
             width: 25px;
         }
         
-        /* زیادکردنی شێوازی نوێ بۆ قەرزداربوون و قەرزداری */
-        .debt-positive {
-            color: #28a745; /* رەنگی سەوز بۆ قەرزداربوون (قەرزداری من) */
-            font-weight: 700;
-        }
-        
-        .debt-negative {
-            color: #dc3545; /* رەنگی سور بۆ قەرزداری (قەرزداری ئەوان) */
-            font-weight: 700;
-        }
-        
-        .debt-neutral {
-            color: #6c757d; /* رەنگی خۆڵەمێشی بۆ بێ قەرز */
-            font-weight: 700;
-        }
-        
         /* بەشی سەرەوە */
         .header {
             height: 70px;
@@ -1515,16 +1499,16 @@
             <form id="loginForm" class="login-form">
                 <div class="input-group">
                     <label for="username"><i class="fas fa-user"></i> ناوی بەکارهێنەر</label>
-                    <input type="text" id="username" placeholder="ناوی بەکارهێنەر" value="admin">
+                    <input type="text" id="username" placeholder="ناوی بەکارهێنەر">
                 </div>
                 
                 <div class="input-group">
                     <label for="password"><i class="fas fa-lock"></i> وشەی نهێنی</label>
-                    <input type="password" id="password" placeholder="وشەی نهێنی" value="1234">
+                    <input type="password" id="password" placeholder="وشەی نهێنی">
                 </div>
                 
                 <div class="input-group remember">
-                    <input type="checkbox" id="remember" checked>
+                    <input type="checkbox" id="remember">
                     <label for="remember">لەبیرم مەکە</label>
                 </div>
                 
@@ -1533,7 +1517,7 @@
                 </button>
                 
                 <div class="login-footer">
-                    <p>وشەی نهێنیت لەبیرچووە؟ <a href="#" onclick="resetPassword()">کلیک لێرە بکە</a></p>
+                    <p>وشەی نهێنیت لەبیرچووە؟ <a href="#">کلیک لێرە بکە</a></p>
                 </div>
             </form>
             
@@ -1630,7 +1614,7 @@
             <div class="header-right">
                 <div class="user-info">
                     <i class="fas fa-user-circle"></i>
-                    <span id="currentUser">بەکارهێنەر</span>
+                    <span id="currentUser">فەرزاد</span>
                 </div>
                 <button class="logout-btn" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i> چوونەدەرەوە
@@ -1693,10 +1677,10 @@
                         <div class="card-icon">
                             <i class="fas fa-user-ow"></i>
                         </div>
-                        <h3>کۆی قەرزی قەرزداران بە من</h3>
-                        <div class="card-value debt-positive" id="totalDebtToMe">٠ <span>دینار</span></div>
-                        <div class="card-change" id="debtToMeChange">
-                            <i class="fas fa-minus"></i> ٠% جیاوازی
+                        <h3>کۆی پارەی قەرزداران</h3>
+                        <div class="card-value">٤٥٠٫٠٠٠ <span>دینار</span></div>
+                        <div class="card-change negative">
+                            <i class="fas fa-arrow-up"></i> ١٥٪ زیاتر لە هەفتەی ڕابردوو
                         </div>
                     </div>
                     
@@ -1704,10 +1688,10 @@
                         <div class="card-icon">
                             <i class="fas fa-handshake"></i>
                         </div>
-                        <h3>کۆی قەرزداریم بە شەریکەکان</h3>
-                        <div class="card-value debt-negative" id="totalMyDebt">٠ <span>دینار</span></div>
-                        <div class="card-change" id="myDebtChange">
-                            <i class="fas fa-minus"></i> ٠% جیاوازی
+                        <h3>قەرزدارم بە شەریکەکان</h3>
+                        <div class="card-value">٧٨٠٫٠٠٠ <span>دینار</span></div>
+                        <div class="card-change positive">
+                            <i class="fas fa-arrow-down"></i> ١٠٪ کەمتر لە هەفتەی ڕابردوو
                         </div>
                     </div>
                     
@@ -2116,12 +2100,6 @@
                             
                             <!-- بەشەکەی شەریکەکان -->
                             <div id="expensePartnerSection" style="display: none;">
-                                <div class="alert" style="background-color: rgba(220, 53, 69, 0.1); color: #dc3545; padding: 15px; border-radius: var(--border-radius); margin-bottom: 20px;">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    <strong>تێبینی:</strong> کاتێ سەرف دەکەیت بۆ شەریک، ئەو پارەیە دەچێتە سەر حیسابەکەت. 
-                                    ئەگەر قەرزداری شەریکە بیت، ئەم پارەیە قەرزەکەت کەم دەکاتەوە.
-                                    ئەگەر قەرزداری نەبیت، ئەوا شەریکە قەرزدارت دەبێت بەم پارەیە.
-                                </div>
                                 <div class="search-container">
                                     <div class="search-box">
                                         <input type="text" id="expensePartnerSearch" placeholder="گەڕان بەدوای ناوی شەریک...">
@@ -2138,12 +2116,6 @@
                             
                             <!-- بەشەکەی کەسەکان -->
                             <div id="expenseCustomerSection" style="display: none;">
-                                <div class="alert" style="background-color: rgba(220, 53, 69, 0.1); color: #dc3545; padding: 15px; border-radius: var(--border-radius); margin-bottom: 20px;">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    <strong>تێبینی:</strong> کاتێ سەرف دەکەیت بۆ کەس، ئەو پارەیە دەچێتە سەر حیسابەکەت. 
-                                    ئەگەر کەسەکە قەرزداری تۆ بێت، ئەم پارەیە قەرزەکەت کەم دەکاتەوە.
-                                    ئەگەر قەرزداری نەبیت، ئەوا کەسەکە قەرزدارت دەبێت بەم پارەیە.
-                                </div>
                                 <div class="search-container">
                                     <div class="search-box">
                                         <input type="text" id="expenseCustomerSearch" placeholder="گەڕان بەدوای ناوی کەس...">
@@ -2240,13 +2212,6 @@
                         <div class="item-form">
                             <h3 style="margin-bottom: 20px;">سەرفکردنی پارە بۆ شەریک</h3>
                             
-                            <div class="alert" style="background-color: rgba(220, 53, 69, 0.1); color: #dc3545; padding: 15px; border-radius: var(--border-radius); margin-bottom: 20px;">
-                                <i class="fas fa-exclamation-circle"></i>
-                                <strong>تێبینی:</strong> کاتێ سەرف دەکەیت بۆ شەریک، ئەو پارەیە دەچێتە سەر حیسابەکەت. 
-                                ئەگەر قەرزداری شەریکە بیت، ئەم پارەیە قەرزەکەت کەم دەکاتەوە.
-                                ئەگەر قەرزداری نەبیت، ئەوا شەریکە قەرزدارت دەبێت بەم پارەیە.
-                            </div>
-                            
                             <div class="search-container">
                                 <div class="search-box">
                                     <input type="text" id="expensePartnerSearchMain" placeholder="گەڕان بەدوای ناوی شەریک...">
@@ -2298,13 +2263,6 @@
                     <div class="tab-content" id="expenseToCustomer">
                         <div class="item-form">
                             <h3 style="margin-bottom: 20px;">سەرفکردنی پارە بۆ کەس</h3>
-                            
-                            <div class="alert" style="background-color: rgba(220, 53, 69, 0.1); color: #dc3545; padding: 15px; border-radius: var(--border-radius); margin-bottom: 20px;">
-                                <i class="fas fa-exclamation-circle"></i>
-                                <strong>تێبینی:</strong> کاتێ سەرف دەکەیت بۆ کەس، ئەو پارەیە دەچێتە سەر حیسابەکەت. 
-                                ئەگەر کەسەکە قەرزداری تۆ بێت، ئەم پارەیە قەرزەکەت کەم دەکاتەوە.
-                                ئەگەر قەرزداری نەبیت، ئەوا کەسەکە قەرزدارت دەبێت بەم پارەیە.
-                            </div>
                             
                             <div class="search-container">
                                 <div class="search-box">
@@ -2636,7 +2594,6 @@
                     <button class="tab-btn active" data-customer-tab="info">زانیاری کەس</button>
                     <button class="tab-btn" data-customer-tab="debt">پارەواسڵکردن</button>
                     <button class="tab-btn" data-customer-tab="invoices">فاکتوورەکان</button>
-                    <button class="tab-btn" data-customer-tab="balance">حیساب</button>
                 </div>
                 
                 <div class="tab-content active" id="customerInfoTab">
@@ -2745,12 +2702,6 @@
                         </ul>
                     </div>
                 </div>
-                
-                <div class="tab-content" id="customerBalanceTab">
-                    <div id="customerBalanceContent">
-                        <!-- حیسابی کەس لێرە دەخرێتە سەر -->
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -2839,7 +2790,7 @@
         let selectedPayment = "cash";
         let selectedCustomer = null;
 
-        // کۆدی چوونەژوورەوە - چاکسازیکراو بۆ هەموو ناو و وشەی نهێنی
+        // کۆدی چوونەژوورەوە
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -2848,21 +2799,24 @@
             
             // چێکی کردنی ناوی بەکارهێنەر و وشەی نهێنی
             if (username && password) {
-                // هەموو ناو و وشەی نهێنیەک دەپەسەندێت
-                currentUser = username;
-                
-                // نیشاندانی پەڕەی سەرەکی و شاردنەوەی پەڕەی چوونەژوورەوە
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('mainPage').style.display = 'flex';
-                
-                // زیادکردنی ناوی بەکارهێنەر
-                document.getElementById('currentUser').textContent = username;
-                
-                // زیادکردنی داتای نموونەیی
-                populateSampleData();
-                
-                // چالاککردنی داشبۆرد وەک یەکەم بەش
-                showSection('dashboard');
+                if (username === 'farzad' && password === 'farzad1234') {
+                    currentUser = username;
+                    
+                    // نیشاندانی پەڕەی سەرەکی و شاردنەوەی پەڕەی چوونەژوورەوە
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('mainPage').style.display = 'flex';
+                    
+                    // زیادکردنی ناوی بەکارهێنەر
+                    document.getElementById('currentUser').textContent = 'فەرزاد';
+                    
+                    // زیادکردنی داتای نموونەیی
+                    populateSampleData();
+                    
+                    // چالاککردنی داشبۆرد وەک یەکەم بەش
+                    showSection('dashboard');
+                } else {
+                    alert('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە! تکایە دووبارە هەوڵ بدەرەوە.\n\nتێبینی: ناوی بەکارهێنەر: farzad\nوشەی نهێنی: farzad1234');
+                }
             } else {
                 alert('تکایە هەردوو خانە پڕ بکەرەوە!');
             }
@@ -2991,71 +2945,6 @@
             }
         }
 
-        // فەنکشنی هەژمارکردنی کۆی قەرزەکان
-        function calculateTotalDebts() {
-            // کۆی قەرزی کەسەکان بە من (قەرزداران)
-            let totalDebtToMe = 0;
-            sampleData.customers.forEach(customer => {
-                totalDebtToMe += customer.debt;
-            });
-            
-            // کۆی قەرزی من بە شەریکەکان
-            let totalMyDebt = 0;
-            sampleData.partners.forEach(partner => {
-                totalMyDebt += partner.debt;
-            });
-            
-            // کۆی قەرزی من بە کەسەکان (لە سەرفکردنەکان)
-            let totalCustomerExpenseDebt = 0;
-            sampleData.expenseHistory.forEach(expense => {
-                if (expense.type === 'customer' && expense.isExpense) {
-                    totalCustomerExpenseDebt += expense.amount;
-                }
-            });
-            
-            // کۆی قەرزی من بە شەریکەکان (لە سەرفکردنەکان)
-            let totalPartnerExpenseDebt = 0;
-            sampleData.expenseHistory.forEach(expense => {
-                if (expense.type === 'partner' && expense.isExpense) {
-                    totalPartnerExpenseDebt += expense.amount;
-                }
-            });
-            
-            // کۆی گشتی قەرزی من بە ئەوان
-            const totalMyDebtToOthers = totalMyDebt + totalCustomerExpenseDebt + totalPartnerExpenseDebt;
-            
-            // نوێکردنەوەی داشبۆرد
-            document.getElementById('totalDebtToMe').innerHTML = `${totalDebtToMe.toLocaleString()} <span>دینار</span>`;
-            document.getElementById('totalMyDebt').innerHTML = `${totalMyDebtToOthers.toLocaleString()} <span>دینار</span>`;
-            
-            // زیادکردنی رەنگ بەپێی قەرز
-            const debtToMeElement = document.getElementById('totalDebtToMe');
-            const myDebtElement = document.getElementById('totalMyDebt');
-            
-            if (totalDebtToMe > 0) {
-                debtToMeElement.className = 'card-value debt-positive';
-            } else if (totalDebtToMe < 0) {
-                debtToMeElement.className = 'card-value debt-negative';
-            } else {
-                debtToMeElement.className = 'card-value debt-neutral';
-            }
-            
-            if (totalMyDebtToOthers > 0) {
-                myDebtElement.className = 'card-value debt-negative';
-            } else if (totalMyDebtToOthers < 0) {
-                myDebtElement.className = 'card-value debt-positive';
-            } else {
-                myDebtElement.className = 'card-value debt-neutral';
-            }
-            
-            return {
-                debtToMe: totalDebtToMe,
-                myDebt: totalMyDebtToOthers,
-                customerExpenseDebt: totalCustomerExpenseDebt,
-                partnerExpenseDebt: totalPartnerExpenseDebt
-            };
-        }
-
         // زیادکردنی داتای نموونەیی
         function populateSampleData() {
             // زیادکردنی کاڵای کەم بووەکان
@@ -3084,7 +2973,7 @@
                     li.className = 'list-item';
                     li.innerHTML = `
                         <div class="item-name">${customer.name}</div>
-                        <div class="item-value debt-positive">${customer.debt.toLocaleString()} دینار</div>
+                        <div class="item-value">${customer.debt.toLocaleString()} دینار</div>
                     `;
                     debtorsList.appendChild(li);
                 });
@@ -3145,16 +3034,10 @@
                             <div style="font-size: 0.9rem; color: var(--gray);">${customer.phone}</div>
                         </div>
                         <div>
-                            <div class="item-value ${customer.debt > 0 ? 'debt-positive' : customer.debt < 0 ? 'debt-negative' : 'debt-neutral'}">
-                                ${Math.abs(customer.debt).toLocaleString()} دینار
-                                ${customer.debt > 0 ? 'قەرزدارە بە من' : customer.debt < 0 ? 'من قەرزدارم' : 'بێ قەرز'}
-                            </div>
-                            <div style="margin-top: 10px; display: flex; gap: 5px;">
-                                <button class="btn btn-info btn-sm" onclick="viewCustomerBalance(${customer.id})">
-                                    <i class="fas fa-calculator"></i> حیساب
-                                </button>
+                            <div class="item-value">${customer.debt.toLocaleString()} دینار قەرز</div>
+                            <div style="margin-top: 10px;">
                                 <button class="btn btn-info btn-sm" onclick="viewCustomerDetails(${customer.id})">
-                                    <i class="fas fa-eye"></i> وردەکاری
+                                    <i class="fas fa-eye"></i> بینین
                                 </button>
                             </div>
                         </div>
@@ -3172,21 +3055,8 @@
                     const li = document.createElement('li');
                     li.className = 'list-item';
                     li.innerHTML = `
-                        <div>
-                            <div class="item-name">${partner.name}</div>
-                            <div style="font-size: 0.9rem; color: var(--gray);">${partner.phone}</div>
-                        </div>
-                        <div>
-                            <div class="item-value ${partner.debt > 0 ? 'debt-positive' : partner.debt < 0 ? 'debt-negative' : 'debt-neutral'}">
-                                ${Math.abs(partner.debt).toLocaleString()} دینار
-                                ${partner.debt > 0 ? 'قەرزدارە بە من' : partner.debt < 0 ? 'من قەرزدارم' : 'بێ قەرز'}
-                            </div>
-                            <div style="margin-top: 10px; display: flex; gap: 5px;">
-                                <button class="btn btn-info btn-sm" onclick="viewPartnerDetails(${partner.id})">
-                                    <i class="fas fa-calculator"></i> حیساب
-                                </button>
-                            </div>
-                        </div>
+                        <div class="item-name">${partner.name}</div>
+                        <div class="item-value">${partner.debt.toLocaleString()} دینار قەرز</div>
                     `;
                     partnersListItems.appendChild(li);
                 });
@@ -3207,12 +3077,9 @@
             // نوێکردنەوەی مێژووی سەرفکردن
             updateExpenseHistoryDisplay();
             updateExpenseHistoryMainDisplay();
-            
-            // هەژمارکردنی کۆی قەرزەکان
-            calculateTotalDebts();
         }
 
-        // فەنکشنی بینینی وردەکارییەکانی کەس
+        // فانکشنی بینینی وردەکارییەکانی کەس
         window.viewCustomerDetails = function(customerId) {
             const customer = sampleData.customers.find(c => c.id === customerId);
             if (!customer) return;
@@ -3276,267 +3143,7 @@
             document.getElementById('customerModal').classList.add('active');
         };
 
-        // فەنکشنی بینینی حیسابی کەس
-        window.viewCustomerBalance = function(customerId) {
-            const customer = sampleData.customers.find(c => c.id === customerId);
-            if (!customer) return;
-            
-            // دۆزینەوەی مێژووی هەموو مامەڵەکان
-            const saleHistory = sampleData.sales.filter(s => s.customer === customer.name);
-            const paymentHistory = sampleData.paymentHistory.filter(p => p.debtorId === customerId && p.debtorType === 'customer');
-            const expenseHistory = sampleData.expenseHistory.filter(e => e.customerId === customerId);
-            
-            // هەژمارکردنی کۆی قەرز
-            let totalSales = saleHistory.filter(s => s.payment === 'credit').reduce((sum, s) => sum + s.total, 0);
-            let totalPayments = paymentHistory.reduce((sum, p) => sum + p.amount, 0);
-            let totalExpenses = expenseHistory.filter(e => e.isExpense).reduce((sum, e) => sum + e.amount, 0);
-            let totalExpensePayments = expenseHistory.filter(e => !e.isExpense).reduce((sum, e) => sum + e.amount, 0);
-            
-            // کۆی قەرزی کۆتایی
-            const theirDebtToMe = totalSales - totalPayments;
-            const myDebtToThem = totalExpenses - totalExpensePayments;
-            
-            const finalBalance = theirDebtToMe - myDebtToThem;
-            
-            // دروستکردنی مۆدالی نوێ
-            const modalHTML = `
-                <div class="modal active" id="customerBalanceModal">
-                    <div class="modal-content" style="max-width: 800px;">
-                        <div class="modal-header">
-                            <h3>حیسابی کەس: ${customer.name}</h3>
-                            <button class="modal-close" onclick="document.getElementById('customerBalanceModal').remove()">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="list-box">
-                                <div class="list-header">
-                                    <h3>کۆی حیساب</h3>
-                                </div>
-                                <div style="padding: 20px;">
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                                        <div>
-                                            <h4>قەرزی ${customer.name} بە من:</h4>
-                                            <div style="font-size: 1.5rem; font-weight: 700; color: ${theirDebtToMe > 0 ? '#28a745' : '#6c757d'}">
-                                                ${theirDebtToMe.toLocaleString()} دینار
-                                            </div>
-                                            <div style="font-size: 0.9rem; color: var(--gray);">
-                                                (فرۆشتنەکان: ${totalSales.toLocaleString()} - پارەواسڵکردن: ${totalPayments.toLocaleString()})
-                                            </div>
-                                        </div>
-                                        
-                                        <div>
-                                            <h4>قەرزی من بە ${customer.name}:</h4>
-                                            <div style="font-size: 1.5rem; font-weight: 700; color: ${myDebtToThem > 0 ? '#dc3545' : '#6c757d'}">
-                                                ${myDebtToThem.toLocaleString()} دینار
-                                            </div>
-                                            <div style="font-size: 0.9rem; color: var(--gray);">
-                                                (سەرفکردنەکان: ${totalExpenses.toLocaleString()} - پارەواسڵکردن: ${totalExpensePayments.toLocaleString()})
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div style="margin-top: 30px; padding: 20px; background-color: ${finalBalance > 0 ? 'rgba(40, 167, 69, 0.1)' : finalBalance < 0 ? 'rgba(220, 53, 69, 0.1)' : 'var(--gray-light)'}; border-radius: var(--border-radius);">
-                                        <h4>کۆی حیسابی کۆتایی:</h4>
-                                        <div style="font-size: 2rem; font-weight: 800; color: ${finalBalance > 0 ? '#28a745' : finalBalance < 0 ? '#dc3545' : '#6c757d'}; margin: 10px 0;">
-                                            ${Math.abs(finalBalance).toLocaleString()} دینار
-                                            ${finalBalance > 0 ? 'قەرزدارە بە من' : finalBalance < 0 ? 'من قەرزدارم بە ئەوان' : 'حیساب یەکسانە'}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- مێژووی مامەڵەکان -->
-                            <div class="list-box" style="margin-top: 20px;">
-                                <div class="list-header">
-                                    <h3>مێژووی مامەڵەکان</h3>
-                                </div>
-                                <div style="max-height: 300px; overflow-y: auto;">
-                                    ${[...saleHistory.filter(s => s.payment === 'credit'), ...paymentHistory, ...expenseHistory]
-                                        .sort((a, b) => new Date(b.date || b.timestamp) - new Date(a.date || a.timestamp))
-                                        .map(transaction => {
-                                            let type = '';
-                                            let amount = 0;
-                                            let color = '';
-                                            let icon = '';
-                                            
-                                            if (transaction.code && transaction.code.startsWith('INV')) {
-                                                type = 'فرۆشتن بە قەرز';
-                                                amount = -transaction.total; // نیشانەی منفی بۆ قەرزی ئەوان
-                                                color = '#28a745';
-                                                icon = 'fa-shopping-cart';
-                                            } else if (transaction.amount && transaction.debtorType) {
-                                                type = 'پارەواسڵکردن';
-                                                amount = transaction.amount; // نیشانەی ئەرێنی بۆ پارەدان
-                                                color = '#dc3545';
-                                                icon = 'fa-money-bill-wave';
-                                            } else if (transaction.isExpense) {
-                                                type = 'سەرفکردن (من قەرزدارم)';
-                                                amount = -transaction.amount; // نیشانەی منفی بۆ قەرزی من
-                                                color = '#dc3545';
-                                                icon = 'fa-hand-holding-usd';
-                                            } else if (transaction.type === 'customer' && !transaction.isExpense) {
-                                                type = 'سەرفکردن (ئەوان قەرزداری)';
-                                                amount = transaction.amount; // نیشانەی ئەرێنی بۆ قەرزی ئەوان
-                                                color = '#28a745';
-                                                icon = 'fa-hand-holding-usd';
-                                            }
-                                            
-                                            return `
-                                                <div class="list-item">
-                                                    <div>
-                                                        <div class="item-name">${type}</div>
-                                                        <div style="font-size: 0.9rem; color: var(--gray);">
-                                                            <i class="fas ${icon}"></i> ${transaction.date || transaction.timestamp.split('T')[0]}
-                                                        </div>
-                                                    </div>
-                                                    <div class="item-value" style="color: ${color};">
-                                                        ${amount > 0 ? '+' : ''}${amount.toLocaleString()} دینار
-                                                    </div>
-                                                </div>
-                                            `;
-                                        }).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-        };
-
-        // فەنکشنی بینینی وردەکاری حیسابی شەریک
-        window.viewPartnerDetails = function(partnerId) {
-            const partner = sampleData.partners.find(p => p.id === partnerId);
-            if (!partner) return;
-            
-            // دۆزینەوەی مێژووی هەموو مامەڵەکان
-            const purchaseHistory = samplePurchaseData.purchases.filter(p => p.partner === partner.name);
-            const paymentHistory = sampleData.paymentHistory.filter(p => p.debtorId === partnerId && p.debtorType === 'partner');
-            const expenseHistory = sampleData.expenseHistory.filter(e => e.partnerId === partnerId);
-            
-            // هەژمارکردنی کۆی قەرز
-            let totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
-            let totalPayments = paymentHistory.reduce((sum, p) => sum + p.amount, 0);
-            let totalExpenses = expenseHistory.filter(e => e.isExpense).reduce((sum, e) => sum + e.amount, 0);
-            let totalExpensePayments = expenseHistory.filter(e => !e.isExpense).reduce((sum, e) => sum + e.amount, 0);
-            
-            // کۆی قەرزی کۆتایی
-            const theirDebtToMe = totalPurchases - totalPayments;
-            const myDebtToThem = totalExpenses - totalExpensePayments;
-            
-            const finalBalance = theirDebtToMe - myDebtToThem;
-            
-            // دروستکردنی مۆدالی نوێ
-            const modalHTML = `
-                <div class="modal active" id="partnerBalanceModal">
-                    <div class="modal-content" style="max-width: 800px;">
-                        <div class="modal-header">
-                            <h3>حیسابی شەریک: ${partner.name}</h3>
-                            <button class="modal-close" onclick="document.getElementById('partnerBalanceModal').remove()">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="list-box">
-                                <div class="list-header">
-                                    <h3>کۆی حیساب</h3>
-                                </div>
-                                <div style="padding: 20px;">
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                                        <div>
-                                            <h4>قەرزی ${partner.name} بە من:</h4>
-                                            <div style="font-size: 1.5rem; font-weight: 700; color: ${theirDebtToMe > 0 ? '#28a745' : '#6c757d'}">
-                                                ${theirDebtToMe.toLocaleString()} دینار
-                                            </div>
-                                            <div style="font-size: 0.9rem; color: var(--gray);">
-                                                (کڕینەکان: ${totalPurchases.toLocaleString()} - پارەواسڵکردن: ${totalPayments.toLocaleString()})
-                                            </div>
-                                        </div>
-                                        
-                                        <div>
-                                            <h4>قەرزی من بە ${partner.name}:</h4>
-                                            <div style="font-size: 1.5rem; font-weight: 700; color: ${myDebtToThem > 0 ? '#dc3545' : '#6c757d'}">
-                                                ${myDebtToThem.toLocaleString()} دینار
-                                            </div>
-                                            <div style="font-size: 0.9rem; color: var(--gray);">
-                                                (سەرفکردنەکان: ${totalExpenses.toLocaleString()} - پارەواسڵکردن: ${totalExpensePayments.toLocaleString()})
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div style="margin-top: 30px; padding: 20px; background-color: ${finalBalance > 0 ? 'rgba(40, 167, 69, 0.1)' : finalBalance < 0 ? 'rgba(220, 53, 69, 0.1)' : 'var(--gray-light)'}; border-radius: var(--border-radius);">
-                                        <h4>کۆی حیسابی کۆتایی:</h4>
-                                        <div style="font-size: 2rem; font-weight: 800; color: ${finalBalance > 0 ? '#28a745' : finalBalance < 0 ? '#dc3545' : '#6c757d'}; margin: 10px 0;">
-                                            ${Math.abs(finalBalance).toLocaleString()} دینار
-                                            ${finalBalance > 0 ? 'قەرزدارە بە من' : finalBalance < 0 ? 'من قەرزدارم بە ئەوان' : 'حیساب یەکسانە'}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- مێژووی مامەڵەکان -->
-                            <div class="list-box" style="margin-top: 20px;">
-                                <div class="list-header">
-                                    <h3>مێژووی مامەڵەکان</h3>
-                                </div>
-                                <div style="max-height: 300px; overflow-y: auto;">
-                                    ${[...purchaseHistory, ...paymentHistory, ...expenseHistory]
-                                        .sort((a, b) => new Date(b.date || b.timestamp) - new Date(a.date || a.timestamp))
-                                        .map(transaction => {
-                                            let type = '';
-                                            let amount = 0;
-                                            let color = '';
-                                            let icon = '';
-                                            
-                                            if (transaction.code && transaction.code.startsWith('PUR')) {
-                                                type = 'کڕین';
-                                                amount = -transaction.total; // نیشانەی منفی بۆ قەرزی ئەوان
-                                                color = '#28a745';
-                                                icon = 'fa-shopping-bag';
-                                            } else if (transaction.amount && transaction.debtorType) {
-                                                type = 'پارەواسڵکردن';
-                                                amount = transaction.amount; // نیشانەی ئەرێنی بۆ پارەدان
-                                                color = '#dc3545';
-                                                icon = 'fa-money-bill-wave';
-                                            } else if (transaction.isExpense) {
-                                                type = 'سەرفکردن (من قەرزدارم)';
-                                                amount = -transaction.amount; // نیشانەی منفی بۆ قەرزی من
-                                                color = '#dc3545';
-                                                icon = 'fa-hand-holding-usd';
-                                            } else if (transaction.type === 'partner' && !transaction.isExpense) {
-                                                type = 'سەرفکردن (ئەوان قەرزداری)';
-                                                amount = transaction.amount; // نیشانەی ئەرێنی بۆ قەرزی ئەوان
-                                                color = '#28a745';
-                                                icon = 'fa-hand-holding-usd';
-                                            }
-                                            
-                                            return `
-                                                <div class="list-item">
-                                                    <div>
-                                                        <div class="item-name">${type}</div>
-                                                        <div style="font-size: 0.9rem; color: var(--gray);">
-                                                            <i class="fas ${icon}"></i> ${transaction.date || transaction.timestamp.split('T')[0]}
-                                                        </div>
-                                                    </div>
-                                                    <div class="item-value" style="color: ${color};">
-                                                        ${amount > 0 ? '+' : ''}${amount.toLocaleString()} دینار
-                                                    </div>
-                                                </div>
-                                            `;
-                                        }).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-        };
-
-        // فەنکشنی بینینی وردەکاری فاکتوور
+        // فانکشنی بینینی وردەکاری فاکتوور
         window.viewInvoiceDetails = function(invoiceId) {
             const invoice = sampleData.sales.find(s => s.id === invoiceId);
             if (!invoice) return;
@@ -4345,7 +3952,7 @@
             });
         });
 
-        // زیادکردنی کەسی نوێ
+        // زیادکردنی کەسی نوێ (چاکسازی)
         const saveCustomerBtn = document.getElementById('saveCustomerBtn');
         if (saveCustomerBtn) {
             saveCustomerBtn.addEventListener('click', function() {
@@ -4513,7 +4120,7 @@
                     div.textContent = `${customer.name} - ${customer.phone}`;
                     
                     div.addEventListener('click', function() {
-                        viewCustomerBalance(customer.id);
+                        viewCustomerDetails(customer.id);
                         customerSearchMain.value = '';
                         suggestions.style.display = 'none';
                     });
@@ -5233,10 +4840,10 @@
                     return;
                 }
                 
-                // کەمکردنەوەی قەرز
+                // ✅ **چاکە: کەمکردنەوەی قەرز (داین)**
                 debtor.debt -= amount;
                 
-                // زیادکردنی پارە بۆ کۆی نەقدی
+                // زیادکردنی پارە بۆ کۆی پارەی نەقدی
                 sampleData.cashBalance += amount;
                 
                 // تۆمارکردنی لە مێژوو
@@ -5512,7 +5119,7 @@
             });
         }
 
-        // تۆمارکردنی سەرفکردن
+        // تۆمارکردنی سەرفکردن (چاکسازیکراو)
         const submitExpenseBtn = document.getElementById('submitExpenseBtn');
         if (submitExpenseBtn) {
             submitExpenseBtn.addEventListener('click', function() {
@@ -5557,10 +5164,10 @@
                     expenseData.partnerId = partnerId;
                     expenseData.partnerName = partner.name;
                     expenseData.description = `سەرفکردن بۆ شەریک: ${partner.name}`;
-                    expenseData.isExpense = true; // نیشانەی قەرزی من
                     
-                    // زیادکردنی قەرز بۆ شەریک (من قەرزداری ئەوان دەبم)
-                    partner.debt += amount;
+                    // کەمکردنەوەی قەرز لە شەریک
+                    partner.debt -= amount;
+                    if (partner.debt < 0) partner.debt = 0;
                     
                 } else if (expenseType === 'customer') {
                     const customerId = parseInt(document.getElementById('selectedCustomerInfo').getAttribute('data-customer-id'));
@@ -5580,10 +5187,10 @@
                     expenseData.customerId = customerId;
                     expenseData.customerName = customer.name;
                     expenseData.description = `سەرفکردن بۆ کەس: ${customer.name}`;
-                    expenseData.isExpense = true; // نیشانەی قەرزی من
                     
-                    // زیادکردنی قەرز بۆ کەس (من قەرزداری ئەوان دەبم)
-                    customer.debt += amount;
+                    // کەمکردنەوەی قەرز لە کەس
+                    customer.debt -= amount;
+                    if (customer.debt < 0) customer.debt = 0;
                     
                 } else if (expenseType === 'other') {
                     const category = document.getElementById('expenseCategory').value;
@@ -5661,10 +5268,10 @@
                 
                 if (expense.type === 'partner') {
                     icon = 'fa-handshake';
-                    colorClass = 'item-value debt-negative';
+                    colorClass = 'item-value';
                 } else if (expense.type === 'customer') {
                     icon = 'fa-user';
-                    colorClass = 'item-value debt-negative';
+                    colorClass = 'item-value';
                 } else if (expense.type === 'other') {
                     icon = 'fa-file-invoice-dollar';
                     colorClass = 'item-value';
@@ -5705,12 +5312,12 @@
                     if (expense.type === 'partner' && expense.partnerId) {
                         const partner = sampleData.partners.find(p => p.id === expense.partnerId);
                         if (partner) {
-                            partner.debt -= expense.amount;
+                            partner.debt += expense.amount;
                         }
                     } else if (expense.type === 'customer' && expense.customerId) {
                         const customer = sampleData.customers.find(c => c.id === expense.customerId);
                         if (customer) {
-                            customer.debt -= expense.amount;
+                            customer.debt += expense.amount;
                         }
                     }
                     
@@ -5870,7 +5477,7 @@
             });
         }
 
-        // تۆمارکردنی سەرفکردن بۆ شەریک
+        // ✅ **چاکسازی: تۆمارکردنی سەرفکردن بۆ شەریک (مدین - قەرزداری من زیاد دەبێت)**
         const submitExpenseToPartnerBtn = document.getElementById('submitExpenseToPartnerBtn');
         if (submitExpenseToPartnerBtn) {
             submitExpenseToPartnerBtn.addEventListener('click', function() {
@@ -5900,7 +5507,7 @@
                     return;
                 }
                 
-                // زیادکردنی قەرز بۆ شەریک (من قەرزداری ئەوان دەبم)
+                // ✅ **چاکسازی: زیادکردنی قەرز بۆ شەریک (من قەرزداری ئەوان دەبم)**
                 partner.debt += amount;
                 
                 // کەمکردنەوەی پارە لە کۆی نەقدی
@@ -5943,19 +5550,11 @@
                 updateExpenseHistoryDisplay();
                 updateExpenseHistoryMainDisplay();
                 
-                let message = `سەرفکردن بۆ شەریک بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار\n`;
-                
-                if (partner.debt > 0) {
-                    message += `قەرزی ئێستا بۆ ${partner.name}: ${partner.debt.toLocaleString()} دینار`;
-                } else if (partner.debt < 0) {
-                    message += `${partner.name} قەرزدارە بە تۆ بە بڕی: ${Math.abs(partner.debt).toLocaleString()} دینار`;
-                }
-                
-                alert(message);
+                alert(`سەرفکردن بۆ شەریک بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار\nقەرزی ئێستا بۆ ${partner.name}: ${partner.debt.toLocaleString()} دینار`);
             });
         }
 
-        // تۆمارکردنی سەرفکردن بۆ کەس
+        // ✅ **چاکسازی: تۆمارکردنی سەرفکردن بۆ کەس (مدین - قەرزداری من زیاد دەبێت)**
         const submitExpenseToCustomerBtn = document.getElementById('submitExpenseToCustomerBtn');
         if (submitExpenseToCustomerBtn) {
             submitExpenseToCustomerBtn.addEventListener('click', function() {
@@ -5985,7 +5584,7 @@
                     return;
                 }
                 
-                // زیادکردنی قەرز بۆ کەس (من قەرزداری ئەوان دەبم)
+                // ✅ **چاکسازی: زیادکردنی قەرز بۆ کەس (من قەرزداری ئەوان دەبم)**
                 customer.debt += amount;
                 
                 // کەمکردنەوەی پارە لە کۆی نەقدی
@@ -6028,15 +5627,7 @@
                 updateExpenseHistoryDisplay();
                 updateExpenseHistoryMainDisplay();
                 
-                let message = `سەرفکردن بۆ کەس بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار\n`;
-                
-                if (customer.debt > 0) {
-                    message += `قەرزی ئێستا بۆ ${customer.name}: ${customer.debt.toLocaleString()} دینار`;
-                } else if (customer.debt < 0) {
-                    message += `${customer.name} قەرزدارە بە تۆ بە بڕی: ${Math.abs(customer.debt).toLocaleString()} دینار`;
-                }
-                
-                alert(message);
+                alert(`سەرفکردن بۆ کەس بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار\nقەرزی ئێستا بۆ ${customer.name}: ${customer.debt.toLocaleString()} دینار`);
             });
         }
 
@@ -6118,16 +5709,13 @@
                 let description = expense.description;
                 let icon = 'fa-money-bill-wave';
                 let typeText = '';
-                let colorClass = 'item-value';
                 
                 if (expense.type === 'partner') {
                     icon = 'fa-handshake';
                     typeText = `بۆ شەریک: ${expense.partnerName}`;
-                    colorClass = 'item-value debt-negative';
                 } else if (expense.type === 'customer') {
                     icon = 'fa-user';
                     typeText = `بۆ کەس: ${expense.customerName}`;
-                    colorClass = 'item-value debt-negative';
                 } else if (expense.type === 'other') {
                     icon = 'fa-file-invoice-dollar';
                     typeText = `بۆ هۆکی تر`;
@@ -6141,7 +5729,7 @@
                         </div>
                     </div>
                     <div>
-                        <div class="${colorClass}" style="color: var(--warning);">${expense.amount.toLocaleString()} دینار</div>
+                        <div class="item-value" style="color: var(--warning);">${expense.amount.toLocaleString()} دینار</div>
                         <div style="margin-top: 10px;">
                             <button class="btn btn-danger btn-sm" onclick="deleteExpense(${expense.id})">
                                 <i class="fas fa-trash"></i>
@@ -6161,11 +5749,6 @@
                 alert('مێژووی سەرفکردن نوێ کرایەوە!');
             });
         }
-
-        // فەنکشنی دووبارەکردنەوەی وشەی نهێنی
-        window.resetPassword = function() {
-            alert('وشەی نهێنی نوێ بنێرە بۆ ئیمەیڵەکەت. لە کاتی ئێستادا، تەنها بەکارهێنەری "admin" بە وشەی نهێنی "1234" دەتوانێت بچێتە ناوەوە.');
-        };
 
         // دەستپێکردنی سیستم
         window.addEventListener('load', function() {
@@ -6236,7 +5819,6 @@
             updateExpenseHistoryDisplay();
             updateExpenseHistoryMainDisplay();
             calculateMonthlyExpense();
-            calculateTotalDebts();
         });
     </script>
 </body>
