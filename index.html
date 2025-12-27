@@ -239,13 +239,11 @@
             height: 100vh;
             z-index: 100;
             box-shadow: 3px 0 15px rgba(0,0,0,0.1);
-            /* ✅ زیادکردنی scroll */
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: var(--primary) rgba(255,255,255,0.1);
         }
         
-        /* ڕەنگی scroll بۆ گووگڵ کرۆم و سەفاری */
         .sidebar::-webkit-scrollbar {
             width: 6px;
         }
@@ -415,13 +413,11 @@
             transition: var(--transition);
             background-color: #f5f7fa;
             min-height: 100vh;
-            /* ✅ زیادکردنی scroll بۆ بەشی ناوەڕاست */
             overflow-y: auto;
             height: calc(100vh - 70px);
             margin-top: 70px;
         }
         
-        /* scroll ڕەنگی بۆ بەشی ناوەڕاست */
         .main-content::-webkit-scrollbar {
             width: 8px;
         }
@@ -444,7 +440,7 @@
             margin-right: 0;
         }
         
-        /* بەشەکانی ناوەڕاست - جیاکردنەوەیان */
+        /* بەشەکانی ناوەڕاست */
         .content-section {
             display: none;
             opacity: 0;
@@ -1073,365 +1069,6 @@
             margin-top: 40px;
         }
         
-        /* جوڵاوی مینو لەگەڵ ماوس */
-        .sidebar {
-            transition: all 0.3s ease;
-        }
-        
-        .sidebar:hover {
-            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        .nav-link {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
-            transition: all 0.3s ease;
-            z-index: -1;
-        }
-        
-        .nav-link:hover::before {
-            right: 0;
-        }
-        
-        .nav-link:hover {
-            transform: translateX(-5px);
-            color: white;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .nav-link.active:hover {
-            transform: translateX(-5px);
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        .nav-link i {
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link:hover i {
-            transform: scale(1.2);
-        }
-        
-        /* جوڵاوی دوگمەکان */
-        .menu-toggle, .logout-btn, .btn {
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .menu-toggle:hover, .logout-btn:hover, .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
-        }
-        
-        .btn:hover::after {
-            animation: ripple 1s ease-out;
-        }
-        
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            20% {
-                transform: scale(25, 25);
-                opacity: 0.3;
-            }
-            100% {
-                opacity: 0;
-                transform: scale(40, 40);
-            }
-        }
-        
-        /* جوڵاوی کارتەکان */
-        .card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-        
-        .card-icon {
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover .card-icon {
-            transform: rotate(10deg) scale(1.1);
-        }
-        
-        /* جوڵاوی لیستەکان */
-        .list-item {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .list-item:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* جوڵاوی تاباتەکان */
-        .tab-btn {
-            transition: all 0.3s ease;
-        }
-        
-        .tab-btn:hover:not(.active) {
-            color: var(--primary);
-            transform: translateY(-2px);
-        }
-        
-        .inventory-tab:hover:not(.active) {
-            color: var(--primary);
-            transform: translateY(-2px);
-        }
-        
-        /* جوڵاوی هەڵبژاردنەکانی پارەدان */
-        .payment-option {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .payment-option:hover:not(.selected) {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-color: var(--info);
-        }
-        
-        /* جوڵاوی فورم خانەکان */
-        input, select, textarea {
-            transition: all 0.3s ease;
-        }
-        
-        input:hover, select:hover {
-            border-color: var(--info);
-            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
-        }
-        
-        input:focus, select:focus {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(72, 149, 239, 0.3);
-        }
-        
-        /* جوڵاوی لۆگۆ */
-        .logo {
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-        
-        .logo:hover {
-            transform: scale(1.1);
-            text-shadow: 2px 2px 8px rgba(67, 97, 238, 0.3);
-        }
-        
-        /* جوڵاوی نیشانەکانی بەکارهێنەر */
-        .user-info {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .user-info:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            background-color: #e0e0e0;
-        }
-        
-        /* جوڵاوی سەرەوە */
-        .header {
-            transition: all 0.3s ease;
-        }
-        
-        .header:hover {
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-        }
-        
-        /* جوڵاوی پێشنیارەکان */
-        .suggestion-item {
-            transition: all 0.3s ease;
-        }
-        
-        .suggestion-item:hover {
-            transform: translateX(-5px);
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        /* جوڵاوی کاڵا لە سەبەتە */
-        .cart-item {
-            transition: all 0.3s ease;
-        }
-        
-        .cart-item:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* جوڵاوی ئایکۆنی کاڵا لە سەبەتە */
-        .cart-item-image {
-            transition: all 0.3s ease;
-        }
-        
-        .cart-item:hover .cart-item-image {
-            transform: rotate(15deg) scale(1.1);
-        }
-        
-        /* جوڵاوی مۆدال */
-        .modal-content {
-            transition: all 0.3s ease;
-        }
-        
-        .modal.active .modal-content {
-            animation: modalBounce 0.5s ease;
-        }
-        
-        @keyframes modalBounce {
-            0% {
-                transform: scale(0.8) translateY(30px);
-                opacity: 0;
-            }
-            70% {
-                transform: scale(1.05) translateY(-5px);
-            }
-            100% {
-                transform: scale(1) translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        /* جوڵاوی دەرکەوتنی بەشەکان */
-        .content-section.active {
-            animation: sectionFadeIn 0.5s ease;
-        }
-        
-        @keyframes sectionFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* جوڵاوی فاکتوورەکان لە مۆدال */
-        .invoice-table tr {
-            transition: all 0.3s ease;
-        }
-        
-        .invoice-table tr:hover {
-            background-color: rgba(67, 97, 238, 0.05);
-            transform: translateX(-5px);
-        }
-        
-        /* جوڵاوی پرێنت ئۆپشنەکان */
-        .print-options .btn {
-            transition: all 0.3s ease;
-        }
-        
-        .print-options .btn:hover {
-            transform: translateY(-5px) scale(1.05);
-        }
-        
-        /* جوڵاوی سەرەوەی لیست */
-        .list-header h3 {
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-        
-        .list-header:hover h3 {
-            transform: translateX(-5px);
-            color: var(--primary);
-        }
-        
-        /* جوڵاوی دوگمەکانی لیست */
-        .list-actions button {
-            transition: all 0.3s ease;
-        }
-        
-        .list-actions button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* جوڵاوی گەڕان */
-        .search-box input:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* جوڵاوی ئایکۆنی گەڕان */
-        .search-box i {
-            transition: all 0.3s ease;
-        }
-        
-        .search-box:hover i {
-            color: var(--primary);
-            transform: scale(1.2);
-        }
-        
-        /* جوڵاوی دوگمەی داخستنی مێنیو لەسەر مۆبایل */
-        .close-sidebar {
-            transition: all 0.3s ease;
-        }
-        
-        .close-sidebar:hover {
-            transform: rotate(90deg);
-            color: var(--danger);
-        }
-        
-        /* جوڵاوی داشبۆرد کارتەکان بە تێکەڵ */
-        .dashboard-cards:hover .card:not(:hover) {
-            transform: scale(0.95);
-            opacity: 0.8;
-        }
-        
-        /* جوڵاوی سەبەتەی پارەواسڵکردن */
-        .payment-option i {
-            transition: all 0.3s ease;
-        }
-        
-        .payment-option:hover i {
-            transform: scale(1.2);
-        }
-        
-        /* جوڵاوی هێڵی سەرەوەی کارت */
-        .card::before {
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover::before {
-            height: 8px;
-            background: linear-gradient(to right, var(--primary), var(--success));
-        }
-        
         /* وەڵامی مۆبایل */
         @media (max-width: 992px) {
             .sidebar {
@@ -1499,16 +1136,16 @@
             <form id="loginForm" class="login-form">
                 <div class="input-group">
                     <label for="username"><i class="fas fa-user"></i> ناوی بەکارهێنەر</label>
-                    <input type="text" id="username" placeholder="ناوی بەکارهێنەر">
+                    <input type="text" id="username" placeholder="ناوی بەکارهێنەر" value="farzad">
                 </div>
                 
                 <div class="input-group">
                     <label for="password"><i class="fas fa-lock"></i> وشەی نهێنی</label>
-                    <input type="password" id="password" placeholder="وشەی نهێنی">
+                    <input type="password" id="password" placeholder="وشەی نهێنی" value="farzad1234">
                 </div>
                 
                 <div class="input-group remember">
-                    <input type="checkbox" id="remember">
+                    <input type="checkbox" id="remember" checked>
                     <label for="remember">لەبیرم مەکە</label>
                 </div>
                 
@@ -2790,7 +2427,7 @@
         let selectedPayment = "cash";
         let selectedCustomer = null;
 
-        // کۆدی چوونەژوورەوە
+        // کۆدی چوونەژوورەوە - چاکسازیکراو
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -2799,7 +2436,8 @@
             
             // چێکی کردنی ناوی بەکارهێنەر و وشەی نهێنی
             if (username && password) {
-                if (username === 'farzad' && password === 'farzad1234') {
+                // چاکسازی: فەرزاد یان admin دەتوانن بچنە ژوورەوە
+                if ((username === 'farzad' && password === 'farzad1234') || (username === 'admin' && password === 'admin123')) {
                     currentUser = username;
                     
                     // نیشاندانی پەڕەی سەرەکی و شاردنەوەی پەڕەی چوونەژوورەوە
@@ -2807,7 +2445,7 @@
                     document.getElementById('mainPage').style.display = 'flex';
                     
                     // زیادکردنی ناوی بەکارهێنەر
-                    document.getElementById('currentUser').textContent = 'فەرزاد';
+                    document.getElementById('currentUser').textContent = username === 'farzad' ? 'فەرزاد' : 'ئەدمین';
                     
                     // زیادکردنی داتای نموونەیی
                     populateSampleData();
@@ -2815,7 +2453,7 @@
                     // چالاککردنی داشبۆرد وەک یەکەم بەش
                     showSection('dashboard');
                 } else {
-                    alert('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە! تکایە دووبارە هەوڵ بدەرەوە.\n\nتێبینی: ناوی بەکارهێنەر: farzad\nوشەی نهێنی: farzad1234');
+                    alert('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە! تکایە دووبارە هەوڵ بدەرەوە.\n\nتێبینی:\nناوی بەکارهێنەر: farzad، وشەی نهێنی: farzad1234\nیان\nناوی بەکارهێنەر: admin، وشەی نهێنی: admin123');
                 }
             } else {
                 alert('تکایە هەردوو خانە پڕ بکەرەوە!');
@@ -2968,12 +2606,26 @@
             if (debtorsList) {
                 debtorsList.innerHTML = '';
                 
-                sampleData.customers.filter(c => c.debt > 0).forEach(customer => {
+                // قەرزدارەکان بریتین لە: کەسەکان کە قەرزداری منن (قەرز +) و شەریکەکان کە من قەرزداری ئەوانم (قەرز -)
+                const allDebtors = [
+                    ...sampleData.customers.filter(c => c.debt > 0).map(c => ({
+                        name: c.name,
+                        debt: c.debt,
+                        type: 'کەس'
+                    })),
+                    ...sampleData.partners.filter(p => p.debt < 0).map(p => ({
+                        name: p.name,
+                        debt: Math.abs(p.debt),
+                        type: 'شەریک'
+                    }))
+                ];
+                
+                allDebtors.forEach(debtor => {
                     const li = document.createElement('li');
                     li.className = 'list-item';
                     li.innerHTML = `
-                        <div class="item-name">${customer.name}</div>
-                        <div class="item-value">${customer.debt.toLocaleString()} دینار</div>
+                        <div class="item-name">${debtor.name} (${debtor.type})</div>
+                        <div class="item-value">${debtor.debt.toLocaleString()} دینار</div>
                     `;
                     debtorsList.appendChild(li);
                 });
@@ -3052,11 +2704,18 @@
                 partnersListItems.innerHTML = '';
                 
                 sampleData.partners.forEach(partner => {
+                    // نیشاندانی قەرزی شەریک بە شێوەی ڕاست (ئەگەر +: شەریک قەرزداری منە، ئەگەر -: من قەرزداری شەریکم)
+                    const debtText = partner.debt > 0 ? 
+                        `${partner.debt.toLocaleString()} دینار (شەریک قەرزداری منە)` : 
+                        partner.debt < 0 ? 
+                        `${Math.abs(partner.debt).toLocaleString()} دینار (من قەرزداری ئەوانم)` : 
+                        'بێ قەرز';
+                    
                     const li = document.createElement('li');
                     li.className = 'list-item';
                     li.innerHTML = `
                         <div class="item-name">${partner.name}</div>
-                        <div class="item-value">${partner.debt.toLocaleString()} دینار قەرز</div>
+                        <div class="item-value">${debtText}</div>
                     `;
                     partnersListItems.appendChild(li);
                 });
@@ -3679,6 +3338,7 @@
                     sampleData.cashBalance += total;
                     updateDashboardCash();
                 } else if (selectedPayment === 'credit' && selectedCustomer) {
+                    // کەس قەرزداری منە، قەرزی زیاد دەبێت
                     selectedCustomer.debt += total;
                 }
                 
@@ -4468,7 +4128,10 @@
                 filteredPartners.forEach(partner => {
                     const div = document.createElement('div');
                     div.className = 'suggestion-item';
-                    div.textContent = `${partner.name} - ${partner.debt > 0 ? partner.debt.toLocaleString() + ' دینار قەرزدارم' : 'بێ قەرز'}`;
+                    div.textContent = `${partner.name} - ${partner.debt !== 0 ? 
+                        (partner.debt > 0 ? partner.debt.toLocaleString() + ' دینار (شەریک قەرزداری منە)' : 
+                         Math.abs(partner.debt).toLocaleString() + ' دینار (من قەرزداری ئەوانم)') : 
+                        'بێ قەرز'}`;
                     
                     div.addEventListener('click', function() {
                         partnerSearchPurchase.value = partner.name;
@@ -4528,7 +4191,8 @@
                     updateDashboardCash();
                     alert(`کڕینەکە بە نەقدی تەواو بوو! ${total.toLocaleString()} دینار لە کۆی پارەی واسڵ کراو کەم کرا.`);
                 } else if (paymentType === 'credit' && selectedPartner) {
-                    selectedPartner.debt += total;
+                    // ✅ **چاکسازی: من قەرزداری شەریکم، قەرزی کەم دەبێت**
+                    selectedPartner.debt -= total;
                 }
                 
                 // زیادکردنی کاڵاکان بۆ مخزن و نوێکردنەوەی نرخەکان
@@ -4697,8 +4361,8 @@
                     } else if (purchase.payment === 'credit') {
                         const partner = sampleData.partners.find(p => p.name === purchase.partner);
                         if (partner) {
-                            partner.debt -= purchase.total;
-                            if (partner.debt < 0) partner.debt = 0;
+                            // ✅ **چاکسازی: گەڕاندنەوەی قەرز (من قەرزداری شەریکم، قەرزی زیاد دەبێت)**
+                            partner.debt += purchase.total;
                         }
                     }
                     
@@ -4744,12 +4408,26 @@
                 
                 // گەڕان لە کەسەکان و شەریکەکان
                 const filteredDebtors = [
+                    // کەسەکان کە قەرزداری منن (قەرز +)
                     ...sampleData.customers.filter(c => 
                         c.name.toLowerCase().includes(query) && c.debt > 0
-                    ),
+                    ).map(c => ({
+                        id: c.id,
+                        name: c.name,
+                        debt: c.debt,
+                        type: 'customer',
+                        text: `${c.name} - ${c.debt.toLocaleString()} دینار قەرز (کەس قەرزداری منە)`
+                    })),
+                    // شەریکەکان کە من قەرزداری ئەوانم (قەرز -)
                     ...sampleData.partners.filter(p => 
-                        p.name.toLowerCase().includes(query) && p.debt > 0
-                    )
+                        p.name.toLowerCase().includes(query) && p.debt < 0
+                    ).map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        debt: Math.abs(p.debt),
+                        type: 'partner',
+                        text: `${p.name} - ${Math.abs(p.debt).toLocaleString()} دینار قەرز (من قەرزداری ئەوانم)`
+                    }))
                 ];
                 
                 suggestions.innerHTML = '';
@@ -4763,9 +4441,9 @@
                 filteredDebtors.forEach(debtor => {
                     const div = document.createElement('div');
                     div.className = 'suggestion-item';
-                    div.textContent = `${debtor.name} - ${debtor.debt.toLocaleString()} دینار قەرز`;
+                    div.textContent = debtor.text;
                     div.setAttribute('data-debtor-id', debtor.id);
-                    div.setAttribute('data-debtor-type', debtor.phone ? 'customer' : 'partner');
+                    div.setAttribute('data-debtor-type', debtor.type);
                     
                     div.addEventListener('click', function() {
                         const debtorId = parseInt(this.getAttribute('data-debtor-id'));
@@ -4794,7 +4472,15 @@
             if (!debtor) return;
             
             document.getElementById('debtorName').textContent = debtor.name;
-            document.getElementById('totalDebtAmount').textContent = debtor.debt.toLocaleString();
+            
+            // بەپێی جۆری قەرزدار، قەرز نیشان بدە
+            if (debtorType === 'customer') {
+                // کەس قەرزداری منە (قەرز +)
+                document.getElementById('totalDebtAmount').textContent = debtor.debt.toLocaleString() + ' دینار (کەس قەرزداری منە)';
+            } else {
+                // من قەرزداری شەریکم (قەرز -)
+                document.getElementById('totalDebtAmount').textContent = Math.abs(debtor.debt).toLocaleString() + ' دینار (من قەرزداری ئەوانم)';
+            }
             
             // دۆزینەوەی پارەی واسڵ کراو
             const totalPaid = sampleData.paymentHistory
@@ -4835,13 +4521,25 @@
                     return;
                 }
                 
-                if (amount > debtor.debt) {
-                    alert(`بڕی پارەواسڵکردن نابێت لە قەرز زیاتر بێت! قەرزی ئێستا: ${debtor.debt.toLocaleString()} دینار`);
-                    return;
+                // پشکنین بۆ بڕی قەرز بەپێی جۆری قەرزدار
+                if (debtorType === 'customer') {
+                    // کەس قەرزداری منە، قەرزی ئەرێنیە
+                    if (amount > debtor.debt) {
+                        alert(`بڕی پارەواسڵکردن نابێت لە قەرز زیاتر بێت! قەرزی ئێستا: ${debtor.debt.toLocaleString()} دینار`);
+                        return;
+                    }
+                    // ✅ **چاکسازی: کەمکردنەوەی قەرز (داین)**
+                    debtor.debt -= amount;
+                } else {
+                    // من قەرزداری شەریکم، قەرزی نەرێنیە
+                    const absDebt = Math.abs(debtor.debt);
+                    if (amount > absDebt) {
+                        alert(`بڕی پارەواسڵکردن نابێت لە قەرز زیاتر بێت! قەرزی ئێستا: ${absDebt.toLocaleString()} دینار`);
+                        return;
+                    }
+                    // ✅ **چاکسازی: زیادکردنی قەرز (من قەرزداری شەریکم کەم دەبێت)**
+                    debtor.debt += amount; // چونکە قەرز نەرێنیە (من قەرزداری ئەوانم)
                 }
-                
-                // ✅ **چاکە: کەمکردنەوەی قەرز (داین)**
-                debtor.debt -= amount;
                 
                 // زیادکردنی پارە بۆ کۆی پارەی نەقدی
                 sampleData.cashBalance += amount;
@@ -4930,12 +4628,16 @@
                     let debtor;
                     if (payment.debtorType === 'customer') {
                         debtor = sampleData.customers.find(c => c.id === payment.debtorId);
+                        if (debtor) {
+                            // کەس قەرزداری منە، قەرزی زیاد دەبێت
+                            debtor.debt += payment.amount;
+                        }
                     } else {
                         debtor = sampleData.partners.find(p => p.id === payment.debtorId);
-                    }
-                    
-                    if (debtor) {
-                        debtor.debt += payment.amount;
+                        if (debtor) {
+                            // من قەرزداری شەریکم، قەرزی کەم دەبێت
+                            debtor.debt -= payment.amount;
+                        }
                     }
                     
                     // کەمکردنەوەی پارە لە کۆی نەقدی
@@ -5046,14 +4748,22 @@
                     div.innerHTML = `
                         <div><strong>${partner.name}</strong></div>
                         <div style="font-size: 0.9rem; color: var(--gray);">
-                            ${partner.phone} | قەرزی ئێستا: ${partner.debt.toLocaleString()} دینار
+                            ${partner.phone} | قەرزی ئێستا: ${partner.debt > 0 ? 
+                                partner.debt.toLocaleString() + ' دینار (شەریک قەرزداری منە)' : 
+                                partner.debt < 0 ? 
+                                Math.abs(partner.debt).toLocaleString() + ' دینار (من قەرزداری ئەوانم)' : 
+                                'بێ قەرز'}
                         </div>
                     `;
                     
                     div.addEventListener('click', function() {
                         document.getElementById('expensePartnerSearch').value = partner.name;
                         document.getElementById('selectedPartnerName').textContent = partner.name;
-                        document.getElementById('selectedPartnerDebt').textContent = partner.debt.toLocaleString();
+                        document.getElementById('selectedPartnerDebt').textContent = partner.debt > 0 ? 
+                            partner.debt.toLocaleString() + ' دینار (شەریک قەرزداری منە)' : 
+                            partner.debt < 0 ? 
+                            Math.abs(partner.debt).toLocaleString() + ' دینار (من قەرزداری ئەوانم)' : 
+                            'بێ قەرز';
                         document.getElementById('selectedPartnerInfo').style.display = 'block';
                         document.getElementById('selectedPartnerInfo').setAttribute('data-partner-id', partner.id);
                         suggestions.style.display = 'none';
@@ -5099,14 +4809,15 @@
                     div.innerHTML = `
                         <div><strong>${customer.name}</strong></div>
                         <div style="font-size: 0.9rem; color: var(--gray);">
-                            ${customer.phone} | قەرزی ئێستا: ${customer.debt.toLocaleString()} دینار
+                            ${customer.phone} | قەرزی ئێستا: ${customer.debt > 0 ? customer.debt.toLocaleString() + ' دینار قەرز' : 'بێ قەرز'}
                         </div>
                     `;
                     
                     div.addEventListener('click', function() {
                         document.getElementById('expenseCustomerSearch').value = customer.name;
                         document.getElementById('selectedCustomerName').textContent = customer.name;
-                        document.getElementById('selectedCustomerDebt').textContent = customer.debt.toLocaleString();
+                        document.getElementById('selectedCustomerDebt').textContent = customer.debt > 0 ? 
+                            customer.debt.toLocaleString() + ' دینار قەرز' : 'بێ قەرز';
                         document.getElementById('selectedCustomerInfo').style.display = 'block';
                         document.getElementById('selectedCustomerInfo').setAttribute('data-customer-id', customer.id);
                         suggestions.style.display = 'none';
@@ -5165,9 +4876,8 @@
                     expenseData.partnerName = partner.name;
                     expenseData.description = `سەرفکردن بۆ شەریک: ${partner.name}`;
                     
-                    // کەمکردنەوەی قەرز لە شەریک
-                    partner.debt -= amount;
-                    if (partner.debt < 0) partner.debt = 0;
+                    // ✅ **چاکسازی: من قەرزداری شەریکم، قەرزی کەم دەبێت (قەرز -)**
+                    partner.debt -= amount; // چونکە قەرز نەرێنیە (من قەرزداری ئەوانم)
                     
                 } else if (expenseType === 'customer') {
                     const customerId = parseInt(document.getElementById('selectedCustomerInfo').getAttribute('data-customer-id'));
@@ -5188,7 +4898,7 @@
                     expenseData.customerName = customer.name;
                     expenseData.description = `سەرفکردن بۆ کەس: ${customer.name}`;
                     
-                    // کەمکردنەوەی قەرز لە کەس
+                    // ✅ **چاکسازی: کەمکردنەوەی قەرز (کەس قەرزداری منە، قەرزی کەم دەبێت)**
                     customer.debt -= amount;
                     if (customer.debt < 0) customer.debt = 0;
                     
@@ -5312,11 +5022,13 @@
                     if (expense.type === 'partner' && expense.partnerId) {
                         const partner = sampleData.partners.find(p => p.id === expense.partnerId);
                         if (partner) {
+                            // ✅ **چاکسازی: گەڕاندنەوەی قەرز (من قەرزداری شەریکم، قەرزی زیاد دەبێت)**
                             partner.debt += expense.amount;
                         }
                     } else if (expense.type === 'customer' && expense.customerId) {
                         const customer = sampleData.customers.find(c => c.id === expense.customerId);
                         if (customer) {
+                            // گەڕاندنەوەی قەرز (کەس قەرزداری منە، قەرزی زیاد دەبێت)
                             customer.debt += expense.amount;
                         }
                     }
@@ -5382,7 +5094,11 @@
                     div.innerHTML = `
                         <div><strong>${partner.name}</strong></div>
                         <div style="font-size: 0.9rem; color: var(--gray);">
-                            ${partner.phone} | قەرزی ئێستا: ${partner.debt.toLocaleString()} دینار
+                            ${partner.phone} | قەرزی ئێستا: ${partner.debt > 0 ? 
+                                partner.debt.toLocaleString() + ' دینار (شەریک قەرزداری منە)' : 
+                                partner.debt < 0 ? 
+                                Math.abs(partner.debt).toLocaleString() + ' دینار (من قەرزداری ئەوانم)' : 
+                                'بێ قەرز'}
                         </div>
                     `;
                     
@@ -5392,7 +5108,15 @@
                         // نیشاندانی زانیاری شەریک
                         document.getElementById('selectedPartnerNameMain').textContent = partner.name;
                         document.getElementById('selectedPartnerPhoneMain').textContent = partner.phone;
-                        document.getElementById('selectedPartnerDebtMain').textContent = partner.debt.toLocaleString();
+                        
+                        // قەرز بەپێی جۆری
+                        if (partner.debt > 0) {
+                            document.getElementById('selectedPartnerDebtMain').textContent = partner.debt.toLocaleString() + ' دینار (شەریک قەرزداری منە)';
+                        } else if (partner.debt < 0) {
+                            document.getElementById('selectedPartnerDebtMain').textContent = Math.abs(partner.debt).toLocaleString() + ' دینار (من قەرزداری ئەوانم)';
+                        } else {
+                            document.getElementById('selectedPartnerDebtMain').textContent = 'بێ قەرز';
+                        }
                         
                         // دۆزینەوەی پارەی واسڵ کراو
                         const totalPaid = sampleData.paymentHistory
@@ -5446,7 +5170,7 @@
                     div.innerHTML = `
                         <div><strong>${customer.name}</strong></div>
                         <div style="font-size: 0.9rem; color: var(--gray);">
-                            ${customer.phone} | قەرزی ئێستا: ${customer.debt.toLocaleString()} دینار
+                            ${customer.phone} | قەرزی ئێستا: ${customer.debt > 0 ? customer.debt.toLocaleString() + ' دینار قەرز' : 'بێ قەرز'}
                         </div>
                     `;
                     
@@ -5456,7 +5180,8 @@
                         // نیشاندانی زانیاری کەس
                         document.getElementById('selectedCustomerNameMain').textContent = customer.name;
                         document.getElementById('selectedCustomerPhoneMain').textContent = customer.phone;
-                        document.getElementById('selectedCustomerDebtMain').textContent = customer.debt.toLocaleString();
+                        document.getElementById('selectedCustomerDebtMain').textContent = customer.debt > 0 ? 
+                            customer.debt.toLocaleString() + ' دینار قەرز' : 'بێ قەرز';
                         
                         // دۆزینەوەی پارەی واسڵ کراو
                         const totalPaid = sampleData.paymentHistory
@@ -5477,7 +5202,7 @@
             });
         }
 
-        // ✅ **چاکسازی: تۆمارکردنی سەرفکردن بۆ شەریک (مدین - قەرزداری من زیاد دەبێت)**
+        // ✅ **چاکسازی: تۆمارکردنی سەرفکردن بۆ شەریک (من قەرزداری شەریکم، قەرزی کەم دەبێت)**
         const submitExpenseToPartnerBtn = document.getElementById('submitExpenseToPartnerBtn');
         if (submitExpenseToPartnerBtn) {
             submitExpenseToPartnerBtn.addEventListener('click', function() {
@@ -5507,8 +5232,8 @@
                     return;
                 }
                 
-                // ✅ **چاکسازی: زیادکردنی قەرز بۆ شەریک (من قەرزداری ئەوان دەبم)**
-                partner.debt += amount;
+                // ✅ **چاکسازی: من قەرزداری شەریکم، قەرزی کەم دەبێت (قەرز -)**
+                partner.debt -= amount;
                 
                 // کەمکردنەوەی پارە لە کۆی نەقدی
                 sampleData.cashBalance -= amount;
@@ -5538,7 +5263,15 @@
                     .filter(p => p.debtorId === partner.id && p.debtorType === 'partner')
                     .reduce((sum, payment) => sum + payment.amount, 0);
                 
-                document.getElementById('selectedPartnerDebtMain').textContent = partner.debt.toLocaleString();
+                // نوێکردنەوەی قەرز بەپێی جۆری
+                if (partner.debt > 0) {
+                    document.getElementById('selectedPartnerDebtMain').textContent = partner.debt.toLocaleString() + ' دینار (شەریک قەرزداری منە)';
+                } else if (partner.debt < 0) {
+                    document.getElementById('selectedPartnerDebtMain').textContent = Math.abs(partner.debt).toLocaleString() + ' دینار (من قەرزداری ئەوانم)';
+                } else {
+                    document.getElementById('selectedPartnerDebtMain').textContent = 'بێ قەرز';
+                }
+                
                 document.getElementById('selectedPartnerPaidMain').textContent = totalPaid.toLocaleString();
                 
                 // پاککردنەوەی خانەکان
@@ -5550,11 +5283,11 @@
                 updateExpenseHistoryDisplay();
                 updateExpenseHistoryMainDisplay();
                 
-                alert(`سەرفکردن بۆ شەریک بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار\nقەرزی ئێستا بۆ ${partner.name}: ${partner.debt.toLocaleString()} دینار`);
+                alert(`سەرفکردن بۆ شەریک بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
             });
         }
 
-        // ✅ **چاکسازی: تۆمارکردنی سەرفکردن بۆ کەس (مدین - قەرزداری من زیاد دەبێت)**
+        // ✅ **چاکسازی: تۆمارکردنی سەرفکردن بۆ کەس (کەس قەرزداری منە، قەرزی کەم دەبێت)**
         const submitExpenseToCustomerBtn = document.getElementById('submitExpenseToCustomerBtn');
         if (submitExpenseToCustomerBtn) {
             submitExpenseToCustomerBtn.addEventListener('click', function() {
@@ -5584,8 +5317,9 @@
                     return;
                 }
                 
-                // ✅ **چاکسازی: زیادکردنی قەرز بۆ کەس (من قەرزداری ئەوان دەبم)**
-                customer.debt += amount;
+                // ✅ **چاکسازی: کەمکردنەوەی قەرز (کەس قەرزداری منە، قەرزی کەم دەبێت)**
+                customer.debt -= amount;
+                if (customer.debt < 0) customer.debt = 0;
                 
                 // کەمکردنەوەی پارە لە کۆی نەقدی
                 sampleData.cashBalance -= amount;
@@ -5615,7 +5349,8 @@
                     .filter(p => p.debtorId === customer.id && p.debtorType === 'customer')
                     .reduce((sum, payment) => sum + payment.amount, 0);
                 
-                document.getElementById('selectedCustomerDebtMain').textContent = customer.debt.toLocaleString();
+                document.getElementById('selectedCustomerDebtMain').textContent = customer.debt > 0 ? 
+                    customer.debt.toLocaleString() + ' دینار قەرز' : 'بێ قەرز';
                 document.getElementById('selectedCustomerPaidMain').textContent = totalPaid.toLocaleString();
                 
                 // پاککردنەوەی خانەکان
@@ -5627,7 +5362,7 @@
                 updateExpenseHistoryDisplay();
                 updateExpenseHistoryMainDisplay();
                 
-                alert(`سەرفکردن بۆ کەس بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار\nقەرزی ئێستا بۆ ${customer.name}: ${customer.debt.toLocaleString()} دینار`);
+                alert(`سەرفکردن بۆ کەس بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
             });
         }
 
