@@ -1,4 +1,4 @@
-l<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -1147,6 +1147,23 @@ l<!DOCTYPE html>
             padding: 5px 10px;
             font-size: 0.8rem;
         }
+        
+        /* هێڵ بۆ textarea */
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -1338,7 +1355,7 @@ l<!DOCTYPE html>
                     
                     <div class="card card-5">
                         <div class="card-icon">
-                            <i class="fas fa-user-ow"></i>
+                            <i class="fas fa-user-friends"></i>
                         </div>
                         <h3>کۆی پارەی قەرزداران</h3>
                         <div class="card-value">٤٥٠٫٠٠٠ <span>دینار</span></div>
@@ -2399,6 +2416,11 @@ l<!DOCTYPE html>
         </div>
     </div>
 
+    <!-- مۆدالی گۆڕانکاری فاکتوور -->
+    <div class="modal" id="editInvoiceModal">
+        <!-- ئەم مۆدالە بە داینامیک لە JavaScript دروست دەکرێت -->
+    </div>
+
     <!-- هەموو JavaScript لێرە -->
     <script>
         // داتای نموونەیی بۆ سیستمەکە
@@ -2426,9 +2448,9 @@ l<!DOCTYPE html>
                 { id: 3, name: "کۆمپانیای ئێسپرێس", phone: "07733445566", address: "هەولێر", debt: 0 }
             ],
             sales: [
-                { id: 1, code: "INV-2023-001", customer: "عەلی محەممەد", date: "2023-12-10", total: 650000, payment: "credit", items: ["مۆبایلی سامسۆنگ"] },
-                { id: 2, code: "INV-2023-002", customer: "سەلام کەریم", date: "2023-12-11", total: 1500000, payment: "cash", items: ["تەلەفزیۆنی LG"] },
-                { id: 3, code: "INV-2023-003", customer: "نەوزاد عەبدوڵڵا", date: "2023-12-12", total: 950000, payment: "credit", items: ["کۆمپیوتەری ڕوومێزی"] }
+                { id: 1, code: "INV-2023-001", customer: "عەلی محەممەد", date: "2023-12-10", total: 650000, payment: "credit", items: ["مۆبایلی سامسۆنگ"], notes: "" },
+                { id: 2, code: "INV-2023-002", customer: "سەلام کەریم", date: "2023-12-11", total: 1500000, payment: "cash", items: ["تەلەفزیۆنی LG"], notes: "" },
+                { id: 3, code: "INV-2023-003", customer: "نەوزاد عەبدوڵڵا", date: "2023-12-12", total: 950000, payment: "credit", items: ["کۆمپیوتەری ڕوومێزی"], notes: "" }
             ],
             purchases: [],
             cashBalance: 3540000,
@@ -2911,33 +2933,194 @@ l<!DOCTYPE html>
                         ${invoice.payment === 'credit' ? `
                             <p><strong>قەرز:</strong> ${invoice.total.toLocaleString()} دینار</p>
                         ` : ''}
+                        ${invoice.notes ? `<p><strong>تێبینی:</strong> ${invoice.notes}</p>` : ''}
                     </div>
                 `;
             }
             
             // نیشاندانی مۆدال
             document.getElementById('invoiceDetailModal').classList.add('active');
+            
+            // پەیوەستکردنی فانکشنەکانی دوگمەکان
+            attachInvoiceModalFunctions(invoice);
         };
+
+        // پەیوەستکردنی فانکشنەکان بۆ دوگمەکانی مۆدالی فاکتوور
+        function attachInvoiceModalFunctions(invoice) {
+            // پرێنتی بچووک
+            const printInvoiceSmallDetail = document.getElementById('printInvoiceSmallDetail');
+            if (printInvoiceSmallDetail) {
+                printInvoiceSmallDetail.onclick = function() {
+                    alert(`پرێنتی بچووک بۆ فاکتووری ${invoice.code} ئامادەکرا!`);
+                };
+            }
+            
+            // پرێنتی A4
+            const printInvoiceA4Detail = document.getElementById('printInvoiceA4Detail');
+            if (printInvoiceA4Detail) {
+                printInvoiceA4Detail.onclick = function() {
+                    alert(`پرێنتی A4 بۆ فاکتووری ${invoice.code} ئامادەکرا!`);
+                };
+            }
+            
+            // سڕینەوەی فاکتوور
+            const deleteInvoiceBtn = document.getElementById('deleteInvoiceBtn');
+            if (deleteInvoiceBtn) {
+                deleteInvoiceBtn.onclick = function() {
+                    deleteInvoice(invoice.id);
+                };
+            }
+            
+            // گۆڕانکاری فاکتوور
+            const editInvoiceBtn = document.getElementById('editInvoiceBtn');
+            if (editInvoiceBtn) {
+                editInvoiceBtn.onclick = function() {
+                    showEditInvoiceModal(invoice);
+                };
+            }
+        }
 
         // فانکشنی سڕینەوەی فاکتوور
         window.deleteInvoice = function(invoiceId) {
             if (confirm('دڵنیای لە سڕینەوەی ئەم فاکتوورە؟')) {
                 const index = sampleData.sales.findIndex(s => s.id === invoiceId);
                 if (index !== -1) {
-                    sampleData.sales.splice(index, 1);
-                    alert('فاکتوورەکە بە سەرکەوتوویی سڕایەوە!');
+                    const invoice = sampleData.sales[index];
                     
-                    // نوێکردنەوەی نیشاندانەکان
-                    if (document.getElementById('customerModal').classList.contains('active')) {
-                        const customerId = parseInt(document.querySelector('#customerModal [data-customer-id]')?.getAttribute('data-customer-id') || 0);
-                        if (customerId) {
-                            viewCustomerDetails(customerId);
+                    // گەڕاندنەوەی پارە ئەگەر فرۆشتن بە نەقدی بوو
+                    if (invoice.payment === 'cash') {
+                        sampleData.cashBalance -= invoice.total;
+                        updateDashboardCash();
+                    } else if (invoice.payment === 'credit') {
+                        // گەڕاندنەوەی قەرز
+                        const customer = sampleData.customers.find(c => c.name === invoice.customer);
+                        if (customer) {
+                            customer.debt -= invoice.total;
+                            if (customer.debt < 0) customer.debt = 0;
                         }
                     }
                     
+                    // گەڕاندنەوەی کاڵاکان بۆ مخزن
+                    invoice.items.forEach(itemName => {
+                        const product = sampleData.products.find(p => p.name === itemName);
+                        if (product) {
+                            product.stock += 1;
+                        }
+                    });
+                    
+                    sampleData.sales.splice(index, 1);
+                    alert('فاکتوورەکە بە سەرکەوتوویی سڕایەوە!');
+                    
+                    // داخستنی مۆدال
+                    document.getElementById('invoiceDetailModal').classList.remove('active');
+                    
+                    // نوێکردنەوەی داشبۆرد
                     populateSampleData();
                 }
             }
+        };
+
+        // مۆدالی گۆڕانکاری فاکتوور
+        window.showEditInvoiceModal = function(invoice) {
+            // داخستنی مۆدالی بینین
+            document.getElementById('invoiceDetailModal').classList.remove('active');
+            
+            // چەک کردنی ئەگەر مۆدالێکی پێشوو هەبێت
+            const existingModal = document.getElementById('editInvoiceModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            const modalHTML = `
+                <div class="modal active" id="editInvoiceModal">
+                    <div class="modal-content" style="max-width: 700px;">
+                        <div class="modal-header">
+                            <h3>گۆڕانکاری فاکتوور: ${invoice.code}</h3>
+                            <button class="modal-close" onclick="document.getElementById('editInvoiceModal').remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="item-form">
+                                <h4>گۆڕانکاری زانیاری فاکتوور</h4>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="editInvoiceCustomer">کڕیار</label>
+                                        <input type="text" id="editInvoiceCustomer" value="${invoice.customer}" placeholder="ناوی کڕیار">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="editInvoiceDate">بەروار</label>
+                                        <input type="date" id="editInvoiceDate" value="${invoice.date}">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="editInvoicePayment">شێوازی پارەدان</label>
+                                        <select id="editInvoicePayment">
+                                            <option value="cash" ${invoice.payment === 'cash' ? 'selected' : ''}>نەقدی</option>
+                                            <option value="credit" ${invoice.payment === 'credit' ? 'selected' : ''}>قەرز</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="editInvoiceTotal">کۆی گشتی</label>
+                                        <input type="number" id="editInvoiceTotal" value="${invoice.total}" placeholder="کۆی گشتی">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="editInvoiceNotes">تێبینی</label>
+                                    <textarea id="editInvoiceNotes" rows="3" placeholder="تێبینی">${invoice.notes || ''}</textarea>
+                                </div>
+                                
+                                <div class="action-buttons">
+                                    <button class="btn btn-danger" onclick="document.getElementById('editInvoiceModal').remove()">
+                                        پاشگەزبوونەوە
+                                    </button>
+                                    <button class="btn btn-success" onclick="saveInvoiceChanges(${invoice.id})">
+                                        هەڵگرتنی گۆڕانکاریەکان
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        };
+
+        // فانکشنی هەڵگرتنی گۆڕانکاریەکان
+        window.saveInvoiceChanges = function(invoiceId) {
+            const invoiceIndex = sampleData.sales.findIndex(s => s.id === invoiceId);
+            if (invoiceIndex === -1) return;
+            
+            const customer = document.getElementById('editInvoiceCustomer').value;
+            const date = document.getElementById('editInvoiceDate').value;
+            const payment = document.getElementById('editInvoicePayment').value;
+            const total = parseInt(document.getElementById('editInvoiceTotal').value) || 0;
+            const notes = document.getElementById('editInvoiceNotes').value;
+            
+            if (!customer || !date || total <= 0) {
+                alert('تکایە هەموو خانە پڕەکان پڕ بکەرەوە!');
+                return;
+            }
+            
+            // نوێکردنەوەی فاکتوور
+            sampleData.sales[invoiceIndex].customer = customer;
+            sampleData.sales[invoiceIndex].date = date;
+            sampleData.sales[invoiceIndex].payment = payment;
+            sampleData.sales[invoiceIndex].total = total;
+            sampleData.sales[invoiceIndex].notes = notes;
+            
+            document.getElementById('editInvoiceModal').remove();
+            alert('گۆڕانکاریەکان بە سەرکەوتوویی هەڵگیرا!');
+            
+            // نوێکردنەوەی نیشاندانەکان
+            populateSampleData();
         };
 
         // نەخشەی مێنیو
@@ -3367,7 +3550,8 @@ l<!DOCTYPE html>
                     date: new Date().toISOString().split('T')[0],
                     total: total,
                     payment: selectedPayment,
-                    items: cart.map(item => item.name)
+                    items: cart.map(item => item.name),
+                    notes: ""
                 };
                 
                 sampleData.sales.unshift(newSale);
