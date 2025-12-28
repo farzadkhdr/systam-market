@@ -1,4 +1,4 @@
-l<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -2691,7 +2691,23 @@ l<!DOCTYPE html>
                                 ${sale.date} - ${sale.payment === 'cash' ? 'نەقدی' : 'قەرز'}
                             </div>
                         </div>
-                        <div class="item-value">${sale.total.toLocaleString()} دینار</div>
+                        <div>
+                            <div class="item-value">${sale.total.toLocaleString()} دینار</div>
+                            <div style="margin-top: 10px; display: flex; gap: 5px;">
+                                <button class="btn btn-info btn-sm" onclick="viewSaleInvoiceDetails(${sale.id})">
+                                    <i class="fas fa-eye"></i> بینین
+                                </button>
+                                <button class="btn btn-warning btn-sm" onclick="printInvoiceSmall('${sale.code}')">
+                                    <i class="fas fa-print"></i> بچووک
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="printInvoiceA4('${sale.code}')">
+                                    <i class="fas fa-print"></i> A4
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteSaleInvoice(${sale.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                     `;
                     saleHistoryList.appendChild(li);
                 });
@@ -2777,7 +2793,7 @@ l<!DOCTYPE html>
             updateExpenseHistoryMainDisplay();
         }
 
-        // فانکشنی بینینی وردەکارییەکانی کەس
+        // فەنکشنی بینینی وردەکارییەکانی کەس
         window.viewCustomerDetails = function(customerId) {
             const customer = sampleData.customers.find(c => c.id === customerId);
             if (!customer) return;
@@ -2841,7 +2857,156 @@ l<!DOCTYPE html>
             document.getElementById('customerModal').classList.add('active');
         };
 
-        // فانکشنی بینینی وردەکاری فاکتوور
+        // فەنکشنی بینینی فاکتووری فرۆشتن
+        window.viewSaleInvoiceDetails = function(saleId) {
+            const sale = sampleData.sales.find(s => s.id === saleId);
+            if (!sale) return;
+            
+            // چاک کردنی ئەگەر مۆدالێکی پێشوو هەبێت
+            const existingModal = document.getElementById('saleInvoiceDetailModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            const customer = sampleData.customers.find(c => c.name === sale.customer);
+            const items = sale.items.map(itemName => {
+                const product = sampleData.products.find(p => p.name === itemName);
+                return {
+                    name: itemName,
+                    price: product ? product.salePrice : 0
+                };
+            });
+            
+            const modalHTML = `
+                <div class="modal active" id="saleInvoiceDetailModal">
+                    <div class="modal-content" style="max-width: 1000px;">
+                        <div class="modal-header">
+                            <h3>فاکتووری فرۆشتن: ${sale.code}</h3>
+                            <button class="modal-close" onclick="document.getElementById('saleInvoiceDetailModal').remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="invoice">
+                                <div class="invoice-header">
+                                    <div class="invoice-logo">الکترۆنیات</div>
+                                    <h2>فاکتووری فرۆشتن</h2>
+                                    <p>کۆدی فاکتوورە: ${sale.code}</p>
+                                    <p>بەروار: ${sale.date}</p>
+                                </div>
+                                
+                                <div class="invoice-details">
+                                    <div>
+                                        <h4>زانیاری فرۆشەر:</h4>
+                                        <p>ناوی سیستەم: الکترۆنیات</p>
+                                        <p>ژمارەی موبایل: ٠٧٧٠١٢٣٤٥٦٧</p>
+                                        <p>ناونیشان: هەولێر، کوردستان</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4>زانیاری کڕیار:</h4>
+                                        <p>ناوی کڕیار: ${sale.customer}</p>
+                                        <p>ژمارەی موبایل: ${customer ? customer.phone : 'نەزانراو'}</p>
+                                        <p>ناونیشان: ${customer ? customer.address : 'نەزانراو'}</p>
+                                    </div>
+                                </div>
+                                
+                                <table class="invoice-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>ناوی کاڵا</th>
+                                            <th>بڕ</th>
+                                            <th>نرخ</th>
+                                            <th>کۆی گشتی</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${items.map((item, index) => `
+                                            <tr>
+                                                <td>${index + 1}</td>
+                                                <td>${item.name}</td>
+                                                <td>١</td>
+                                                <td>${item.price.toLocaleString()} دینار</td>
+                                                <td>${item.price.toLocaleString()} دینار</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                                
+                                <div class="invoice-total">
+                                    <p><strong>کۆی گشتی:</strong> ${sale.total.toLocaleString()} دینار</p>
+                                    <p><strong>شێوازی پارەدان:</strong> ${sale.payment === 'cash' ? 'نەقدی' : 'قەرز'}</p>
+                                    ${sale.payment === 'credit' ? `
+                                        <p><strong>قەرز:</strong> ${sale.total.toLocaleString()} دینار</p>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            
+                            <div class="print-options" style="margin-top: 30px;">
+                                <button class="btn btn-warning" onclick="printInvoiceSmall('${sale.code}')">
+                                    <i class="fas fa-print"></i> پرێنتی بچووک
+                                </button>
+                                <button class="btn btn-primary" onclick="printInvoiceA4('${sale.code}')">
+                                    <i class="fas fa-print"></i> پرێنتی A4
+                                </button>
+                                <button class="btn btn-danger" onclick="document.getElementById('saleInvoiceDetailModal').remove()">
+                                    <i class="fas fa-times"></i> داخستن
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        };
+
+        // فەنکشنی پرێنتکردن بە دوو جۆر
+        window.printInvoiceSmall = function(invoiceCode) {
+            alert(`پرێنتی بچووک بۆ فاکتووری ${invoiceCode} ئامادەکرا!\n\nلە وەشانی راستەقینەدا فاکتوورەکە بە شێوازی ٨٠mm پرێنت دەکرێت.`);
+        };
+
+        window.printInvoiceA4 = function(invoiceCode) {
+            alert(`پرێنتی A4 بۆ فاکتووری ${invoiceCode} ئامادەکرا!\n\nلە وەشانی راستەقینەدا فاکتوورەکە بە شێوازی A4 پرێنت دەکرێت.`);
+        };
+
+        // فەنکشنی سڕینەوەی فاکتووری فرۆشتن
+        window.deleteSaleInvoice = function(saleId) {
+            if (confirm('دڵنیای لە سڕینەوەی ئەم فاکتوورەی فرۆشتن؟')) {
+                const index = sampleData.sales.findIndex(s => s.id === saleId);
+                if (index !== -1) {
+                    const sale = sampleData.sales[index];
+                    
+                    // گەڕاندنەوەی پارە ئەگەر فرۆشتن بە نەقدی بوو
+                    if (sale.payment === 'cash') {
+                        sampleData.cashBalance -= sale.total;
+                        updateDashboardCash();
+                    } else if (sale.payment === 'credit') {
+                        // گەڕاندنەوەی قەرز
+                        const customer = sampleData.customers.find(c => c.name === sale.customer);
+                        if (customer) {
+                            customer.debt -= sale.total;
+                            if (customer.debt < 0) customer.debt = 0;
+                        }
+                    }
+                    
+                    // گەڕاندنەوەی کاڵاکان بۆ مخزن
+                    sale.items.forEach(itemName => {
+                        const product = sampleData.products.find(p => p.name === itemName);
+                        if (product) {
+                            product.stock += 1; // هەر کاڵایەک یەک دانە زیاد دەبێت
+                        }
+                    });
+                    
+                    sampleData.sales.splice(index, 1);
+                    populateSampleData();
+                    alert('فاکتووری فرۆشتن بە سەرکەوتوویی سڕایەوە!');
+                }
+            }
+        };
+
+        // فەنکشنی بینینی وردەکاری فاکتوور
         window.viewInvoiceDetails = function(invoiceId) {
             const invoice = sampleData.sales.find(s => s.id === invoiceId);
             if (!invoice) return;
@@ -2853,6 +3018,13 @@ l<!DOCTYPE html>
             const invoiceDetailContent = document.getElementById('invoiceDetailContent');
             if (invoiceDetailContent) {
                 const customer = sampleData.customers.find(c => c.name === invoice.customer);
+                const items = invoice.items.map(itemName => {
+                    const product = sampleData.products.find(p => p.name === itemName);
+                    return {
+                        name: itemName,
+                        price: product ? product.salePrice : 0
+                    };
+                });
                 
                 invoiceDetailContent.innerHTML = `
                     <div class="invoice-header">
@@ -2889,19 +3061,15 @@ l<!DOCTYPE html>
                             </tr>
                         </thead>
                         <tbody>
-                            ${invoice.items.map((item, index) => {
-                                const product = sampleData.products.find(p => p.name === item);
-                                const price = product ? product.salePrice : 0;
-                                return `
-                                    <tr>
-                                        <td>${index + 1}</td>
-                                        <td>${item}</td>
-                                        <td>١</td>
-                                        <td>${price.toLocaleString()} دینار</td>
-                                        <td>${price.toLocaleString()} دینار</td>
-                                    </tr>
-                                `;
-                            }).join('')}
+                            ${items.map((item, index) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${item.name}</td>
+                                    <td>١</td>
+                                    <td>${item.price.toLocaleString()} دینار</td>
+                                    <td>${item.price.toLocaleString()} دینار</td>
+                                </tr>
+                            `).join('')}
                         </tbody>
                     </table>
                     
@@ -2919,7 +3087,7 @@ l<!DOCTYPE html>
             document.getElementById('invoiceDetailModal').classList.add('active');
         };
 
-        // فانکشنی سڕینەوەی فاکتوور
+        // فەنکشنی سڕینەوەی فاکتوور
         window.deleteInvoice = function(invoiceId) {
             if (confirm('دڵنیای لە سڕینەوەی ئەم فاکتوورە؟')) {
                 const index = sampleData.sales.findIndex(s => s.id === invoiceId);
@@ -3589,6 +3757,24 @@ l<!DOCTYPE html>
             refreshSaleHistoryBtn.addEventListener('click', function() {
                 populateSampleData();
                 alert('مێژووی فرۆشتن نوێ کرایەوە!');
+            });
+        }
+
+        // گەڕان لە مێژووی فرۆشتن
+        const saleHistorySearch = document.getElementById('saleHistorySearch');
+        if (saleHistorySearch) {
+            saleHistorySearch.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                const items = document.querySelectorAll('#saleHistoryList .list-item');
+                
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
             });
         }
 
@@ -4308,7 +4494,13 @@ l<!DOCTYPE html>
                         <div class="item-value">${purchase.total.toLocaleString()} دینار</div>
                         <div style="margin-top: 10px; display: flex; gap: 5px;">
                             <button class="btn btn-info btn-sm" onclick="viewPurchaseDetails(${purchase.id})">
-                                <i class="fas fa-eye"></i>
+                                <i class="fas fa-eye"></i> بینین
+                            </button>
+                            <button class="btn btn-warning btn-sm" onclick="printInvoiceSmall('${purchase.code}')">
+                                <i class="fas fa-print"></i> بچووک
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="printInvoiceA4('${purchase.code}')">
+                                <i class="fas fa-print"></i> A4
                             </button>
                             <button class="btn btn-danger btn-sm" onclick="deletePurchase(${purchase.id})">
                                 <i class="fas fa-trash"></i>
@@ -4320,12 +4512,30 @@ l<!DOCTYPE html>
             });
         }
 
+        // گەڕان لە مێژووی کڕین
+        const purchaseHistorySearch = document.getElementById('purchaseHistorySearch');
+        if (purchaseHistorySearch) {
+            purchaseHistorySearch.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                const items = document.querySelectorAll('#purchaseHistoryList .list-item');
+                
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+
         // بینینی وردەکارییەکانی کڕین
         window.viewPurchaseDetails = function(purchaseId) {
             const purchase = samplePurchaseData.purchases.find(p => p.id === purchaseId);
             if (!purchase) return;
             
-            // چەک کردنی ئەگەر مۆدالێکی پێشوو هەبێت
+            // چاک کردنی ئەگەر مۆدالێکی پێشوو هەبێت
             const existingModal = document.getElementById('purchaseDetailModal');
             if (existingModal) {
                 existingModal.remove();
@@ -4333,7 +4543,7 @@ l<!DOCTYPE html>
             
             const modalHTML = `
                 <div class="modal active" id="purchaseDetailModal">
-                    <div class="modal-content" style="max-width: 800px;">
+                    <div class="modal-content" style="max-width: 1000px;">
                         <div class="modal-header">
                             <h3>فاکتووری کڕین: ${purchase.code}</h3>
                             <button class="modal-close" onclick="document.getElementById('purchaseDetailModal').remove()">
@@ -4393,8 +4603,11 @@ l<!DOCTYPE html>
                             </div>
                             
                             <div class="print-options" style="margin-top: 30px;">
-                                <button class="btn btn-warning" onclick="printPurchase(${purchase.id})">
-                                    <i class="fas fa-print"></i> پرێنت کردن
+                                <button class="btn btn-warning" onclick="printInvoiceSmall('${purchase.code}')">
+                                    <i class="fas fa-print"></i> پرێنتی بچووک
+                                </button>
+                                <button class="btn btn-primary" onclick="printInvoiceA4('${purchase.code}')">
+                                    <i class="fas fa-print"></i> پرێنتی A4
                                 </button>
                                 <button class="btn btn-danger" onclick="document.getElementById('purchaseDetailModal').remove()">
                                     <i class="fas fa-times"></i> داخستن
