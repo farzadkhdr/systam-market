@@ -37,7 +37,6 @@
             min-height: 100vh;
             direction: rtl;
             overflow-x: hidden;
-            height: 100vh;
         }
         
         /* شێوازی پەڕەی چوونەژوورەوە */
@@ -223,9 +222,9 @@
         
         /* شێوازی پەڕەی سەرەکی */
         .container {
-            display: flex;
-            min-height: 100vh;
             display: none; /* شاردراوە بۆ دەستپێک */
+            min-height: 100vh;
+            flex-direction: column;
         }
         
         /* بارەگەی لای چەپ - مێنیو */
@@ -1147,47 +1146,70 @@
             padding: 5px 10px;
             font-size: 0.8rem;
         }
+        
+        /* ئێررۆر مێسێج */
+        .error-message {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .input-group.error input {
+            border-color: var(--danger);
+        }
     </style>
 </head>
 <body>
     <!-- پەڕەی چوونەژوورەوە -->
-    <div id="loginPage" class="login-container">
-        <div class="login-box">
-            <div class="login-header">
-                <div class="logo">الکترۆنیات</div>
-                <h2>سیستەمی فرۆشتی ئەلکترۆنیات</h2>
-                <p>تکایە ناوی بەکارهێنەر و وشەی نهێنی داخڵ بکە</p>
-            </div>
-            
-            <form id="loginForm" class="login-form">
-                <div class="input-group">
-                    <label for="username"><i class="fas fa-user"></i> ناوی بەکارهێنەر</label>
-                    <input type="text" id="username" placeholder="ناوی بەکارهێنەر" value="farzad">
+    <div id="loginPage">
+        <div class="login-container">
+            <div class="login-box">
+                <div class="login-header">
+                    <div class="logo">الکترۆنیات</div>
+                    <h2>سیستەمی فرۆشتی ئەلکترۆنیات</h2>
+                    <p>تکایە ناوی بەکارهێنەر و وشەی نهێنی داخڵ بکە</p>
                 </div>
                 
-                <div class="input-group">
-                    <label for="password"><i class="fas fa-lock"></i> وشەی نهێنی</label>
-                    <input type="password" id="password" placeholder="وشەی نهێنی" value="farzad1234">
-                </div>
+                <form id="loginForm" class="login-form">
+                    <div class="input-group">
+                        <label for="username"><i class="fas fa-user"></i> ناوی بەکارهێنەر</label>
+                        <input type="text" id="username" placeholder="ناوی بەکارهێنەر">
+                        <div class="error-message" id="usernameError">تکایە ناوی بەکارهێنەر داخڵ بکە</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="password"><i class="fas fa-lock"></i> وشەی نهێنی</label>
+                        <input type="password" id="password" placeholder="وشەی نهێنی">
+                        <div class="error-message" id="passwordError">تکایە وشەی نهێنی داخڵ بکە</div>
+                    </div>
+                    
+                    <div class="input-group remember">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">لەبیرم مەکە</label>
+                    </div>
+                    
+                    <button type="submit" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i> چوونەژوورەوە
+                    </button>
+                    
+                    <div class="login-footer">
+                        <p>وشەی نهێنیت لەبیرچووە؟ <a href="#" id="forgotPassword">کلیک لێرە بکە</a></p>
+                        <p style="margin-top: 10px; font-size: 0.8rem; color: var(--gray);">
+                            ناو: farzad یان admin | وشەی نهێنی: farzad1234 یان admin123
+                        </p>
+                    </div>
+                </form>
                 
-                <div class="input-group remember">
-                    <input type="checkbox" id="remember" checked>
-                    <label for="remember">لەبیرم مەکە</label>
+                <div class="login-animation">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
                 </div>
-                
-                <button type="submit" class="login-btn">
-                    <i class="fas fa-sign-in-alt"></i> چوونەژوورەوە
-                </button>
-                
-                <div class="login-footer">
-                    <p>وشەی نهێنیت لەبیرچووە؟ <a href="#">کلیک لێرە بکە</a></p>
-                </div>
-            </form>
-            
-            <div class="login-animation">
-                <div class="circle"></div>
-                <div class="circle"></div>
-                <div class="circle"></div>
             </div>
         </div>
     </div>
@@ -1430,7 +1452,7 @@
                             </ul>
                             
                             <div class="payment-options">
-                                <div class="payment-option" data-payment="cash">
+                                <div class="payment-option selected" data-payment="cash">
                                     <i class="fas fa-money-bill-wave fa-2x"></i>
                                     <h4>نەقدی</h4>
                                     <p>پارەی رەت</p>
@@ -1516,7 +1538,7 @@
                             </ul>
                             
                             <div class="payment-options">
-                                <div class="payment-option" data-payment="cash">
+                                <div class="payment-option selected" data-payment="cash">
                                     <i class="fas fa-money-bill-wave fa-2x"></i>
                                     <h4>نەقدی</h4>
                                     <p>پارەی رەت</p>
@@ -1707,7 +1729,7 @@
                                     
                                     <div class="form-group">
                                         <label for="paymentDateInput">بەروار</label>
-                                        <input type="date" id="paymentDateInput" value="${new Date().toISOString().split('T')[0]}">
+                                        <input type="date" id="paymentDateInput">
                                     </div>
                                     
                                     <div class="form-group">
@@ -1755,7 +1777,7 @@
                                 
                                 <div class="form-group">
                                     <label for="expenseDate">بەروار</label>
-                                    <input type="date" id="expenseDate" value="${new Date().toISOString().split('T')[0]}">
+                                    <input type="date" id="expenseDate">
                                 </div>
                             </div>
                             
@@ -1903,7 +1925,7 @@
                                 
                                 <div class="form-group">
                                     <label for="expenseToPartnerDate">بەرواری سەرفکردن</label>
-                                    <input type="date" id="expenseToPartnerDate" value="${new Date().toISOString().split('T')[0]}">
+                                    <input type="date" id="expenseToPartnerDate">
                                 </div>
                                 
                                 <div class="form-group">
@@ -1955,7 +1977,7 @@
                                 
                                 <div class="form-group">
                                     <label for="expenseToCustomerDate">بەرواری سەرفکردن</label>
-                                    <input type="date" id="expenseToCustomerDate" value="${new Date().toISOString().split('T')[0]}">
+                                    <input type="date" id="expenseToCustomerDate">
                                 </div>
                                 
                                 <div class="form-group">
@@ -1985,7 +2007,7 @@
                                 
                                 <div class="form-group">
                                     <label for="otherExpenseDate">بەرواری سەرفکردن</label>
-                                    <input type="date" id="otherExpenseDate" value="${new Date().toISOString().split('T')[0]}">
+                                    <input type="date" id="otherExpenseDate">
                                 </div>
                             </div>
                             
@@ -2451,40 +2473,79 @@
         let selectedPayment = "cash";
         let selectedCustomer = null;
 
-        // کۆدی چوونەژوورەوە - چاکسازیکراو
+        // فەنکشنی چێک کردنی چوونەژوورەوە
+        function validateLogin(username, password) {
+            // پاککردنەوەی ئێررۆرە پێشووەکان
+            document.getElementById('usernameError').classList.remove('show');
+            document.getElementById('passwordError').classList.remove('show');
+            document.getElementById('username').parentElement.classList.remove('error');
+            document.getElementById('password').parentElement.classList.remove('error');
+            
+            let isValid = true;
+            
+            // چێکی کردنی ناوی بەکارهێنەر
+            if (!username) {
+                document.getElementById('usernameError').classList.add('show');
+                document.getElementById('username').parentElement.classList.add('error');
+                isValid = false;
+            }
+            
+            // چێکی کردنی وشەی نهێنی
+            if (!password) {
+                document.getElementById('passwordError').classList.add('show');
+                document.getElementById('password').parentElement.classList.add('error');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                return false;
+            }
+            
+            // چێکی کردنی ناوی بەکارهێنەر و وشەی نهێنی
+            if ((username === 'farzad' && password === 'farzad1234') || (username === 'admin' && password === 'admin123')) {
+                return true;
+            } else {
+                alert('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە!\n\nتێبینی:\nناوی بەکارهێنەر: farzad، وشەی نهێنی: farzad1234\nیان\nناوی بەکارهێنەر: admin، وشەی نهێنی: admin123');
+                return false;
+            }
+        }
+
+        // چاکسازی: کۆدی چوونەژوورەوە
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
             
-            // چێکی کردنی ناوی بەکارهێنەر و وشەی نهێنی
-            if (username && password) {
-                // چاکسازی: فەرزاد یان admin دەتوانن بچنە ژوورەوە
-                if ((username === 'farzad' && password === 'farzad1234') || (username === 'admin' && password === 'admin123')) {
-                    currentUser = username;
-                    
-                    // نیشاندانی پەڕەی سەرەکی و شاردنەوەی پەڕەی چوونەژوورەوە
-                    document.getElementById('loginPage').style.display = 'none';
-                    document.getElementById('mainPage').style.display = 'flex';
-                    
-                    // زیادکردنی ناوی بەکارهێنەر
-                    document.getElementById('currentUser').textContent = username === 'farzad' ? 'فەرزاد' : 'ئەدمین';
-                    
-                    // زیادکردنی داتای نموونەیی
-                    populateSampleData();
-                    
-                    // چالاککردنی داشبۆرد وەک یەکەم بەش
-                    showSection('dashboard');
-                } else {
-                    alert('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە! تکایە دووبارە هەوڵ بدەرەوە.\n\nتێبینی:\nناوی بەکارهێنەر: farzad، وشەی نهێنی: farzad1234\nیان\nناوی بەکارهێنەر: admin، وشەی نهێنی: admin123');
-                }
-            } else {
-                alert('تکایە هەردوو خانە پڕ بکەرەوە!');
+            // چێکی کردنی چوونەژوورەوە
+            if (validateLogin(username, password)) {
+                currentUser = username;
+                
+                // نیشاندانی پەڕەی سەرەکی و شاردنەوەی پەڕەی چوونەژوورەوە
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainPage').style.display = 'flex';
+                
+                // زیادکردنی ناوی بەکارهێنەر
+                document.getElementById('currentUser').textContent = username === 'farzad' ? 'فەرزاد' : 'ئەدمین';
+                
+                // زیادکردنی داتای نموونەیی
+                populateSampleData();
+                
+                // چالاککردنی داشبۆرد وەک یەکەم بەش
+                showSection('dashboard');
+                
+                // دانانی بەرواری ئەمرۆ بۆ هەموو فیلدەکانی بەروار
+                const today = new Date().toISOString().split('T')[0];
+                const dateFields = document.querySelectorAll('input[type="date"]');
+                dateFields.forEach(field => {
+                    if (!field.value) {
+                        field.value = today;
+                    }
+                });
             }
         });
 
-        // فانکشنی نیشاندانی بەش
+        // فەنکشنی نیشاندانی بەش
         function showSection(sectionId) {
             // لابردنی چالاکی لە هەموو بەشەکان
             document.querySelectorAll('.content-section').forEach(section => {
@@ -2516,35 +2577,43 @@
 
         // چوونەدەرەوە
         document.getElementById('logoutBtn').addEventListener('click', function() {
-            currentUser = null;
-            cart = [];
-            purchaseCart = [];
-            selectedCustomer = null;
-            selectedPayment = "cash";
-            
-            document.getElementById('mainPage').style.display = 'none';
-            document.getElementById('loginPage').style.display = 'flex';
-            
-            // پاککردنەوەی خانەکانی چوونەژوورەوە
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            
-            // پاککردنەوەی سەبەتە
-            updateCartDisplay();
-            updatePurchaseCartDisplay();
-            
-            // پاککردنەوەی هەڵبژاردنەکانی پارەدان
-            document.querySelectorAll('.payment-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            document.querySelector('.payment-option[data-payment="cash"]').classList.add('selected');
-            document.getElementById('customerSelection').style.display = 'none';
-            document.getElementById('partnerSelection').style.display = 'none';
-            if (document.getElementById('customerSearch')) {
-                document.getElementById('customerSearch').value = '';
-            }
-            if (document.getElementById('partnerSearchPurchase')) {
-                document.getElementById('partnerSearchPurchase').value = '';
+            if (confirm('دڵنیای لە چوونەدەرەوە؟')) {
+                currentUser = null;
+                cart = [];
+                purchaseCart = [];
+                selectedCustomer = null;
+                selectedPayment = "cash";
+                
+                document.getElementById('mainPage').style.display = 'none';
+                document.getElementById('loginPage').style.display = 'flex';
+                
+                // پاککردنەوەی خانەکانی چوونەژوورەوە
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                
+                // پاککردنەوەی سەبەتە
+                updateCartDisplay();
+                updatePurchaseCartDisplay();
+                
+                // پاککردنەوەی هەڵبژاردنەکانی پارەدان
+                document.querySelectorAll('.payment-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                document.querySelector('.payment-option[data-payment="cash"]').classList.add('selected');
+                document.getElementById('customerSelection').style.display = 'none';
+                document.getElementById('partnerSelection').style.display = 'none';
+                if (document.getElementById('customerSearch')) {
+                    document.getElementById('customerSearch').value = '';
+                }
+                if (document.getElementById('partnerSearchPurchase')) {
+                    document.getElementById('partnerSearchPurchase').value = '';
+                }
+                
+                // پاککردنەوەی ئێررۆرەکان
+                document.getElementById('usernameError').classList.remove('show');
+                document.getElementById('passwordError').classList.remove('show');
+                document.getElementById('username').parentElement.classList.remove('error');
+                document.getElementById('password').parentElement.classList.remove('error');
             }
         });
 
@@ -5877,6 +5946,16 @@
 
         // دەستپێکردنی سیستم
         window.addEventListener('load', function() {
+            // دانانی بەرواری ئەمرۆ بۆ هەموو فیلدەکانی بەروار
+            const today = new Date().toISOString().split('T')[0];
+            const dateFields = document.querySelectorAll('input[type="date"]');
+            dateFields.forEach(field => {
+                if (!field.value) {
+                    field.value = today;
+                }
+            });
+            
+            // دەستپێکردنی تایبەتمەندیەکان
             const firstNavLink = document.querySelector('.nav-link[data-section="dashboard"]');
             if (firstNavLink) {
                 firstNavLink.classList.add('active');
@@ -5907,11 +5986,6 @@
                 firstInventoryTab.classList.add('active');
             }
             
-            const firstPaymentOption = document.querySelector('.payment-option[data-payment="cash"]');
-            if (firstPaymentOption) {
-                firstPaymentOption.classList.add('selected');
-            }
-            
             const firstCustomerTab = document.querySelector('.tab-btn[data-tab="customersList"]');
             if (firstCustomerTab) {
                 firstCustomerTab.classList.add('active');
@@ -5928,15 +6002,6 @@
                 document.getElementById('expenseOtherSection').style.display = 'block';
             }
             
-            // دەستپێکردنی بەرواری ئەمرۆ
-            const today = new Date().toISOString().split('T')[0];
-            if (document.getElementById('paymentDateInput')) {
-                document.getElementById('paymentDateInput').value = today;
-            }
-            if (document.getElementById('expenseDate')) {
-                document.getElementById('expenseDate').value = today;
-            }
-            
             updateCartDisplay();
             updatePurchaseCartDisplay();
             updateDashboardCash();
@@ -5944,6 +6009,12 @@
             updateExpenseHistoryDisplay();
             updateExpenseHistoryMainDisplay();
             calculateMonthlyExpense();
+        });
+
+        // فەرمانی یارمەتی وشەی نهێنی
+        document.getElementById('forgotPassword').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('یارمەتی وشەی نهێنی:\n\nناوی بەکارهێنەر: farzad یان admin\nوشەی نهێنی: farzad1234 یان admin123');
         });
     </script>
 </body>
