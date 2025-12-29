@@ -2296,7 +2296,7 @@
                         <button class="btn btn-danger" id="deleteCustomerBtn">
                             <i class="fas fa-trash"></i> سڕینەوەی کەس
                         </button>
-                        <button class="btn btn-warning" id="printCustomerInfo">
+                        <button class="btn btn-warning" id="printCustomerInfo" onclick="printCustomerInfo()">
                             <i class="fas fa-print"></i> پرێنتکردنی زانیاری
                         </button>
                         <button class="btn btn-success" id="saveCustomerChanges">
@@ -2451,7 +2451,7 @@
         let selectedPayment = "cash";
         let selectedCustomer = null;
 
-        // کۆدی چوونەژوورەوە - چاکسازیکراو
+        // کۆدی چوونەژوورەوە
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -2484,7 +2484,7 @@
             }
         });
 
-        // فانکشنی نیشاندانی بەش
+        // فەنکشنی نیشاندانی بەش
         function showSection(sectionId) {
             // لابردنی چالاکی لە هەموو بەشەکان
             document.querySelectorAll('.content-section').forEach(section => {
@@ -2962,13 +2962,329 @@
             document.body.insertAdjacentHTML('beforeend', modalHTML);
         };
 
-        // فەنکشنی پرێنتکردن بە دوو جۆر
-        window.printInvoiceSmall = function(invoiceCode) {
-            alert(`پرێنتی بچووک بۆ فاکتووری ${invoiceCode} ئامادەکرا!\n\nلە وەشانی راستەقینەدا فاکتوورەکە بە شێوازی ٨٠mm پرێنت دەکرێت.`);
+        // ==============================================
+        // فەنکشنەکانی نوێ بۆ پرێنتکردن
+        // ==============================================
+
+        // فەنکشنی پرێنتکردنی ڕاستەقینە
+        window.printRealInvoice = function(invoiceCode, size = 'small') {
+            // دۆزینەوەی مۆدالی پرێنت
+            const printModal = document.getElementById('printModal');
+            if (!printModal) {
+                alert('مۆدالی پرێنت نەدۆزرایەوە!');
+                return;
+            }
+            
+            // دۆزینەوەی بەشەی فاکتوور
+            const invoiceContent = printModal.querySelector('.invoice');
+            if (!invoiceContent) {
+                alert('بەشی فاکتوور نەدۆزرایەوە!');
+                return;
+            }
+            
+            // دروستکردنی پەڕەی نوێ بۆ پرێنت
+            const printWindow = window.open('', '_blank');
+            
+            // دروستکردنی HTML بۆ پرێنت
+            const printHTML = `
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>فاکتووری فرۆشتن - ${invoiceCode}</title>
+                    <style>
+                        @media print {
+                            body {
+                                margin: 0;
+                                padding: 0;
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                font-size: ${size === 'small' ? '12px' : '14px'};
+                                line-height: 1.4;
+                            }
+                            
+                            .print-container {
+                                width: ${size === 'small' ? '80mm' : '210mm'};
+                                padding: ${size === 'small' ? '5px' : '20px'};
+                                margin: 0 auto;
+                            }
+                            
+                            .invoice-header {
+                                text-align: center;
+                                border-bottom: 2px solid #4361ee;
+                                padding-bottom: 10px;
+                                margin-bottom: 20px;
+                            }
+                            
+                            .invoice-logo {
+                                font-size: ${size === 'small' ? '1.5rem' : '2rem'};
+                                font-weight: 800;
+                                color: #4361ee;
+                                margin-bottom: 5px;
+                            }
+                            
+                            .invoice-title {
+                                font-size: ${size === 'small' ? '1rem' : '1.5rem'};
+                                margin: 5px 0;
+                            }
+                            
+                            .invoice-details {
+                                display: grid;
+                                grid-template-columns: 1fr 1fr;
+                                gap: 15px;
+                                margin-bottom: 20px;
+                            }
+                            
+                            .invoice-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-bottom: 20px;
+                            }
+                            
+                            .invoice-table th, .invoice-table td {
+                                padding: ${size === 'small' ? '3px 5px' : '8px 10px'};
+                                text-align: right;
+                                border-bottom: 1px solid #ddd;
+                            }
+                            
+                            .invoice-table th {
+                                background-color: #f8f9fa;
+                                font-weight: bold;
+                            }
+                            
+                            .invoice-total {
+                                margin-top: 20px;
+                                padding-top: 10px;
+                                border-top: 2px solid #ddd;
+                                text-align: left;
+                            }
+                            
+                            .invoice-footer {
+                                text-align: center;
+                                margin-top: 30px;
+                                padding-top: 10px;
+                                border-top: 1px dashed #ddd;
+                                color: #6c757d;
+                                font-size: 0.9rem;
+                            }
+                            
+                            .no-print {
+                                display: none !important;
+                            }
+                        }
+                        
+                        @page {
+                            margin: 0;
+                            size: ${size === 'small' ? '80mm auto' : 'A4'};
+                        }
+                        
+                        body {
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            font-size: ${size === 'small' ? '12px' : '14px'};
+                        }
+                        
+                        .print-container {
+                            width: ${size === 'small' ? '80mm' : '210mm'};
+                            padding: ${size === 'small' ? '5px' : '20px'};
+                            margin: 0 auto;
+                        }
+                        
+                        .invoice-header {
+                            text-align: center;
+                            border-bottom: 2px solid #4361ee;
+                            padding-bottom: 10px;
+                            margin-bottom: 20px;
+                        }
+                        
+                        .invoice-logo {
+                            font-size: ${size === 'small' ? '1.5rem' : '2rem'};
+                            font-weight: 800;
+                            color: #4361ee;
+                            margin-bottom: 5px;
+                        }
+                        
+                        .invoice-title {
+                            font-size: ${size === 'small' ? '1rem' : '1.5rem'};
+                            margin: 5px 0;
+                        }
+                        
+                        .invoice-details {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 15px;
+                            margin-bottom: 20px;
+                        }
+                        
+                        .invoice-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-bottom: 20px;
+                        }
+                        
+                        .invoice-table th, .invoice-table td {
+                            padding: ${size === 'small' ? '3px 5px' : '8px 10px'};
+                            text-align: right;
+                            border-bottom: 1px solid #ddd;
+                        }
+                        
+                        .invoice-table th {
+                            background-color: #f8f9fa;
+                            font-weight: bold;
+                        }
+                        
+                        .invoice-total {
+                            margin-top: 20px;
+                            padding-top: 10px;
+                            border-top: 2px solid #ddd;
+                            text-align: left;
+                        }
+                        
+                        .invoice-footer {
+                            text-align: center;
+                            margin-top: 30px;
+                            padding-top: 10px;
+                            border-top: 1px dashed #ddd;
+                            color: #6c757d;
+                            font-size: 0.9rem;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-container">
+                        ${invoiceContent.innerHTML}
+                        <div class="invoice-footer">
+                            <p>سپاس بۆ بەکارهێنانی سیستەمی ئەلکترۆنیات</p>
+                            <p>ژمارەی پەیوەندی: ٠٧٧٠١٢٣٤٥٦٧</p>
+                            <p>بەروار: ${new Date().toLocaleDateString('ar-IQ')}</p>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        window.onload = function() {
+                            // پرێنتکردن لەسەر بارکردنی پەڕەکە
+                            window.print();
+                            
+                            // داخستنی پەڕە دوای پرێنتکردن
+                            setTimeout(function() {
+                                window.close();
+                            }, 1000);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `;
+            
+            // نووسینی HTML بۆ پەڕەی نوێ
+            printWindow.document.open();
+            printWindow.document.write(printHTML);
+            printWindow.document.close();
         };
 
+        // نوێکردنەوەی فەنکشنی پرێنتی بچووک
+        window.printInvoiceSmall = function(invoiceCode) {
+            if (window.printRealInvoice) {
+                window.printRealInvoice(invoiceCode, 'small');
+            } else {
+                alert('پرێنتی بچووک ئامادەکرا!');
+            }
+        };
+
+        // نوێکردنەوەی فەنکشنی پرێنتی A4
         window.printInvoiceA4 = function(invoiceCode) {
-            alert(`پرێنتی A4 بۆ فاکتووری ${invoiceCode} ئامادەکرا!\n\nلە وەشانی راستەقینەدا فاکتوورەکە بە شێوازی A4 پرێنت دەکرێت.`);
+            if (window.printRealInvoice) {
+                window.printRealInvoice(invoiceCode, 'A4');
+            } else {
+                alert('پرێنتی A4 ئامادەکرا!');
+            }
+        };
+
+        // فەنکشنی پرێنتکردنی زانیاری کەس
+        window.printCustomerInfo = function() {
+            const customerName = document.getElementById('modalCustomerName').textContent;
+            const customerInfo = `
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>زانیاری کەس - ${customerName}</title>
+                    <style>
+                        body {
+                            font-family: 'Segoe UI', sans-serif;
+                            font-size: 14px;
+                            line-height: 1.6;
+                        }
+                        .print-header {
+                            text-align: center;
+                            border-bottom: 2px solid #4361ee;
+                            padding-bottom: 10px;
+                            margin-bottom: 20px;
+                        }
+                        .info-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        .info-table td {
+                            padding: 8px;
+                            border-bottom: 1px solid #ddd;
+                        }
+                        .info-table td:first-child {
+                            font-weight: bold;
+                            width: 40%;
+                        }
+                        @media print {
+                            body { margin: 0; padding: 20px; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-header">
+                        <h2>زانیاری کەس: ${customerName}</h2>
+                        <p>سیستەمی ئەلکترۆنیات</p>
+                    </div>
+                    <table class="info-table">
+                        <tr>
+                            <td>ناوی کەس:</td>
+                            <td>${document.getElementById('editCustomerName').value}</td>
+                        </tr>
+                        <tr>
+                            <td>ژمارەی موبایل:</td>
+                            <td>${document.getElementById('editCustomerPhone').value}</td>
+                        </tr>
+                        <tr>
+                            <td>ناونیشان:</td>
+                            <td>${document.getElementById('editCustomerAddress').value || 'نەزانراو'}</td>
+                        </tr>
+                        <tr>
+                            <td>کۆی قەرز:</td>
+                            <td>${document.getElementById('customerTotalDebt').value}</td>
+                        </tr>
+                        <tr>
+                            <td>کۆتا فرۆشتن:</td>
+                            <td>${document.getElementById('customerLastPurchase').value}</td>
+                        </tr>
+                        <tr>
+                            <td>کۆی فرۆشتن:</td>
+                            <td>${document.getElementById('customerTotalPurchases').value}</td>
+                        </tr>
+                    </table>
+                    <div style="margin-top: 30px; text-align: center; color: #666; font-size: 12px;">
+                        <p>بەروار: ${new Date().toLocaleDateString('ar-IQ')}</p>
+                        <p>سیستەمی ئەلکترۆنیات - هەولێر، کوردستان</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.open();
+            printWindow.document.write(customerInfo);
+            printWindow.document.close();
+            
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
         };
 
         // فەنکشنی سڕینەوەی فاکتووری فرۆشتن
@@ -3778,19 +4094,39 @@
             });
         }
 
-        // پرێنتی بچووک
+        // پرێنتی بچووک (لە مۆدالی سەرەکی)
         const printSmallBtn = document.getElementById('printSmall');
         if (printSmallBtn) {
             printSmallBtn.addEventListener('click', function() {
-                alert('پرێنتی بچووک ئامادەکرا (لە وەشانی راستەقینەدا پرێنت دەکرێت)');
+                const invoiceCode = document.getElementById('invoiceCode').textContent;
+                window.printInvoiceSmall(invoiceCode);
             });
         }
 
-        // پرێنتی A4
+        // پرێنتی A4 (لە مۆدالی سەرەکی)
         const printA4Btn = document.getElementById('printA4');
         if (printA4Btn) {
             printA4Btn.addEventListener('click', function() {
-                alert('پرێنتی A4 ئامادەکرا (لە وەشانی راستەقینەدا پرێنت دەکرێت)');
+                const invoiceCode = document.getElementById('invoiceCode').textContent;
+                window.printInvoiceA4(invoiceCode);
+            });
+        }
+
+        // پرێنتی بچووک (لە مۆدالی فاکتوور)
+        const printInvoiceSmallDetailBtn = document.getElementById('printInvoiceSmallDetail');
+        if (printInvoiceSmallDetailBtn) {
+            printInvoiceSmallDetailBtn.addEventListener('click', function() {
+                const invoiceCode = document.getElementById('modalInvoiceCode').textContent;
+                window.printInvoiceSmall(invoiceCode);
+            });
+        }
+
+        // پرێنتی A4 (لە مۆدالی فاکتوور)
+        const printInvoiceA4DetailBtn = document.getElementById('printInvoiceA4Detail');
+        if (printInvoiceA4DetailBtn) {
+            printInvoiceA4DetailBtn.addEventListener('click', function() {
+                const invoiceCode = document.getElementById('modalInvoiceCode').textContent;
+                window.printInvoiceA4(invoiceCode);
             });
         }
 
@@ -3837,7 +4173,7 @@
             });
         });
 
-        // زیادکردنی کەسی نوێ (چاکسازی)
+        // زیادکردنی کەسی نوێ
         const saveCustomerBtn = document.getElementById('saveCustomerBtn');
         if (saveCustomerBtn) {
             saveCustomerBtn.addEventListener('click', function() {
@@ -4386,7 +4722,7 @@
             });
         }
 
-        // تەواوکردنی کڕین (چاکسازیکراو)
+        // تەواوکردنی کڕین
         const completePurchaseBtn = document.getElementById('completePurchase');
         if (completePurchaseBtn) {
             completePurchaseBtn.addEventListener('click', function() {
@@ -4432,13 +4768,13 @@
                     updateDashboardCash();
                     alert(`کڕینەکە بە نەقدی تەواو بوو! ${total.toLocaleString()} دینار لە کۆی پارەی واسڵ کراو کەم کرا.`);
                 } else if (paymentType === 'credit' && selectedPartner) {
-                    // ✅ **چاکسازی بەپێی حاڵەت:**
+                    // چاکسازی بەپێی حاڵەت:
                     if (selectedPartner.debt <= 0) {
                         // ئەگەر من قەرزداری شەریکم یان بێ قەرز
-                        selectedPartner.debt -= total; // -100,000 - 50,000 = -150,000 ✅
+                        selectedPartner.debt -= total;
                     } else {
                         // ئەگەر شەریک قەرزداری منە
-                        selectedPartner.debt += total; // 30,000 + 50,000 = 80,000 ✅
+                        selectedPartner.debt += total;
                     }
                 }
                 
@@ -4621,7 +4957,7 @@
             document.body.insertAdjacentHTML('beforeend', modalHTML);
         };
 
-        // سڕینەوەی کڕین (چاکسازیکراو)
+        // سڕینەوەی کڕین
         window.deletePurchase = function(purchaseId) {
             if (confirm('دڵنیای لە سڕینەوەی ئەم فاکتوورەی کڕین؟')) {
                 const index = samplePurchaseData.purchases.findIndex(p => p.id === purchaseId);
@@ -4635,7 +4971,7 @@
                     } else if (purchase.payment === 'credit') {
                         const partner = sampleData.partners.find(p => p.name === purchase.partner);
                         if (partner) {
-                            // ✅ **چاکسازی: گەڕاندنەوەی قەرز بەپێی حاڵەت**
+                            // چاکسازی: گەڕاندنەوەی قەرز بەپێی حاڵەت
                             if (partner.debt <= 0) {
                                 // من قەرزداری شەریکم، قەرزی زیاد دەبێت
                                 partner.debt += purchase.total;
@@ -4652,11 +4988,6 @@
                     alert('فاکتووری کڕین بە سەرکەوتوویی سڕایەوە!');
                 }
             }
-        };
-
-        // پرێنتکردنی کڕین
-        window.printPurchase = function(purchaseId) {
-            alert('پرێنتی فاکتووری کڕین ئامادەکرا (لە وەشانی راستەقینەدا پرێنت دەکرێت)');
         };
 
         // نوێکردنەوەی مێژووی کڕین
@@ -4781,7 +5112,7 @@
             document.getElementById('debtorInfo').setAttribute('data-debtor-type', debtorType);
         }
 
-        // تۆمارکردنی پارەواسڵکردن (چاکسازیکراو)
+        // تۆمارکردنی پارەواسڵکردن
         const submitPaymentBtn = document.getElementById('submitPaymentBtn');
         if (submitPaymentBtn) {
             submitPaymentBtn.addEventListener('click', function() {
@@ -4825,17 +5156,17 @@
                         alert(`بڕی پارەواسڵکردن نابێت لە قەرز زیاتر بێت! قەرزی ئێستا: ${absDebt.toLocaleString()} دینار`);
                         return;
                     }
-                    // ✅ **چاکسازی بەپێی حاڵەت:**
+                    // چاکسازی بەپێی حاڵەت:
                     if (debtor.debt < 0) {
                         // من قەرزداری شەریکم: قەرزم کەم دەبێت
-                        debtor.debt += amount; // -100,000 + 30,000 = -70,000 ✅
+                        debtor.debt += amount;
                     } else if (debtor.debt === 0) {
                         // بێ قەرز: پارەواسڵکردن بۆ شەریک بێ مانایە
                         alert('شەریکەکە قەرزی نییە!');
                         return;
                     } else {
                         // شەریک قەرزداری منە: قەرزی کەم دەبێت
-                        debtor.debt -= amount; // 50,000 - 30,000 = 20,000 ✅
+                        debtor.debt -= amount;
                     }
                 }
                 
@@ -5164,7 +5495,7 @@
             });
         }
 
-        // تۆمارکردنی سەرفکردن (چاکسازیکراو)
+        // تۆمارکردنی سەرفکردن
         const submitExpenseBtn = document.getElementById('submitExpenseBtn');
         if (submitExpenseBtn) {
             submitExpenseBtn.addEventListener('click', function() {
@@ -5210,16 +5541,16 @@
                     expenseData.partnerName = partner.name;
                     expenseData.description = `سەرفکردن بۆ شەریک: ${partner.name}`;
                     
-                    // ✅ **چاکسازی بەپێی حاڵەت:**
+                    // چاکسازی بەپێی حاڵەت:
                     if (partner.debt < 0) {
                         // من قەرزداری شەریکم، قەرزی کەم دەبێت
-                        partner.debt += amount; // -100,000 + 20,000 = -80,000 ✅
+                        partner.debt += amount;
                     } else if (partner.debt === 0) {
                         // بێ قەرز، شەریک قەرزداری من دەبێت
-                        partner.debt = amount; // 0 -> 20,000 ✅
+                        partner.debt = amount;
                     } else {
                         // شەریک قەرزداری منە، قەرزی زیاد دەکات
-                        partner.debt += amount; // 30,000 + 20,000 = 50,000 ✅
+                        partner.debt += amount;
                     }
                     
                 } else if (expenseType === 'customer') {
@@ -5361,7 +5692,7 @@
             });
         }
 
-        // سڕینەوەی سەرفکردن (چاکسازیکراو)
+        // سڕینەوەی سەرفکردن
         window.deleteExpense = function(expenseId) {
             if (confirm('دڵنیای لە سڕینەوەی ئەم سەرفکردنە؟')) {
                 const expenseIndex = sampleData.expenseHistory.findIndex(e => e.id === expenseId);
@@ -5563,7 +5894,7 @@
             });
         }
 
-        // تۆمارکردنی سەرفکردن بۆ شەریک (چاکسازیکراو)
+        // تۆمارکردنی سەرفکردن بۆ شەریک
         const submitExpenseToPartnerBtn = document.getElementById('submitExpenseToPartnerBtn');
         if (submitExpenseToPartnerBtn) {
             submitExpenseToPartnerBtn.addEventListener('click', function() {
@@ -5593,19 +5924,19 @@
                     return;
                 }
                 
-                // ✅ **چاکسازی بەپێی حاڵەت:**
+                // چاکسازی بەپێی حاڵەت:
                 if (partner.debt < 0) {
                     // حاڵەت ١: من قەرزداری شەریکم (قەرز منفی)
                     // سەرفکردن واتە: من پارە دەدەم، قەرزم کەم دەبێت
-                    partner.debt += amount; // -100,000 + 20,000 = -80,000 ✅
+                    partner.debt += amount;
                 } else if (partner.debt === 0) {
                     // حاڵەت ٢: بێ قەرز (سفر)
                     // سەرفکردن واتە: شەریک قەرزداری من دەبێت
-                    partner.debt = amount; // 0 -> 20,000 ✅
+                    partner.debt = amount;
                 } else {
                     // حاڵەت ٣: شەریک قەرزداری منە (قەرز مثبت)
                     // سەرفکردن واتە: قەرزی زیاد دەکات
-                    partner.debt += amount; // 30,000 + 20,000 = 50,000 ✅
+                    partner.debt += amount;
                 }
                 
                 // کەمکردنەوەی پارە لە کۆی نەقدی
