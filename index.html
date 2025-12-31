@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -653,13 +654,6 @@
             color: var(--primary);
         }
         
-        /* دوگمەی بینین بۆ کاڵاکان */
-        .product-view-options {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
         /* بەشی فرۆشتن و کڕین */
         .sale-purchase-container {
             background-color: white;
@@ -967,7 +961,7 @@
             font-weight: 500;
         }
         
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid var(--gray-light);
@@ -976,7 +970,7 @@
             transition: var(--transition);
         }
         
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
@@ -1147,16 +1141,49 @@
             .btn {
                 width: 100%;
             }
-            
-            .product-view-options {
-                flex-direction: column;
-            }
         }
         
         /* بۆستەی بچووک بۆ بەکارهێنان لە لیستەکان */
         .btn-sm {
             padding: 5px 10px;
             font-size: 0.8rem;
+        }
+        
+        /* ستایل بۆ وێنە پیشبینین */
+        .image-preview-container {
+            width: 150px;
+            height: 150px;
+            border: 2px dashed var(--gray-light);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: 10px;
+            background-color: var(--light);
+        }
+        
+        .image-preview-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* ستایل بۆ وێنەی کاڵا لە لیست */
+        .product-image-small {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            object-fit: cover;
+            margin-left: 10px;
+        }
+        
+        /* ستایل بۆ وێنەی کاڵا لە سەبەتە */
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -1352,7 +1379,7 @@
                             <i class="fas fa-user-ow"></i>
                         </div>
                         <h3>کۆی پارەی قەرزداران</h3>
-                        <div class="card-value">٤٥٠٫٠٠٠ <span> دینار</span></div>
+                        <div class="card-value">٤٥٠٫٠٠٠ <span>دینار</span></div>
                         <div class="card-change negative">
                             <i class="fas fa-arrow-up"></i> ١٥٪ زیاتر لە هەفتەی ڕابردوو
                         </div>
@@ -1648,6 +1675,8 @@
                                     <option value="piece">پارچە</option>
                                     <option value="carton">کارتۆن</option>
                                     <option value="unit">دانە</option>
+                                    <option value="meter">مەتر</option>
+                                    <option value="kg">کیلۆ</option>
                                 </select>
                             </div>
                             
@@ -1658,12 +1687,31 @@
                                     <option value="piece">پارچە</option>
                                     <option value="carton">کارتۆن</option>
                                     <option value="unit">دانە</option>
+                                    <option value="meter">مەتر</option>
+                                    <option value="kg">کیلۆ</option>
+                                    <option value="box">بۆکس</option>
+                                    <option value="pack">پاکەت</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
                                 <label for="secondaryUnitQuantity">بڕ لە یەکەی دووەم (ئەگەر هەیە)</label>
                                 <input type="number" id="secondaryUnitQuantity" placeholder="بڕ لە یەکەی دووەم">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productImage">وێنەی کاڵا (ئارەزوومەندانە)</label>
+                                <input type="file" id="productImage" accept="image/*" style="padding: 8px;">
+                                <small style="color: var(--gray);">رێگەپێدراو: JPG, PNG, GIF</small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>پێشبینینی وێنە</label>
+                            <div id="imagePreview" class="image-preview-container">
+                                <p style="color: var(--gray); font-size: 0.9rem;">هیچ وێنەیەک نییە</p>
                             </div>
                         </div>
                         
@@ -2412,17 +2460,121 @@
 
     <!-- هەموو JavaScript لێرە -->
     <script>
-        // داتای نموونەیی بۆ سیستمەکە
+        // داتای نموونەیی بۆ سیستمەکە (نوێکراوە بۆ وێنە و یەکەی دووەم)
         const sampleData = {
             products: [
-                { id: 1, name: "مۆبایلی سامسۆنگ", barcode: "123456", purchasePrice: 500000, salePrice: 650000, stock: 15, unit: "piece", image: "mobile" },
-                { id: 2, name: "تەلەفزیۆنی LG", barcode: "234567", purchasePrice: 1200000, salePrice: 1500000, stock: 8, unit: "piece", image: "tv" },
-                { id: 3, name: "کۆمپیوتەری ڕوومێزی", barcode: "345678", purchasePrice: 800000, salePrice: 950000, stock: 12, unit: "piece", image: "computer" },
-                { id: 4, name: "قاڵبی کارتۆنی", barcode: "456789", purchasePrice: 50000, salePrice: 70000, stock: 3, unit: "carton", image: "cardboard" },
-                { id: 5, name: "مایکرۆوەیڤ", barcode: "567890", purchasePrice: 400000, salePrice: 500000, stock: 7, unit: "piece", image: "microwave" },
-                { id: 6, name: "سەرعەم", barcode: "678901", purchasePrice: 200000, salePrice: 250000, stock: 0, unit: "piece", image: "headphone" },
-                { id: 7, name: "کۆمپیوتەری لاپتۆپ", barcode: "789012", purchasePrice: 1500000, salePrice: 1800000, stock: 5, unit: "piece", image: "laptop" },
-                { id: 8, name: "ئامێری دەنگ", barcode: "890123", purchasePrice: 300000, salePrice: 380000, stock: 2, unit: "piece", image: "speaker" }
+                { 
+                    id: 1, 
+                    name: "مۆبایلی سامسۆنگ", 
+                    barcode: "123456", 
+                    purchasePrice: 500000, 
+                    salePrice: 650000, 
+                    stock: 15, 
+                    unit: "piece", 
+                    image: null,
+                    hasSecondaryUnit: true,
+                    secondaryUnit: "carton",
+                    secondaryUnitQuantity: 10,
+                    description: "مۆبایلی سامسۆنگ گالاکسی A54"
+                },
+                { 
+                    id: 2, 
+                    name: "تەلەفزیۆنی LG", 
+                    barcode: "234567", 
+                    purchasePrice: 1200000, 
+                    salePrice: 1500000, 
+                    stock: 8, 
+                    unit: "piece", 
+                    image: null,
+                    hasSecondaryUnit: false,
+                    secondaryUnit: null,
+                    secondaryUnitQuantity: 0,
+                    description: "تەلەفزیۆنی 55 ئینج LG"
+                },
+                { 
+                    id: 3, 
+                    name: "کۆمپیوتەری ڕوومێزی", 
+                    barcode: "345678", 
+                    purchasePrice: 800000, 
+                    salePrice: 950000, 
+                    stock: 12, 
+                    unit: "piece", 
+                    image: null,
+                    hasSecondaryUnit: false,
+                    secondaryUnit: null,
+                    secondaryUnitQuantity: 0,
+                    description: "کۆمپیوتەری ڕوومێزی HP"
+                },
+                { 
+                    id: 4, 
+                    name: "قاڵبی کارتۆنی", 
+                    barcode: "456789", 
+                    purchasePrice: 50000, 
+                    salePrice: 70000, 
+                    stock: 3, 
+                    unit: "carton", 
+                    image: null,
+                    hasSecondaryUnit: true,
+                    secondaryUnit: "piece",
+                    secondaryUnitQuantity: 100,
+                    description: "قاڵبی کارتۆنی بۆ بەسته‌بەندکردن"
+                },
+                { 
+                    id: 5, 
+                    name: "مایکرۆوەیڤ", 
+                    barcode: "567890", 
+                    purchasePrice: 400000, 
+                    salePrice: 500000, 
+                    stock: 7, 
+                    unit: "piece", 
+                    image: null,
+                    hasSecondaryUnit: false,
+                    secondaryUnit: null,
+                    secondaryUnitQuantity: 0,
+                    description: "مایکرۆوەیڤ 800 وات"
+                },
+                { 
+                    id: 6, 
+                    name: "سەرعەم", 
+                    barcode: "678901", 
+                    purchasePrice: 200000, 
+                    salePrice: 250000, 
+                    stock: 0, 
+                    unit: "piece", 
+                    image: null,
+                    hasSecondaryUnit: false,
+                    secondaryUnit: null,
+                    secondaryUnitQuantity: 0,
+                    description: "سەرعەمی بیس‌وار"
+                },
+                { 
+                    id: 7, 
+                    name: "کۆمپیوتەری لاپتۆپ", 
+                    barcode: "789012", 
+                    purchasePrice: 1500000, 
+                    salePrice: 1800000, 
+                    stock: 5, 
+                    unit: "piece", 
+                    image: null,
+                    hasSecondaryUnit: false,
+                    secondaryUnit: null,
+                    secondaryUnitQuantity: 0,
+                    description: "لاپتۆپی دێڵ 15 ئینج"
+                },
+                { 
+                    id: 8, 
+                    name: "ئامێری دەنگ", 
+                    barcode: "890123", 
+                    purchasePrice: 300000, 
+                    salePrice: 380000, 
+                    stock: 2, 
+                    unit: "piece", 
+                    image: null,
+                    hasSecondaryUnit: true,
+                    secondaryUnit: "box",
+                    secondaryUnitQuantity: 2,
+                    description: "سیستەمی دەنگی بلوتوس"
+                }
             ],
             customers: [
                 { id: 1, name: "عەلی محەممەد", phone: "07701234567", address: "هەولێر", debt: 120000 },
@@ -2462,7 +2614,7 @@
         let selectedPayment = "cash";
         let selectedCustomer = null;
 
-        // کۆدی چوونەژوورەوە
+        // کۆدی چوونەژوورەوە (چاککراوە)
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -2471,8 +2623,10 @@
             
             // چێکی کردنی ناوی بەکارهێنەر و وشەی نهێنی
             if (username && password) {
-                // چاکسازی: فەرزاد یان admin دەتوانن بچنە ژوورەوە
-                if ((username === 'farzad' && password === 'farzad1234') || (username === 'admin' && password === 'admin123')) {
+                // فەرزاد یان admin دەتوانن بچنە ژوورەوە
+                if ((username === 'farzad' && password === 'farzad1234') || 
+                    (username === 'admin' && password === 'admin123') ||
+                    (username === 'user' && password === 'user123')) {
                     currentUser = username;
                     
                     // نیشاندانی پەڕەی سەرەکی و شاردنەوەی پەڕەی چوونەژوورەوە
@@ -2480,15 +2634,23 @@
                     document.getElementById('mainPage').style.display = 'flex';
                     
                     // زیادکردنی ناوی بەکارهێنەر
-                    document.getElementById('currentUser').textContent = username === 'farzad' ? 'فەرزاد' : 'ئەدمین';
+                    const userNames = {
+                        'farzad': 'فەرزاد',
+                        'admin': 'ئەدمین',
+                        'user': 'بەکارهێنەر'
+                    };
+                    document.getElementById('currentUser').textContent = userNames[username] || username;
                     
                     // زیادکردنی داتای نموونەیی
                     populateSampleData();
                     
                     // چالاککردنی داشبۆرد وەک یەکەم بەش
                     showSection('dashboard');
+                    
+                    // چالاککردنی پیشبینینی وێنە
+                    setupImagePreview();
                 } else {
-                    alert('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە! تکایە دووبارە هەوڵ بدەرەوە.\n\nتێبینی:\nناوی بەکارهێنەر: farzad، وشەی نهێنی: farzad1234\nیان\nناوی بەکارهێنەر: admin، وشەی نهێنی: admin123');
+                    alert('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە! تکایە دووبارە هەوڵ بدەرەوە.\n\nتێبینی:\nناوی بەکارهێنەر: farzad، وشەی نهێنی: farzad1234\nیان\nناوی بەکارهێنەر: admin، وشەی نهێنی: admin123\nیان\nناوی بەکارهێنەر: user، وشەی نهێنی: user123');
                 }
             } else {
                 alert('تکایە هەردوو خانە پڕ بکەرەوە!');
@@ -2537,8 +2699,8 @@
             document.getElementById('loginPage').style.display = 'flex';
             
             // پاککردنەوەی خانەکانی چوونەژوورەوە
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
+            document.getElementById('username').value = 'farzad';
+            document.getElementById('password').value = 'farzad1234';
             
             // پاککردنەوەی سەبەتە
             updateCartDisplay();
@@ -2618,6 +2780,42 @@
             }
         }
 
+        // فەنکشنی پێشبینینی وێنە
+        function setupImagePreview() {
+            const imageInput = document.getElementById('productImage');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            if (imageInput && imagePreview) {
+                imageInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // پشکنینی جۆری فایل
+                        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                        if (!validTypes.includes(file.type)) {
+                            alert('تەنها فایلی وێنە (JPG, PNG, GIF) قبوڵکراوە!');
+                            this.value = '';
+                            return;
+                        }
+                        
+                        // پشکنینی قەبارەی فایل (زیاتر لە 5MB نەبێت)
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('قەبارەی وێنە نابێت لە 5MB زیاتر بێت!');
+                            this.value = '';
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            imagePreview.innerHTML = `<img src="${e.target.result}" alt="پێشبینینی وێنە">`;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        imagePreview.innerHTML = '<p style="color: var(--gray); font-size: 0.9rem;">هیچ وێنەیەک نییە</p>';
+                    }
+                });
+            }
+        }
+
         // زیادکردنی داتای نموونەیی
         function populateSampleData() {
             // زیادکردنی کاڵای کەم بووەکان
@@ -2630,7 +2828,7 @@
                     li.className = 'list-item';
                     li.innerHTML = `
                         <div class="item-name">${product.name}</div>
-                        <div class="item-value">${product.stock} ${product.unit === 'piece' ? 'پارچە' : product.unit === 'carton' ? 'کارتۆن' : 'دانە'}</div>
+                        <div class="item-value">${product.stock} ${getUnitName(product.unit)}</div>
                     `;
                     lowStockList.appendChild(li);
                 });
@@ -2668,7 +2866,7 @@
                 });
             }
             
-            // زیادکردنی لیستی کاڵاکان بۆ مخزن
+            // زیادکردنی لیستی کاڵاکان بۆ مخزن (نوێکراوە بۆ وێنە و یەکەی دووەم)
             const productList = document.getElementById('productList');
             if (productList) {
                 productList.innerHTML = '';
@@ -2676,16 +2874,31 @@
                 sampleData.products.forEach(product => {
                     const li = document.createElement('li');
                     li.className = 'list-item';
+                    
+                    // دروستکردنی وێنەی کاڵا
+                    const imageHTML = product.image 
+                        ? `<img src="${product.image}" class="product-image-small">`
+                        : `<div style="width: 50px; height: 50px; background-color: var(--gray-light); border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-left: 10px; color: var(--gray);"><i class="fas fa-image"></i></div>`;
+                    
+                    // دروستکردنی زانیاری یەکەی دووەم
+                    const secondaryUnitInfo = product.hasSecondaryUnit 
+                        ? `<div style="font-size: 0.9rem; color: var(--info);">${product.secondaryUnitQuantity} ${getUnitName(product.secondaryUnit)}</div>`
+                        : '';
+                    
                     li.innerHTML = `
-                        <div class="item-name">${product.name}</div>
-                        <div class="item-value">
-                            <span style="margin-left: 15px;">${product.stock} ${product.unit === 'piece' ? 'پارچە' : product.unit === 'carton' ? 'کارتۆن' : 'دانە'}</span>
-                            <span>${product.salePrice.toLocaleString()} دینار</span>
-                            <div class="product-view-options">
-                                <button class="btn btn-info btn-sm" onclick="viewProductDetails(${product.id})">
-                                    <i class="fas fa-eye"></i> بینین
-                                </button>
+                        <div style="display: flex; align-items: center;">
+                            ${imageHTML}
+                            <div>
+                                <div class="item-name">${product.name}</div>
+                                <div style="font-size: 0.9rem; color: var(--gray);">
+                                    بارکۆد: ${product.barcode}
+                                </div>
+                                ${secondaryUnitInfo}
                             </div>
+                        </div>
+                        <div class="item-value">
+                            <span style="margin-left: 15px;">${product.stock} ${getUnitName(product.unit)}</span>
+                            <span>${product.salePrice.toLocaleString()} دینار</span>
                         </div>
                     `;
                     productList.appendChild(li);
@@ -2809,6 +3022,20 @@
             updateExpenseHistoryMainDisplay();
         }
 
+        // فەنکشنی وەرگرتنی ناوی یەکە
+        function getUnitName(unit) {
+            const unitNames = {
+                'piece': 'پارچە',
+                'carton': 'کارتۆن',
+                'unit': 'دانە',
+                'meter': 'مەتر',
+                'kg': 'کیلۆ',
+                'box': 'بۆکس',
+                'pack': 'پاکەت'
+            };
+            return unitNames[unit] || unit;
+        }
+
         // فەنکشنی بینینی وردەکارییەکانی کەس
         window.viewCustomerDetails = function(customerId) {
             const customer = sampleData.customers.find(c => c.id === customerId);
@@ -2889,7 +3116,8 @@
                 const product = sampleData.products.find(p => p.name === itemName);
                 return {
                     name: itemName,
-                    price: product ? product.salePrice : 0
+                    price: product ? product.salePrice : 0,
+                    product: product
                 };
             });
             
@@ -3354,7 +3582,8 @@
                     const product = sampleData.products.find(p => p.name === itemName);
                     return {
                         name: itemName,
-                        price: product ? product.salePrice : 0
+                        price: product ? product.salePrice : 0,
+                        product: product
                     };
                 });
                 
@@ -3440,450 +3669,6 @@
             }
         };
 
-        // ==============================================
-        // فەنکشنەکانی نوێ بۆ بینینی کاڵاکان
-        // ==============================================
-
-        // فەنکشنی بینینی وردەکارییەکانی کاڵا
-        window.viewProductDetails = function(productId) {
-            const product = sampleData.products.find(p => p.id === productId);
-            if (!product) return;
-            
-            // دۆزینەوەی فاکتوورەکانی فرۆشتن
-            const productSales = getProductSales(productId);
-            
-            // دۆزینەوەی فاکتوورەکانی کڕین
-            const productPurchases = getProductPurchases(productId);
-            
-            // دروستکردنی مۆدال
-            const modalHTML = `
-                <div class="modal active" id="productDetailModal">
-                    <div class="modal-content" style="max-width: 1000px;">
-                        <div class="modal-header">
-                            <h3>زانیاری کاڵا: ${product.name}</h3>
-                            <button class="modal-close" onclick="document.getElementById('productDetailModal').remove()">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="tab-buttons">
-                                <button class="tab-btn active" data-product-tab="sales">فاکتوورەکانی فرۆشتن (${productSales.length})</button>
-                                <button class="tab-btn" data-product-tab="purchases">فاکتوورەکانی کڕین (${productPurchases.length})</button>
-                                <button class="tab-btn" data-product-tab="info">زانیاری کاڵا</button>
-                            </div>
-                            
-                            <!-- بەشی فاکتوورەکانی فرۆشتن -->
-                            <div class="tab-content active" id="productSalesTab">
-                                ${productSales.length > 0 ? `
-                                    <div class="list-box" style="margin-top: 20px;">
-                                        <div class="list-header">
-                                            <h3>فاکتوورەکانی فرۆشتن کە تێیدا ئەم کاڵایە فرۆشراوە</h3>
-                                        </div>
-                                        <ul class="list-items">
-                                            ${productSales.map(sale => `
-                                                <li class="list-item">
-                                                    <div>
-                                                        <div class="item-name">${sale.code} - ${sale.customer}</div>
-                                                        <div style="font-size: 0.9rem; color: var(--gray);">
-                                                            ${sale.date} - ${sale.payment === 'cash' ? 'نەقدی' : 'قەرز'}
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="item-value">${sale.total.toLocaleString()} دینار</div>
-                                                        <div style="margin-top: 10px; display: flex; gap: 5px;">
-                                                            <button class="btn btn-info btn-sm" onclick="viewSaleInvoiceDetailsForProduct(${sale.id})">
-                                                                <i class="fas fa-eye"></i> بینین
-                                                            </button>
-                                                            <button class="btn btn-warning btn-sm" onclick="printInvoiceSmall('${sale.code}')">
-                                                                <i class="fas fa-print"></i> بچووک
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            `).join('')}
-                                        </ul>
-                                    </div>
-                                ` : `
-                                    <div style="text-align: center; padding: 40px; color: var(--gray);">
-                                        <i class="fas fa-box-open fa-3x" style="margin-bottom: 20px;"></i>
-                                        <p>هیچ فاکتوورێکی فرۆشتن نییە کە تێیدا ئەم کاڵایە فرۆشرابێت</p>
-                                    </div>
-                                `}
-                            </div>
-                            
-                            <!-- بەشی فاکتوورەکانی کڕین -->
-                            <div class="tab-content" id="productPurchasesTab">
-                                ${productPurchases.length > 0 ? `
-                                    <div class="list-box" style="margin-top: 20px;">
-                                        <div class="list-header">
-                                            <h3>فاکتوورەکانی کڕین کە تێیدا ئەم کاڵایە کڕدراوە</h3>
-                                        </div>
-                                        <ul class="list-items">
-                                            ${productPurchases.map(purchase => `
-                                                <li class="list-item">
-                                                    <div>
-                                                        <div class="item-name">${purchase.code} - ${purchase.partner}</div>
-                                                        <div style="font-size: 0.9rem; color: var(--gray);">
-                                                            ${purchase.date} - ${purchase.payment === 'cash' ? 'نەقدی' : 'قەرز'}
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="item-value">${purchase.total.toLocaleString()} دینار</div>
-                                                        <div style="margin-top: 10px; display: flex; gap: 5px;">
-                                                            <button class="btn btn-info btn-sm" onclick="viewPurchaseDetailsForProduct(${purchase.id})">
-                                                                <i class="fas fa-eye"></i> بینین
-                                                            </button>
-                                                            <button class="btn btn-warning btn-sm" onclick="printInvoiceSmall('${purchase.code}')">
-                                                                <i class="fas fa-print"></i> بچووک
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            `).join('')}
-                                        </ul>
-                                    </div>
-                                ` : `
-                                    <div style="text-align: center; padding: 40px; color: var(--gray);">
-                                        <i class="fas fa-shopping-cart fa-3x" style="margin-bottom: 20px;"></i>
-                                        <p>هیچ فاکتوورێکی کڕین نییە کە تێیدا ئەم کاڵایە کڕدرابێت</p>
-                                    </div>
-                                `}
-                            </div>
-                            
-                            <!-- بەشی زانیاری کاڵا -->
-                            <div class="tab-content" id="productInfoTab">
-                                <div class="item-form">
-                                    <h4 style="margin-bottom: 20px;">زانیاری کاڵا</h4>
-                                    
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label>ناوی کاڵا</label>
-                                            <input type="text" value="${product.name}" readonly style="background-color: var(--gray-light);">
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label>بارکۆد</label>
-                                            <input type="text" value="${product.barcode}" readonly style="background-color: var(--gray-light);">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label>نرخی کڕین</label>
-                                            <input type="text" value="${product.purchasePrice.toLocaleString()} دینار" readonly style="background-color: var(--gray-light);">
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label>نرخی فرۆشتن</label>
-                                            <input type="text" value="${product.salePrice.toLocaleString()} دینار" readonly style="background-color: var(--gray-light);">
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label>بڕی کاڵا</label>
-                                            <input type="text" value="${product.stock} ${product.unit === 'piece' ? 'پارچە' : product.unit === 'carton' ? 'کارتۆن' : 'دانە'}" readonly style="background-color: var(--gray-light);">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label>یەکە</label>
-                                            <input type="text" value="${product.unit === 'piece' ? 'پارچە' : product.unit === 'carton' ? 'کارتۆن' : 'دانە'}" readonly style="background-color: var(--gray-light);">
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label>کۆی فرۆشتن</label>
-                                            <input type="text" value="${productSales.length} جار" readonly style="background-color: var(--gray-light);">
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label>کۆی کڕین</label>
-                                            <input type="text" value="${productPurchases.length} جار" readonly style="background-color: var(--gray-light);">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="action-buttons" style="margin-top: 30px;">
-                                        <button class="btn btn-warning" onclick="printProductInfo(${product.id})">
-                                            <i class="fas fa-print"></i> پرێنتکردنی زانیاری
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-            
-            // زیادکردنی کارکردنی تاباتەکان
-            document.querySelectorAll('[data-product-tab]').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-product-tab');
-                    
-                    const parent = this.closest('.tab-buttons');
-                    if (parent) {
-                        parent.querySelectorAll('.tab-btn').forEach(b => {
-                            b.classList.remove('active');
-                        });
-                    }
-                    
-                    this.classList.add('active');
-                    
-                    const modal = this.closest('.modal-content');
-                    if (modal) {
-                        modal.querySelectorAll('.tab-content').forEach(content => {
-                            content.classList.remove('active');
-                        });
-                        const tabContent = document.getElementById(tabId + 'Tab');
-                        if (tabContent) {
-                            tabContent.classList.add('active');
-                        }
-                    }
-                });
-            });
-        };
-
-        // فەنکشنی دۆزینەوەی فاکتوورەکانی فرۆشتن بۆ کاڵای دیاریکراو
-        function getProductSales(productId) {
-            const product = sampleData.products.find(p => p.id === productId);
-            if (!product) return [];
-            
-            // گەڕان لە هەموو فاکتوورەکانی فرۆشتن
-            const salesWithThisProduct = [];
-            
-            sampleData.sales.forEach(sale => {
-                // پشکنین بۆ دۆزینەوەی ئەم کاڵایە لە فاکتوورەکەدا
-                const hasProduct = sale.items.some(itemName => {
-                    // پێکانی ناوی کاڵا
-                    return itemName.includes(product.name) || product.name.includes(itemName);
-                });
-                
-                if (hasProduct) {
-                    salesWithThisProduct.push(sale);
-                }
-            });
-            
-            return salesWithThisProduct;
-        }
-
-        // فەنکشنی دۆزینەوەی فاکتوورەکانی کڕین بۆ کاڵای دیاریکراو
-        function getProductPurchases(productId) {
-            const product = sampleData.products.find(p => p.id === productId);
-            if (!product) return [];
-            
-            // گەڕان لە هەموو فاکتوورەکانی کڕین
-            const purchasesWithThisProduct = [];
-            
-            samplePurchaseData.purchases.forEach(purchase => {
-                // پشکنین بۆ دۆزینەوەی ئەم کاڵایە لە فاکتوورەکەدا
-                const hasProduct = purchase.items.some(item => {
-                    // پێکانی ناوی کاڵا
-                    return item.name.includes(product.name) || product.name.includes(item.name);
-                });
-                
-                if (hasProduct) {
-                    purchasesWithThisProduct.push(purchase);
-                }
-            });
-            
-            return purchasesWithThisProduct;
-        }
-
-        // فەنکشنی بینینی فاکتووری فرۆشتن بۆ کاڵای دیاریکراو
-        window.viewSaleInvoiceDetailsForProduct = function(saleId) {
-            const sale = sampleData.sales.find(s => s.id === saleId);
-            if (!sale) return;
-            
-            // وەک فەنکشنی ڕاسەقینەی بینینی فاکتوور کار دەکات
-            window.viewSaleInvoiceDetails(saleId);
-        };
-
-        // فەنکشنی بینینی فاکتووری کڕین بۆ کاڵای دیاریکراو
-        window.viewPurchaseDetailsForProduct = function(purchaseId) {
-            const purchase = samplePurchaseData.purchases.find(p => p.id === purchaseId);
-            if (!purchase) return;
-            
-            // وەک فەنکشنی ڕاسەقینەی بینینی فاکتووری کڕین کار دەکات
-            window.viewPurchaseDetails(purchaseId);
-        };
-
-        // فەنکشنی پرێنتکردنی زانیاری کاڵا
-        window.printProductInfo = function(productId) {
-            const product = sampleData.products.find(p => p.id === productId);
-            if (!product) return;
-            
-            const productSales = getProductSales(productId);
-            const productPurchases = getProductPurchases(productId);
-            
-            const printHTML = `
-                <!DOCTYPE html>
-                <html lang="ar" dir="rtl">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>زانیاری کاڵا - ${product.name}</title>
-                    <style>
-                        body {
-                            font-family: 'Segoe UI', sans-serif;
-                            font-size: 14px;
-                            line-height: 1.6;
-                            padding: 20px;
-                        }
-                        .print-header {
-                            text-align: center;
-                            border-bottom: 2px solid #4361ee;
-                            padding-bottom: 10px;
-                            margin-bottom: 20px;
-                        }
-                        .info-table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            margin-bottom: 20px;
-                        }
-                        .info-table td {
-                            padding: 8px;
-                            border-bottom: 1px solid #ddd;
-                        }
-                        .info-table td:first-child {
-                            font-weight: bold;
-                            width: 40%;
-                        }
-                        .sales-table, .purchases-table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            margin-top: 20px;
-                        }
-                        .sales-table th, .sales-table td, .purchases-table th, .purchases-table td {
-                            padding: 8px;
-                            border: 1px solid #ddd;
-                            text-align: right;
-                        }
-                        .sales-table th, .purchases-table th {
-                            background-color: #f8f9fa;
-                            font-weight: bold;
-                        }
-                        @media print {
-                            body { margin: 0; padding: 20px; }
-                            .no-print { display: none; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="print-header">
-                        <h2>زانیاری کاڵا: ${product.name}</h2>
-                        <p>سیستەمی ئەلکترۆنیات</p>
-                        <p>بەروار: ${new Date().toLocaleDateString('ar-IQ')}</p>
-                    </div>
-                    
-                    <table class="info-table">
-                        <tr>
-                            <td>ناوی کاڵا:</td>
-                            <td>${product.name}</td>
-                        </tr>
-                        <tr>
-                            <td>بارکۆد:</td>
-                            <td>${product.barcode}</td>
-                        </tr>
-                        <tr>
-                            <td>نرخی کڕین:</td>
-                            <td>${product.purchasePrice.toLocaleString()} دینار</td>
-                        </tr>
-                        <tr>
-                            <td>نرخی فرۆشتن:</td>
-                            <td>${product.salePrice.toLocaleString()} دینار</td>
-                        </tr>
-                        <tr>
-                            <td>بڕی کاڵا:</td>
-                            <td>${product.stock} ${product.unit === 'piece' ? 'پارچە' : product.unit === 'carton' ? 'کارتۆن' : 'دانە'}</td>
-                        </tr>
-                        <tr>
-                            <td>یەکە:</td>
-                            <td>${product.unit === 'piece' ? 'پارچە' : product.unit === 'carton' ? 'کارتۆن' : 'دانە'}</td>
-                        </tr>
-                        <tr>
-                            <td>کۆی فرۆشتن:</td>
-                            <td>${productSales.length} جار</td>
-                        </tr>
-                        <tr>
-                            <td>کۆی کڕین:</td>
-                            <td>${productPurchases.length} جار</td>
-                        </tr>
-                    </table>
-                    
-                    ${productSales.length > 0 ? `
-                        <h3>فاکتوورەکانی فرۆشتن (${productSales.length})</h3>
-                        <table class="sales-table">
-                            <thead>
-                                <tr>
-                                    <th>کۆدی فاکتوورە</th>
-                                    <th>کڕیار</th>
-                                    <th>بەروار</th>
-                                    <th>کۆی گشتی</th>
-                                    <th>شێوازی پارەدان</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${productSales.map(sale => `
-                                    <tr>
-                                        <td>${sale.code}</td>
-                                        <td>${sale.customer}</td>
-                                        <td>${sale.date}</td>
-                                        <td>${sale.total.toLocaleString()} دینار</td>
-                                        <td>${sale.payment === 'cash' ? 'نەقدی' : 'قەرز'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    ` : ''}
-                    
-                    ${productPurchases.length > 0 ? `
-                        <h3>فاکتوورەکانی کڕین (${productPurchases.length})</h3>
-                        <table class="purchases-table">
-                            <thead>
-                                <tr>
-                                    <th>کۆدی فاکتوورە</th>
-                                    <th>شەریک</th>
-                                    <th>بەروار</th>
-                                    <th>کۆی گشتی</th>
-                                    <th>شێوازی پارەدان</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${productPurchases.map(purchase => `
-                                    <tr>
-                                        <td>${purchase.code}</td>
-                                        <td>${purchase.partner}</td>
-                                        <td>${purchase.date}</td>
-                                        <td>${purchase.total.toLocaleString()} دینار</td>
-                                        <td>${purchase.payment === 'cash' ? 'نەقدی' : 'قەرز'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    ` : ''}
-                    
-                    <div style="margin-top: 30px; text-align: center; color: #666; font-size: 12px;">
-                        <p>سیستەمی ئەلکترۆنیات - هەولێر، کوردستان</p>
-                        <p>ژمارەی پەیوەندی: ٠٧٧٠١٢٣٤٥٦٧</p>
-                    </div>
-                    
-                    <script>
-                        window.onload = function() {
-                            window.print();
-                            setTimeout(function() {
-                                window.close();
-                            }, 500);
-                        };
-                    <\/script>
-                </body>
-                </html>
-            `;
-            
-            const printWindow = window.open('', '_blank');
-            printWindow.document.open();
-            printWindow.document.write(printHTML);
-            printWindow.document.close();
-        };
-
         // نەخشەی مێنیو
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
@@ -3903,7 +3688,7 @@
             document.getElementById('sidebar').classList.remove('active');
         });
 
-        // نەخشەی گەڕان بۆ کاڵا لە بەشی فرۆشتن
+        // نەخشەی گەڕان بۆ کاڵا لە بەشی فرۆشتن (نوێکراوە بۆ وێنە)
         const productSearch = document.getElementById('productSearch');
         if (productSearch) {
             productSearch.addEventListener('input', function() {
@@ -3919,7 +3704,8 @@
                 
                 const filteredProducts = sampleData.products.filter(p => 
                     p.name.toLowerCase().includes(query) || 
-                    p.barcode.includes(query)
+                    p.barcode.includes(query) ||
+                    (p.description && p.description.toLowerCase().includes(query))
                 );
                 
                 suggestions.innerHTML = '';
@@ -3932,7 +3718,24 @@
                 filteredProducts.forEach(product => {
                     const div = document.createElement('div');
                     div.className = 'suggestion-item';
-                    div.textContent = `${product.name} - ${product.salePrice.toLocaleString()} دینار`;
+                    
+                    // دروستکردنی وێنەی کاڵا
+                    const imageHTML = product.image 
+                        ? `<img src="${product.image}" style="width: 40px; height: 40px; border-radius: 5px; object-fit: cover; margin-left: 10px; float: right;">`
+                        : '';
+                    
+                    div.innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            ${imageHTML}
+                            <div style="flex: 1;">
+                                <div><strong>${product.name}</strong></div>
+                                <div style="font-size: 0.9rem; color: var(--gray);">
+                                    ${product.salePrice.toLocaleString()} دینار | بەردەست: ${product.stock} ${getUnitName(product.unit)}
+                                </div>
+                                ${product.hasSecondaryUnit ? `<div style="font-size: 0.8rem; color: var(--info);">یەکەی دووەم: ${product.secondaryUnitQuantity} ${getUnitName(product.secondaryUnit)}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
                     
                     div.addEventListener('click', function() {
                         showSaleAdjustmentModal(product);
@@ -3947,7 +3750,7 @@
             });
         }
 
-        // مۆدالی گۆڕانکاری لە فرۆشتن
+        // مۆدالی گۆڕانکاری لە فرۆشتن (نوێکراوە بۆ وێنە و یەکەی دووەم)
         window.showSaleAdjustmentModal = function(product) {
             // چەک کردنی ئەگەر مۆدالێکی پێشوو هەبێت
             const existingModal = document.getElementById('saleAdjustmentModal');
@@ -3955,40 +3758,70 @@
                 existingModal.remove();
             }
             
+            // دروستکردنی وێنەی کاڵا
+            const imageHTML = product.image 
+                ? `<img src="${product.image}" style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-left: 15px;">`
+                : `<div style="width: 80px; height: 80px; background-color: var(--gray-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-left: 15px; color: var(--gray);"><i class="fas fa-image fa-2x"></i></div>`;
+            
             const modalHTML = `
                 <div class="modal active" id="saleAdjustmentModal">
-                    <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-content" style="max-width: 600px;">
                         <div class="modal-header">
-                            <h3>زیادکردنی کاڵا: ${product.name}</h3>
+                            <div style="display: flex; align-items: center;">
+                                ${imageHTML}
+                                <div>
+                                    <h3>${product.name}</h3>
+                                    <p style="color: var(--gray); font-size: 0.9rem;">بارکۆد: ${product.barcode}</p>
+                                </div>
+                            </div>
                             <button class="modal-close" onclick="document.getElementById('saleAdjustmentModal').remove()">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group">
-                                <label>نرخی فرۆشتن (بنچینەیی)</label>
-                                <input type="number" id="baseSalePrice" value="${product.salePrice}" readonly style="background-color: var(--gray-light);">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>نرخی فرۆشتن (بنچینەیی)</label>
+                                    <input type="number" id="baseSalePrice" value="${product.salePrice}" readonly style="background-color: var(--gray-light);">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>نرخی فرۆشتن (دەستکاریکراو)</label>
+                                    <input type="number" id="adjustedSalePrice" value="${product.salePrice}" placeholder="نرخی فرۆشتنی دەستکاریکراو">
+                                </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label>نرخی فرۆشتن (دەستکاریکراو)</label>
-                                <input type="number" id="adjustedSalePrice" value="${product.salePrice}" placeholder="نرخی فرۆشتنی دەستکاریکراو">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>بڕی فرۆشتن</label>
+                                    <input type="number" id="saleQuantity" value="1" min="1" max="${product.stock}" placeholder="بڕ">
+                                    <small style="color: var(--gray);">بڕی بەردەست: ${product.stock} ${getUnitName(product.unit)}</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>یەکەی سەرەکی</label>
+                                    <select id="saleUnit">
+                                        <option value="${product.unit}">${getUnitName(product.unit)}</option>
+                                    </select>
+                                </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label>بڕی فرۆشتن</label>
-                                <input type="number" id="saleQuantity" value="1" min="1" max="${product.stock}" placeholder="بڕ">
-                                <small style="color: var(--gray);">بڕی بەردەست: ${product.stock}</small>
+                            ${product.hasSecondaryUnit ? `
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>یەکەی دووەم</label>
+                                    <select id="saleSecondaryUnit">
+                                        <option value="${product.secondaryUnit}">${getUnitName(product.secondaryUnit)}</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>بڕ لە یەکەی دووەم</label>
+                                    <input type="number" id="saleSecondaryUnitQuantity" value="0" min="0" max="${Math.floor(product.stock * product.secondaryUnitQuantity)}" placeholder="بڕ لە یەکەی دووەم">
+                                    <small style="color: var(--gray);">بەردەست: ${Math.floor(product.stock * product.secondaryUnitQuantity)} ${getUnitName(product.secondaryUnit)}</small>
+                                </div>
                             </div>
-                            
-                            <div class="form-group">
-                                <label>یەکە</label>
-                                <select id="saleUnit">
-                                    <option value="piece" ${product.unit === 'piece' ? 'selected' : ''}>پارچە</option>
-                                    <option value="carton" ${product.unit === 'carton' ? 'selected' : ''}>کارتۆن</option>
-                                    <option value="unit" ${product.unit === 'unit' ? 'selected' : ''}>دانە</option>
-                                </select>
-                            </div>
+                            ` : ''}
                             
                             <div class="action-buttons">
                                 <button class="btn btn-danger" onclick="document.getElementById('saleAdjustmentModal').remove()">
@@ -4006,7 +3839,7 @@
             document.body.insertAdjacentHTML('beforeend', modalHTML);
         };
 
-        // زیادکردنی کاڵا بە نرخ و بڕی دەستکاریکراو
+        // زیادکردنی کاڵا بە نرخ و بڕی دەستکاریکراو (نوێکراوە بۆ یەکەی دووەم)
         window.addToCartWithAdjustment = function(productId) {
             const product = sampleData.products.find(p => p.id === productId);
             if (!product) return;
@@ -4017,30 +3850,53 @@
             
             // پشکنینی بڕی بەردەست
             if (quantity > product.stock) {
-                alert(`تەنها ${product.stock} ${unit === 'piece' ? 'پارچە' : unit === 'carton' ? 'کارتۆن' : 'دانە'} بەردەستە!`);
+                alert(`تەنها ${product.stock} ${getUnitName(unit)} بەردەستە!`);
                 return;
+            }
+            
+            // پشکنینی یەکەی دووەم ئەگەر هەیە
+            let secondaryUnitQuantity = 0;
+            if (product.hasSecondaryUnit) {
+                secondaryUnitQuantity = parseInt(document.getElementById('saleSecondaryUnitQuantity').value) || 0;
+                const maxSecondaryQuantity = Math.floor(product.stock * product.secondaryUnitQuantity);
+                if (secondaryUnitQuantity > maxSecondaryQuantity) {
+                    alert(`تەنها ${maxSecondaryQuantity} ${getUnitName(product.secondaryUnit)} بەردەستە!`);
+                    return;
+                }
             }
             
             const existingItem = cart.find(item => item.id === product.id && item.price === adjustedPrice);
             
             if (existingItem) {
                 existingItem.quantity += quantity;
+                if (product.hasSecondaryUnit) {
+                    existingItem.secondaryUnitQuantity += secondaryUnitQuantity;
+                }
             } else {
-                cart.push({
+                const cartItem = {
                     id: product.id,
                     name: product.name,
                     price: adjustedPrice,
                     quantity: quantity,
                     unit: unit,
-                    originalPrice: product.salePrice
-                });
+                    originalPrice: product.salePrice,
+                    image: product.image
+                };
+                
+                if (product.hasSecondaryUnit) {
+                    cartItem.hasSecondaryUnit = true;
+                    cartItem.secondaryUnit = product.secondaryUnit;
+                    cartItem.secondaryUnitQuantity = secondaryUnitQuantity;
+                }
+                
+                cart.push(cartItem);
             }
             
             updateCartDisplay();
             document.getElementById('saleAdjustmentModal').remove();
         };
 
-        // نوێکردنەوەی نیشاندانی سەبەتە
+        // نوێکردنەوەی نیشاندانی سەبەتە (نوێکراوە بۆ وێنە و یەکەی دووەم)
         function updateCartDisplay() {
             const cartItems = document.getElementById('cartItems');
             if (!cartItems) return;
@@ -4058,19 +3914,32 @@
                 const li = document.createElement('li');
                 li.className = 'cart-item';
                 
+                const product = sampleData.products.find(p => p.id === item.id);
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
                 
+                // دروستکردنی وێنەی کاڵا
+                const imageHTML = item.image 
+                    ? `<img src="${item.image}" alt="${item.name}">`
+                    : `<div class="cart-item-image"><i class="fas fa-${getProductIcon(item.name)}"></i></div>`;
+                
+                // دروستکردنی زانیاری یەکەی دووەم
+                const secondaryUnitInfo = item.hasSecondaryUnit && item.secondaryUnitQuantity > 0
+                    ? `<div style="font-size: 0.9rem; color: var(--info); margin-top: 5px;">
+                        ${item.secondaryUnitQuantity} ${getUnitName(item.secondaryUnit)}
+                       </div>`
+                    : '';
+                
                 li.innerHTML = `
                     <div class="cart-item-info">
-                        <div class="cart-item-image">
-                            <i class="fas fa-${getProductIcon(item.name)}"></i>
-                        </div>
+                        ${imageHTML}
                         <div>
                             <div class="item-name">${item.name}</div>
                             <div style="font-size: 0.9rem; color: var(--gray);">
-                                ${item.quantity} ${item.unit === 'piece' ? 'پارچە' : item.unit === 'carton' ? 'کارتۆن' : 'دانە'} × ${item.price.toLocaleString()} دینار
+                                ${item.quantity} ${getUnitName(item.unit)} × ${item.price.toLocaleString()} دینار
+                                ${item.price !== item.originalPrice ? `<br><small style="color: var(--warning);">(بنچینە: ${item.originalPrice.toLocaleString()} دینار)</small>` : ''}
                             </div>
+                            ${secondaryUnitInfo}
                         </div>
                     </div>
                     <div>
@@ -4247,7 +4116,7 @@
                     tr.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${item.name}</td>
-                        <td>${item.unit === 'piece' ? 'پارچە' : item.unit === 'carton' ? 'کارتۆن' : 'دانە'}</td>
+                        <td>${getUnitName(item.unit)}</td>
                         <td>${item.quantity}</td>
                         <td>${item.price.toLocaleString()} دینار</td>
                         <td>${itemTotal.toLocaleString()} دینار</td>
@@ -4424,23 +4293,17 @@
                     productForm.style.display = 'block';
                     this.style.display = 'none';
                     
-                    const productName = document.getElementById('productName');
-                    const productBarcode = document.getElementById('productBarcode');
-                    const purchasePrice = document.getElementById('purchasePrice');
-                    const salePrice = document.getElementById('salePrice');
-                    const stockQuantity = document.getElementById('stockQuantity');
-                    const primaryUnit = document.getElementById('primaryUnit');
-                    const secondaryUnit = document.getElementById('secondaryUnit');
-                    const secondaryUnitQuantity = document.getElementById('secondaryUnitQuantity');
-                    
-                    if (productName) productName.value = '';
-                    if (productBarcode) productBarcode.value = '';
-                    if (purchasePrice) purchasePrice.value = '';
-                    if (salePrice) salePrice.value = '';
-                    if (stockQuantity) stockQuantity.value = '';
-                    if (primaryUnit) primaryUnit.value = 'piece';
-                    if (secondaryUnit) secondaryUnit.value = '';
-                    if (secondaryUnitQuantity) secondaryUnitQuantity.value = '';
+                    // پاککردنەوەی خانەکان
+                    document.getElementById('productName').value = '';
+                    document.getElementById('productBarcode').value = '';
+                    document.getElementById('purchasePrice').value = '';
+                    document.getElementById('salePrice').value = '';
+                    document.getElementById('stockQuantity').value = '';
+                    document.getElementById('primaryUnit').value = 'piece';
+                    document.getElementById('secondaryUnit').value = '';
+                    document.getElementById('secondaryUnitQuantity').value = '';
+                    document.getElementById('productImage').value = '';
+                    document.getElementById('imagePreview').innerHTML = '<p style="color: var(--gray); font-size: 0.9rem;">هیچ وێنەیەک نییە</p>';
                 }
             });
         }
@@ -4459,7 +4322,7 @@
             });
         }
 
-        // هەڵگرتنی کاڵای نوێ
+        // هەڵگرتنی کاڵای نوێ (نوێکراوە بۆ وێنە و یەکەی دووەم)
         const saveProductBtn = document.getElementById('saveProductBtn');
         if (saveProductBtn) {
             saveProductBtn.addEventListener('click', function() {
@@ -4467,13 +4330,14 @@
                 const purchasePrice = document.getElementById('purchasePrice');
                 const salePrice = document.getElementById('salePrice');
                 const stockQuantity = document.getElementById('stockQuantity');
+                const productImage = document.getElementById('productImage');
                 
                 if (!productName || !purchasePrice || !salePrice || !stockQuantity) {
                     alert('تکایە هەموو خانە پڕەکان پڕ بکەرەوە!');
                     return;
                 }
                 
-                const name = productName.value;
+                const name = productName.value.trim();
                 const purchasePriceValue = parseInt(purchasePrice.value) || 0;
                 const salePriceValue = parseInt(salePrice.value) || 0;
                 const stock = parseInt(stockQuantity.value) || 0;
@@ -4483,29 +4347,50 @@
                     return;
                 }
                 
-                const newProduct = {
-                    id: sampleData.products.length + 1,
-                    name: name,
-                    barcode: document.getElementById('productBarcode').value || `BR${sampleData.products.length + 1000}`,
-                    purchasePrice: purchasePriceValue,
-                    salePrice: salePriceValue,
-                    stock: stock,
-                    unit: document.getElementById('primaryUnit').value
-                };
-                
-                sampleData.products.push(newProduct);
-                
-                populateSampleData();
-                
-                const productForm = document.getElementById('productForm');
-                const addProductBtn = document.getElementById('addProductBtn');
-                
-                if (productForm && addProductBtn) {
-                    productForm.style.display = 'none';
-                    addProductBtn.style.display = 'block';
+                // هەڵگرتنی وێنە بە فۆرمی Base64
+                let imageBase64 = null;
+                if (productImage.files.length > 0) {
+                    const file = productImage.files[0];
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imageBase64 = e.target.result;
+                        saveProductWithImage(imageBase64);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    saveProductWithImage(null);
                 }
                 
-                alert('کاڵای نوێ بە سەرکەوتوویی زیاد کرا!');
+                function saveProductWithImage(imageData) {
+                    const newProduct = {
+                        id: sampleData.products.length + 1,
+                        name: name,
+                        barcode: document.getElementById('productBarcode').value.trim() || `BR${sampleData.products.length + 1000}`,
+                        purchasePrice: purchasePriceValue,
+                        salePrice: salePriceValue,
+                        stock: stock,
+                        unit: document.getElementById('primaryUnit').value,
+                        image: imageData,
+                        hasSecondaryUnit: document.getElementById('secondaryUnit').value !== '',
+                        secondaryUnit: document.getElementById('secondaryUnit').value || null,
+                        secondaryUnitQuantity: parseInt(document.getElementById('secondaryUnitQuantity').value) || 0,
+                        description: ''
+                    };
+                    
+                    sampleData.products.push(newProduct);
+                    
+                    populateSampleData();
+                    
+                    const productForm = document.getElementById('productForm');
+                    const addProductBtn = document.getElementById('addProductBtn');
+                    
+                    if (productForm && addProductBtn) {
+                        productForm.style.display = 'none';
+                        addProductBtn.style.display = 'block';
+                    }
+                    
+                    alert('کاڵای نوێ بە سەرکەوتوویی زیاد کرا!');
+                }
             });
         }
 
@@ -4554,7 +4439,7 @@
             });
         }
 
-        // پرێنتی بچووک (لە مۆدالی سەرەکی)
+        // پرێنتی بچووک (لە مۆدالی سەرەمی)
         const printSmallBtn = document.getElementById('printSmall');
         if (printSmallBtn) {
             printSmallBtn.addEventListener('click', function() {
@@ -4563,7 +4448,7 @@
             });
         }
 
-        // پرێنتی A4 (لە مۆدالی سەرەکی)
+        // پرێنتی A4 (لە مۆدالی سەرەمی)
         const printA4Btn = document.getElementById('printA4');
         if (printA4Btn) {
             printA4Btn.addEventListener('click', function() {
@@ -4886,7 +4771,7 @@
         }
 
         // ==============================================
-        // بەشی کڕین - فەنکشنە نوێیەکان
+        // بەشی کڕین - فەنکشنە نوێیەکان (نوێکراوە بۆ وێنە)
         // ==============================================
 
         // گەڕان بۆ کاڵا لە بەشی کڕین
@@ -4905,7 +4790,8 @@
                 
                 const filteredProducts = sampleData.products.filter(p => 
                     p.name.toLowerCase().includes(query) || 
-                    p.barcode.includes(query)
+                    p.barcode.includes(query) ||
+                    (p.description && p.description.toLowerCase().includes(query))
                 );
                 
                 suggestions.innerHTML = '';
@@ -4918,11 +4804,28 @@
                 filteredProducts.forEach(product => {
                     const div = document.createElement('div');
                     div.className = 'suggestion-item';
+                    
+                    // دروستکردنی وێنەی کاڵا
+                    const imageHTML = product.image 
+                        ? `<img src="${product.image}" style="width: 40px; height: 40px; border-radius: 5px; object-fit: cover; margin-left: 10px; float: right;">`
+                        : '';
+                    
                     div.innerHTML = `
-                        <div><strong>${product.name}</strong></div>
-                        <div style="font-size: 0.9rem;">بارکۆد: ${product.barcode}</div>
-                        <div style="font-size: 0.9rem;">نرخی کڕین: ${product.purchasePrice.toLocaleString()} دینار</div>
-                        <div style="font-size: 0.9rem;">نرخی فرۆشتن: ${product.salePrice.toLocaleString()} دینار</div>
+                        <div style="display: flex; align-items: center;">
+                            ${imageHTML}
+                            <div style="flex: 1;">
+                                <div><strong>${product.name}</strong></div>
+                                <div style="font-size: 0.9rem; color: var(--gray);">
+                                    نرخی کڕین: ${product.purchasePrice.toLocaleString()} دینار
+                                </div>
+                                <div style="font-size: 0.9rem; color: var(--info);">
+                                    نرخی فرۆشتن: ${product.salePrice.toLocaleString()} دینار
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--gray);">
+                                    بەردەست: ${product.stock} ${getUnitName(product.unit)}
+                                </div>
+                            </div>
+                        </div>
                     `;
                     
                     div.addEventListener('click', function() {
@@ -4938,7 +4841,7 @@
             });
         }
 
-        // مۆدال بۆ زیادکردنی کاڵا بۆ سەبەتەی کڕین
+        // مۆدال بۆ زیادکردنی کاڵا بۆ سەبەتەی کڕین (نوێکراوە بۆ وێنە)
         window.showAddToPurchaseModal = function(product) {
             // چەک کردنی ئەگەر مۆدالێکی پێشوو هەبێت
             const existingModal = document.getElementById('addToPurchaseModal');
@@ -4946,49 +4849,82 @@
                 existingModal.remove();
             }
             
+            // دروستکردنی وێنەی کاڵا
+            const imageHTML = product.image 
+                ? `<img src="${product.image}" style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-left: 15px;">`
+                : `<div style="width: 80px; height: 80px; background-color: var(--gray-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-left: 15px; color: var(--gray);"><i class="fas fa-image fa-2x"></i></div>`;
+            
             const modalHTML = `
                 <div class="modal active" id="addToPurchaseModal">
-                    <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-content" style="max-width: 600px;">
                         <div class="modal-header">
-                            <h3>زیادکردنی کاڵا: ${product.name}</h3>
+                            <div style="display: flex; align-items: center;">
+                                ${imageHTML}
+                                <div>
+                                    <h3>${product.name}</h3>
+                                    <p style="color: var(--gray); font-size: 0.9rem;">بارکۆد: ${product.barcode}</p>
+                                </div>
+                            </div>
                             <button class="modal-close" onclick="document.getElementById('addToPurchaseModal').remove()">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group">
-                                <label>نرخی کڕین (کۆن)</label>
-                                <input type="number" id="oldPurchasePrice" value="${product.purchasePrice}" readonly style="background-color: var(--gray-light);">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>نرخی کڕین (کۆن)</label>
+                                    <input type="number" id="oldPurchasePrice" value="${product.purchasePrice}" readonly style="background-color: var(--gray-light);">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>نرخی کڕینی نوێ</label>
+                                    <input type="number" id="newPurchasePrice" value="${product.purchasePrice}" placeholder="نرخی کڕینی نوێ">
+                                </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label>نرخی کڕینی نوێ</label>
-                                <input type="number" id="newPurchasePrice" value="${product.purchasePrice}" placeholder="نرخی کڕینی نوێ">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>نرخی فرۆشتن (کۆن)</label>
+                                    <input type="number" id="oldSalePrice" value="${product.salePrice}" readonly style="background-color: var(--gray-light);">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>نرخی فرۆشتنی نوێ</label>
+                                    <input type="number" id="newSalePrice" value="${product.salePrice}" placeholder="نرخی فرۆشتنی نوێ">
+                                </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label>نرخی فرۆشتن (کۆن)</label>
-                                <input type="number" id="oldSalePrice" value="${product.salePrice}" readonly style="background-color: var(--gray-light);">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>بڕی کڕین</label>
+                                    <input type="number" id="purchaseQuantity" value="1" min="1" placeholder="بڕ">
+                                    <small style="color: var(--gray);">بەردەست: ${product.stock} ${getUnitName(product.unit)}</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>یەکەی سەرەکی</label>
+                                    <select id="purchaseUnit">
+                                        <option value="${product.unit}">${getUnitName(product.unit)}</option>
+                                    </select>
+                                </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label>نرخی فرۆشتنی نوێ</label>
-                                <input type="number" id="newSalePrice" value="${product.salePrice}" placeholder="نرخی فرۆشتنی نوێ">
+                            ${product.hasSecondaryUnit ? `
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>یەکەی دووەم</label>
+                                    <select id="purchaseSecondaryUnit">
+                                        <option value="${product.secondaryUnit}">${getUnitName(product.secondaryUnit)}</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>بڕ لە یەکەی دووەم</label>
+                                    <input type="number" id="purchaseSecondaryUnitQuantity" value="0" min="0" placeholder="بڕ لە یەکەی دووەم">
+                                    <small style="color: var(--gray);">یەکە: ${product.secondaryUnitQuantity} ${getUnitName(product.secondaryUnit)} = 1 ${getUnitName(product.unit)}</small>
+                                </div>
                             </div>
-                            
-                            <div class="form-group">
-                                <label>بڕی کڕین</label>
-                                <input type="number" id="purchaseQuantity" value="1" min="1" placeholder="بڕ">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>یەکە</label>
-                                <select id="purchaseUnit">
-                                    <option value="piece" ${product.unit === 'piece' ? 'selected' : ''}>پارچە</option>
-                                    <option value="carton" ${product.unit === 'carton' ? 'selected' : ''}>کارتۆن</option>
-                                    <option value="unit" ${product.unit === 'unit' ? 'selected' : ''}>دانە</option>
-                                </select>
-                            </div>
+                            ` : ''}
                             
                             <div class="action-buttons">
                                 <button class="btn btn-danger" onclick="document.getElementById('addToPurchaseModal').remove()">
@@ -5006,7 +4942,7 @@
             document.body.insertAdjacentHTML('beforeend', modalHTML);
         };
 
-        // زیادکردنی کاڵا بۆ سەبەتەی کڕین
+        // زیادکردنی کاڵا بۆ سەبەتەی کڕین (نوێکراوە بۆ یەکەی دووەم)
         window.addToPurchaseCart = function(productId) {
             const product = sampleData.products.find(p => p.id === productId);
             if (!product) return;
@@ -5015,6 +4951,12 @@
             const newSalePrice = parseInt(document.getElementById('newSalePrice').value) || product.salePrice;
             const quantity = parseInt(document.getElementById('purchaseQuantity').value) || 1;
             const unit = document.getElementById('purchaseUnit').value;
+            
+            // پشکنینی یەکەی دووەم ئەگەر هەیە
+            let secondaryUnitQuantity = 0;
+            if (product.hasSecondaryUnit) {
+                secondaryUnitQuantity = parseInt(document.getElementById('purchaseSecondaryUnitQuantity').value) || 0;
+            }
             
             const purchaseCartItem = {
                 id: product.id,
@@ -5025,8 +4967,16 @@
                 newSalePrice: newSalePrice,
                 quantity: quantity,
                 unit: unit,
+                image: product.image,
                 total: newPurchasePrice * quantity
             };
+            
+            // زیادکردنی یەکەی دووەم ئەگەر هەیە
+            if (product.hasSecondaryUnit) {
+                purchaseCartItem.hasSecondaryUnit = true;
+                purchaseCartItem.secondaryUnit = product.secondaryUnit;
+                purchaseCartItem.secondaryUnitQuantity = secondaryUnitQuantity;
+            }
             
             // زیادکردنی بۆ سەبەتەی کڕین
             purchaseCart.push(purchaseCartItem);
@@ -5035,7 +4985,7 @@
             document.getElementById('addToPurchaseModal').remove();
         };
 
-        // نوێکردنەوەی سەبەتەی کڕین
+        // نوێکردنەوەی سەبەتەی کڕین (نوێکراوە بۆ وێنە و یەکەی دووەم)
         function updatePurchaseCartDisplay() {
             const purchaseCartItems = document.getElementById('purchaseCartItems');
             if (!purchaseCartItems) return;
@@ -5053,22 +5003,34 @@
                 const li = document.createElement('li');
                 li.className = 'cart-item';
                 
+                const product = sampleData.products.find(p => p.id === item.id);
                 const itemTotal = item.newPurchasePrice * item.quantity;
                 total += itemTotal;
                 
+                // دروستکردنی وێنەی کاڵا
+                const imageHTML = item.image 
+                    ? `<img src="${item.image}" alt="${item.name}">`
+                    : `<div class="cart-item-image"><i class="fas fa-${getProductIcon(item.name)}"></i></div>`;
+                
+                // دروستکردنی زانیاری یەکەی دووەم
+                const secondaryUnitInfo = item.hasSecondaryUnit && item.secondaryUnitQuantity > 0
+                    ? `<div style="font-size: 0.9rem; color: var(--info); margin-top: 5px;">
+                        ${item.secondaryUnitQuantity} ${getUnitName(item.secondaryUnit)}
+                       </div>`
+                    : '';
+                
                 li.innerHTML = `
                     <div class="cart-item-info">
-                        <div class="cart-item-image">
-                            <i class="fas fa-${getProductIcon(item.name)}"></i>
-                        </div>
+                        ${imageHTML}
                         <div>
                             <div class="item-name">${item.name}</div>
                             <div style="font-size: 0.9rem; color: var(--gray);">
-                                ${item.quantity} ${item.unit === 'piece' ? 'پارچە' : item.unit === 'carton' ? 'کارتۆن' : 'دانە'}
+                                ${item.quantity} ${getUnitName(item.unit)}
                             </div>
                             <div style="font-size: 0.9rem; color: var(--info);">
                                 نرخ: ${item.newPurchasePrice.toLocaleString()} دینار (کۆن: ${item.oldPurchasePrice.toLocaleString()})
                             </div>
+                            ${secondaryUnitInfo}
                         </div>
                     </div>
                     <div>
@@ -5182,7 +5144,7 @@
             });
         }
 
-        // تەواوکردنی کڕین
+        // تەواوکردنی کڕین (نوێکراوە بۆ یەکەی دووەم)
         const completePurchaseBtn = document.getElementById('completePurchase');
         if (completePurchaseBtn) {
             completePurchaseBtn.addEventListener('click', function() {
@@ -5213,7 +5175,12 @@
                     date: new Date().toISOString().split('T')[0],
                     total: total,
                     payment: paymentType,
-                    items: purchaseCart.map(item => ({name: item.name, quantity: item.quantity, price: item.newPurchasePrice}))
+                    items: purchaseCart.map(item => ({
+                        name: item.name, 
+                        quantity: item.quantity, 
+                        price: item.newPurchasePrice,
+                        secondaryUnitQuantity: item.secondaryUnitQuantity || 0
+                    }))
                 };
                 
                 samplePurchaseData.purchases.unshift(newPurchase);
@@ -5245,6 +5212,12 @@
                         product.stock += item.quantity;
                         product.purchasePrice = item.newPurchasePrice;
                         product.salePrice = item.newSalePrice;
+                        
+                        // زیادکردنی یەکەی دووەم ئەگەر هەیە
+                        if (item.hasSecondaryUnit && item.secondaryUnitQuantity > 0) {
+                            const totalSecondaryUnits = item.quantity * product.secondaryUnitQuantity + item.secondaryUnitQuantity;
+                            product.stock += Math.floor(totalSecondaryUnits / product.secondaryUnitQuantity);
+                        }
                     }
                 });
                 
@@ -6728,6 +6701,10 @@
                 document.getElementById('expenseDate').value = today;
             }
             
+            // چالاککردنی پیشبینینی وێنە
+            setupImagePreview();
+            
+            // دەستپێکردنی سەبەتە و داشبۆرد
             updateCartDisplay();
             updatePurchaseCartDisplay();
             updateDashboardCash();
