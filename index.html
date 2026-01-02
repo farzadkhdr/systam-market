@@ -266,6 +266,10 @@
             transform: translateX(-250px);
         }
         
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        
         .sidebar-header {
             padding: 0 20px 20px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -1334,9 +1338,9 @@
                             <i class="fas fa-wallet"></i>
                         </div>
                         <h3>کۆی پارەی واسڵ کراو</h3>
-                        <div class="card-value" id="cashBalanceDisplay">٣٬٥٤٠٫٠٠٠ <span>دینار</span></div>
+                        <div class="card-value" id="cashBalanceDisplay">٠ <span>دینار</span></div>
                         <div class="card-change positive">
-                            <i class="fas fa-arrow-up"></i> ١٢٪ زیاتر لە هەفتەی ڕابردوو
+                            <i class="fas fa-arrow-up"></i> ٠٪ زیاتر لە هەفتەی ڕابردوو
                         </div>
                     </div>
                     
@@ -1345,9 +1349,9 @@
                             <i class="fas fa-shopping-cart"></i>
                         </div>
                         <h3>کۆی کڕین</h3>
-                        <div class="card-value">١٬٢٣٠٫٠٠٠ <span>دینار</span></div>
+                        <div class="card-value">٠ <span>دینار</span></div>
                         <div class="card-change negative">
-                            <i class="fas fa-arrow-down"></i> ٥٪ کەمتر لە هەفتەی ڕابردوو
+                            <i class="fas fa-arrow-down"></i> ٠٪ کەمتر لە هەفتەی ڕابردوو
                         </div>
                     </div>
                     
@@ -1356,9 +1360,9 @@
                             <i class="fas fa-exchange-alt"></i>
                         </div>
                         <h3>جیاوازی کڕین و واسڵ کراو</h3>
-                        <div class="card-value">٢٬٣١٠٫٠٠٠ <span>دینار</span></div>
+                        <div class="card-value">٠ <span>دینار</span></div>
                         <div class="card-change positive">
-                            <i class="fas fa-arrow-up"></i> ٨٪ زیاتر لە هەفتەی ڕابردوو
+                            <i class="fas fa-arrow-up"></i> ٠٪ زیاتر لە هەفتەی ڕابردوو
                         </div>
                     </div>
                     
@@ -1367,9 +1371,9 @@
                             <i class="fas fa-exclamation-triangle"></i>
                         </div>
                         <h3>کۆی کاڵای کەم بوو</h3>
-                        <div class="card-value">٢٤ <span>جۆر</span></div>
+                        <div class="card-value">٠ <span>جۆر</span></div>
                         <div class="card-change positive">
-                            <i class="fas fa-arrow-down"></i> ٣ جۆر کەمتر لە هەفتەی ڕابردوو
+                            <i class="fas fa-arrow-down"></i> ٠ جۆر کەمتر لە هەفتەی ڕابردوو
                         </div>
                     </div>
                     
@@ -1378,9 +1382,9 @@
                             <i class="fas fa-user-ow"></i>
                         </div>
                         <h3>کۆی پارەی قەرزداران</h3>
-                        <div class="card-value">٤٥٠٫٠٠٠ <span>دینار</span></div>
+                        <div class="card-value">٠ <span>دینار</span></div>
                         <div class="card-change negative">
-                            <i class="fas fa-arrow-up"></i> ١٥٪ زیاتر لە هەفتەی ڕابردوو
+                            <i class="fas fa-arrow-up"></i> ٠٪ زیاتر لە هەفتەی ڕابردوو
                         </div>
                     </div>
                     
@@ -1389,9 +1393,9 @@
                             <i class="fas fa-handshake"></i>
                         </div>
                         <h3>قەرزدارم بە شەریکەکان</h3>
-                        <div class="card-value">٧٨٠٫٠٠٠ <span>دینار</span></div>
+                        <div class="card-value">٠ <span>دینار</span></div>
                         <div class="card-change positive">
-                            <i class="fas fa-arrow-down"></i> ١٠٪ کەمتر لە هەفتەی ڕابردوو
+                            <i class="fas fa-arrow-down"></i> ٠٪ کەمتر لە هەفتەی ڕابردوو
                         </div>
                     </div>
                     
@@ -2459,151 +2463,21 @@
 
     <!-- هەموو JavaScript لێرە -->
     <script>
-        // داتای نموونەیی بۆ سیستمەکە (نوێکراوە بۆ وێنە و یەکەی دووەم)
+        // داتای نموونەیی بۆ سیستمەکە (داتاکان لە سفرەوە دەست پێدەکەن)
         const sampleData = {
-            products: [
-                { 
-                    id: 1, 
-                    name: "مۆبایلی سامسۆنگ", 
-                    barcode: "123456", 
-                    purchasePrice: 500000, 
-                    salePrice: 650000, 
-                    stock: 15, 
-                    unit: "piece", 
-                    image: null,
-                    hasSecondaryUnit: true,
-                    secondaryUnit: "carton",
-                    secondaryUnitQuantity: 10,
-                    description: "مۆبایلی سامسۆنگ گالاکسی A54"
-                },
-                { 
-                    id: 2, 
-                    name: "تەلەفزیۆنی LG", 
-                    barcode: "234567", 
-                    purchasePrice: 1200000, 
-                    salePrice: 1500000, 
-                    stock: 8, 
-                    unit: "piece", 
-                    image: null,
-                    hasSecondaryUnit: false,
-                    secondaryUnit: null,
-                    secondaryUnitQuantity: 0,
-                    description: "تەلەفزیۆنی 55 ئینج LG"
-                },
-                { 
-                    id: 3, 
-                    name: "کۆمپیوتەری ڕوومێزی", 
-                    barcode: "345678", 
-                    purchasePrice: 800000, 
-                    salePrice: 950000, 
-                    stock: 12, 
-                    unit: "piece", 
-                    image: null,
-                    hasSecondaryUnit: false,
-                    secondaryUnit: null,
-                    secondaryUnitQuantity: 0,
-                    description: "کۆمپیوتەری ڕوومێزی HP"
-                },
-                { 
-                    id: 4, 
-                    name: "قاڵبی کارتۆنی", 
-                    barcode: "456789", 
-                    purchasePrice: 50000, 
-                    salePrice: 70000, 
-                    stock: 3, 
-                    unit: "carton", 
-                    image: null,
-                    hasSecondaryUnit: true,
-                    secondaryUnit: "piece",
-                    secondaryUnitQuantity: 100,
-                    description: "قاڵبی کارتۆنی بۆ بەسته‌بەندکردن"
-                },
-                { 
-                    id: 5, 
-                    name: "مایکرۆوەیڤ", 
-                    barcode: "567890", 
-                    purchasePrice: 400000, 
-                    salePrice: 500000, 
-                    stock: 7, 
-                    unit: "piece", 
-                    image: null,
-                    hasSecondaryUnit: false,
-                    secondaryUnit: null,
-                    secondaryUnitQuantity: 0,
-                    description: "مایکرۆوەیڤ 800 وات"
-                },
-                { 
-                    id: 6, 
-                    name: "سەرعەم", 
-                    barcode: "678901", 
-                    purchasePrice: 200000, 
-                    salePrice: 250000, 
-                    stock: 0, 
-                    unit: "piece", 
-                    image: null,
-                    hasSecondaryUnit: false,
-                    secondaryUnit: null,
-                    secondaryUnitQuantity: 0,
-                    description: "سەرعەمی بیس‌وار"
-                },
-                { 
-                    id: 7, 
-                    name: "کۆمپیوتەری لاپتۆپ", 
-                    barcode: "789012", 
-                    purchasePrice: 1500000, 
-                    salePrice: 1800000, 
-                    stock: 5, 
-                    unit: "piece", 
-                    image: null,
-                    hasSecondaryUnit: false,
-                    secondaryUnit: null,
-                    secondaryUnitQuantity: 0,
-                    description: "لاپتۆپی دێڵ 15 ئینج"
-                },
-                { 
-                    id: 8, 
-                    name: "ئامێری دەنگ", 
-                    barcode: "890123", 
-                    purchasePrice: 300000, 
-                    salePrice: 380000, 
-                    stock: 2, 
-                    unit: "piece", 
-                    image: null,
-                    hasSecondaryUnit: true,
-                    secondaryUnit: "box",
-                    secondaryUnitQuantity: 2,
-                    description: "سیستەمی دەنگی بلوتوس"
-                }
-            ],
-            customers: [
-                { id: 1, name: "عەلی محەممەد", phone: "07701234567", address: "هەولێر", debt: 120000 },
-                { id: 2, name: "سەلام کەریم", phone: "07702345678", address: "سلێمانی", debt: 0 },
-                { id: 3, name: "نەوزاد عەبدوڵڵا", phone: "07703456789", address: "هەولێر", debt: 75000 },
-                { id: 4, name: "هەڤال ئەحمەد", phone: "07704567890", address: "دهۆک", debt: 250000 },
-                { id: 5, name: "رێزان محەممەد", phone: "07705678901", address: "هەولێر", debt: 0 }
-            ],
-            partners: [
-                { id: 1, name: "کۆمپانیای ئەلکترۆنی", phone: "07711223344", address: "هەولێر", debt: -450000 },
-                { id: 2, name: "فرۆشگای کوردسات", phone: "07722334455", address: "سلێمانی", debt: -330000 },
-                { id: 3, name: "کۆمپانیای ئێسپرێس", phone: "07733445566", address: "هەولێر", debt: 0 }
-            ],
-            sales: [
-                { id: 1, code: "INV-2023-001", customer: "عەلی محەممەد", date: "2023-12-10", total: 650000, payment: "credit", items: ["مۆبایلی سامسۆنگ"] },
-                { id: 2, code: "INV-2023-002", customer: "سەلام کەریم", date: "2023-12-11", total: 1500000, payment: "cash", items: ["تەلەفزیۆنی LG"] },
-                { id: 3, code: "INV-2023-003", customer: "نەوزاد عەبدوڵڵا", date: "2023-12-12", total: 950000, payment: "credit", items: ["کۆمپیوتەری ڕوومێزی"] }
-            ],
+            products: [],
+            customers: [],
+            partners: [],
+            sales: [],
             purchases: [],
-            cashBalance: 3540000,
+            cashBalance: 0,
             expenseHistory: [],
             paymentHistory: []
         };
 
         // داتای نموونەیی بۆ مێژووی کڕین
         const samplePurchaseData = {
-            purchases: [
-                { id: 1, code: "PUR-2023-001", partner: "کۆمپانیای ئەلکترۆنی", date: "2023-12-05", total: 1500000, payment: "credit", items: ["مۆبایلی سامسۆنگ", "مۆبایلی سامسۆنگ"] },
-                { id: 2, code: "PUR-2023-002", partner: "فرۆشگای کوردسات", date: "2023-12-08", total: 800000, payment: "cash", items: ["کۆمپیوتەری ڕوومێزی"] }
-            ]
+            purchases: []
         };
 
         // دۆمینەکان
@@ -2642,8 +2516,8 @@
                     };
                     document.getElementById('currentUser').textContent = userNames[username] || username;
                     
-                    // زیادکردنی داتای نموونەیی
-                    populateSampleData();
+                    // زیادکردنی داتای نموونەیی سادە بۆ ئەزموونکردن
+                    addSampleDataForTesting();
                     
                     // چالاککردنی داشبۆرد وەک یەکەم بەش
                     showSection('dashboard');
@@ -2657,6 +2531,15 @@
                 alert('تکایە هەردوو خانە پڕ بکەرەوە!');
             }
         });
+
+        // فەنکشنی زیادکردنی داتای نموونەیی سادە بۆ ئەزموونکردن
+        function addSampleDataForTesting() {
+            // زیادکردنی کۆی پارەی سەرەتا
+            sampleData.cashBalance = 10000000; // 10 ملیۆن دینار
+            
+            // نوێکردنەوەی داشبۆرد
+            populateSampleData();
+        }
 
         // فەنکشنی نیشاندانی بەش
         function showSection(sectionId) {
@@ -2780,6 +2663,9 @@
                     expenseChangeElement.innerHTML = `<i class="fas fa-minus"></i> ٠% جیاوازی لە مانگی ڕابردوو`;
                     expenseChangeElement.className = 'card-change';
                 }
+            } else {
+                expenseChangeElement.innerHTML = `<i class="fas fa-minus"></i> ٠% جیاوازی لە مانگی ڕابردوو`;
+                expenseChangeElement.className = 'card-change';
             }
         }
 
@@ -2826,15 +2712,21 @@
             if (lowStockList) {
                 lowStockList.innerHTML = '';
                 
-                sampleData.products.filter(p => p.stock <= 5).forEach(product => {
-                    const li = document.createElement('li');
-                    li.className = 'list-item';
-                    li.innerHTML = `
-                        <div class="item-name">${product.name}</div>
-                        <div class="item-value">${product.stock} ${getUnitName(product.unit)}</div>
-                    `;
-                    lowStockList.appendChild(li);
-                });
+                const lowStockProducts = sampleData.products.filter(p => p.stock <= 5);
+                
+                if (lowStockProducts.length === 0) {
+                    lowStockList.innerHTML = '<li class="list-item">هیچ کاڵایەک کەم نییە</li>';
+                } else {
+                    lowStockProducts.forEach(product => {
+                        const li = document.createElement('li');
+                        li.className = 'list-item';
+                        li.innerHTML = `
+                            <div class="item-name">${product.name}</div>
+                            <div class="item-value">${product.stock} ${getUnitName(product.unit)}</div>
+                        `;
+                        lowStockList.appendChild(li);
+                    });
+                }
             }
             
             // زیادکردنی قەرزدارەکان
@@ -2858,15 +2750,19 @@
                     }))
                 ];
                 
-                allDebtors.forEach(debtor => {
-                    const li = document.createElement('li');
-                    li.className = 'list-item';
-                    li.innerHTML = `
-                        <div class="item-name">${debtor.name} (${debtor.type})</div>
-                        <div class="item-value ${debtor.debtClass}">${debtor.debt.toLocaleString()} دینار</div>
-                    `;
-                    debtorsList.appendChild(li);
-                });
+                if (allDebtors.length === 0) {
+                    debtorsList.innerHTML = '<li class="list-item">هیچ قەرزدارێک نییە</li>';
+                } else {
+                    allDebtors.forEach(debtor => {
+                        const li = document.createElement('li');
+                        li.className = 'list-item';
+                        li.innerHTML = `
+                            <div class="item-name">${debtor.name} (${debtor.type})</div>
+                            <div class="item-value ${debtor.debtClass}">${debtor.debt.toLocaleString()} دینار</div>
+                        `;
+                        debtorsList.appendChild(li);
+                    });
+                }
             }
             
             // زیادکردنی لیستی کاڵاکان بۆ مخزن (نوێکراوە بۆ وێنە و یەکەی دووەم)
@@ -2874,46 +2770,50 @@
             if (productList) {
                 productList.innerHTML = '';
                 
-                sampleData.products.forEach(product => {
-                    const li = document.createElement('li');
-                    li.className = 'list-item';
-                    
-                    // دروستکردنی وێنەی کاڵا
-                    const imageHTML = product.image 
-                        ? `<img src="${product.image}" class="product-image-small">`
-                        : `<div style="width: 50px; height: 50px; background-color: var(--gray-light); border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-left: 10px; color: var(--gray);"><i class="fas fa-image"></i></div>`;
-                    
-                    // دروستکردنی زانیاری یەکەی دووەم
-                    const secondaryUnitInfo = product.hasSecondaryUnit 
-                        ? `<div style="font-size: 0.9rem; color: var(--info);">${product.secondaryUnitQuantity} ${getUnitName(product.secondaryUnit)}</div>`
-                        : '';
-                    
-                    li.innerHTML = `
-                        <div style="display: flex; align-items: center;">
-                            ${imageHTML}
-                            <div>
-                                <div class="item-name">${product.name}</div>
-                                <div style="font-size: 0.9rem; color: var(--gray);">
-                                    بارکۆد: ${product.barcode}
+                if (sampleData.products.length === 0) {
+                    productList.innerHTML = '<li class="list-item">هیچ کاڵایەک نییە. دەتوانی یەکەم کاڵا زیاد بکەی!</li>';
+                } else {
+                    sampleData.products.forEach(product => {
+                        const li = document.createElement('li');
+                        li.className = 'list-item';
+                        
+                        // دروستکردنی وێنەی کاڵا
+                        const imageHTML = product.image 
+                            ? `<img src="${product.image}" class="product-image-small">`
+                            : `<div style="width: 50px; height: 50px; background-color: var(--gray-light); border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-left: 10px; color: var(--gray);"><i class="fas fa-image"></i></div>`;
+                        
+                        // دروستکردنی زانیاری یەکەی دووەم
+                        const secondaryUnitInfo = product.hasSecondaryUnit 
+                            ? `<div style="font-size: 0.9rem; color: var(--info);">${product.secondaryUnitQuantity} ${getUnitName(product.secondaryUnit)}</div>`
+                            : '';
+                        
+                        li.innerHTML = `
+                            <div style="display: flex; align-items: center;">
+                                ${imageHTML}
+                                <div>
+                                    <div class="item-name">${product.name}</div>
+                                    <div style="font-size: 0.9rem; color: var(--gray);">
+                                        بارکۆد: ${product.barcode}
+                                    </div>
+                                    ${secondaryUnitInfo}
                                 </div>
-                                ${secondaryUnitInfo}
                             </div>
-                        </div>
-                        <div class="item-value">
-                            <span style="margin-left: 15px;">${product.stock} ${getUnitName(product.unit)}</span>
-                            <span>${product.salePrice.toLocaleString()} دینار</span>
-                            <div style="margin-top: 10px; display: flex; gap: 5px;">
-                                <button class="btn btn-info btn-sm" onclick="editProduct(${product.id})">
-                                    <i class="fas fa-edit"></i> گۆڕانکاری
-                                </button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">
-                                    <i class="fas fa-trash"></i> سڕینەوە
-                                </button>
+                            <div class="item-value">
+                                <span style="margin-left: 15px;">${product.stock} ${getUnitName(product.unit)}</span>
+                                <span>${product.salePrice.toLocaleString()} دینار</span>
+                                <div style="margin-top: 10px; display: flex; gap: 5px;">
+                                    <button class="btn btn-info btn-sm" onclick="editProduct(${product.id})">
+                                        <i class="fas fa-edit"></i> گۆڕانکاری
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">
+                                        <i class="fas fa-trash"></i> سڕینەوە
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                    productList.appendChild(li);
-                });
+                        `;
+                        productList.appendChild(li);
+                    });
+                }
             }
             
             // زیادکردنی مێژووی فرۆشتن
@@ -2921,36 +2821,40 @@
             if (saleHistoryList) {
                 saleHistoryList.innerHTML = '';
                 
-                sampleData.sales.forEach(sale => {
-                    const li = document.createElement('li');
-                    li.className = 'list-item';
-                    li.innerHTML = `
-                        <div>
-                            <div class="item-name">${sale.code} - ${sale.customer}</div>
-                            <div style="font-size: 0.9rem; color: var(--gray);">
-                                ${sale.date} - ${sale.payment === 'cash' ? 'نەقدی' : 'قەرز'}
+                if (sampleData.sales.length === 0) {
+                    saleHistoryList.innerHTML = '<li class="list-item">هیچ مێژووی فرۆشتنی تۆمارنەکراوە</li>';
+                } else {
+                    sampleData.sales.forEach(sale => {
+                        const li = document.createElement('li');
+                        li.className = 'list-item';
+                        li.innerHTML = `
+                            <div>
+                                <div class="item-name">${sale.code} - ${sale.customer}</div>
+                                <div style="font-size: 0.9rem; color: var(--gray);">
+                                    ${sale.date} - ${sale.payment === 'cash' ? 'نەقدی' : 'قەرز'}
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <div class="item-value">${sale.total.toLocaleString()} دینار</div>
-                            <div style="margin-top: 10px; display: flex; gap: 5px;">
-                                <button class="btn btn-info btn-sm" onclick="viewSaleInvoiceDetails(${sale.id})">
-                                    <i class="fas fa-eye"></i> بینین
-                                </button>
-                                <button class="btn btn-warning btn-sm" onclick="printInvoiceSmall('${sale.code}')">
-                                    <i class="fas fa-print"></i> بچووک
-                                </button>
-                                <button class="btn btn-primary btn-sm" onclick="printInvoiceA4('${sale.code}')">
-                                    <i class="fas fa-print"></i> A4
-                                </button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteSaleInvoice(${sale.id})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                            <div>
+                                <div class="item-value">${sale.total.toLocaleString()} دینار</div>
+                                <div style="margin-top: 10px; display: flex; gap: 5px;">
+                                    <button class="btn btn-info btn-sm" onclick="viewSaleInvoiceDetails(${sale.id})">
+                                        <i class="fas fa-eye"></i> بینین
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="printInvoiceSmall('${sale.code}')">
+                                        <i class="fas fa-print"></i> بچووک
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="printInvoiceA4('${sale.code}')">
+                                        <i class="fas fa-print"></i> A4
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteSaleInvoice(${sale.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                    saleHistoryList.appendChild(li);
-                });
+                        `;
+                        saleHistoryList.appendChild(li);
+                    });
+                }
             }
             
             // زیادکردنی لیستی کەسەکان بۆ بەشی سەرەکی
@@ -2958,29 +2862,33 @@
             if (customersMainList) {
                 customersMainList.innerHTML = '';
                 
-                sampleData.customers.forEach(customer => {
-                    // دیاریکردنی رەنگ بەپێی قەرز
-                    let debtClass = customer.debt > 0 ? 'debt-positive' : 'debt-zero';
-                    
-                    const li = document.createElement('li');
-                    li.className = 'list-item';
-                    li.setAttribute('data-customer-id', customer.id);
-                    li.innerHTML = `
-                        <div>
-                            <div class="item-name">${customer.name}</div>
-                            <div style="font-size: 0.9rem; color: var(--gray);">${customer.phone}</div>
-                        </div>
-                        <div>
-                            <div class="item-value ${debtClass}">${customer.debt.toLocaleString()} دینار قەرز</div>
-                            <div style="margin-top: 10px;">
-                                <button class="btn btn-info btn-sm" onclick="viewCustomerDetails(${customer.id})">
-                                    <i class="fas fa-eye"></i> بینین
-                                </button>
+                if (sampleData.customers.length === 0) {
+                    customersMainList.innerHTML = '<li class="list-item">هیچ کەسێک تۆمارنەکراوە</li>';
+                } else {
+                    sampleData.customers.forEach(customer => {
+                        // دیاریکردنی رەنگ بەپێی قەرز
+                        let debtClass = customer.debt > 0 ? 'debt-positive' : 'debt-zero';
+                        
+                        const li = document.createElement('li');
+                        li.className = 'list-item';
+                        li.setAttribute('data-customer-id', customer.id);
+                        li.innerHTML = `
+                            <div>
+                                <div class="item-name">${customer.name}</div>
+                                <div style="font-size: 0.9rem; color: var(--gray);">${customer.phone}</div>
                             </div>
-                        </div>
-                    `;
-                    customersMainList.appendChild(li);
-                });
+                            <div>
+                                <div class="item-value ${debtClass}">${customer.debt.toLocaleString()} دینار قەرز</div>
+                                <div style="margin-top: 10px;">
+                                    <button class="btn btn-info btn-sm" onclick="viewCustomerDetails(${customer.id})">
+                                        <i class="fas fa-eye"></i> بینین
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        customersMainList.appendChild(li);
+                    });
+                }
             }
             
             // زیادکردنی لیستی شەریکەکان
@@ -2988,32 +2896,36 @@
             if (partnersListItems) {
                 partnersListItems.innerHTML = '';
                 
-                sampleData.partners.forEach(partner => {
-                    // دیاریکردنی رەنگ بەپێی جۆری قەرز
-                    let debtText, debtClass;
-                    
-                    if (partner.debt > 0) {
-                        // شەریک قەرزداری منە (مثبت) - سۆر
-                        debtText = `${partner.debt.toLocaleString()} دینار (شەریک قەرزداری منە)`;
-                        debtClass = 'debt-positive';
-                    } else if (partner.debt < 0) {
-                        // من قەرزداری شەریکم (منفی) - رەش
-                        debtText = `${Math.abs(partner.debt).toLocaleString()} دینار (من قەرزداری ئەوانم)`;
-                        debtClass = 'debt-negative';
-                    } else {
-                        // بێ قەرز - خۆڵەمێشی
-                        debtText = 'بێ قەرز';
-                        debtClass = 'debt-zero';
-                    }
-                    
-                    const li = document.createElement('li');
-                    li.className = 'list-item';
-                    li.innerHTML = `
-                        <div class="item-name">${partner.name}</div>
-                        <div class="item-value ${debtClass}">${debtText}</div>
-                    `;
-                    partnersListItems.appendChild(li);
-                });
+                if (sampleData.partners.length === 0) {
+                    partnersListItems.innerHTML = '<li class="list-item">هیچ شەریکێک تۆمارنەکراوە</li>';
+                } else {
+                    sampleData.partners.forEach(partner => {
+                        // دیاریکردنی رەنگ بەپێی جۆری قەرز
+                        let debtText, debtClass;
+                        
+                        if (partner.debt > 0) {
+                            // شەریک قەرزداری منە (مثبت) - سۆر
+                            debtText = `${partner.debt.toLocaleString()} دینار (شەریک قەرزداری منە)`;
+                            debtClass = 'debt-positive';
+                        } else if (partner.debt < 0) {
+                            // من قەرزداری شەریکم (منفی) - رەش
+                            debtText = `${Math.abs(partner.debt).toLocaleString()} دینار (من قەرزداری ئەوانم)`;
+                            debtClass = 'debt-negative';
+                        } else {
+                            // بێ قەرز - خۆڵەمێشی
+                            debtText = 'بێ قەرز';
+                            debtClass = 'debt-zero';
+                        }
+                        
+                        const li = document.createElement('li');
+                        li.className = 'list-item';
+                        li.innerHTML = `
+                            <div class="item-name">${partner.name}</div>
+                            <div class="item-value ${debtClass}">${debtText}</div>
+                        `;
+                        partnersListItems.appendChild(li);
+                    });
+                }
             }
             
             // زیادکردنی مێژووی کڕین
@@ -5403,6 +5315,11 @@
             
             purchaseHistoryList.innerHTML = '';
             
+            if (samplePurchaseData.purchases.length === 0) {
+                purchaseHistoryList.innerHTML = '<li class="list-item">هیچ مێژووی کڕینی تۆمارنەکراوە</li>';
+                return;
+            }
+            
             samplePurchaseData.purchases.forEach(purchase => {
                 const li = document.createElement('li');
                 li.className = 'list-item';
@@ -6533,54 +6450,35 @@
                 // کەمکردنەوەی پارە لە کۆی نەقدی
                 sampleData.cashBalance -= amount;
                 
-                // دروستکردنی تۆمارەکە بۆ مێژووی سەرفکردن
-                const expenseRecord = {
+                // تۆمارکردنی لە مێژوو
+                const expenseData = {
                     id: sampleData.expenseHistory.length + 1,
                     type: 'partner',
                     partnerId: partnerId,
                     partnerName: partner.name,
                     amount: amount,
                     date: date,
-                    reason: reason || `سەرفکردن بۆ شەریک: ${partner.name}`,
-                    description: reason || `سەرفکردن بۆ شەریک: ${partner.name}`,
-                    timestamp: new Date().toISOString(),
-                    isExpense: true
+                    description: `سەرفکردن بۆ شەریک: ${partner.name}${reason ? ' - ' + reason : ''}`,
+                    timestamp: new Date().toISOString()
                 };
                 
-                // تۆمارکردنی لە مێژوو
-                sampleData.expenseHistory.unshift(expenseRecord);
+                sampleData.expenseHistory.unshift(expenseData);
                 
                 // نوێکردنەوەی داشبۆرد
                 updateDashboardCash();
                 
-                // نوێکردنەوەی زانیاری شەریک
-                const totalPaid = sampleData.paymentHistory
-                    .filter(p => p.debtorId === partner.id && p.debtorType === 'partner')
-                    .reduce((sum, payment) => sum + payment.amount, 0);
-                
-                // نوێکردنەوەی قەرز بەپێی جۆری
-                let debtText;
-                if (partner.debt > 0) {
-                    debtText = partner.debt.toLocaleString() + ' دینار (شەریک قەرزداری منە)';
-                } else if (partner.debt < 0) {
-                    debtText = Math.abs(partner.debt).toLocaleString() + ' دینار (من قەرزداری ئەوانم)';
-                } else {
-                    debtText = 'بێ قەرز';
-                }
-                
-                document.getElementById('selectedPartnerDebtMain').textContent = debtText;
-                document.getElementById('selectedPartnerPaidMain').textContent = totalPaid.toLocaleString();
-                
                 // پاککردنەوەی خانەکان
                 document.getElementById('expenseToPartnerAmount').value = '';
                 document.getElementById('expenseToPartnerReason').value = '';
+                document.getElementById('expensePartnerSearchMain').value = '';
+                document.getElementById('selectedPartnerInfoMain').style.display = 'none';
                 
                 // نوێکردنەوەی داشبۆرد و لیستەکان
                 populateSampleData();
                 updateExpenseHistoryDisplay();
                 updateExpenseHistoryMainDisplay();
                 
-                alert(`سەرفکردن بۆ شەریک بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
+                alert(`سەرفکردنەکە بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
             });
         }
 
@@ -6621,45 +6519,35 @@
                 // کەمکردنەوەی پارە لە کۆی نەقدی
                 sampleData.cashBalance -= amount;
                 
-                // دروستکردنی تۆمارەکە بۆ مێژووی سەرفکردن
-                const expenseRecord = {
+                // تۆمارکردنی لە مێژوو
+                const expenseData = {
                     id: sampleData.expenseHistory.length + 1,
                     type: 'customer',
                     customerId: customerId,
                     customerName: customer.name,
                     amount: amount,
                     date: date,
-                    reason: reason || `سەرفکردن بۆ کەس: ${customer.name}`,
-                    description: reason || `سەرفکردن بۆ کەس: ${customer.name}`,
-                    timestamp: new Date().toISOString(),
-                    isExpense: true
+                    description: `سەرفکردن بۆ کەس: ${customer.name}${reason ? ' - ' + reason : ''}`,
+                    timestamp: new Date().toISOString()
                 };
                 
-                // تۆمارکردنی لە مێژوو
-                sampleData.expenseHistory.unshift(expenseRecord);
+                sampleData.expenseHistory.unshift(expenseData);
                 
                 // نوێکردنەوەی داشبۆرد
                 updateDashboardCash();
                 
-                // نوێکردنەوەی زانیاری کەس
-                const totalPaid = sampleData.paymentHistory
-                    .filter(p => p.debtorId === customer.id && p.debtorType === 'customer')
-                    .reduce((sum, payment) => sum + payment.amount, 0);
-                
-                document.getElementById('selectedCustomerDebtMain').textContent = customer.debt > 0 ? 
-                    customer.debt.toLocaleString() + ' دینار قەرز' : 'بێ قەرز';
-                document.getElementById('selectedCustomerPaidMain').textContent = totalPaid.toLocaleString();
-                
                 // پاککردنەوەی خانەکان
                 document.getElementById('expenseToCustomerAmount').value = '';
                 document.getElementById('expenseToCustomerReason').value = '';
+                document.getElementById('expenseCustomerSearchMain').value = '';
+                document.getElementById('selectedCustomerInfoMain').style.display = 'none';
                 
                 // نوێکردنەوەی داشبۆرد و لیستەکان
                 populateSampleData();
                 updateExpenseHistoryDisplay();
                 updateExpenseHistoryMainDisplay();
                 
-                alert(`سەرفکردن بۆ کەس بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
+                alert(`سەرفکردنەکە بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
             });
         }
 
@@ -6673,7 +6561,12 @@
                 const description = document.getElementById('otherExpenseDescription').value;
                 
                 if (!amount || amount <= 0) {
-                    alert('تکایە بڕی پارەی سەرفکردن پڕ بکەرەوە!');
+                    alert('تکایە بڕی سەرفکردن پڕ بکەرەوە!');
+                    return;
+                }
+                
+                if (!description.trim()) {
+                    alert('تکایە پێناسەی سەرفکردن پڕ بکەرەوە!');
                     return;
                 }
                 
@@ -6682,10 +6575,8 @@
                     return;
                 }
                 
-                if (!description.trim()) {
-                    alert('تکایە پێناسەی سەرفکردن پڕ بکەرەوە!');
-                    return;
-                }
+                // کەمکردنەوەی پارە لە کۆی نەقدی
+                sampleData.cashBalance -= amount;
                 
                 // ناوی پۆل بە کوردی
                 const categoryNames = {
@@ -6699,26 +6590,19 @@
                     'other': 'هی تر'
                 };
                 
-                const categoryName = categoryNames[category] || category;
-                
-                // دروستکردنی تۆمارەکە بۆ مێژووی سەرفکردن
-                const expenseRecord = {
+                // تۆمارکردنی لە مێژوو
+                const expenseData = {
                     id: sampleData.expenseHistory.length + 1,
                     type: 'other',
                     amount: amount,
                     date: date,
                     category: category,
-                    categoryName: categoryName,
+                    categoryName: categoryNames[category] || category,
                     description: description,
-                    timestamp: new Date().toISOString(),
-                    isExpense: true
+                    timestamp: new Date().toISOString()
                 };
                 
-                // کەمکردنەوەی پارە لە کۆی نەقدی
-                sampleData.cashBalance -= amount;
-                
-                // تۆمارکردنی لە مێژوو
-                sampleData.expenseHistory.unshift(expenseRecord);
+                sampleData.expenseHistory.unshift(expenseData);
                 
                 // نوێکردنەوەی داشبۆرد
                 updateDashboardCash();
@@ -6736,7 +6620,7 @@
             });
         }
 
-        // نوێکردنەوەی مێژووی سەرفکردن (بەشی سەرەکی)
+        // نوێکردنەوەی مێژووی سەرفکردن لە بەشی سەرەکی
         function updateExpenseHistoryMainDisplay() {
             const expenseHistoryMainList = document.getElementById('expenseHistoryMainList');
             if (!expenseHistoryMainList) return;
@@ -6811,8 +6695,9 @@
 
         // دەستپێکردنی سیستم
         document.addEventListener('DOMContentLoaded', function() {
-            // چالاککردنی پیشبینینی وێنە
-            setupImagePreview();
+            // تەنها پەڕەی چوونەژوورەوە دەبینرێت لە سەرەتا
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('mainPage').style.display = 'none';
         });
     </script>
 </body>
