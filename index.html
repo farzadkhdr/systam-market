@@ -5173,25 +5173,6 @@
             
             // چالاککردنی پێشبینینی وێنە
             setupImagePreview();
-            
-            // زیادکردنی کارتی پاککردنەوەی داتا لە داشبۆرد
-            const dashboardCards = document.querySelector('.dashboard-cards');
-            if (dashboardCards) {
-                const clearDataCard = document.createElement('div');
-                clearDataCard.className = 'card';
-                clearDataCard.style.backgroundColor = '#fff';
-                clearDataCard.innerHTML = `
-                    <div class="card-icon" style="background-color: var(--danger);">
-                        <i class="fas fa-trash-alt"></i>
-                    </div>
-                    <h3>پاککردنەوەی داتا</h3>
-                    <div class="card-value" style="font-size: 1.2rem;">ڕیسک</div>
-                    <button class="btn btn-danger" onclick="clearSampleData()" style="margin-top: 15px; width: 100%;">
-                        <i class="fas fa-trash"></i> پاککردنەوەی هەموو داتاکان
-                    </button>
-                `;
-                dashboardCards.appendChild(clearDataCard);
-            }
         });
     </script>
 </body>
