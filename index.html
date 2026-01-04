@@ -1393,7 +1393,7 @@
                             <i class="fas fa-handshake"></i>
                         </div>
                         <h3>قەرزدارم بە شەریکەکان</h3>
-                        <div class="card-value" id="partnerDebtDisplay">٠ <span>دینар</span></div>
+                        <div class="card-value" id="partnerDebtDisplay">٠ <span>دینار</span></div>
                         <div class="card-change positive">
                             <i class="fas fa-arrow-down"></i> ٠٪ کەمتر لە هەفتەی ڕابردوو
                         </div>
@@ -1444,12 +1444,67 @@
                 
                 <div class="sale-purchase-container">
                     <div class="tab-buttons">
-                        <button class="tab-btn active" data-tab="quickSale">فرۆشتنی خێرا</button>
+                        <button class="tab-btn active" data-tab="newSale">فرۆشتی نوێ</button>
+                        <button class="tab-btn" data-tab="quickSale">فرۆشتنی خێرا</button>
                         <button class="tab-btn" data-tab="saleHistory">مێژووی فرۆشتن</button>
                     </div>
                     
+                    <div class="tab-content active" id="newSale">
+                        <div class="search-container">
+                            <div class="search-box">
+                                <input type="text" id="productSearch" placeholder="گەڕان بەدوای ناوی کاڵا...">
+                                <i class="fas fa-search"></i>
+                                <div class="suggestions" id="productSuggestions"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="cart-container">
+                            <div class="cart-header">
+                                <h3>سەبەتە</h3>
+                                <button class="btn btn-danger" id="clearCart">
+                                    <i class="fas fa-trash"></i> سڕینەوەی سەبەتە
+                                </button>
+                            </div>
+                            
+                            <ul class="cart-items" id="cartItems">
+                                <!-- کاڵاکانی سەبەتە لێرە زیاد دەکرێن -->
+                                <li class="empty-cart">هیچ کاڵایەک لە سەبەتەدا نییە</li>
+                            </ul>
+                            
+                            <div class="payment-options">
+                                <div class="payment-option selected" data-payment="cash">
+                                    <i class="fas fa-money-bill-wave fa-2x"></i>
+                                    <h4>نەقدی</h4>
+                                    <p>پارەی رەت</p>
+                                </div>
+                                <div class="payment-option" data-payment="credit">
+                                    <i class="fas fa-credit-card fa-2x"></i>
+                                    <h4>قەرز</h4>
+                                    <p>فرۆشتن بە قەرز</p>
+                                </div>
+                            </div>
+                            
+                            <div id="customerSelection" style="display: none; margin-top: 20px;">
+                                <div class="search-box">
+                                    <input type="text" id="customerSearch" placeholder="گەڕان بەدوای ناوی کەس...">
+                                    <i class="fas fa-search"></i>
+                                    <div class="suggestions" id="customerSuggestions"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-warning" id="printInvoice">
+                                    <i class="fas fa-print"></i> پرێنت کردن
+                                </button>
+                                <button class="btn btn-success" id="completeSale">
+                                    <i class="fas fa-check-circle"></i> تەواوکردنی فرۆشتن
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- بەشی فرۆشتنی خێرا -->
-                    <div class="tab-content active" id="quickSale">
+                    <div class="tab-content" id="quickSale">
                         <div class="search-container">
                             <div class="search-box">
                                 <input type="text" id="quickSaleSearch" placeholder="ناوی کاڵا یان بارکۆد..." autocomplete="off">
@@ -1460,7 +1515,7 @@
                         
                         <div class="cart-container">
                             <div class="cart-header">
-                                <h3>سەبەتەی فرۆشتن</h3>
+                                <h3>سەبەتەی فرۆشتنی خێرا</h3>
                                 <div style="display: flex; gap: 10px;">
                                     <button class="btn btn-info" id="openBarcodeScanner">
                                         <i class="fas fa-barcode"></i> بارکۆد
