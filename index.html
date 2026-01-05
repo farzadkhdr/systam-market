@@ -1955,22 +1955,97 @@
             <!-- بەشی رێکخستن -->
             <section id="settingsSection" class="content-section">
                 <h2 class="section-title">رێکخستن</h2>
-                <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
-                    <i class="fas fa-cogs fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
-                    <h3 style="margin-bottom: 15px;">بەشی رێکخستن</h3>
-                    <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
-                    <p>لێرەدا هەموو رێکخستنەکانی سیستم بەڕێوەدەبرێن.</p>
+                
+                <div class="sale-purchase-container">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="systemSettings">گۆڕانکاری لە زانیاری سیستەم</button>
+                        <button class="tab-btn" data-tab="styleSettings">ستایلی سیستەم</button>
+                        <button class="tab-btn" data-tab="securitySettings">سکویرتی و پاراستن</button>
+                    </div>
+                    
+                    <!-- بەشی ١: گۆڕانکاری لە زانیاری سیستەم -->
+                    <div class="tab-content active" id="systemSettings">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-info-circle fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">گۆڕانکاری لە زانیاری سیستەم</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا زانیاری بنچینەیی سیستەم وەک ناو، ناونیشان، ژمارەی پەیوەندی، و زانیاری تر دەستکاری دەکرێن.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی ٢: ستایلی سیستەم -->
+                    <div class="tab-content" id="styleSettings">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-palette fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">ستایلی سیستەم</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا ستایل و رەنگەکانی سیستەم وەک تێم، فۆنت، و درێژایی پەڕەکان دەستکاری دەکرێن.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی ٣: سکویرتی و پاراستن -->
+                    <div class="tab-content" id="securitySettings">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-shield-alt fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">سکویرتی و پاراستن</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا رێکخستنەکانی پاراستنی سیستم وەک وشەی نهێنی، هەژمارەکان، و ئاستی چوونەژوورەوە بەڕێوەدەبرێن.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <!-- بەشی کارمەندان -->
             <section id="employeesSection" class="content-section">
                 <h2 class="section-title">کارمەندان</h2>
-                <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
-                    <i class="fas fa-users fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
-                    <h3 style="margin-bottom: 15px;">بەشی کارمەندان</h3>
-                    <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
-                    <p>لێرەدا زانیاری و بەڕێوەبردنی کارمەندانی سیستم بەڕێوەدەبرێت.</p>
+                
+                <div class="sale-purchase-container">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="employeeInfo">ناوی کارمەند و زانیاری</button>
+                        <button class="tab-btn" data-tab="employeeSalaries">داهاتی کارمەندەکان</button>
+                        <button class="tab-btn" data-tab="employeeDailyLeaves">مۆڵەتی رۆژانەی کارمەندەکان</button>
+                        <button class="tab-btn" data-tab="employeeLeave">مۆڵەتی کارمەند</button>
+                    </div>
+                    
+                    <!-- بەشی ١: ناوی کارمەند و زانیاری -->
+                    <div class="tab-content active" id="employeeInfo">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-user-tie fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">ناوی کارمەند و زانیاری</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا زانیاری کارمەندەکان وەک ناو، ناونیشان، ژمارەی پەیوەندی، و زانیاری تر بەڕێوەدەبرێن.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی ٢: داهاتی کارمەندەکان -->
+                    <div class="tab-content" id="employeeSalaries">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-money-bill-wave fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">داهاتی کارمەندەکان</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا داهات و مووچەی کارمەندەکان و پارەدانەکان بەڕێوەدەبرێن.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی ٣: مۆڵەتی رۆژانەی کارمەندەکان -->
+                    <div class="tab-content" id="employeeDailyLeaves">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-calendar-day fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">مۆڵەتی رۆژانەی کارمەندەکان</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا مۆڵەتی رۆژانەی کارمەندەکان و ئەنجامەکانی بەڕێوەدەبرێن.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی ٤: مۆڵەتی کارمەند -->
+                    <div class="tab-content" id="employeeLeave">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-calendar-alt fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">مۆڵەتی کارمەند</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا مۆڵەتی کارمەندەکان و کاتی نەهاتنیان بەڕێوەدەبرێن.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -6462,7 +6537,7 @@
                     'other': 'هی تر'
                 };
                 
-                // کەمکردنەوەی پارە لە کۆی نەقدی
+                // کەمکردنەوەی پارە
                 sampleData.cashBalance -= amount;
                 
                 // تۆمارکردنی لە مێژوو
@@ -6493,7 +6568,7 @@
                 updateExpenseHistoryDisplay();
                 updateExpenseHistoryMainDisplay();
                 
-                alert(`سەرفکردن بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
+                alert(`سەرفکردن بۆ هۆکی تر بە سەرکەوتوویی تۆمارکرا! ${amount.toLocaleString()} دینار`);
             });
         }
 
@@ -6513,30 +6588,38 @@
                 const li = document.createElement('li');
                 li.className = 'list-item';
                 
-                // دیاریکردنی رەنگ و ئایکۆن بەپێی جۆری سەرفکردن
-                let colorClass = 'debt-expense';
+                // دروستکردنی پێناسە بەپێی جۆری سەرفکردن
+                let description = expense.description;
                 let icon = 'fa-money-bill-wave';
-                let typeText = 'هۆکی تر';
+                let colorClass = 'debt-expense';
                 
                 if (expense.type === 'partner') {
-                    colorClass = 'debt-negative'; // من قەرزداری شەریکم
                     icon = 'fa-handshake';
-                    typeText = 'شەریک';
+                    // بۆ سەرفکردنی شەریک، رەنگی جیاواز بەپێی جۆری قەرز
+                    const partner = sampleData.partners.find(p => p.id === expense.partnerId);
+                    if (partner) {
+                        if (partner.debt > 0) {
+                            colorClass = 'debt-positive';
+                        } else if (partner.debt < 0) {
+                            colorClass = 'debt-negative';
+                        } else {
+                            colorClass = 'debt-zero';
+                        }
+                    }
                 } else if (expense.type === 'customer') {
-                    colorClass = 'debt-positive'; // کەس قەرزداری منە
                     icon = 'fa-user';
-                    typeText = 'کەس';
+                    colorClass = 'debt-positive';
                 } else if (expense.type === 'other') {
-                    colorClass = 'debt-expense';
                     icon = 'fa-file-invoice-dollar';
-                    typeText = expense.categoryName || 'هۆکی تر';
+                    colorClass = 'debt-expense';
                 }
                 
                 li.innerHTML = `
                     <div>
-                        <div class="item-name">${expense.description}</div>
+                        <div class="item-name">${description}</div>
                         <div style="font-size: 0.9rem; color: var(--gray);">
-                            <i class="fas ${icon}"></i> ${expense.date} | جۆر: ${typeText}
+                            <i class="fas ${icon}"></i> ${expense.date}
+                            ${expense.categoryName ? ` | پۆل: ${expense.categoryName}` : ''}
                         </div>
                     </div>
                     <div>
@@ -6552,7 +6635,7 @@
             });
         }
 
-        // نوێکردنەوەی مێژووی سەرفکردن (بەشی سەرف و حیسابی شەریکەکان)
+        // نوێکردنەوەی مێژووی سەرفکردن
         const refreshExpenseHistoryMainBtn = document.getElementById('refreshExpenseHistoryMain');
         if (refreshExpenseHistoryMainBtn) {
             refreshExpenseHistoryMainBtn.addEventListener('click', function() {
@@ -6561,10 +6644,143 @@
             });
         }
 
-        // دەستپێکردنی سیستم
-        document.addEventListener('DOMContentLoaded', function() {
-            // چالاککردنی پیشبینینی وێنە
-            setupImagePreview();
+        // ==============================================
+        // بەشی نوێ: نەخشەی تاباتەکان لە رێکخستن و کارمەندان
+        // ==============================================
+
+        // تاباتەکان لە بەشی رێکخستن
+        document.querySelectorAll('#settingsSection .tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                const parent = this.closest('.tab-buttons');
+                if (parent) {
+                    parent.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                }
+                
+                this.classList.add('active');
+                
+                const container = this.closest('.sale-purchase-container');
+                if (container) {
+                    container.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    const tabContent = document.getElementById(tabId);
+                    if (tabContent) {
+                        tabContent.classList.add('active');
+                    }
+                }
+            });
+        });
+
+        // تاباتەکان لە بەشی کارمەندان
+        document.querySelectorAll('#employeesSection .tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                const parent = this.closest('.tab-buttons');
+                if (parent) {
+                    parent.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                }
+                
+                this.classList.add('active');
+                
+                const container = this.closest('.sale-purchase-container');
+                if (container) {
+                    container.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    const tabContent = document.getElementById(tabId);
+                    if (tabContent) {
+                        tabContent.classList.add('active');
+                    }
+                }
+            });
+        });
+
+        // تاباتەکان لە بەشی کەسەکان
+        document.querySelectorAll('#customersSection .tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                const parent = this.closest('.tab-buttons');
+                if (parent) {
+                    parent.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                }
+                
+                this.classList.add('active');
+                
+                const container = this.closest('.sale-purchase-container');
+                if (container) {
+                    container.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    const tabContent = document.getElementById(tabId);
+                    if (tabContent) {
+                        tabContent.classList.add('active');
+                    }
+                }
+            });
+        });
+
+        // تاباتەکان لە بەشی شەریکەکان
+        document.querySelectorAll('#partnersSection .tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                const parent = this.closest('.tab-buttons');
+                if (parent) {
+                    parent.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                }
+                
+                this.classList.add('active');
+                
+                const container = this.closest('.sale-purchase-container');
+                if (container) {
+                    container.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    const tabContent = document.getElementById(tabId);
+                    if (tabContent) {
+                        tabContent.classList.add('active');
+                    }
+                }
+            });
+        });
+
+        // تاباتەکان لە بەشی سەرف و حیسابی شەریکەکان
+        document.querySelectorAll('#partnerExpenseSection .tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                const parent = this.closest('.tab-buttons');
+                if (parent) {
+                    parent.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                }
+                
+                this.classList.add('active');
+                
+                const container = this.closest('.sale-purchase-container');
+                if (container) {
+                    container.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    const tabContent = document.getElementById(tabId);
+                    if (tabContent) {
+                        tabContent.classList.add('active');
+                    }
+                }
+            });
         });
     </script>
 </body>
