@@ -1293,6 +1293,37 @@
                         شەریکەکان
                     </a>
                 </li>
+                <!-- بەشە نوێیەکان -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="settings">
+                        <i class="fas fa-cogs"></i>
+                        رێکخستن
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="employees">
+                        <i class="fas fa-users"></i>
+                        کارمەندان
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="lossProfit">
+                        <i class="fas fa-chart-line"></i>
+                        بەسەرچوون و تێکچوون
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="reconciliation">
+                        <i class="fas fa-balance-scale"></i>
+                        متابق کردنەوە
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="management">
+                        <i class="fas fa-user-tie"></i>
+                        بەرێوبەرایەتی
+                    </a>
+                </li>
             </ul>
         </aside>
 
@@ -1432,14 +1463,57 @@
                 </div>
             </section>
 
-            <!-- بەشی فرۆشتن و کڕینەکان -->
+            <!-- بەشی فرۆشتن و کڕینەکان (نوێکراوە) -->
             <section id="salesPurchasesSection" class="content-section">
                 <h2 class="section-title">فرۆشتن و کڕینەکان</h2>
-                <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
-                    <i class="fas fa-exchange-alt fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
-                    <h3 style="margin-bottom: 15px;">بەشی فرۆشتن و کڕینەکان</h3>
-                    <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
-                    <p>لێرەدا هەموو فرۆشتن و کڕینەکان کۆدەکرێنەوە بۆ بینین و بەڕێوەبردنیان.</p>
+                
+                <div class="sale-purchase-container">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="newSale">فرۆشتن</button>
+                        <button class="tab-btn" data-tab="newPurchase">کڕین</button>
+                        <button class="tab-btn" data-tab="returnSale">گەڕانەوەی فرۆشتن</button>
+                        <button class="tab-btn" data-tab="returnPurchase">گەڕانەوەی کڕین</button>
+                    </div>
+                    
+                    <!-- بەشی فرۆشتن -->
+                    <div class="tab-content active" id="newSale">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-shopping-cart fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">بەشی فرۆشتن</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا فرۆشتنی نوێ ئەنجام دەدرێت.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی کڕین -->
+                    <div class="tab-content" id="newPurchase">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-truck-loading fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">بەشی کڕین</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا کڕینی نوێ ئەنجام دەدرێت.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی گەڕانەوەی فرۆشتن -->
+                    <div class="tab-content" id="returnSale">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-undo fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">بەشی گەڕانەوەی فرۆشتن</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا گەڕانەوەی فرۆشتنەکان بەڕێوەدەبرێت.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی گەڕانەوەی کڕین -->
+                    <div class="tab-content" id="returnPurchase">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-exchange-alt fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">بەشی گەڕانەوەی کڕین</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا گەڕانەوەی کڕینەکان بەڕێوەدەبرێت.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -1875,6 +1949,61 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- بەشی رێکخستن -->
+            <section id="settingsSection" class="content-section">
+                <h2 class="section-title">رێکخستن</h2>
+                <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                    <i class="fas fa-cogs fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3 style="margin-bottom: 15px;">بەشی رێکخستن</h3>
+                    <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                    <p>لێرەدا هەموو رێکخستنەکانی سیستم بەڕێوەدەبرێن.</p>
+                </div>
+            </section>
+
+            <!-- بەشی کارمەندان -->
+            <section id="employeesSection" class="content-section">
+                <h2 class="section-title">کارمەندان</h2>
+                <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                    <i class="fas fa-users fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3 style="margin-bottom: 15px;">بەشی کارمەندان</h3>
+                    <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                    <p>لێرەدا زانیاری و بەڕێوەبردنی کارمەندانی سیستم بەڕێوەدەبرێت.</p>
+                </div>
+            </section>
+
+            <!-- بەشی بەسەرچوون و تێکچوون -->
+            <section id="lossProfitSection" class="content-section">
+                <h2 class="section-title">بەسەرچوون و تێکچوون</h2>
+                <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                    <i class="fas fa-chart-line fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3 style="margin-bottom: 15px;">بەشی بەسەرچوون و تێکچوون</h3>
+                    <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                    <p>لێرەدا هەژماری بەسەرچوون و تێکچوونەکان پیشان دەدرێت.</p>
+                </div>
+            </section>
+
+            <!-- بەشی متابق کردنەوە -->
+            <section id="reconciliationSection" class="content-section">
+                <h2 class="section-title">متابق کردنەوە</h2>
+                <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                    <i class="fas fa-balance-scale fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3 style="margin-bottom: 15px;">بەشی متابق کردنەوە</h3>
+                    <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                    <p>لێرەدا هەژمارەکان پێکەوە متابق دەکرێنەوە.</p>
+                </div>
+            </section>
+
+            <!-- بەشی بەرێوبەرایەتی -->
+            <section id="managementSection" class="content-section">
+                <h2 class="section-title">بەرێوبەرایەتی</h2>
+                <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                    <i class="fas fa-user-tie fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3 style="margin-bottom: 15px;">بەشی بەرێوبەرایەتی</h3>
+                    <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                    <p>لێرەدا بەرێوبەرایەتی گشتی سیستم ئەنجام دەدرێت.</p>
                 </div>
             </section>
         </main>
