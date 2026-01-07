@@ -529,6 +529,7 @@
         .card-5 .card-icon { background-color: var(--secondary); }
         .card-6 .card-icon { background-color: var(--info); }
         .card-7 .card-icon { background-color: #9d4edd; }
+        .card-8 .card-icon { background-color: #e74c3c; }
         
         .card h3 {
             font-size: 1.1rem;
@@ -580,6 +581,16 @@
         
         .item-value.debt-expense {
             color: #f8961e; /* پرتەقاڵی - سەرفکردن */
+            font-weight: 600;
+        }
+        
+        .item-value.expiry-warning {
+            color: #e74c3c; /* سۆری تۆخ - بەسەرچوون */
+            font-weight: 600;
+        }
+        
+        .item-value.expiry-near {
+            color: #f39c12; /* پرتەقاڵی - نزیک بەسەرچوون */
             font-weight: 600;
         }
         
@@ -1154,6 +1165,11 @@
             color: white;
         }
         
+        .notification.warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        
         /* وەڵامی مۆبایل */
         @media (max-width: 992px) {
             .sidebar {
@@ -1259,6 +1275,27 @@
         .history-list {
             max-height: 500px;
             overflow-y: auto;
+        }
+        
+        /* ستایل بۆ کاڵای بەسەرچوون */
+        .expiry-badge {
+            background-color: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+        
+        .near-expiry-badge {
+            background-color: #f39c12;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 5px;
         }
     </style>
 </head>
@@ -1506,6 +1543,18 @@
                             <i class="fas fa-minus"></i> ٠٪ جیاوازی لە مانگی ڕابردوو
                         </div>
                     </div>
+                    
+                    <!-- کارتی نوێ بۆ کاڵای بەسەرچوون -->
+                    <div class="card card-8">
+                        <div class="card-icon">
+                            <i class="fas fa-calendar-times"></i>
+                        </div>
+                        <h3>کاڵای بەسەرچوون</h3>
+                        <div class="card-value" id="expiredCount">٠ <span>جۆر</span></div>
+                        <div class="card-change negative">
+                            <i class="fas fa-exclamation-circle"></i> هەوڵی فرۆشتنی زوو بدە
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="lists-container">
@@ -1530,6 +1579,19 @@
                         </div>
                         <ul class="list-items" id="debtorsList">
                             <!-- داتاکان لە JavaScript دا زیاد دەکرێن -->
+                        </ul>
+                    </div>
+                    
+                    <!-- لیستی نوێ بۆ کاڵای بەسەرچوون -->
+                    <div class="list-box">
+                        <div class="list-header">
+                            <h3>کاڵای بەسەرچوون</h3>
+                            <div class="list-actions">
+                                <button id="refreshExpired">نوێکردنەوە</button>
+                            </div>
+                        </div>
+                        <ul class="list-items" id="expiredList">
+                            <!-- کاڵای بەسەرچوون لێرە زیاد دەکرێن -->
                         </ul>
                     </div>
                 </div>
@@ -1696,6 +1758,19 @@
                             <div class="form-group">
                                 <label for="secondaryUnitQuantity">بڕ لە یەکەی دووەم (ئەگەر هەیە)</label>
                                 <input type="number" id="secondaryUnitQuantity" placeholder="بڕ لە یەکەی دووەم">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="secondaryUnitPrice">نرخی یەکەی دووەم (ئارەزوومەندانە)</label>
+                                <input type="number" id="secondaryUnitPrice" placeholder="نرخی یەکەی دووەم">
+                                <small style="color: var(--gray); font-size: 0.8rem;">ئەگەر بەتاڵ بێت، سیستم خۆکارانە دەیەژمێرێت</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="expiryDate">بەرواری بەسەرچوون (ئارەزوومەندانە)</label>
+                                <input type="date" id="expiryDate">
                             </div>
                         </div>
                         
@@ -2495,6 +2570,22 @@
             const product = sampleData.products.find(p => p.barcode === barcode);
             
             if (product) {
+                // پشکنینی بەسەرچوون
+                if (product.expiryDate) {
+                    const expiry = new Date(product.expiryDate);
+                    const now = new Date();
+                    const diffTime = expiry - now;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays <= 0) {
+                        if (!confirm(`ئەم کاڵایە بەسەرچووە (${product.expiryDate}). دەیەوێت بەردەوام بیت؟`)) {
+                            return;
+                        }
+                    } else if (diffDays <= 7) {
+                        showNotification(`ئەم کاڵایە نزیکە لە بەسەرچوون (${diffDays} ڕۆژی ماوە)`, 'warning');
+                    }
+                }
+                
                 addProductToCart(product.id, 1, null, null);
                 updateCartDisplay();
                 
@@ -2524,6 +2615,12 @@
             ];
             
             // زیادکردنی کاڵای نموونەیی
+            const today = new Date();
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            const lastMonth = new Date();
+            lastMonth.setMonth(lastMonth.getMonth() - 1);
+            
             sampleData.products = [
                 { 
                     id: 1, 
@@ -2533,10 +2630,12 @@
                     salePrice: 600000, 
                     stock: 10, 
                     unit: "piece",
+                    hasSecondaryUnit: true,
+                    secondaryUnit: "carton",
+                    secondaryUnitQuantity: 50,
+                    secondaryUnitPrice: 25000, // 50 دانە = 25,000 دینار (کارتۆن)
                     image: null,
-                    hasSecondaryUnit: false,
-                    secondaryUnit: null,
-                    secondaryUnitQuantity: 0
+                    expiryDate: nextMonth.toISOString().split('T')[0]
                 },
                 { 
                     id: 2, 
@@ -2546,10 +2645,12 @@
                     salePrice: 950000, 
                     stock: 5, 
                     unit: "piece",
-                    image: null,
                     hasSecondaryUnit: false,
                     secondaryUnit: null,
-                    secondaryUnitQuantity: 0
+                    secondaryUnitQuantity: 0,
+                    secondaryUnitPrice: null,
+                    image: null,
+                    expiryDate: null
                 },
                 { 
                     id: 3, 
@@ -2559,10 +2660,12 @@
                     salePrice: 90000, 
                     stock: 20, 
                     unit: "piece",
+                    hasSecondaryUnit: true,
+                    secondaryUnit: "carton",
+                    secondaryUnitQuantity: 24,
+                    secondaryUnitPrice: 2000, // 24 دانە = 2,000 دینار (کارتۆن)
                     image: null,
-                    hasSecondaryUnit: false,
-                    secondaryUnit: null,
-                    secondaryUnitQuantity: 0
+                    expiryDate: today.toISOString().split('T')[0] // بەسەرچوو
                 },
                 { 
                     id: 4, 
@@ -2572,10 +2675,12 @@
                     salePrice: 1500000, 
                     stock: 3, 
                     unit: "piece",
-                    image: null,
                     hasSecondaryUnit: false,
                     secondaryUnit: null,
-                    secondaryUnitQuantity: 0
+                    secondaryUnitQuantity: 0,
+                    secondaryUnitPrice: null,
+                    image: null,
+                    expiryDate: nextMonth.toISOString().split('T')[0]
                 },
                 { 
                     id: 5, 
@@ -2585,10 +2690,12 @@
                     salePrice: 3000000, 
                     stock: 2, 
                     unit: "piece",
+                    hasSecondaryUnit: true,
+                    secondaryUnit: "box",
+                    secondaryUnitQuantity: 10,
+                    secondaryUnitPrice: 250000, // 10 دانە = 250,000 دینار (بۆکس)
                     image: null,
-                    hasSecondaryUnit: false,
-                    secondaryUnit: null,
-                    secondaryUnitQuantity: 0
+                    expiryDate: lastMonth.toISOString().split('T')[0] // بەسەرچوو
                 }
             ];
             
@@ -2634,7 +2741,10 @@
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             
-            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            const icon = type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-circle' : 
+                        type === 'warning' ? 'fa-exclamation-triangle' : 
+                        'fa-info-circle';
             
             notification.innerHTML = `
                 <i class="fas ${icon}"></i>
@@ -2841,6 +2951,21 @@
                         const div = document.createElement('div');
                         div.className = 'suggestion-item';
                         
+                        // پشکنینی بەسەرچوون
+                        let expiryBadge = '';
+                        if (product.expiryDate) {
+                            const expiry = new Date(product.expiryDate);
+                            const now = new Date();
+                            const diffTime = expiry - now;
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            
+                            if (diffDays <= 0) {
+                                expiryBadge = '<span class="expiry-badge">بەسەرچوو</span>';
+                            } else if (diffDays <= 7) {
+                                expiryBadge = `<span class="near-expiry-badge">${diffDays} ڕۆژ</span>`;
+                            }
+                        }
+                        
                         const imageHTML = product.image 
                             ? `<img src="${product.image}" style="width: 40px; height: 40px; border-radius: 5px; object-fit: cover; margin-left: 10px; float: right;">`
                             : '';
@@ -2849,7 +2974,7 @@
                             <div style="display: flex; align-items: center;">
                                 ${imageHTML}
                                 <div style="flex: 1;">
-                                    <div><strong>${product.name}</strong></div>
+                                    <div><strong>${product.name} ${expiryBadge}</strong></div>
                                     <div style="font-size: 0.9rem; color: var(--gray);">
                                         ${product.salePrice.toLocaleString()} دینار | بەردەست: ${product.stock} ${getUnitName(product.unit)}
                                     </div>
@@ -2861,6 +2986,22 @@
                         `;
                         
                         div.addEventListener('click', function() {
+                            // پشکنینی بەسەرچوون
+                            if (product.expiryDate) {
+                                const expiry = new Date(product.expiryDate);
+                                const now = new Date();
+                                const diffTime = expiry - now;
+                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                
+                                if (diffDays <= 0) {
+                                    if (!confirm(`ئەم کاڵایە بەسەرچووە (${product.expiryDate}). دەیەوێت بەردەوام بیت؟`)) {
+                                        return;
+                                    }
+                                } else if (diffDays <= 7) {
+                                    showNotification(`ئەم کاڵایە نزیکە لە بەسەرچوون (${diffDays} ڕۆژی ماوە)`, 'warning');
+                                }
+                            }
+                            
                             addProductToCart(product.id, 1, null, null);
                             productSearchSale.value = '';
                             suggestions.style.display = 'none';
@@ -3029,7 +3170,9 @@
                     barcode: product.barcode,
                     hasSecondaryUnit: product.hasSecondaryUnit,
                     secondaryUnit: product.secondaryUnit,
-                    secondaryUnitQuantity: product.secondaryUnitQuantity
+                    secondaryUnitQuantity: product.secondaryUnitQuantity,
+                    secondaryUnitPrice: product.secondaryUnitPrice,
+                    expiryDate: product.expiryDate
                 };
                 
                 cart.push(cartItem);
@@ -3072,6 +3215,21 @@
                 total += itemTotal;
                 totalItems += item.quantity;
                 
+                // پشکنینی بەسەرچوون
+                let expiryBadge = '';
+                if (item.expiryDate) {
+                    const expiry = new Date(item.expiryDate);
+                    const now = new Date();
+                    const diffTime = expiry - now;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays <= 0) {
+                        expiryBadge = '<span class="expiry-badge">بەسەرچوو</span>';
+                    } else if (diffDays <= 7) {
+                        expiryBadge = `<span class="near-expiry-badge">${diffDays} ڕۆژ</span>`;
+                    }
+                }
+                
                 const li = document.createElement('li');
                 li.className = 'cart-item';
                 
@@ -3087,7 +3245,7 @@
                             ${imageHTML}
                         </div>
                         <div style="flex: 1;">
-                            <div class="item-name">${item.name}</div>
+                            <div class="item-name">${item.name} ${expiryBadge}</div>
                             <div style="font-size: 0.9rem; color: var(--gray); margin-top: 5px;">
                                 بارکۆد: ${item.barcode}
                             </div>
@@ -3205,8 +3363,13 @@
                 if (newUnit === product.unit) {
                     cart[index].price = cart[index].originalPrice;
                 } else if (newUnit === product.secondaryUnit && product.secondaryUnitQuantity > 0) {
-                    // هەژمارکردنی نرخی یەکەی دووەم
-                    cart[index].price = Math.ceil(product.salePrice / product.secondaryUnitQuantity);
+                    // ئەگەر نرخی یەکەی دووەم دیاریکراو بوو
+                    if (product.secondaryUnitPrice && product.secondaryUnitPrice > 0) {
+                        cart[index].price = product.secondaryUnitPrice;
+                    } else {
+                        // هەژمارکردنی خۆکارانە
+                        cart[index].price = Math.ceil(product.salePrice / product.secondaryUnitQuantity);
+                    }
                 }
                 
                 updateCartDisplay();
@@ -3315,7 +3478,20 @@
             
             cart[index].quantity = newQuantity;
             cart[index].unit = newUnit;
-            cart[index].price = newPrice;
+            
+            // دەستکاریکردنی نرخ بەپێی یەکە
+            if (newUnit === product.unit) {
+                cart[index].price = newPrice;
+            } else if (newUnit === product.secondaryUnit && product.secondaryUnitQuantity > 0) {
+                // ئەگەر یەکە گۆڕدرا بۆ یەکەی دووەم
+                if (product.secondaryUnitPrice && product.secondaryUnitPrice > 0) {
+                    cart[index].price = product.secondaryUnitPrice;
+                } else {
+                    cart[index].price = Math.ceil(newPrice / product.secondaryUnitQuantity);
+                }
+            } else {
+                cart[index].price = newPrice;
+            }
             
             updateCartDisplay();
             document.getElementById('editCartItemModal').remove();
@@ -3594,6 +3770,21 @@
                         const div = document.createElement('div');
                         div.className = 'suggestion-item';
                         
+                        // پشکنینی بەسەرچوون
+                        let expiryBadge = '';
+                        if (product.expiryDate) {
+                            const expiry = new Date(product.expiryDate);
+                            const now = new Date();
+                            const diffTime = expiry - now;
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            
+                            if (diffDays <= 0) {
+                                expiryBadge = '<span class="expiry-badge">بەسەرچوو</span>';
+                            } else if (diffDays <= 7) {
+                                expiryBadge = `<span class="near-expiry-badge">${diffDays} ڕۆژ</span>`;
+                            }
+                        }
+                        
                         const imageHTML = product.image 
                             ? `<img src="${product.image}" style="width: 40px; height: 40px; border-radius: 5px; object-fit: cover; margin-left: 10px; float: right;">`
                             : '';
@@ -3602,7 +3793,7 @@
                             <div style="display: flex; align-items: center;">
                                 ${imageHTML}
                                 <div style="flex: 1;">
-                                    <div><strong>${product.name}</strong></div>
+                                    <div><strong>${product.name} ${expiryBadge}</strong></div>
                                     <div style="font-size: 0.9rem; color: var(--gray);">
                                         نرخی کڕین: ${product.purchasePrice.toLocaleString()} دینار | بەردەست: ${product.stock} ${getUnitName(product.unit)}
                                     </div>
@@ -3770,8 +3961,10 @@
                     hasSecondaryUnit: product.hasSecondaryUnit,
                     secondaryUnit: product.secondaryUnit,
                     secondaryUnitQuantity: product.secondaryUnitQuantity,
+                    secondaryUnitPrice: product.secondaryUnitPrice,
                     salePrice: product.salePrice, // هەڵگرتنی نرخی فرۆشتن بۆ پێشنیاری گۆڕانکاری
-                    currentPurchasePrice: product.purchasePrice // نرخی کڕینی ئێستا
+                    currentPurchasePrice: product.purchasePrice, // نرخی کڕینی ئێستا
+                    expiryDate: product.expiryDate
                 };
                 
                 purchaseCart.push(cartItem);
@@ -3814,6 +4007,21 @@
                 total += itemTotal;
                 totalItems += item.quantity;
                 
+                // پشکنینی بەسەرچوون
+                let expiryBadge = '';
+                if (item.expiryDate) {
+                    const expiry = new Date(item.expiryDate);
+                    const now = new Date();
+                    const diffTime = expiry - now;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays <= 0) {
+                        expiryBadge = '<span class="expiry-badge">بەسەرچوو</span>';
+                    } else if (diffDays <= 7) {
+                        expiryBadge = `<span class="near-expiry-badge">${diffDays} ڕۆژ</span>`;
+                    }
+                }
+                
                 const li = document.createElement('li');
                 li.className = 'cart-item';
                 
@@ -3849,7 +4057,7 @@
                             ${imageHTML}
                         </div>
                         <div style="flex: 1;">
-                            <div class="item-name">${item.name}</div>
+                            <div class="item-name">${item.name} ${expiryBadge}</div>
                             <div style="font-size: 0.9rem; color: var(--gray); margin-top: 5px;">
                                 بارکۆد: ${item.barcode}
                             </div>
@@ -3954,6 +4162,20 @@
             // پشکنینی ئەگەر یەکەی نوێ بەردەستە
             if (newUnit === product.unit || (product.hasSecondaryUnit && newUnit === product.secondaryUnit)) {
                 purchaseCart[index].unit = newUnit;
+                
+                // گۆڕینی نرخ بەپێی یەکە
+                if (newUnit === product.unit) {
+                    purchaseCart[index].price = purchaseCart[index].originalPrice;
+                } else if (newUnit === product.secondaryUnit && product.secondaryUnitQuantity > 0) {
+                    // ئەگەر نرخی یەکەی دووەم دیاریکراو بوو
+                    if (product.secondaryUnitPrice && product.secondaryUnitPrice > 0) {
+                        purchaseCart[index].price = product.secondaryUnitPrice;
+                    } else {
+                        // هەژمارکردنی خۆکارانە
+                        purchaseCart[index].price = Math.ceil(product.purchasePrice / product.secondaryUnitQuantity);
+                    }
+                }
+                
                 updatePurchaseCartDisplay();
             }
         };
@@ -4017,6 +4239,11 @@
                                 <input type="number" id="editPurchasePrice" value="${item.price}" min="1" style="width: 100%; padding: 10px;">
                             </div>
                             
+                            <div class="form-group">
+                                <label>بەرواری بەسەرچوون (ئارەزوومەندانە)</label>
+                                <input type="date" id="editPurchaseExpiryDate" value="${item.expiryDate || ''}" style="width: 100%; padding: 10px;">
+                            </div>
+                            
                             <div class="action-buttons" style="margin-top: 20px;">
                                 <button class="btn btn-danger" onclick="document.getElementById('editPurchaseCartItemModal').remove()">
                                     پاشگەزبوونەوە
@@ -4042,16 +4269,19 @@
             const editPurchaseQuantity = document.getElementById('editPurchaseQuantity');
             const editPurchaseUnit = document.getElementById('editPurchaseUnit');
             const editPurchasePrice = document.getElementById('editPurchasePrice');
+            const editPurchaseExpiryDate = document.getElementById('editPurchaseExpiryDate');
             
             if (!editPurchaseQuantity || !editPurchaseUnit || !editPurchasePrice) return;
             
             const newQuantity = parseInt(editPurchaseQuantity.value) || 1;
             const newUnit = editPurchaseUnit.value;
             const newPrice = parseInt(editPurchasePrice.value) || purchaseCart[index].originalPrice;
+            const newExpiryDate = editPurchaseExpiryDate ? editPurchaseExpiryDate.value : null;
             
             purchaseCart[index].quantity = newQuantity;
             purchaseCart[index].unit = newUnit;
             purchaseCart[index].price = newPrice;
+            purchaseCart[index].expiryDate = newExpiryDate;
             
             updatePurchaseCartDisplay();
             document.getElementById('editPurchaseCartItemModal').remove();
@@ -4233,6 +4463,11 @@
                         const priceDiff = item.price - item.currentPurchasePrice;
                         product.salePrice = Math.max(1, Math.round(product.salePrice + priceDiff));
                     }
+                    
+                    // نوێکردنەوەی بەرواری بەسەرچوون ئەگەر دیاریکراو بێت
+                    if (item.expiryDate) {
+                        product.expiryDate = item.expiryDate;
+                    }
                 } else {
                     // دروستکردنی کاڵای نوێ ئەگەر بوونی نەبوو
                     const newProduct = {
@@ -4246,7 +4481,9 @@
                         image: item.image,
                         hasSecondaryUnit: item.hasSecondaryUnit,
                         secondaryUnit: item.secondaryUnit,
-                        secondaryUnitQuantity: item.secondaryUnitQuantity
+                        secondaryUnitQuantity: item.secondaryUnitQuantity,
+                        secondaryUnitPrice: item.secondaryUnitPrice || null,
+                        expiryDate: item.expiryDate || null
                     };
                     
                     sampleData.products.push(newProduct);
@@ -5575,6 +5812,63 @@
                 }
             }
             
+            // زیادکردنی لیستی کاڵای بەسەرچوون
+            const expiredList = document.getElementById('expiredList');
+            if (expiredList) {
+                expiredList.innerHTML = '';
+                
+                const now = new Date();
+                const expiredProducts = sampleData.products.filter(p => {
+                    if (!p.expiryDate) return false;
+                    const expiry = new Date(p.expiryDate);
+                    return expiry < now;
+                });
+                
+                const nearExpiryProducts = sampleData.products.filter(p => {
+                    if (!p.expiryDate) return false;
+                    const expiry = new Date(p.expiryDate);
+                    const diffTime = expiry - now;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    return diffDays <= 7 && diffDays > 0;
+                });
+                
+                if (expiredProducts.length === 0 && nearExpiryProducts.length === 0) {
+                    expiredList.innerHTML = '<li class="list-item">هیچ کاڵایەک بەسەرچوو نییە</li>';
+                } else {
+                    // کاڵای بەسەرچوو
+                    expiredProducts.forEach(product => {
+                        const li = document.createElement('li');
+                        li.className = 'list-item';
+                        li.innerHTML = `
+                            <div class="item-name">${product.name} <span class="expiry-badge">بەسەرچوو</span></div>
+                            <div class="item-value expiry-warning">${product.stock} ${getUnitName(product.unit)}</div>
+                        `;
+                        expiredList.appendChild(li);
+                    });
+                    
+                    // کاڵای نزیک بەسەرچوون
+                    nearExpiryProducts.forEach(product => {
+                        const expiry = new Date(product.expiryDate);
+                        const diffTime = expiry - now;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        const li = document.createElement('li');
+                        li.className = 'list-item';
+                        li.innerHTML = `
+                            <div class="item-name">${product.name} <span class="near-expiry-badge">${diffDays} ڕۆژ</span></div>
+                            <div class="item-value expiry-near">${product.stock} ${getUnitName(product.unit)}</div>
+                        `;
+                        expiredList.appendChild(li);
+                    });
+                }
+                
+                // نوێکردنەوەی کارتی کاڵای بەسەرچوون
+                const expiredCount = document.getElementById('expiredCount');
+                if (expiredCount) {
+                    expiredCount.innerHTML = `${expiredProducts.length} <span>جۆر</span>`;
+                }
+            }
+            
             // زیادکردنی لیستی کاڵاکان بۆ مخزن
             const productList = document.getElementById('productList');
             if (productList) {
@@ -5592,20 +5886,36 @@
                             ? `<img src="${product.image}" class="product-image-small">`
                             : `<div style="width: 50px; height: 50px; background-color: var(--gray-light); border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-left: 10px; color: var(--gray);"><i class="fas fa-image"></i></div>`;
                         
+                        // پشکنینی بەسەرچوون
+                        let expiryBadge = '';
+                        if (product.expiryDate) {
+                            const expiry = new Date(product.expiryDate);
+                            const now = new Date();
+                            const diffTime = expiry - now;
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            
+                            if (diffDays <= 0) {
+                                expiryBadge = '<span class="expiry-badge">بەسەرچوو</span>';
+                            } else if (diffDays <= 7) {
+                                expiryBadge = `<span class="near-expiry-badge">${diffDays} ڕۆژ</span>`;
+                            }
+                        }
+                        
                         // دروستکردنی زانیاری یەکەی دووەم
                         const secondaryUnitInfo = product.hasSecondaryUnit 
-                            ? `<div style="font-size: 0.9rem; color: var(--info);">${product.secondaryUnitQuantity} ${getUnitName(product.secondaryUnit)}</div>`
+                            ? `<div style="font-size: 0.9rem; color: var(--info);">${product.secondaryUnitQuantity} ${getUnitName(product.secondaryUnit)} = ${product.secondaryUnitPrice ? product.secondaryUnitPrice.toLocaleString() + ' دینار' : 'نەزانراو'}</div>`
                             : '';
                         
                         li.innerHTML = `
                             <div style="display: flex; align-items: center;">
                                 ${imageHTML}
                                 <div>
-                                    <div class="item-name">${product.name}</div>
+                                    <div class="item-name">${product.name} ${expiryBadge}</div>
                                     <div style="font-size: 0.9rem; color: var(--gray);">
                                         بارکۆد: ${product.barcode}
                                     </div>
                                     ${secondaryUnitInfo}
+                                    ${product.expiryDate ? `<div style="font-size: 0.8rem; color: var(--danger);">بەسەرچوون: ${product.expiryDate}</div>` : ''}
                                 </div>
                             </div>
                             <div class="item-value">
@@ -5726,7 +6036,7 @@
             const totalDebtDisplay = document.getElementById('totalDebtDisplay');
             if (totalDebtDisplay) {
                 const totalCustomerDebt = sampleData.customers.reduce((sum, customer) => sum + customer.debt, 0);
-                totalDebtDisplay.innerHTML = `${totalCustomerDebt.toLocaleString()} <span>دینار</span>`;
+                totalDebtDisplay.innerHTML = `${totalCustomerDebt.toLocaleString()} <span>دینар</span>`;
             }
             
             // قەرزدارم بە شەریکەکان
@@ -5833,6 +6143,8 @@
             document.getElementById('primaryUnit').value = product.unit;
             document.getElementById('secondaryUnit').value = product.secondaryUnit || '';
             document.getElementById('secondaryUnitQuantity').value = product.secondaryUnitQuantity || 0;
+            document.getElementById('secondaryUnitPrice').value = product.secondaryUnitPrice || '';
+            document.getElementById('expiryDate').value = product.expiryDate || '';
             
             // نیشاندانی وێنە
             const imagePreview = document.getElementById('imagePreview');
@@ -5864,6 +6176,8 @@
             document.getElementById('primaryUnit').value = 'piece';
             document.getElementById('secondaryUnit').value = '';
             document.getElementById('secondaryUnitQuantity').value = '';
+            document.getElementById('secondaryUnitPrice').value = '';
+            document.getElementById('expiryDate').value = '';
             document.getElementById('productImage').value = '';
             document.getElementById('imagePreview').innerHTML = '<p style="color: var(--gray); font-size: 0.9rem;">هیچ وێنەیەک نییە</p>';
             editingProductId = null;
@@ -5911,6 +6225,11 @@
             }
             
             // دروستکردنی کاڵای نوێ
+            const secondaryUnit = document.getElementById('secondaryUnit').value;
+            const secondaryUnitQuantity = parseInt(document.getElementById('secondaryUnitQuantity').value) || 0;
+            const secondaryUnitPrice = parseInt(document.getElementById('secondaryUnitPrice').value) || null;
+            const expiryDate = document.getElementById('expiryDate').value;
+            
             const newProduct = {
                 id: sampleData.products.length + 1,
                 name: name,
@@ -5919,9 +6238,11 @@
                 salePrice: salePriceValue,
                 stock: stock,
                 unit: document.getElementById('primaryUnit').value,
-                hasSecondaryUnit: document.getElementById('secondaryUnit').value !== '',
-                secondaryUnit: document.getElementById('secondaryUnit').value || null,
-                secondaryUnitQuantity: parseInt(document.getElementById('secondaryUnitQuantity').value) || 0,
+                hasSecondaryUnit: secondaryUnit !== '',
+                secondaryUnit: secondaryUnit || null,
+                secondaryUnitQuantity: secondaryUnitQuantity,
+                secondaryUnitPrice: secondaryUnitPrice,
+                expiryDate: expiryDate || null,
                 description: ''
             };
             
@@ -5978,6 +6299,8 @@
             product.hasSecondaryUnit = document.getElementById('secondaryUnit').value !== '';
             product.secondaryUnit = document.getElementById('secondaryUnit').value || null;
             product.secondaryUnitQuantity = parseInt(document.getElementById('secondaryUnitQuantity').value) || 0;
+            product.secondaryUnitPrice = parseInt(document.getElementById('secondaryUnitPrice').value) || null;
+            product.expiryDate = document.getElementById('expiryDate').value || null;
             
             // هەڵگرتنی وێنە
             if (productImage.files.length > 0) {
@@ -6036,6 +6359,15 @@
                     this.style.display = 'none';
                     resetProductForm();
                 }
+            });
+        }
+
+        // نوێکردنەوەی لیستی کاڵای بەسەرچوون
+        const refreshExpiredBtn = document.getElementById('refreshExpired');
+        if (refreshExpiredBtn) {
+            refreshExpiredBtn.addEventListener('click', function() {
+                populateSampleData();
+                showNotification('لیستی کاڵای بەسەرچوون نوێ کرایەوە!', 'info');
             });
         }
 
