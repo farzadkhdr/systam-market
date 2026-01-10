@@ -529,6 +529,8 @@
         .card-5 .card-icon { background-color: var(--secondary); }
         .card-6 .card-icon { background-color: var(--info); }
         .card-7 .card-icon { background-color: #9d4edd; }
+        .card-8 .card-icon { background-color: #06d6a0; }
+        .card-9 .card-icon { background-color: #118ab2; }
         
         .card h3 {
             font-size: 1.1rem;
@@ -1201,6 +1203,12 @@
             }
         }
         
+        @media (min-width: 1200px) {
+            .dashboard-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
         /* بۆستەی بچووک بۆ بەکارهێنان لە لیستەکان */
         .btn-sm {
             padding: 5px 10px;
@@ -1396,6 +1404,13 @@
                         بەرێوبەرایەتی
                     </a>
                 </li>
+                <!-- بەشی جەرد کردنی کاڵا -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="inventoryAudit">
+                        <i class="fas fa-clipboard-check"></i>
+                        جەرد کردنی کاڵا
+                    </a>
+                </li>
             </ul>
         </aside>
 
@@ -1506,6 +1521,30 @@
                             <i class="fas fa-minus"></i> ٠٪ جیاوازی لە مانگی ڕابردوو
                         </div>
                     </div>
+
+                    <!-- کارتی نوێ: سەرمایە (راس مال) -->
+                    <div class="card card-8">
+                        <div class="card-icon">
+                            <i class="fas fa-landmark"></i>
+                        </div>
+                        <h3>سەرمایە (راس مال)</h3>
+                        <div class="card-value" id="capitalBalanceDisplay">١٠,٠٠٠,٠٠٠ <span>دینار</span></div>
+                        <div class="card-change positive">
+                            <i class="fas fa-arrow-up"></i> ٠٪ گۆڕانکاری
+                        </div>
+                    </div>
+
+                    <!-- کارتی نوێ: ڕێژەی قازانج -->
+                    <div class="card card-9">
+                        <div class="card-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <h3>ڕێژەی قازانج</h3>
+                        <div class="card-value" id="profitRateDisplay">٠٪ <span></span></div>
+                        <div class="card-change negative">
+                            <i class="fas fa-arrow-down"></i> ٠٪ کەمتر لە هەفتەی ڕابردوو
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="lists-container">
@@ -1515,19 +1554,7 @@
                             <div class="list-actions">
                                 <button id="refreshLowStock">نوێکردنەوە</button>
                             </div>
-                        </div><!-- لە ناو dashboard-cards زیاد بکە -->
-                      <div 
-    
-                      class="card card-8">
-                      <div class="card-icon">
-                        <i class="fas fa-balance-scale-left"></i>
-                      </div>
-                      <h3>کۆی جەرد</h3>
-                      <div class="card-value" id="totalAdjustmentDisplay">٠ <span>دینار</span></div>
-                      <div class="card-change positive">
-        <i class="fas fa-minus"></i> ٠٪ جیاوازی لە مانگی ڕابردوو
-    </div>
-</div>
+                        </div>
                         <ul class="list-items" id="lowStockList">
                             <!-- داتاکان لە JavaScript دا زیاد دەکرێن -->
                         </ul>
@@ -2170,6 +2197,49 @@
                     <h3 style="margin-bottom: 15px;">بەشی بەرێوبەرایەتی</h3>
                     <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
                     <p>لێرەدا بەرێوبەرایەتی گشتی سیستم ئەنجام دەدرێت.</p>
+                </div>
+            </section>
+
+            <!-- بەشی جەرد کردنی کاڵا -->
+            <section id="inventoryAuditSection" class="content-section">
+                <h2 class="section-title">جەرد کردنی کاڵا</h2>
+                
+                <div class="sale-purchase-container">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="auditList">لیستی جەرد</button>
+                        <button class="tab-btn" data-tab="newAudit">جەردی نوێ</button>
+                        <button class="tab-btn" data-tab="auditHistory">مێژووی جەرد</button>
+                    </div>
+                    
+                    <!-- بەشی ١: لیستی جەرد -->
+                    <div class="tab-content active" id="auditList">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-clipboard-check fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">لیستی جەردەکان</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا هەموو جەردەکانی کاڵاکان بە شێوەیەکی رێک و پێک بەڕێوەدەبرێن.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی ٢: جەردی نوێ -->
+                    <div class="tab-content" id="newAudit">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-search-plus fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">جەردی نوێی کاڵا</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا جەردی نوێی کاڵاکان دروست دەکرێت و جیاوازییەکان تۆمار دەکرێن.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی ٣: مێژووی جەرد -->
+                    <div class="tab-content" id="auditHistory">
+                        <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                            <i class="fas fa-history fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px;">مێژووی جەردەکان</h3>
+                            <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
+                            <p>لێرەدا مێژووی هەموو جەردەکانی کاڵاکان پیشان دەدرێت.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
@@ -5485,6 +5555,47 @@
             }
         }
 
+        // نوێکردنەوەی کارتی سەرمایە
+        function updateCapitalCard() {
+            const capitalDisplay = document.getElementById('capitalBalanceDisplay');
+            const profitRateDisplay = document.getElementById('profitRateDisplay');
+            
+            if (capitalDisplay) {
+                // بۆ نموونە، سەرمایە بە کۆی کڕین + پارەی نەقدی دەهێنینەوە
+                const totalPurchases = samplePurchaseData.purchases.reduce((sum, purchase) => sum + purchase.total, 0);
+                const capital = sampleData.cashBalance + totalPurchases;
+                capitalDisplay.innerHTML = `${capital.toLocaleString()} <span>دینار</span>`;
+            }
+            
+            if (profitRateDisplay) {
+                // بۆ نموونە، ڕێژەی قازانج بە شێوەیەکی سادە
+                const totalSales = sampleData.sales.reduce((sum, sale) => sum + sale.total, 0);
+                const totalPurchases = samplePurchaseData.purchases.reduce((sum, purchase) => sum + purchase.total, 0);
+                
+                let profitRate = 0;
+                if (totalPurchases > 0) {
+                    profitRate = Math.round(((totalSales - totalPurchases) / totalPurchases) * 100);
+                }
+                
+                profitRateDisplay.innerHTML = `${profitRate}٪ <span></span>`;
+                
+                // نوێکردنەوەی تێبینی گۆڕانکاری
+                const changeElement = document.querySelector('.card-9 .card-change');
+                if (changeElement) {
+                    if (profitRate > 0) {
+                        changeElement.innerHTML = `<i class="fas fa-arrow-up"></i> ${profitRate}٪ قازانج`;
+                        changeElement.className = 'card-change positive';
+                    } else if (profitRate < 0) {
+                        changeElement.innerHTML = `<i class="fas fa-arrow-down"></i> ${Math.abs(profitRate)}٪ زەرەر`;
+                        changeElement.className = 'card-change negative';
+                    } else {
+                        changeElement.innerHTML = `<i class="fas fa-minus"></i> بێ قازانج و زەرەر`;
+                        changeElement.className = 'card-change';
+                    }
+                }
+            }
+        }
+
         // فەنکشنی پێشبینینی وێنە
         function setupImagePreview() {
             const imageInput = document.getElementById('productImage');
@@ -5720,6 +5831,9 @@
             
             // نوێکردنەوەی مێژووی فرۆشتن
             updateSaleHistoryDisplay();
+            
+            // نوێکردنەوەی کارتی سەرمایە
+            updateCapitalCard();
         }
 
         // نوێکردنەوەی هەموو کارتەکانی داشبۆرد
