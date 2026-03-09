@@ -2877,7 +2877,7 @@
             partners: [],
             sales: [],
             purchases: [],
-            cashBalance: 0,
+            cashBalance: 10000000, // 10 ملیۆن دینار بۆ نموونە
             expenseHistory: [],
             paymentHistory: []
         };
@@ -4970,7 +4970,7 @@
         };
 
         // ==============================================
-        // سیستەمی واسڵکردنی پارە - فەنکشنە تەواوەکان
+        // سیستەمی واسڵکردنی پارە - فەنکشنە تەواوەکان (بە سیستەمی داین و مەدین)
         // ==============================================
 
         // فەنکشنی گەڕان بەدوای شەریک بۆ واسڵکردن
@@ -5249,7 +5249,9 @@
             updateCustomerCashSummary();
         };
 
-        // تۆمارکردنی واسڵکردن بۆ شەریک
+        // ==============================================
+        // تۆمارکردنی واسڵکردن بۆ شەریک - بە سیستەمی داین و مەدین
+        // ==============================================
         window.submitPartnerCash = function() {
             if (!selectedPartnerForCash) {
                 showNotification('تکایە یەکەم جار شەریکێک هەڵبژێرە!', 'error');
@@ -5262,13 +5264,15 @@
                 return;
             }
             
+            const cashAmount = parseInt(amount);
+            
             // دروستکردنی تۆماری واسڵکردن
             const cashRecord = {
                 id: cashSettlementHistory.length + 1,
                 type: 'partner',
                 personId: selectedPartnerForCash.id,
                 personName: selectedPartnerForCash.name,
-                amount: parseInt(amount),
+                amount: cashAmount,
                 date: document.getElementById('partnerCashDate').value,
                 time: document.getElementById('partnerCashTime').value,
                 method: document.getElementById('partnerCashMethod').value,
@@ -5281,31 +5285,51 @@
             // زیادکردن بۆ مێژوو
             cashSettlementHistory.push(cashRecord);
             
-            // نوێکردنەوەی قەرزی شەریک
-            if (selectedPartnerForCash.debt < 0) {
-                // ئەگەر من قەرزداری شەریک بم، کەم دەبێتەوە
-                selectedPartnerForCash.debt += parseInt(amount);
-                if (selectedPartnerForCash.debt > 0) selectedPartnerForCash.debt = 0;
-            } else {
-                // ئەگەر شەریک قەرزداری من بێت، زیاد دەبێت
-                selectedPartnerForCash.debt += parseInt(amount);
-            }
+            // زیادکردنی پارەی واسڵکراو بۆ کۆی گشتی (نەک کەمکردنەوە)
+            sampleData.cashBalance += cashAmount;
             
-            // کەمکردنەوەی پارە لە کۆی نەقدی
-            sampleData.cashBalance -= parseInt(amount);
+            // ===== سیستەمی داین و مەدین =====
+            // حیسابی شەریک نوێ دەکەینەوە
+            // - ئەگەر شەریک قەرزدار بوو (debt > 0) => لە قەرزەکەی کەم دەکەین
+            // - ئەگەر شەریک قەرزدار نەبوو یان کەمتر بوو => من قەرزدار دەبم (debt دەبێتە نزم)
+            
+            // بەکارهێنانی سیستەمی داین و مەدین: 
+            // debt > 0: شەریک قەرزداری منە (کەسەکە قەرزدارە)
+            // debt < 0: من قەرزداری شەریکم (من قەرزدارم)
+            let partner = selectedPartnerForCash;
+            
+            if (partner.debt > 0) {
+                // شەریک قەرزداری منە => پارە وەردەگرم لەسەر قەرزەکەی
+                if (cashAmount >= partner.debt) {
+                    // پارەکە زیاترە لە قەرزەکەی => دەبمە قەرزدار (debt دەبێتە نزم)
+                    partner.debt = partner.debt - cashAmount; // ئەمە دەبێتە نزم
+                } else {
+                    // پارەکە کەمترە لە قەرزەکەی => قەرزەکەی کەم دەبێتەوە بەڵام هێشتا قەرزدارە
+                    partner.debt = partner.debt - cashAmount; // ئەمە هێشتا ڕاستەقینەیە
+                }
+            } else if (partner.debt < 0) {
+                // من قەرزداری شەریکم => پارەی زیاتر دەدەم => قەرزەکەم زیاد دەکات (debt نزمتر دەبێت)
+                partner.debt = partner.debt - cashAmount; // نزمتر دەبێت (زیاتر قەرزدار دەبم)
+            } else {
+                // debt == 0 => بێ قەرز => ئێستا من دەبمە قەرزدار
+                partner.debt = -cashAmount;
+            }
             
             // نوێکردنەوەی نمایش
             updateCashHistoryDisplay();
             updateCashTotals();
             updateDashboardCash();
+            updateAllDashboardCards(); // نوێکردنەوەی کارتەکانی داشبۆرد
             
-            showNotification(`واسڵکردنی ${parseInt(amount).toLocaleString()} دینار بۆ ${selectedPartnerForCash.name} تۆمار کرا`, 'success');
+            showNotification(`واسڵکردنی ${cashAmount.toLocaleString()} دینار بۆ ${partner.name} تۆمار کرا`, 'success');
             
             // ڕێکخستنەوەی فۆرم
             resetPartnerCashForm();
         };
 
-        // تۆمارکردنی واسڵکردن بۆ کەس
+        // ==============================================
+        // تۆمارکردنی واسڵکردن بۆ کەس - بە سیستەمی داین و مەدین
+        // ==============================================
         window.submitCustomerCash = function() {
             if (!selectedCustomerForCash) {
                 showNotification('تکایە یەکەم جار کەسێک هەڵبژێرە!', 'error');
@@ -5318,13 +5342,15 @@
                 return;
             }
             
+            const cashAmount = parseInt(amount);
+            
             // دروستکردنی تۆماری واسڵکردن
             const cashRecord = {
                 id: cashSettlementHistory.length + 1,
                 type: 'customer',
                 personId: selectedCustomerForCash.id,
                 personName: selectedCustomerForCash.name,
-                amount: parseInt(amount),
+                amount: cashAmount,
                 date: document.getElementById('customerCashDate').value,
                 time: document.getElementById('customerCashTime').value,
                 method: document.getElementById('customerCashMethod').value,
@@ -5337,21 +5363,40 @@
             // زیادکردن بۆ مێژوو
             cashSettlementHistory.push(cashRecord);
             
-            // کەمکردنەوەی قەرزی کەس
-            if (selectedCustomerForCash.debt > 0) {
-                selectedCustomerForCash.debt -= parseInt(amount);
-                if (selectedCustomerForCash.debt < 0) selectedCustomerForCash.debt = 0;
-            }
+            // زیادکردنی پارەی واسڵکراو بۆ کۆی گشتی (نەک کەمکردنەوە)
+            sampleData.cashBalance += cashAmount;
             
-            // کەمکردنەوەی پارە لە کۆی نەقدی
-            sampleData.cashBalance -= parseInt(amount);
+            // ===== سیستەمی داین و مەدین =====
+            // حیسابی کەس نوێ دەکەینەوە
+            // - ئەگەر کەس قەرزدار بوو (debt > 0) => لە قەرزەکەی کەم دەکەین
+            // - ئەگەر کەس قەرزدار نەبوو یان کەمتر بوو => من قەرزدار دەبم (debt دەبێتە نزم)
+            
+            let customer = selectedCustomerForCash;
+            
+            if (customer.debt > 0) {
+                // کەسەکە قەرزداری منە => پارە وەردەگرم لەسەر قەرزەکەی
+                if (cashAmount >= customer.debt) {
+                    // پارەکە زیاترە لە قەرزەکەی => من دەبمە قەرزدار (debt دەبێتە نزم)
+                    customer.debt = customer.debt - cashAmount; // ئەمە دەبێتە نزم
+                } else {
+                    // پارەکە کەمترە لە قەرزەکەی => قەرزەکەی کەم دەبێتەوە بەڵام هێشتا قەرزدارە
+                    customer.debt = customer.debt - cashAmount; // ئەمە هێشتا ڕاستەقینەیە
+                }
+            } else if (customer.debt < 0) {
+                // من قەرزداری کەسەکەم => پارەی زیاتر دەدەم => قەرزەکەم زیاد دەکات (debt نزمتر دەبێت)
+                customer.debt = customer.debt - cashAmount; // نزمتر دەبێت (زیاتر قەرزدار دەبم)
+            } else {
+                // debt == 0 => بێ قەرز => ئێستا من دەبمە قەرزدار
+                customer.debt = -cashAmount;
+            }
             
             // نوێکردنەوەی نمایش
             updateCashHistoryDisplay();
             updateCashTotals();
             updateDashboardCash();
+            updateAllDashboardCards(); // نوێکردنەوەی کارتەکانی داشبۆرد
             
-            showNotification(`واسڵکردنی ${parseInt(amount).toLocaleString()} دینار بۆ ${selectedCustomerForCash.name} تۆمار کرا`, 'success');
+            showNotification(`واسڵکردنی ${cashAmount.toLocaleString()} دینار بۆ ${customer.name} تۆمار کرا`, 'success');
             
             // ڕێکخستنەوەی فۆرم
             resetCustomerCashForm();
@@ -5716,19 +5761,35 @@
             if (index !== -1) {
                 const record = cashSettlementHistory[index];
                 
-                // گەڕاندنەوەی پارە بۆ کۆی نەقدی
-                sampleData.cashBalance += record.amount;
+                // گەڕاندنەوەی پارە بۆ کۆی نەقدی (کەمکردنەوە)
+                sampleData.cashBalance -= record.amount;
                 
                 // گەڕاندنەوەی قەرز
                 if (record.type === 'partner') {
                     const partner = sampleData.partners.find(p => p.id === record.personId);
                     if (partner) {
-                        partner.debt -= record.amount;
+                        // گەڕاندنەوەی قەرزی شەریک
+                        if (partner.debt < 0) {
+                            // ئەگەر من قەرزداربووم، دەبمە کەمتر قەرزدار
+                            partner.debt += record.amount;
+                            if (partner.debt > 0) partner.debt = 0;
+                        } else {
+                            // ئەگەر شەریک قەرزداربوو، دەبێتە زیاتر قەرزدار
+                            partner.debt += record.amount;
+                        }
                     }
                 } else if (record.type === 'customer') {
                     const customer = sampleData.customers.find(c => c.id === record.personId);
                     if (customer) {
-                        customer.debt += record.amount;
+                        // گەڕاندنەوەی قەرزی کەس
+                        if (customer.debt < 0) {
+                            // ئەگەر من قەرزداربووم، دەبمە کەمتر قەرزدار
+                            customer.debt += record.amount;
+                            if (customer.debt > 0) customer.debt = 0;
+                        } else {
+                            // ئەگەر کەسەکە قەرزداربوو، دەبێتە زیاتر قەرزدار
+                            customer.debt += record.amount;
+                        }
                     }
                 }
                 
@@ -5736,6 +5797,7 @@
                 updateCashHistoryDisplay();
                 updateCashTotals();
                 updateDashboardCash();
+                updateAllDashboardCards();
                 showNotification('تۆمارەکە بە سەرکەوتوویی سڕایەوە!', 'success');
             }
         };
@@ -6886,6 +6948,71 @@
             }
         }
 
+        // نوێکردنەوەی هەموو کارتەکانی داشبۆرد
+        function updateAllDashboardCards() {
+            // کۆی پارەی واسڵ کراو
+            const cashBalanceDisplay = document.getElementById('cashBalanceDisplay');
+            if (cashBalanceDisplay) {
+                cashBalanceDisplay.innerHTML = `${sampleData.cashBalance.toLocaleString()} <span>دینار</span>`;
+            }
+            
+            // کۆی کڕین
+            const totalPurchaseDisplay = document.getElementById('totalPurchaseDisplay');
+            if (totalPurchaseDisplay) {
+                const totalPurchases = samplePurchaseData.purchases.reduce((sum, purchase) => sum + purchase.total, 0);
+                totalPurchaseDisplay.innerHTML = `${totalPurchases.toLocaleString()} <span>دینار</span>`;
+            }
+            
+            // جیاوازی
+            const differenceDisplay = document.getElementById('differenceDisplay');
+            if (differenceDisplay) {
+                const totalExpenses = sampleData.expenseHistory.reduce((sum, expense) => sum + expense.amount, 0);
+                const totalPurchases = samplePurchaseData.purchases.reduce((sum, purchase) => sum + purchase.total, 0);
+                const difference = sampleData.cashBalance - (totalPurchases + totalExpenses);
+                differenceDisplay.innerHTML = `${difference.toLocaleString()} <span>دینار</span>`;
+                
+                const changeElement = document.querySelector('.card-3 .card-change');
+                if (changeElement) {
+                    if (difference > 0) {
+                        changeElement.innerHTML = `<i class="fas fa-arrow-up"></i> سود`;
+                        changeElement.className = 'card-change positive';
+                    } else if (difference < 0) {
+                        changeElement.innerHTML = `<i class="fas fa-arrow-down"></i> زەرەر`;
+                        changeElement.className = 'card-change negative';
+                    } else {
+                        changeElement.innerHTML = `<i class="fas fa-minus"></i> بێ گۆڕانکاری`;
+                        changeElement.className = 'card-change';
+                    }
+                }
+            }
+            
+            // کۆی قەرزداران (کەسەکان)
+            const totalDebtDisplay = document.getElementById('totalDebtDisplay');
+            if (totalDebtDisplay) {
+                const totalCustomerDebt = sampleData.customers.reduce((sum, customer) => sum + (customer.debt > 0 ? customer.debt : 0), 0);
+                totalDebtDisplay.innerHTML = `${totalCustomerDebt.toLocaleString()} <span>دینار</span>`;
+            }
+            
+            // قەرزدارم بە شەریکەکان
+            const partnerDebtDisplay = document.getElementById('partnerDebtDisplay');
+            if (partnerDebtDisplay) {
+                const totalPartnerDebt = sampleData.partners
+                    .filter(p => p.debt < 0)
+                    .reduce((sum, partner) => sum + Math.abs(partner.debt), 0);
+                partnerDebtDisplay.innerHTML = `${totalPartnerDebt.toLocaleString()} <span>دینار</span>`;
+            }
+            
+            // کۆی کاڵای کەم بوو
+            const lowStockCount = document.getElementById('lowStockCount');
+            if (lowStockCount) {
+                const lowStockProducts = sampleData.products.filter(p => p.stock <= 5);
+                lowStockCount.innerHTML = `${lowStockProducts.length} <span>جۆر</span>`;
+            }
+            
+            // نوێکردنەوەی سەرمایە و ڕێژەی قازانج
+            updateCapitalCard();
+        }
+
         // زیادکردنی داتای نموونەیی
         function populateSampleData() {
             // زیادکردنی کاڵای کەم بووەکان
@@ -7024,7 +7151,7 @@
                                 <div style="font-size: 0.9rem; color: var(--gray);">${customer.phone}</div>
                             </div>
                             <div>
-                                <div class="item-value ${debtClass}">${customer.debt.toLocaleString()} دینار قەرز</div>
+                                <div class="item-value ${debtClass}">${customer.debt > 0 ? customer.debt.toLocaleString() : 0} دینار قەرز</div>
                                 <div style="margin-top: 10px;">
                                     <button class="btn btn-info btn-sm" onclick="viewCustomerDetails(${customer.id})">
                                         <i class="fas fa-eye"></i> بینین
@@ -7088,67 +7215,6 @@
             
             // نوێکردنەوەی کارتی سەرمایە
             updateCapitalCard();
-        }
-
-        // نوێکردنەوەی هەموو کارتەکانی داشبۆرد
-        function updateAllDashboardCards() {
-            // کۆی کڕین
-            const totalPurchaseDisplay = document.getElementById('totalPurchaseDisplay');
-            if (totalPurchaseDisplay) {
-                const totalPurchases = samplePurchaseData.purchases.reduce((sum, purchase) => sum + purchase.total, 0);
-                totalPurchaseDisplay.innerHTML = `${totalPurchases.toLocaleString()} <span>دینار</span>`;
-            }
-            
-            // جیاوازی
-            updateDifferenceCard();
-            
-            // کۆی قەرزداران
-            const totalDebtDisplay = document.getElementById('totalDebtDisplay');
-            if (totalDebtDisplay) {
-                const totalCustomerDebt = sampleData.customers.reduce((sum, customer) => sum + customer.debt, 0);
-                totalDebtDisplay.innerHTML = `${totalCustomerDebt.toLocaleString()} <span>دینار</span>`;
-            }
-            
-            // قەرزدارم بە شەریکەکان
-            const partnerDebtDisplay = document.getElementById('partnerDebtDisplay');
-            if (partnerDebtDisplay) {
-                const totalPartnerDebt = sampleData.partners
-                    .filter(p => p.debt < 0)
-                    .reduce((sum, partner) => sum + Math.abs(partner.debt), 0);
-                partnerDebtDisplay.innerHTML = `${totalPartnerDebt.toLocaleString()} <span>دینار</span>`;
-            }
-        }
-
-        // نوێکردنەوەی کارتی جیاوازی
-        function updateDifferenceCard() {
-            const differenceCard = document.getElementById('differenceDisplay');
-            if (differenceCard) {
-                // کۆی هەموو کڕینەکان
-                const totalPurchases = samplePurchaseData.purchases.reduce((sum, purchase) => sum + purchase.total, 0);
-                
-                // کۆی هەموو سەرفەکان
-                const totalExpenses = sampleData.expenseHistory.reduce((sum, expense) => sum + expense.amount, 0);
-                
-                // جیاوازی = پارەی واسڵ - (کڕین + سەرف)
-                const difference = sampleData.cashBalance - (totalPurchases + totalExpenses);
-                
-                differenceCard.innerHTML = `${difference.toLocaleString()} <span>دینار</span>`;
-                
-                // نوێکردنەوەی تێبینی گۆڕانکاری
-                const changeElement = document.querySelector('.card-3 .card-change');
-                if (changeElement) {
-                    if (difference > 0) {
-                        changeElement.innerHTML = `<i class="fas fa-arrow-up"></i> سود`;
-                        changeElement.className = 'card-change positive';
-                    } else if (difference < 0) {
-                        changeElement.innerHTML = `<i class="fas fa-arrow-down"></i> زەرەر`;
-                        changeElement.className = 'card-change negative';
-                    } else {
-                        changeElement.innerHTML = `<i class="fas fa-minus"></i> بێ گۆڕانکاری`;
-                        changeElement.className = 'card-change';
-                    }
-                }
-            }
         }
 
         // فەنکشنی وەرگرتنی ناوی یەکە
