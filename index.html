@@ -3001,6 +3001,11 @@
                     
                     // چالاککردنی چێکبۆکسی بەرواری بەسەرچوون
                     setupExpiryDateCheckbox();
+                    
+                    // زیادکردنی دوگمەی نوێکردنەوەی حیساب
+                    setTimeout(() => {
+                        addRefreshButtonToPartners();
+                    }, 1000);
                 } else {
                     showNotification('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە! تکایە دووبارە هەوڵ بدەرەوە.', 'error');
                 }
@@ -7416,6 +7421,230 @@
         }
 
         // ==============================================
+        // فەنکشنەکانی نوێکردنەوەی حیسابی شەریک و کەس
+        // ==============================================
+
+        // فەنکشنی نوێکردنەوەی حیسابی هەموو کەس و شەریکەکان
+        function refreshAllAccounts() {
+            // نوێکردنەوەی حیسابی کەسەکان
+            if (sampleData.customers && sampleData.customers.length > 0) {
+                sampleData.customers.forEach(customer => {
+                    // هەژمارکردنی کۆی قەرزی کەسەکە لە مێژووی واسڵکردن
+                    const customerPayments = cashSettlementHistory.filter(p => 
+                        p.type === 'customer' && p.personId === customer.id
+                    );
+                    
+                    // هەژمارکردنی کۆی فرۆشتنی قەرزی ئەم کەسە
+                    const customerSales = sampleData.sales.filter(s => 
+                        s.customer === customer.name && s.payment === 'credit'
+                    );
+                    
+                    const totalSalesDebt = customerSales.reduce((sum, s) => sum + s.total, 0);
+                    const totalPayments = customerPayments.reduce((sum, p) => sum + p.amount, 0);
+                    
+                    // حیسابکردنی قەرزی کەسەکە
+                    // debt > 0: کەسەکە قەرزداریە (فرۆشتنی قەرز - پارەی وەرگیراو)
+                    customer.debt = totalSalesDebt - totalPayments;
+                });
+            }
+            
+            // نوێکردنەوەی حیسابی شەریکەکان
+            if (sampleData.partners && sampleData.partners.length > 0) {
+                sampleData.partners.forEach(partner => {
+                    // هەژمارکردنی کۆی قەرزی شەریکەکە لە مێژووی واسڵکردن
+                    const partnerPayments = cashSettlementHistory.filter(p => 
+                        p.type === 'partner' && p.personId === partner.id
+                    );
+                    
+                    // هەژمارکردنی کۆی کڕینی قەرزی ئەم شەریکە
+                    const partnerPurchases = samplePurchaseData.purchases.filter(p => 
+                        p.partner === partner.name && p.payment === 'credit'
+                    );
+                    
+                    const totalPurchasesDebt = partnerPurchases.reduce((sum, p) => sum + p.total, 0);
+                    const totalPayments = partnerPayments.reduce((sum, p) => sum + p.amount, 0);
+                    
+                    // حیسابکردنی قەرزی شەریکەکە
+                    // debt > 0: شەریک قەرزداری منە (پارەی پێدراو - کڕینی قەرز)
+                    // debt < 0: من قەرزداری شەریکم (کڕینی قەرز - پارەی پێدراو)
+                    partner.debt = totalPayments - totalPurchasesDebt;
+                });
+            }
+            
+            // نوێکردنەوەی نیشاندان
+            populateSampleData();
+            updateAllDashboardCards();
+            
+            showNotification('هەموو حیسابەکان بە سەرکەوتوویی نوێ کرانەوە!', 'success');
+        }
+
+        // زیادکردنی دوگمەی نوێکردنەوە بۆ بەشی شەریکەکان
+        function addRefreshButtonToPartners() {
+            const partnersListHeader = document.querySelector('#partnersList .list-header .list-actions');
+            if (partnersListHeader) {
+                // پشکنین ئەگەر دوگمەکە هەیە یان نا
+                if (!document.getElementById('refreshPartnerAccountsBtn')) {
+                    const refreshBtn = document.createElement('button');
+                    refreshBtn.id = 'refreshPartnerAccountsBtn';
+                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> نوێکردنەوەی حیساب';
+                    refreshBtn.onclick = function() {
+                        refreshAllAccounts();
+                    };
+                    partnersListHeader.appendChild(refreshBtn);
+                }
+            }
+            
+            // زیادکردنی دوگمە بۆ بەشی کەسەکان
+            const customersListHeader = document.querySelector('#customersList .list-header .list-actions');
+            if (customersListHeader) {
+                if (!document.getElementById('refreshCustomerAccountsBtn')) {
+                    const refreshBtn = document.createElement('button');
+                    refreshBtn.id = 'refreshCustomerAccountsBtn';
+                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> نوێکردنەوەی حیساب';
+                    refreshBtn.onclick = function() {
+                        refreshAllAccounts();
+                    };
+                    customersListHeader.appendChild(refreshBtn);
+                }
+            }
+        }
+
+        // ==============================================
+        // فەنکشنەکانی زیادکردنی شەریک و کەس
+        // ==============================================
+
+        // زیادکردنی شەریکی نوێ
+        document.getElementById('savePartnerBtn')?.addEventListener('click', function() {
+            const nameInput = document.getElementById('newPartnerName');
+            const phoneInput = document.getElementById('newPartnerPhone');
+            const addressInput = document.getElementById('newPartnerAddress');
+            
+            if (!nameInput || !nameInput.value.trim()) {
+                showNotification('تکایە ناوی شەریک داخڵ بکە!', 'error');
+                return;
+            }
+            
+            const newPartner = {
+                id: sampleData.partners.length + 1,
+                name: nameInput.value.trim(),
+                phone: phoneInput?.value.trim() || '',
+                address: addressInput?.value.trim() || '',
+                debt: 0
+            };
+            
+            sampleData.partners.push(newPartner);
+            
+            // پاککردنەوەی خانەکان
+            nameInput.value = '';
+            if (phoneInput) phoneInput.value = '';
+            if (addressInput) addressInput.value = '';
+            
+            // گۆڕینی بۆ تابی لیست
+            document.querySelector('[data-tab="partnersList"]').click();
+            
+            // نوێکردنەوەی نیشاندان
+            populateSampleData();
+            
+            showNotification('شەریکی نوێ بە سەرکەوتوویی زیاد کرا!', 'success');
+        });
+
+        // زیادکردنی کەسی نوێ
+        document.getElementById('saveCustomerBtn')?.addEventListener('click', function() {
+            const nameInput = document.getElementById('newCustomerName');
+            const phoneInput = document.getElementById('newCustomerPhone');
+            const addressInput = document.getElementById('newCustomerAddress');
+            
+            if (!nameInput || !nameInput.value.trim()) {
+                showNotification('تکایە ناوی کەس داخڵ بکە!', 'error');
+                return;
+            }
+            
+            const newCustomer = {
+                id: sampleData.customers.length + 1,
+                name: nameInput.value.trim(),
+                phone: phoneInput?.value.trim() || '',
+                address: addressInput?.value.trim() || '',
+                debt: 0
+            };
+            
+            sampleData.customers.push(newCustomer);
+            
+            // پاککردنەوەی خانەکان
+            nameInput.value = '';
+            if (phoneInput) phoneInput.value = '';
+            if (addressInput) addressInput.value = '';
+            
+            // گۆڕینی بۆ تابی لیست
+            document.querySelector('[data-tab="customersList"]').click();
+            
+            // نوێکردنەوەی نیشاندان
+            populateSampleData();
+            
+            showNotification('کەسی نوێ بە سەرکەوتوویی زیاد کرا!', 'success');
+        });
+
+        // پاشگەزبوونەوە لە زیادکردنی شەریک
+        document.getElementById('cancelPartnerBtn')?.addEventListener('click', function() {
+            document.querySelector('[data-tab="partnersList"]').click();
+            
+            // پاککردنەوەی خانەکان
+            document.getElementById('newPartnerName').value = '';
+            document.getElementById('newPartnerPhone').value = '';
+            document.getElementById('newPartnerAddress').value = '';
+        });
+
+        // پاشگەزبوونەوە لە زیادکردنی کەس
+        document.getElementById('cancelCustomerBtn')?.addEventListener('click', function() {
+            document.querySelector('[data-tab="customersList"]').click();
+            
+            // پاککردنەوەی خانەکان
+            document.getElementById('newCustomerName').value = '';
+            document.getElementById('newCustomerPhone').value = '';
+            document.getElementById('newCustomerAddress').value = '';
+        });
+
+        // زیادکردنی کارگێڕی گواستنەوە بۆ تابی زیادکردن
+        document.getElementById('addPartnerBtn')?.addEventListener('click', function() {
+            document.querySelector('[data-tab="addPartner"]').click();
+        });
+
+        document.getElementById('addCustomerBtn')?.addEventListener('click', function() {
+            document.querySelector('[data-tab="addCustomer"]').click();
+        });
+
+        // چالاککردنی تاباتەکانی شەریکەکان
+        document.querySelectorAll('#partnersSection .tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                document.querySelectorAll('#partnersSection .tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('#partnersSection .tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // چالاککردنی تاباتەکانی کەسەکان
+        document.querySelectorAll('#customersSection .tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                document.querySelectorAll('#customersSection .tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('#customersSection .tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // ==============================================
         // بەشی مخزن - فەنکشنەکان
         // ==============================================
 
@@ -7946,6 +8175,11 @@
                     }, 100);
                 });
             }
+            
+            // زیادکردنی دوگمەی نوێکردنەوەی حیساب
+            setTimeout(() => {
+                addRefreshButtonToPartners();
+            }, 1000);
         });
     </script>
 </body>
