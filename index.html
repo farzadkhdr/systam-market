@@ -3697,7 +3697,88 @@
             let summaryText = `${totalItems} کاڵا | ${total.toLocaleString()} دینار | ${paymentType === 'cash' ? 'نەقدی' : 'قەرز'}`;
             
             if (paymentType === 'credit' && selectedCustomer) {
-                summaryText += ` | کەس: ${selectedCustomer.name}`;
+<div class="form-row">
+    <div class="form-group">
+        <label for="productName">ناوی کاڵا</label>
+        <input type="text" id="productName" placeholder="ناوی کاڵا">
+    </div>
+    
+    <div class="form-group">
+        <label for="productBarcode">بارکۆد (ئارەزوومەندانە)</label>
+        <input type="text" id="productBarcode" placeholder="بارکۆد">
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group">
+        <label for="purchasePrice">نرخی کڕین</label>
+        <input type="number" id="purchasePrice" placeholder="نرخی کڕین">
+    </div>
+    
+    <div class="form-group">
+        <label for="salePrice">نرخی فرۆشتن</label>
+        <input type="number" id="salePrice" placeholder="نرخی فرۆشتن">
+    </div>
+    
+    <div class="form-group">
+        <label for="stockQuantity">بڕی کاڵا</label>
+        <input type="number" id="stockQuantity" placeholder="بڕی کاڵا">
+    </div>
+</div>
+
+<!-- بەشی نوێ: بەرواری بەسەرچوون -->
+<div class="form-row">
+    <div class="form-group">
+        <label for="hasExpiryDate">
+            <input type="checkbox" id="hasExpiryDate"> 
+            بەرواری بەسەرچوونی هەیە
+        </label>
+    </div>
+    
+    <div class="form-group" id="expiryDateGroup" style="display: none;">
+        <label for="expiryDate">بەرواری بەسەرچوون</label>
+        <input type="date" id="expiryDate" min="2025-01-01">
+    </div>
+    
+    <div class="form-group" id="expiryWarningGroup" style="display: none;">
+        <label for="expiryWarningDays">ئاگادارکردنەوە (ڕۆژ)</label>
+        <input type="number" id="expiryWarningDays" placeholder="بۆ نموونە: 30" value="30" min="1" max="365">
+        <small style="color: var(--gray);">ڕۆژ پێش بەسەرچوون ئاگاداربکە</small>
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group">
+        <label for="primaryUnit">یەکەی سەرەکی</label>
+        <select id="primaryUnit">
+            <option value="piece">پارچە</option>
+            <option value="carton">کارتۆن</option>
+            <option value="unit">دانە</option>
+            <option value="meter">مەتر</option>
+            <option value="kg">کیلۆ</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="secondaryUnit">یەکەی دووەم (ئارەزوومەندانە)</label>
+        <select id="secondaryUnit">
+            <option value="">هیچ</option>
+            <option value="piece">پارچە</option>
+            <option value="carton">کارتۆن</option>
+            <option value="unit">دانە</option>
+            <option value="meter">مەتر</option>
+            <option value="kg">کیلۆ</option>
+            <option value="box">بۆکس</option>
+            <option value="pack">پاکەت</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="secondaryUnitQuantity">بڕ لە یەکەی دووەم (ئەگەر هەیە)</label>
+        <input type="number" id="secondaryUnitQuantity" placeholder="بڕ لە یەکەی دووەم">
+    </div>
+</div>  
+            summaryText += ` | کەس: ${selectedCustomer.name}`;
             }
             
             cartSummary.innerHTML = summaryText;
@@ -6408,7 +6489,31 @@
                 purchaseHistoryList.innerHTML = '<li class="list-item">هیچ مێژووی کڕینی تۆمارنەکراوە</li>';
                 return;
             }
+// نمایش/شاردنەوەی خانەکانی بەرواری بەسەرچوون
+const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
+if (hasExpiryDateCheckbox) {
+    hasExpiryDateCheckbox.addEventListener('change', function() {
+        const expiryDateGroup = document.getElementById('expiryDateGroup');
+        const expiryWarningGroup = document.getElementById('expiryWarningGroup');
+        
+        if (this.checked) {
+            expiryDateGroup.style.display = 'block';
+            expiryWarningGroup.style.display = 'block';
             
+            // دانینی بەرواری خۆکار (ساڵێک دوای ئەمڕۆ)
+            const today = new Date();
+            const nextYear = new Date(today);
+            nextYear.setFullYear(today.getFullYear() + 1);
+            const year = nextYear.getFullYear();
+            const month = String(nextYear.getMonth() + 1).padStart(2, '0');
+            const day = String(nextYear.getDate()).padStart(2, '0');
+            document.getElementById('expiryDate').value = `${year}-${month}-${day}`;
+        } else {
+            expiryDateGroup.style.display = 'none';
+            expiryWarningGroup.style.display = 'none';
+        }
+    });
+}            
             samplePurchaseData.purchases.forEach(purchase => {
                 const li = document.createElement('li');
                 li.className = 'list-item';
@@ -6492,7 +6597,20 @@
                                     </div>
                                 </div>
                                 
-                                <table class="invoice-table">
+   // پاککردنەوەی بەرواری بەسەرچوون
+const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
+const expiryDateGroup = document.getElementById('expiryDateGroup');
+const expiryWarningGroup = document.getElementById('expiryWarningGroup');
+const expiryDateInput = document.getElementById('expiryDate');
+const expiryWarningDaysInput = document.getElementById('expiryWarningDays');
+
+if (hasExpiryDateCheckbox) {
+    hasExpiryDateCheckbox.checked = false;
+    expiryDateGroup.style.display = 'none';
+    expiryWarningGroup.style.display = 'none';
+    expiryDateInput.value = '';
+    expiryWarningDaysInput.value = 30;
+}                             <table class="invoice-table">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -6592,7 +6710,26 @@
                                 color: #4361ee;
                                 margin-bottom: 5px;
                             }
-                            
+// پڕکردنەوەی بەرواری بەسەرچوون
+const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
+const expiryDateGroup = document.getElementById('expiryDateGroup');
+const expiryWarningGroup = document.getElementById('expiryWarningGroup');
+const expiryDateInput = document.getElementById('expiryDate');
+const expiryWarningDaysInput = document.getElementById('expiryWarningDays');
+
+if (product.hasExpiryDate) {
+    hasExpiryDateCheckbox.checked = true;
+    expiryDateGroup.style.display = 'block';
+    expiryWarningGroup.style.display = 'block';
+    expiryDateInput.value = product.expiryDate || '';
+    expiryWarningDaysInput.value = product.expiryWarningDays || 30;
+} else {
+    hasExpiryDateCheckbox.checked = false;
+    expiryDateGroup.style.display = 'none';
+    expiryWarningGroup.style.display = 'none';
+    expiryDateInput.value = '';
+    expiryWarningDaysInput.value = 30;
+}                            
                             .invoice-details {
                                 display: grid;
                                 grid-template-columns: 1fr 1fr;
@@ -6716,7 +6853,31 @@
                                 <div class="invoice-logo">الکترۆنیات</div>
                                 <h2>فاکتووری کڕین</h2>
                                 <p>کۆدی فاکتوورە: ${purchase.code}</p>
-                                <p>بەروار: ${purchase.date}</p>
+    // زیادکردنی بەرواری بەسەرچوون
+const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
+if (hasExpiryDateCheckbox && hasExpiryDateCheckbox.checked) {
+    const expiryDate = document.getElementById('expiryDate').value;
+    const expiryWarningDays = parseInt(document.getElementById('expiryWarningDays').value) || 30;
+    
+    if (expiryDate) {
+        newProduct.hasExpiryDate = true;
+        newProduct.expiryDate = expiryDate;
+        newProduct.expiryWarningDays = expiryWarningDays;
+        
+        // پشکنینی ئەگەر کاڵاکە نزیکە لە بەسەرچوون
+        const today = new Date();
+        const expiry = new Date(expiryDate);
+        const daysUntilExpiry = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+        
+        if (daysUntilExpiry <= expiryWarningDays) {
+            showNotification(`ئاگاداری: ئەم کاڵایە لە ${daysUntilExpiry} ڕۆژی تر بەسەردەچێت!`, 'warning');
+        }
+    }
+} else {
+    newProduct.hasExpiryDate = false;
+    newProduct.expiryDate = null;
+    newProduct.expiryWarningDays = null;
+}                            <p>بەروار: ${purchase.date}</p>
                             </div>
                             
                             <div class="invoice-details">
@@ -6792,7 +6953,22 @@
             
             // نووسینی HTML بۆ پەڕەی نوێ
             printWindow.document.open();
-            printWindow.document.write(printHTML);
+// نوێکردنەوەی بەرواری بەسەرچوون
+const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
+if (hasExpiryDateCheckbox && hasExpiryDateCheckbox.checked) {
+    const expiryDate = document.getElementById('expiryDate').value;
+    const expiryWarningDays = parseInt(document.getElementById('expiryWarningDays').value) || 30;
+    
+    if (expiryDate) {
+        product.hasExpiryDate = true;
+        product.expiryDate = expiryDate;
+        product.expiryWarningDays = expiryWarningDays;
+    }
+} else {
+    product.hasExpiryDate = false;
+    product.expiryDate = null;
+    product.expiryWarningDays = null;
+}            printWindow.document.write(printHTML);
             printWindow.document.close();
             
             // داخستنی مۆدالەکان پاش پرێنتکردن
@@ -7121,7 +7297,42 @@
                                     </button>
                                     <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">
                                         <i class="fas fa-trash"></i> سڕینەوە
-                                    </button>
+ // پشکنینی کاڵا نزیک لە بەسەرچوون
+const today = new Date();
+const expiringSoonProducts = sampleData.products.filter(p => {
+    if (p.hasExpiryDate && p.expiryDate) {
+        const expiryDate = new Date(p.expiryDate);
+        const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+        return daysUntilExpiry <= (p.expiryWarningDays || 30) && daysUntilExpiry > 0;
+    }
+    return false;
+});
+
+if (expiringSoonProducts.length > 0) {
+    // زیادکردنی ئاگاداری لە داشبۆرد
+    const lowStockList = document.getElementById('lowStockList');
+    if (lowStockList) {
+        expiringSoonProducts.forEach(product => {
+            const expiryDate = new Date(product.expiryDate);
+            const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+            
+            const li = document.createElement('li');
+            li.className = 'list-item';
+            li.style.backgroundColor = '#fff3cd';
+            li.style.borderRight = '3px solid #ffc107';
+            li.innerHTML = `
+                <div class="item-name">
+                    <i class="fas fa-exclamation-triangle" style="color: #ffc107; margin-left: 5px;"></i>
+                    ${product.name}
+                </div>
+                <div class="item-value" style="color: #856404;">
+                    ${daysUntilExpiry} ڕۆژ بۆ بەسەرچوون
+                </div>
+            `;
+            lowStockList.appendChild(li);
+        });
+    }
+}                                   </button>
                                 </div>
                             </div>
                         `;
