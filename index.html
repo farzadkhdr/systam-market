@@ -19,6 +19,9 @@
             --light: #f8f9fa;
             --gray: #6c757d;
             --gray-light: #e9ecef;
+            --expiry-warning: #fff3cd;
+            --expiry-border: #ffc107;
+            --expiry-text: #856404;
             --border-radius: 10px;
             --box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             --transition: all 0.3s ease;
@@ -585,6 +588,16 @@
             font-weight: 600;
         }
         
+        /* ستایل بۆ کاڵا نزیک لە بەسەرچوون */
+        .expiry-warning-item {
+            background-color: var(--expiry-warning);
+            border-right: 3px solid var(--expiry-border);
+        }
+        
+        .expiry-warning-text {
+            color: var(--expiry-text);
+        }
+        
         /* لیستەکان */
         .lists-container {
             display: grid;
@@ -1014,6 +1027,17 @@
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
         
+        /* ستایل بۆ چێکبۆکسی بەرواری بەسەرچوون */
+        .form-group input[type="checkbox"] {
+            width: auto;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        .form-group label input[type="checkbox"] {
+            margin-left: 5px;
+        }
+        
         /* بەشی پارەواسڵکردن */
         .payment-container {
             background-color: white;
@@ -1163,6 +1187,11 @@
         .notification.info {
             background-color: #17a2b8;
             color: white;
+        }
+        
+        .notification.warning {
+            background-color: #ffc107;
+            color: #212529;
         }
         
         /* وەڵامی مۆبایل */
@@ -2098,6 +2127,27 @@
                             </div>
                         </div>
                         
+                        <!-- بەشی نوێ: بەرواری بەسەرچوون -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="hasExpiryDate">
+                                    <input type="checkbox" id="hasExpiryDate"> 
+                                    بەرواری بەسەرچوونی هەیە
+                                </label>
+                            </div>
+                            
+                            <div class="form-group" id="expiryDateGroup" style="display: none;">
+                                <label for="expiryDate">بەرواری بەسەرچوون</label>
+                                <input type="date" id="expiryDate" min="2025-01-01">
+                            </div>
+                            
+                            <div class="form-group" id="expiryWarningGroup" style="display: none;">
+                                <label for="expiryWarningDays">ئاگادارکردنەوە (ڕۆژ)</label>
+                                <input type="number" id="expiryWarningDays" placeholder="بۆ نموونە: 30" value="30" min="1" max="365">
+                                <small style="color: var(--gray);">ڕۆژ پێش بەسەرچوون ئاگاداربکە</small>
+                            </div>
+                        </div>
+                        
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="primaryUnit">یەکەی سەرەکی</label>
@@ -2948,6 +2998,9 @@
                     
                     // دانانی بەروار و کاتی خۆکار
                     setDefaultDateTime();
+                    
+                    // چالاککردنی چێکبۆکسی بەرواری بەسەرچوون
+                    setupExpiryDateCheckbox();
                 } else {
                     showNotification('ناوی بەکارهێنەر یان وشەی نهێنی هەڵەە! تکایە دووبارە هەوڵ بدەرەوە.', 'error');
                 }
@@ -2971,6 +3024,34 @@
             if (partnerTime) partnerTime.value = currentTime;
             if (customerDate) customerDate.value = today;
             if (customerTime) customerTime.value = currentTime;
+        }
+
+        // چالاککردنی چێکبۆکسی بەرواری بەسەرچوون
+        function setupExpiryDateCheckbox() {
+            const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
+            const expiryDateGroup = document.getElementById('expiryDateGroup');
+            const expiryWarningGroup = document.getElementById('expiryWarningGroup');
+            
+            if (hasExpiryDateCheckbox) {
+                hasExpiryDateCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        expiryDateGroup.style.display = 'block';
+                        expiryWarningGroup.style.display = 'block';
+                        
+                        // دانینی بەرواری خۆکار (ساڵێک دوای ئەمڕۆ)
+                        const today = new Date();
+                        const nextYear = new Date(today);
+                        nextYear.setFullYear(today.getFullYear() + 1);
+                        const year = nextYear.getFullYear();
+                        const month = String(nextYear.getMonth() + 1).padStart(2, '0');
+                        const day = String(nextYear.getDate()).padStart(2, '0');
+                        document.getElementById('expiryDate').value = `${year}-${month}-${day}`;
+                    } else {
+                        expiryDateGroup.style.display = 'none';
+                        expiryWarningGroup.style.display = 'none';
+                    }
+                });
+            }
         }
 
         // دەستپێکردنی سیستەمی بارکۆد
@@ -3026,7 +3107,16 @@
                 { id: 3, name: "کۆمپانیای فرۆشتن", phone: "07703334455", address: "سلێمانی", debt: 0 }
             ];
             
-            // زیادکردنی کاڵای نموونەیی
+            // زیادکردنی کاڵای نموونەیی (بە بەرواری بەسەرچوون)
+            const today = new Date();
+            const nextMonth = new Date(today);
+            nextMonth.setMonth(today.getMonth() + 1);
+            const nextMonthStr = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}-${String(nextMonth.getDate()).padStart(2, '0')}`;
+            
+            const nextYear = new Date(today);
+            nextYear.setFullYear(today.getFullYear() + 1);
+            const nextYearStr = `${nextYear.getFullYear()}-${String(nextYear.getMonth() + 1).padStart(2, '0')}-${String(nextYear.getDate()).padStart(2, '0')}`;
+            
             sampleData.products = [
                 { 
                     id: 1, 
@@ -3039,7 +3129,10 @@
                     image: null,
                     hasSecondaryUnit: false,
                     secondaryUnit: null,
-                    secondaryUnitQuantity: 0
+                    secondaryUnitQuantity: 0,
+                    hasExpiryDate: true,
+                    expiryDate: nextYearStr,
+                    expiryWarningDays: 30
                 },
                 { 
                     id: 2, 
@@ -3052,7 +3145,10 @@
                     image: null,
                     hasSecondaryUnit: false,
                     secondaryUnit: null,
-                    secondaryUnitQuantity: 0
+                    secondaryUnitQuantity: 0,
+                    hasExpiryDate: true,
+                    expiryDate: nextYearStr,
+                    expiryWarningDays: 30
                 },
                 { 
                     id: 3, 
@@ -3065,7 +3161,10 @@
                     image: null,
                     hasSecondaryUnit: false,
                     secondaryUnit: null,
-                    secondaryUnitQuantity: 0
+                    secondaryUnitQuantity: 0,
+                    hasExpiryDate: true,
+                    expiryDate: nextMonthStr,
+                    expiryWarningDays: 30
                 },
                 { 
                     id: 4, 
@@ -3078,7 +3177,10 @@
                     image: null,
                     hasSecondaryUnit: false,
                     secondaryUnit: null,
-                    secondaryUnitQuantity: 0
+                    secondaryUnitQuantity: 0,
+                    hasExpiryDate: false,
+                    expiryDate: null,
+                    expiryWarningDays: null
                 },
                 { 
                     id: 5, 
@@ -3091,7 +3193,10 @@
                     image: null,
                     hasSecondaryUnit: false,
                     secondaryUnit: null,
-                    secondaryUnitQuantity: 0
+                    secondaryUnitQuantity: 0,
+                    hasExpiryDate: false,
+                    expiryDate: null,
+                    expiryWarningDays: null
                 }
             ];
             
@@ -3167,7 +3272,7 @@
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             
-            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
             
             notification.innerHTML = `
                 <i class="fas ${icon}"></i>
@@ -3545,6 +3650,22 @@
                 return false;
             }
             
+            // پشکنینی بەرواری بەسەرچوون
+            if (product.hasExpiryDate && product.expiryDate) {
+                const today = new Date();
+                const expiryDate = new Date(product.expiryDate);
+                const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                
+                if (daysUntilExpiry <= product.expiryWarningDays) {
+                    if (daysUntilExpiry <= 0) {
+                        showNotification(`ئەم کاڵایە بەسەرچووە! ناتوانیت بیفرۆشی`, 'error');
+                        return false;
+                    } else {
+                        showNotification(`ئاگاداری: ئەم کاڵایە لە ${daysUntilExpiry} ڕۆژی تر بەسەردەچێت`, 'warning');
+                    }
+                }
+            }
+            
             const price = customPrice || product.salePrice;
             const unit = customUnit || product.unit;
             
@@ -3571,7 +3692,10 @@
                     barcode: product.barcode,
                     hasSecondaryUnit: product.hasSecondaryUnit,
                     secondaryUnit: product.secondaryUnit,
-                    secondaryUnitQuantity: product.secondaryUnitQuantity
+                    secondaryUnitQuantity: product.secondaryUnitQuantity,
+                    hasExpiryDate: product.hasExpiryDate,
+                    expiryDate: product.expiryDate,
+                    expiryWarningDays: product.expiryWarningDays
                 };
                 
                 cart.push(cartItem);
@@ -3697,88 +3821,7 @@
             let summaryText = `${totalItems} کاڵا | ${total.toLocaleString()} دینار | ${paymentType === 'cash' ? 'نەقدی' : 'قەرز'}`;
             
             if (paymentType === 'credit' && selectedCustomer) {
-<div class="form-row">
-    <div class="form-group">
-        <label for="productName">ناوی کاڵا</label>
-        <input type="text" id="productName" placeholder="ناوی کاڵا">
-    </div>
-    
-    <div class="form-group">
-        <label for="productBarcode">بارکۆد (ئارەزوومەندانە)</label>
-        <input type="text" id="productBarcode" placeholder="بارکۆد">
-    </div>
-</div>
-
-<div class="form-row">
-    <div class="form-group">
-        <label for="purchasePrice">نرخی کڕین</label>
-        <input type="number" id="purchasePrice" placeholder="نرخی کڕین">
-    </div>
-    
-    <div class="form-group">
-        <label for="salePrice">نرخی فرۆشتن</label>
-        <input type="number" id="salePrice" placeholder="نرخی فرۆشتن">
-    </div>
-    
-    <div class="form-group">
-        <label for="stockQuantity">بڕی کاڵا</label>
-        <input type="number" id="stockQuantity" placeholder="بڕی کاڵا">
-    </div>
-</div>
-
-<!-- بەشی نوێ: بەرواری بەسەرچوون -->
-<div class="form-row">
-    <div class="form-group">
-        <label for="hasExpiryDate">
-            <input type="checkbox" id="hasExpiryDate"> 
-            بەرواری بەسەرچوونی هەیە
-        </label>
-    </div>
-    
-    <div class="form-group" id="expiryDateGroup" style="display: none;">
-        <label for="expiryDate">بەرواری بەسەرچوون</label>
-        <input type="date" id="expiryDate" min="2025-01-01">
-    </div>
-    
-    <div class="form-group" id="expiryWarningGroup" style="display: none;">
-        <label for="expiryWarningDays">ئاگادارکردنەوە (ڕۆژ)</label>
-        <input type="number" id="expiryWarningDays" placeholder="بۆ نموونە: 30" value="30" min="1" max="365">
-        <small style="color: var(--gray);">ڕۆژ پێش بەسەرچوون ئاگاداربکە</small>
-    </div>
-</div>
-
-<div class="form-row">
-    <div class="form-group">
-        <label for="primaryUnit">یەکەی سەرەکی</label>
-        <select id="primaryUnit">
-            <option value="piece">پارچە</option>
-            <option value="carton">کارتۆن</option>
-            <option value="unit">دانە</option>
-            <option value="meter">مەتر</option>
-            <option value="kg">کیلۆ</option>
-        </select>
-    </div>
-    
-    <div class="form-group">
-        <label for="secondaryUnit">یەکەی دووەم (ئارەزوومەندانە)</label>
-        <select id="secondaryUnit">
-            <option value="">هیچ</option>
-            <option value="piece">پارچە</option>
-            <option value="carton">کارتۆن</option>
-            <option value="unit">دانە</option>
-            <option value="meter">مەتر</option>
-            <option value="kg">کیلۆ</option>
-            <option value="box">بۆکس</option>
-            <option value="pack">پاکەت</option>
-        </select>
-    </div>
-    
-    <div class="form-group">
-        <label for="secondaryUnitQuantity">بڕ لە یەکەی دووەم (ئەگەر هەیە)</label>
-        <input type="number" id="secondaryUnitQuantity" placeholder="بڕ لە یەکەی دووەم">
-    </div>
-</div>  
-            summaryText += ` | کەس: ${selectedCustomer.name}`;
+                summaryText += ` | کەس: ${selectedCustomer.name}`;
             }
             
             cartSummary.innerHTML = summaryText;
@@ -4394,7 +4437,10 @@
                     secondaryUnit: product.secondaryUnit,
                     secondaryUnitQuantity: product.secondaryUnitQuantity,
                     salePrice: product.salePrice, // هەڵگرتنی نرخی فرۆشتن بۆ پێشنیاری گۆڕانکاری
-                    currentPurchasePrice: product.purchasePrice // نرخی کڕینی ئێستا
+                    currentPurchasePrice: product.purchasePrice, // نرخی کڕینی ئێستا
+                    hasExpiryDate: product.hasExpiryDate,
+                    expiryDate: product.expiryDate,
+                    expiryWarningDays: product.expiryWarningDays
                 };
                 
                 purchaseCart.push(cartItem);
@@ -4808,6 +4854,13 @@
                     
                     // نوێکردنەوەی نرخی کڕین
                     product.purchasePrice = item.price;
+                    
+                    // نوێکردنەوەی بەرواری بەسەرچوون ئەگەر هەیە
+                    if (item.hasExpiryDate && item.expiryDate) {
+                        product.hasExpiryDate = item.hasExpiryDate;
+                        product.expiryDate = item.expiryDate;
+                        product.expiryWarningDays = item.expiryWarningDays;
+                    }
                 } else {
                     // دروستکردنی کاڵای نوێ ئەگەر بوونی نەبوو
                     const newProduct = {
@@ -4821,7 +4874,10 @@
                         image: item.image,
                         hasSecondaryUnit: item.hasSecondaryUnit,
                         secondaryUnit: item.secondaryUnit,
-                        secondaryUnitQuantity: item.secondaryUnitQuantity
+                        secondaryUnitQuantity: item.secondaryUnitQuantity,
+                        hasExpiryDate: item.hasExpiryDate || false,
+                        expiryDate: item.expiryDate || null,
+                        expiryWarningDays: item.expiryWarningDays || null
                     };
                     
                     sampleData.products.push(newProduct);
@@ -6489,31 +6545,7 @@
                 purchaseHistoryList.innerHTML = '<li class="list-item">هیچ مێژووی کڕینی تۆمارنەکراوە</li>';
                 return;
             }
-// نمایش/شاردنەوەی خانەکانی بەرواری بەسەرچوون
-const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
-if (hasExpiryDateCheckbox) {
-    hasExpiryDateCheckbox.addEventListener('change', function() {
-        const expiryDateGroup = document.getElementById('expiryDateGroup');
-        const expiryWarningGroup = document.getElementById('expiryWarningGroup');
-        
-        if (this.checked) {
-            expiryDateGroup.style.display = 'block';
-            expiryWarningGroup.style.display = 'block';
             
-            // دانینی بەرواری خۆکار (ساڵێک دوای ئەمڕۆ)
-            const today = new Date();
-            const nextYear = new Date(today);
-            nextYear.setFullYear(today.getFullYear() + 1);
-            const year = nextYear.getFullYear();
-            const month = String(nextYear.getMonth() + 1).padStart(2, '0');
-            const day = String(nextYear.getDate()).padStart(2, '0');
-            document.getElementById('expiryDate').value = `${year}-${month}-${day}`;
-        } else {
-            expiryDateGroup.style.display = 'none';
-            expiryWarningGroup.style.display = 'none';
-        }
-    });
-}            
             samplePurchaseData.purchases.forEach(purchase => {
                 const li = document.createElement('li');
                 li.className = 'list-item';
@@ -6597,20 +6629,7 @@ if (hasExpiryDateCheckbox) {
                                     </div>
                                 </div>
                                 
-   // پاککردنەوەی بەرواری بەسەرچوون
-const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
-const expiryDateGroup = document.getElementById('expiryDateGroup');
-const expiryWarningGroup = document.getElementById('expiryWarningGroup');
-const expiryDateInput = document.getElementById('expiryDate');
-const expiryWarningDaysInput = document.getElementById('expiryWarningDays');
-
-if (hasExpiryDateCheckbox) {
-    hasExpiryDateCheckbox.checked = false;
-    expiryDateGroup.style.display = 'none';
-    expiryWarningGroup.style.display = 'none';
-    expiryDateInput.value = '';
-    expiryWarningDaysInput.value = 30;
-}                             <table class="invoice-table">
+                                <table class="invoice-table">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -6710,26 +6729,7 @@ if (hasExpiryDateCheckbox) {
                                 color: #4361ee;
                                 margin-bottom: 5px;
                             }
-// پڕکردنەوەی بەرواری بەسەرچوون
-const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
-const expiryDateGroup = document.getElementById('expiryDateGroup');
-const expiryWarningGroup = document.getElementById('expiryWarningGroup');
-const expiryDateInput = document.getElementById('expiryDate');
-const expiryWarningDaysInput = document.getElementById('expiryWarningDays');
-
-if (product.hasExpiryDate) {
-    hasExpiryDateCheckbox.checked = true;
-    expiryDateGroup.style.display = 'block';
-    expiryWarningGroup.style.display = 'block';
-    expiryDateInput.value = product.expiryDate || '';
-    expiryWarningDaysInput.value = product.expiryWarningDays || 30;
-} else {
-    hasExpiryDateCheckbox.checked = false;
-    expiryDateGroup.style.display = 'none';
-    expiryWarningGroup.style.display = 'none';
-    expiryDateInput.value = '';
-    expiryWarningDaysInput.value = 30;
-}                            
+                            
                             .invoice-details {
                                 display: grid;
                                 grid-template-columns: 1fr 1fr;
@@ -6853,31 +6853,7 @@ if (product.hasExpiryDate) {
                                 <div class="invoice-logo">الکترۆنیات</div>
                                 <h2>فاکتووری کڕین</h2>
                                 <p>کۆدی فاکتوورە: ${purchase.code}</p>
-    // زیادکردنی بەرواری بەسەرچوون
-const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
-if (hasExpiryDateCheckbox && hasExpiryDateCheckbox.checked) {
-    const expiryDate = document.getElementById('expiryDate').value;
-    const expiryWarningDays = parseInt(document.getElementById('expiryWarningDays').value) || 30;
-    
-    if (expiryDate) {
-        newProduct.hasExpiryDate = true;
-        newProduct.expiryDate = expiryDate;
-        newProduct.expiryWarningDays = expiryWarningDays;
-        
-        // پشکنینی ئەگەر کاڵاکە نزیکە لە بەسەرچوون
-        const today = new Date();
-        const expiry = new Date(expiryDate);
-        const daysUntilExpiry = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-        
-        if (daysUntilExpiry <= expiryWarningDays) {
-            showNotification(`ئاگاداری: ئەم کاڵایە لە ${daysUntilExpiry} ڕۆژی تر بەسەردەچێت!`, 'warning');
-        }
-    }
-} else {
-    newProduct.hasExpiryDate = false;
-    newProduct.expiryDate = null;
-    newProduct.expiryWarningDays = null;
-}                            <p>بەروار: ${purchase.date}</p>
+                                <p>بەروار: ${purchase.date}</p>
                             </div>
                             
                             <div class="invoice-details">
@@ -6953,22 +6929,7 @@ if (hasExpiryDateCheckbox && hasExpiryDateCheckbox.checked) {
             
             // نووسینی HTML بۆ پەڕەی نوێ
             printWindow.document.open();
-// نوێکردنەوەی بەرواری بەسەرچوون
-const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
-if (hasExpiryDateCheckbox && hasExpiryDateCheckbox.checked) {
-    const expiryDate = document.getElementById('expiryDate').value;
-    const expiryWarningDays = parseInt(document.getElementById('expiryWarningDays').value) || 30;
-    
-    if (expiryDate) {
-        product.hasExpiryDate = true;
-        product.expiryDate = expiryDate;
-        product.expiryWarningDays = expiryWarningDays;
-    }
-} else {
-    product.hasExpiryDate = false;
-    product.expiryDate = null;
-    product.expiryWarningDays = null;
-}            printWindow.document.write(printHTML);
+            printWindow.document.write(printHTML);
             printWindow.document.close();
             
             // داخستنی مۆدالەکان پاش پرێنتکردن
@@ -7198,9 +7159,40 @@ if (hasExpiryDateCheckbox && hasExpiryDateCheckbox.checked) {
                 
                 const lowStockProducts = sampleData.products.filter(p => p.stock <= 5);
                 
-                if (lowStockProducts.length === 0) {
-                    lowStockList.innerHTML = '<li class="list-item">هیچ کاڵایەک کەم نییە</li>';
+                // پشکنینی کاڵا نزیک لە بەسەرچوون
+                const today = new Date();
+                const expiringSoonProducts = sampleData.products.filter(p => {
+                    if (p.hasExpiryDate && p.expiryDate) {
+                        const expiryDate = new Date(p.expiryDate);
+                        const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                        return daysUntilExpiry <= (p.expiryWarningDays || 30) && daysUntilExpiry > 0;
+                    }
+                    return false;
+                });
+                
+                if (lowStockProducts.length === 0 && expiringSoonProducts.length === 0) {
+                    lowStockList.innerHTML = '<li class="list-item">هیچ کاڵایەک نییە</li>';
                 } else {
+                    // زیادکردنی کاڵا نزیک لە بەسەرچوون
+                    expiringSoonProducts.forEach(product => {
+                        const expiryDate = new Date(product.expiryDate);
+                        const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                        
+                        const li = document.createElement('li');
+                        li.className = 'list-item expiry-warning-item';
+                        li.innerHTML = `
+                            <div class="item-name">
+                                <i class="fas fa-exclamation-triangle" style="color: #ffc107; margin-left: 5px;"></i>
+                                ${product.name}
+                            </div>
+                            <div class="item-value expiry-warning-text">
+                                ${daysUntilExpiry} ڕۆژ بۆ بەسەرچوون
+                            </div>
+                        `;
+                        lowStockList.appendChild(li);
+                    });
+                    
+                    // زیادکردنی کاڵای کەم بوو
                     lowStockProducts.forEach(product => {
                         const li = document.createElement('li');
                         li.className = 'list-item';
@@ -7277,6 +7269,21 @@ if (hasExpiryDateCheckbox && hasExpiryDateCheckbox.checked) {
                             ? `<div style="font-size: 0.9rem; color: var(--info);">${product.secondaryUnitQuantity} ${getUnitName(product.secondaryUnit)}</div>`
                             : '';
                         
+                        // زانیاری بەرواری بەسەرچوون
+                        let expiryInfo = '';
+                        if (product.hasExpiryDate && product.expiryDate) {
+                            const today = new Date();
+                            const expiryDate = new Date(product.expiryDate);
+                            const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                            
+                            if (daysUntilExpiry <= product.expiryWarningDays) {
+                                expiryInfo = `<div style="font-size: 0.9rem; color: #856404; background-color: #fff3cd; padding: 2px 5px; border-radius: 3px; margin-top: 5px;">
+                                    <i class="fas fa-exclamation-triangle"></i> 
+                                    ${daysUntilExpiry > 0 ? `${daysUntilExpiry} ڕۆژ بۆ بەسەرچوون` : 'بەسەرچووە'}
+                                </div>`;
+                            }
+                        }
+                        
                         li.innerHTML = `
                             <div style="display: flex; align-items: center;">
                                 ${imageHTML}
@@ -7286,6 +7293,7 @@ if (hasExpiryDateCheckbox && hasExpiryDateCheckbox.checked) {
                                         بارکۆد: ${product.barcode}
                                     </div>
                                     ${secondaryUnitInfo}
+                                    ${expiryInfo}
                                 </div>
                             </div>
                             <div class="item-value">
@@ -7297,42 +7305,7 @@ if (hasExpiryDateCheckbox && hasExpiryDateCheckbox.checked) {
                                     </button>
                                     <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">
                                         <i class="fas fa-trash"></i> سڕینەوە
- // پشکنینی کاڵا نزیک لە بەسەرچوون
-const today = new Date();
-const expiringSoonProducts = sampleData.products.filter(p => {
-    if (p.hasExpiryDate && p.expiryDate) {
-        const expiryDate = new Date(p.expiryDate);
-        const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
-        return daysUntilExpiry <= (p.expiryWarningDays || 30) && daysUntilExpiry > 0;
-    }
-    return false;
-});
-
-if (expiringSoonProducts.length > 0) {
-    // زیادکردنی ئاگاداری لە داشبۆرد
-    const lowStockList = document.getElementById('lowStockList');
-    if (lowStockList) {
-        expiringSoonProducts.forEach(product => {
-            const expiryDate = new Date(product.expiryDate);
-            const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
-            
-            const li = document.createElement('li');
-            li.className = 'list-item';
-            li.style.backgroundColor = '#fff3cd';
-            li.style.borderRight = '3px solid #ffc107';
-            li.innerHTML = `
-                <div class="item-name">
-                    <i class="fas fa-exclamation-triangle" style="color: #ffc107; margin-left: 5px;"></i>
-                    ${product.name}
-                </div>
-                <div class="item-value" style="color: #856404;">
-                    ${daysUntilExpiry} ڕۆژ بۆ بەسەرچوون
-                </div>
-            `;
-            lowStockList.appendChild(li);
-        });
-    }
-}                                   </button>
+                                    </button>
                                 </div>
                             </div>
                         `;
@@ -7491,6 +7464,27 @@ if (expiringSoonProducts.length > 0) {
             document.getElementById('secondaryUnit').value = product.secondaryUnit || '';
             document.getElementById('secondaryUnitQuantity').value = product.secondaryUnitQuantity || 0;
             
+            // پڕکردنەوەی بەرواری بەسەرچوون
+            const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
+            const expiryDateGroup = document.getElementById('expiryDateGroup');
+            const expiryWarningGroup = document.getElementById('expiryWarningGroup');
+            const expiryDateInput = document.getElementById('expiryDate');
+            const expiryWarningDaysInput = document.getElementById('expiryWarningDays');
+
+            if (product.hasExpiryDate) {
+                hasExpiryDateCheckbox.checked = true;
+                expiryDateGroup.style.display = 'block';
+                expiryWarningGroup.style.display = 'block';
+                expiryDateInput.value = product.expiryDate || '';
+                expiryWarningDaysInput.value = product.expiryWarningDays || 30;
+            } else {
+                hasExpiryDateCheckbox.checked = false;
+                expiryDateGroup.style.display = 'none';
+                expiryWarningGroup.style.display = 'none';
+                expiryDateInput.value = '';
+                expiryWarningDaysInput.value = 30;
+            }
+            
             // نیشاندانی وێنە
             const imagePreview = document.getElementById('imagePreview');
             if (product.image) {
@@ -7523,6 +7517,22 @@ if (expiringSoonProducts.length > 0) {
             document.getElementById('secondaryUnitQuantity').value = '';
             document.getElementById('productImage').value = '';
             document.getElementById('imagePreview').innerHTML = '<p style="color: var(--gray); font-size: 0.9rem;">هیچ وێنەیەک نییە</p>';
+            
+            // پاککردنەوەی بەرواری بەسەرچوون
+            const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
+            const expiryDateGroup = document.getElementById('expiryDateGroup');
+            const expiryWarningGroup = document.getElementById('expiryWarningGroup');
+            const expiryDateInput = document.getElementById('expiryDate');
+            const expiryWarningDaysInput = document.getElementById('expiryWarningDays');
+
+            if (hasExpiryDateCheckbox) {
+                hasExpiryDateCheckbox.checked = false;
+                expiryDateGroup.style.display = 'none';
+                expiryWarningGroup.style.display = 'none';
+                expiryDateInput.value = '';
+                expiryWarningDaysInput.value = 30;
+            }
+            
             editingProductId = null;
             
             const saveBtn = document.getElementById('saveProductBtn');
@@ -7582,6 +7592,32 @@ if (expiringSoonProducts.length > 0) {
                 description: ''
             };
             
+            // زیادکردنی بەرواری بەسەرچوون
+            const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
+            if (hasExpiryDateCheckbox && hasExpiryDateCheckbox.checked) {
+                const expiryDate = document.getElementById('expiryDate').value;
+                const expiryWarningDays = parseInt(document.getElementById('expiryWarningDays').value) || 30;
+                
+                if (expiryDate) {
+                    newProduct.hasExpiryDate = true;
+                    newProduct.expiryDate = expiryDate;
+                    newProduct.expiryWarningDays = expiryWarningDays;
+                    
+                    // پشکنینی ئەگەر کاڵاکە نزیکە لە بەسەرچوون
+                    const today = new Date();
+                    const expiry = new Date(expiryDate);
+                    const daysUntilExpiry = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysUntilExpiry <= expiryWarningDays) {
+                        showNotification(`ئاگاداری: ئەم کاڵایە لە ${daysUntilExpiry} ڕۆژی تر بەسەردەچێت!`, 'warning');
+                    }
+                }
+            } else {
+                newProduct.hasExpiryDate = false;
+                newProduct.expiryDate = null;
+                newProduct.expiryWarningDays = null;
+            }
+            
             // هەڵگرتنی وێنە
             const productImage = document.getElementById('productImage');
             if (productImage.files.length > 0) {
@@ -7635,6 +7671,23 @@ if (expiringSoonProducts.length > 0) {
             product.hasSecondaryUnit = document.getElementById('secondaryUnit').value !== '';
             product.secondaryUnit = document.getElementById('secondaryUnit').value || null;
             product.secondaryUnitQuantity = parseInt(document.getElementById('secondaryUnitQuantity').value) || 0;
+            
+            // نوێکردنەوەی بەرواری بەسەرچوون
+            const hasExpiryDateCheckbox = document.getElementById('hasExpiryDate');
+            if (hasExpiryDateCheckbox && hasExpiryDateCheckbox.checked) {
+                const expiryDate = document.getElementById('expiryDate').value;
+                const expiryWarningDays = parseInt(document.getElementById('expiryWarningDays').value) || 30;
+                
+                if (expiryDate) {
+                    product.hasExpiryDate = true;
+                    product.expiryDate = expiryDate;
+                    product.expiryWarningDays = expiryWarningDays;
+                }
+            } else {
+                product.hasExpiryDate = false;
+                product.expiryDate = null;
+                product.expiryWarningDays = null;
+            }
             
             // هەڵگرتنی وێنە
             if (productImage.files.length > 0) {
