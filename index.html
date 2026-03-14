@@ -532,7 +532,6 @@
         .card-7 .card-icon { background-color: #9d4edd; }
         .card-8 .card-icon { background-color: #06d6a0; }
         .card-9 .card-icon { background-color: #118ab2; }
-        .card-10 .card-icon { background-color: #ff9e00; }
         
         .card h3 {
             font-size: 1rem;
@@ -1444,15 +1443,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link" data-section="inventory">
-                        <i class="fas fa-warehouse"></i>
-                        مخزن
+                    <a href="#" class="nav-link" data-section="dailySettlement">
+                        <i class="fas fa-calculator"></i>
+                        حیسابات کردنی ئەمرۆ
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link" data-section="inventoryAccounting">
-                        <i class="fas fa-calculator"></i>
-                        حیساباتی مخزن
+                    <a href="#" class="nav-link" data-section="inventory">
+                        <i class="fas fa-warehouse"></i>
+                        مخزن
                     </a>
                 </li>
                 <li class="nav-item">
@@ -1519,94 +1518,74 @@
                 <h2 class="section-title">داشبۆرد</h2>
                 
                 <div class="dashboard-cards">
+                    <!-- کارتی ١: کۆی گشتی پارەی واسڵ کراو -->
                     <div class="card card-1">
                         <div class="card-icon">
                             <i class="fas fa-wallet"></i>
                         </div>
-                        <h3>کۆی پارەی واسڵ کراو</h3>
-                        <div class="card-value" id="cashBalanceDisplay">٠ <span>دینار</span></div>
-                        <div class="card-change positive" id="cashChange">٠٪ زیاتر</div>
+                        <h3>کۆی گشتی پارەی واسڵ کراو</h3>
+                        <div class="card-value" id="totalCashSettledDisplay">٠ <span>دینار</span></div>
+                        <div class="card-change" id="totalCashChange">کۆی گشتی</div>
                     </div>
                     
+                    <!-- کارتی ٢: کۆی گشتی پارەی واسڵ کراوی ئەمرۆ -->
                     <div class="card card-2">
+                        <div class="card-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <h3>کۆی گشتی پارەی واسڵ کراوی ئەمرۆ</h3>
+                        <div class="card-value" id="todayCashSettledDisplay">٠ <span>دینار</span></div>
+                        <div class="card-change" id="todayCashChange">ئەمرۆ</div>
+                    </div>
+                    
+                    <!-- کارتی ٣: کۆی گشتی کڕین بە نەقدی -->
+                    <div class="card card-3">
                         <div class="card-icon">
                             <i class="fas fa-shopping-cart"></i>
                         </div>
-                        <h3>کۆی کڕین</h3>
-                        <div class="card-value" id="totalPurchaseDisplay">٠ <span>دینار</span></div>
-                        <div class="card-change negative">٠٪ کەمتر</div>
+                        <h3>کۆی گشتی کڕین بە نەقدی</h3>
+                        <div class="card-value" id="totalCashPurchaseDisplay">٠ <span>دینار</span></div>
+                        <div class="card-change negative" id="cashPurchaseChange">نەقدی</div>
                     </div>
                     
-                    <div class="card card-3">
-                        <div class="card-icon">
-                            <i class="fas fa-exchange-alt"></i>
-                        </div>
-                        <h3>جیاوازی</h3>
-                        <div class="card-value" id="differenceDisplay">٠ <span>دینار</span></div>
-                        <div class="card-change positive" id="differenceChange">بێ گۆڕانکاری</div>
-                    </div>
-                    
+                    <!-- کارتی ٤: کۆی گشتی قەرزەکان -->
                     <div class="card card-4">
                         <div class="card-icon">
-                            <i class="fas fa-exclamation-triangle"></i>
+                            <i class="fas fa-hand-holding-usd"></i>
                         </div>
-                        <h3>کۆی کاڵای کەم بوو</h3>
-                        <div class="card-value" id="lowStockCount">٠ <span>جۆر</span></div>
-                        <div class="card-change positive">کەمتر</div>
+                        <h3>کۆی گشتی قەرزەکان</h3>
+                        <div class="card-value" id="totalDebtOverallDisplay">٠ <span>دینار</span></div>
+                        <div class="card-change negative" id="debtChange">قەرز</div>
                     </div>
                     
+                    <!-- کارتی ٥: کۆی گشتی سەرفکردن -->
                     <div class="card card-5">
-                        <div class="card-icon">
-                            <i class="fas fa-user-ow"></i>
-                        </div>
-                        <h3>کۆی پارەی قەرزداران</h3>
-                        <div class="card-value" id="totalDebtDisplay">٠ <span>دینار</span></div>
-                        <div class="card-change negative">زیاتر</div>
-                    </div>
-                    
-                    <div class="card card-6">
-                        <div class="card-icon">
-                            <i class="fas fa-handshake"></i>
-                        </div>
-                        <h3>قەرزدارم بە شەریکەکان</h3>
-                        <div class="card-value" id="partnerDebtDisplay">٠ <span>دینار</span></div>
-                        <div class="card-change positive">کەمتر</div>
-                    </div>
-                    
-                    <div class="card card-7">
                         <div class="card-icon">
                             <i class="fas fa-file-invoice-dollar"></i>
                         </div>
-                        <h3>کۆی سەرفکردن</h3>
-                        <div class="card-value" id="monthlyExpenseTotal">٠ <span>دینار</span></div>
-                        <div class="card-change">٠٪</div>
+                        <h3>کۆی گشتی سەرفکردن</h3>
+                        <div class="card-value" id="totalExpensesDisplay">٠ <span>دینار</span></div>
+                        <div class="card-change" id="expenseChange">سەرفکردن</div>
                     </div>
-
-                    <div class="card card-8">
+                    
+                    <!-- کارتی ٦: کۆی گشتی راس مال (کۆی گشتی پارەی واسڵ کراو - کڕینی نەقدی - سەرفکردن) -->
+                    <div class="card card-6">
                         <div class="card-icon">
                             <i class="fas fa-landmark"></i>
                         </div>
-                        <h3>سەرمایە</h3>
-                        <div class="card-value" id="capitalBalanceDisplay">٠ <span>دینار</span></div>
-                        <div class="card-change positive" id="capitalChange">٠٪</div>
+                        <h3>کۆی گشتی راس مال</h3>
+                        <div class="card-value" id="totalCapitalDisplay">٠ <span>دینار</span></div>
+                        <div class="card-change positive" id="capitalChange">سەرمایە</div>
                     </div>
-
-                    <div class="card card-9">
+                    
+                    <!-- کارتی ٧: کۆی قازانج (کۆی گشتی پارەی واسڵ کراو - (کڕینی نەقدی + سەرفکردن)) -->
+                    <div class="card card-7">
                         <div class="card-icon">
-                            <i class="fas fa-percentage"></i>
+                            <i class="fas fa-chart-line"></i>
                         </div>
-                        <h3>ڕێژەی قازانج</h3>
-                        <div class="card-value" id="profitRateDisplay">٠٪</div>
-                        <div class="card-change" id="profitChange">بێ قازانج</div>
-                    </div>
-
-                    <div class="card card-10">
-                        <div class="card-icon">
-                            <i class="fas fa-cash-register"></i>
-                        </div>
-                        <h3>کۆی واسڵی ئەمرۆ</h3>
-                        <div class="card-value" id="todayCashTotalDisplay">٠ <span>دینار</span></div>
-                        <div class="card-change positive">واسڵی ئەمرۆ</div>
+                        <h3>کۆی قازانج</h3>
+                        <div class="card-value" id="totalProfitDisplay">٠ <span>دینار</span></div>
+                        <div class="card-change positive" id="profitChange">قازانج</div>
                     </div>
                 </div>
                 
@@ -1981,6 +1960,93 @@
                 </div>
             </section>
 
+            <!-- بەشی حیسابات کردنی ئەمرۆ (بەشی نوێ) -->
+            <section id="dailySettlementSection" class="content-section">
+                <h2 class="section-title">حیسابات کردنی ئەمرۆ</h2>
+                
+                <div class="sale-purchase-container">
+                    <div class="item-form">
+                        <h3 style="margin-bottom: 20px; color: var(--primary);">
+                            <i class="fas fa-calculator"></i> حیساباتی ئەمرۆ
+                        </h3>
+                        
+                        <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: var(--border-radius); padding: 20px; margin-bottom: 25px;">
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
+                                <div>
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">پارەی واسڵ کراوی ئەمرۆ</div>
+                                    <div style="font-size: 1.5rem; font-weight: bold;" id="dailySettledAmount">٠ دینار</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">بەرواری ئەمرۆ</div>
+                                    <div style="font-size: 1.2rem; font-weight: bold;" id="currentDate"></div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">کاتی ئێستا</div>
+                                    <div style="font-size: 1.2rem; font-weight: bold;" id="currentTime"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="background-color: var(--gray-light); border-radius: var(--border-radius); padding: 20px; margin-bottom: 25px;">
+                            <h4 style="margin-bottom: 15px;">پوختەی حیساباتی ئەمرۆ</h4>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                                <div style="background-color: white; border-radius: var(--border-radius); padding: 15px;">
+                                    <p style="color: var(--gray); margin-bottom: 5px;">کۆی گشتی پارەی واسڵ کراو</p>
+                                    <p style="font-size: 1.3rem; font-weight: bold; color: var(--success);" id="summaryTotalCash">٠ دینار</p>
+                                </div>
+                                <div style="background-color: white; border-radius: var(--border-radius); padding: 15px;">
+                                    <p style="color: var(--gray); margin-bottom: 5px;">کۆی گشتی کڕین</p>
+                                    <p style="font-size: 1.3rem; font-weight: bold; color: var(--danger);" id="summaryTotalPurchases">٠ دینار</p>
+                                </div>
+                                <div style="background-color: white; border-radius: var(--border-radius); padding: 15px;">
+                                    <p style="color: var(--gray); margin-bottom: 5px;">کۆی گشتی سەرفکردن</p>
+                                    <p style="font-size: 1.3rem; font-weight: bold; color: var(--warning);" id="summaryTotalExpenses">٠ دینار</p>
+                                </div>
+                                <div style="background-color: white; border-radius: var(--border-radius); padding: 15px;">
+                                    <p style="color: var(--gray); margin-bottom: 5px;">کۆی گشتی قەرزەکان</p>
+                                    <p style="font-size: 1.3rem; font-weight: bold; color: #f72585;" id="summaryTotalDebt">٠ دینار</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="background-color: #e8f4fd; border-radius: var(--border-radius); padding: 20px; margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h4>راس مال و قازانج</h4>
+                                <span class="badge" style="background-color: var(--primary);">حیساباتی کۆتایی</span>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                                <div>
+                                    <p style="color: var(--gray);">راس مال (کۆی پارە - کڕین - سەرفکردن):</p>
+                                    <p style="font-size: 1.5rem; font-weight: bold;" id="summaryCapital">٠ دینار</p>
+                                </div>
+                                <div>
+                                    <p style="color: var(--gray);">قازانج (کۆی پارە - کڕین - سەرفکردن):</p>
+                                    <p style="font-size: 1.5rem; font-weight: bold;" id="summaryProfit">٠ دینار</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-success" id="completeDailySettlement">
+                                <i class="fas fa-check-double"></i> تەواوکردنی حیساباتی ئەمرۆ
+                            </button>
+                            <button class="btn btn-primary" id="refreshDailySettlement">
+                                <i class="fas fa-sync-alt"></i> نوێکردنەوە
+                            </button>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background-color: #fff3cd; border-radius: var(--border-radius); border-right: 4px solid #ffc107;">
+                            <p style="color: #856404;">
+                                <i class="fas fa-info-circle"></i> 
+                                کاتێک "تەواوکردنی حیساباتی ئەمرۆ" دەکەیت، پارەی ئەمرۆ دەگوازرێتەوە بۆ "کۆی گشتی پارەی واسڵ کراو" و ئاماری ئەمرۆ ڕێک دەخرێتەوە.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- بەشی مخزن -->
             <section id="inventorySection" class="content-section">
                 <h2 class="section-title">مخزن</h2>
@@ -2106,303 +2172,6 @@
                         <div class="action-buttons">
                             <button class="btn btn-danger" id="cancelProductBtn">پاشگەزبوونەوە</button>
                             <button class="btn btn-success" id="saveProductBtn">هەڵگرتن</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- بەشی حیساباتی مخزن (نوێ) -->
-            <section id="inventoryAccountingSection" class="content-section">
-                <h2 class="section-title">حیساباتی مخزن</h2>
-                
-                <div class="sale-purchase-container">
-                    <div class="tab-buttons">
-                        <button class="tab-btn active" data-inventory-accounting-tab="purchaseFromInventory">کڕینەوە لە مخزن</button>
-                        <button class="tab-btn" data-inventory-accounting-tab="returnToInventory">گەڕاندنەوەی کاڵا بۆ مخزن</button>
-                        <button class="tab-btn" data-inventory-accounting-tab="inventoryExpenses">سەرفەکانی مخزن</button>
-                    </div>
-                    
-                    <!-- بەشی کڕینەوە لە مخزن -->
-                    <div class="tab-content active" id="purchaseFromInventory">
-                        <div class="item-form">
-                            <h3 style="margin-bottom: 15px; color: var(--primary);">
-                                <i class="fas fa-cart-plus"></i> کڕینەوە لە مخزن (کاڵا کەم بووەکان)
-                            </h3>
-                            
-                            <div class="search-container">
-                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">ناوی شەریک (دابینکەر):</label>
-                                <div class="search-box">
-                                    <input type="text" id="inventoryPurchasePartnerSearch" placeholder="گەڕان بەدوای ناوی شەریک..." autocomplete="off">
-                                    <i class="fas fa-search"></i>
-                                    <div class="suggestions" id="inventoryPurchasePartnerSuggestions"></div>
-                                </div>
-                            </div>
-                            
-                            <div id="selectedInventoryPurchasePartnerInfo" style="display: none; margin-top: 15px; background-color: var(--gray-light); border-radius: var(--border-radius); padding: 15px;">
-                                <div style="display: flex; align-items: center; justify-content: space-between;">
-                                    <h4 style="color: var(--primary);">شەریکی هەڵبژێردراو</h4>
-                                    <span class="badge">دابینکەر</span>
-                                </div>
-                                <p><strong>ناو:</strong> <span id="selectedInventoryPurchasePartnerName"></span></p>
-                                <p><strong>قەرز:</strong> <span id="selectedInventoryPurchasePartnerDebt"></span></p>
-                            </div>
-                            
-                            <div style="margin-top: 20px;">
-                                <h4 style="margin-bottom: 10px;">کاڵا کەم بووەکان (کەمتر لە ٥)</h4>
-                                <div class="list-box">
-                                    <ul class="list-items" id="lowStockForPurchaseList">
-                                        <!-- JavaScript لێرە پڕ دەکاتەوە -->
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <div id="inventoryPurchaseCart" style="margin-top: 20px;">
-                                <div class="cart-header">
-                                    <h4>کاڵا هەڵبژێردراوەکان بۆ کڕینەوە</h4>
-                                    <button class="btn btn-danger btn-sm" onclick="clearInventoryPurchaseCart()">
-                                        <i class="fas fa-trash"></i> پاککردنەوە
-                                    </button>
-                                </div>
-                                
-                                <div class="cart-items-container" id="inventoryPurchaseCartItems">
-                                    <p style="text-align: center; padding: 20px;">هیچ کاڵایەک هەڵنەبژێردراوە</p>
-                                </div>
-                                
-                                <div style="margin-top: 15px; padding: 15px; background-color: var(--gray-light); border-radius: var(--border-radius);">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <h4>کۆی گشتی:</h4>
-                                        <h4 id="inventoryPurchaseTotal">٠ دینار</h4>
-                                    </div>
-                                </div>
-                                
-                                <div class="payment-options" style="margin-top: 15px;">
-                                    <div class="payment-option selected" onclick="selectInventoryPurchasePayment('cash')" id="inventoryPurchasePaymentCash">
-                                        <i class="fas fa-money-bill-wave"></i> نەقدی
-                                    </div>
-                                    <div class="payment-option" onclick="selectInventoryPurchasePayment('credit')" id="inventoryPurchasePaymentCredit">
-                                        <i class="fas fa-file-invoice-dollar"></i> قەرز
-                                    </div>
-                                </div>
-                                
-                                <div class="action-buttons">
-                                    <button class="btn btn-success" onclick="completeInventoryPurchase()">
-                                        <i class="fas fa-check-circle"></i> تەواوکردنی کڕینەوە
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- بەشی گەڕاندنەوەی کاڵا بۆ مخزن -->
-                    <div class="tab-content" id="returnToInventory">
-                        <div class="item-form">
-                            <h3 style="margin-bottom: 15px; color: var(--primary);">
-                                <i class="fas fa-undo-alt"></i> گەڕاندنەوەی کاڵا بۆ مخزن
-                            </h3>
-                            
-                            <div class="search-container">
-                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">ناوی کاڵا:</label>
-                                <div class="search-box">
-                                    <input type="text" id="returnProductSearch" placeholder="گەڕان بەدوای ناوی کاڵا..." autocomplete="off">
-                                    <i class="fas fa-search"></i>
-                                    <div class="suggestions" id="returnProductSuggestions"></div>
-                                </div>
-                            </div>
-                            
-                            <div id="selectedReturnProductInfo" style="display: none; margin-top: 15px; background-color: var(--gray-light); border-radius: var(--border-radius); padding: 15px;">
-                                <div style="display: flex; align-items: center; gap: 15px;">
-                                    <div style="flex: 1;">
-                                        <p><strong>ناوی کاڵا:</strong> <span id="returnProductName"></span></p>
-                                        <p><strong>نرخی کڕین:</strong> <span id="returnProductPrice"></span></p>
-                                    </div>
-                                    <div style="flex: 1;">
-                                        <p><strong>بەردەست:</strong> <span id="returnProductStock"></span></p>
-                                        <p><strong>یەکە:</strong> <span id="returnProductUnit"></span></p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div id="returnForm" style="display: none; margin-top: 20px;">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="returnQuantity">بڕی گەڕاندنەوە <span style="color: var(--danger);">*</span></label>
-                                        <input type="number" id="returnQuantity" placeholder="بڕی کاڵا" min="1" oninput="calculateReturnTotal()">
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="returnPrice">نرخی کڕین (بە دینار)</label>
-                                        <input type="number" id="returnPrice" placeholder="نرخی کڕین" readonly style="background-color: var(--gray-light);">
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="returnTotal">کۆی گشتی</label>
-                                        <input type="text" id="returnTotal" placeholder="٠ دینار" readonly style="background-color: var(--gray-light); font-weight: bold;">
-                                    </div>
-                                </div>
-                                
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="returnDate">بەروار</label>
-                                        <input type="date" id="returnDate">
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="returnReason">هۆکاری گەڕاندنەوە</label>
-                                        <select id="returnReason">
-                                            <option value="damaged">تێکچوو</option>
-                                            <option value="expired">بەسەرچوو</option>
-                                            <option value="wrong">هەڵە</option>
-                                            <option value="other">هی تر</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div style="background-color: #e8f4fd; border-radius: var(--border-radius); padding: 15px; margin: 15px 0;">
-                                    <p><strong>پوختە:</strong> گەڕاندنەوەی <span id="summaryQuantity">٠</span> دانە بە نرخی <span id="summaryPrice">٠</span> دینار = <strong id="summaryTotal">٠ دینار</strong></p>
-                                </div>
-                                
-                                <div class="action-buttons">
-                                    <button class="btn btn-danger" onclick="resetReturnForm()">
-                                        <i class="fas fa-redo-alt"></i> ڕێکخستنەوە
-                                    </button>
-                                    <button class="btn btn-success" onclick="submitReturn()">
-                                        <i class="fas fa-check-circle"></i> تۆمارکردن
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="list-box" style="margin-top: 20px;">
-                            <div class="list-header">
-                                <h3>مێژووی گەڕاندنەوەکان</h3>
-                                <div class="list-actions">
-                                    <button onclick="refreshReturnHistory()"><i class="fas fa-sync-alt"></i> نوێکردنەوە</button>
-                                </div>
-                            </div>
-                            <div style="max-height: 300px; overflow-y: auto;">
-                                <table style="width: 100%; border-collapse: collapse;">
-                                    <thead style="background-color: var(--gray-light);">
-                                        <tr>
-                                            <th style="padding: 8px;">بەروار</th>
-                                            <th style="padding: 8px;">ناوی کاڵا</th>
-                                            <th style="padding: 8px;">بڕ</th>
-                                            <th style="padding: 8px;">کۆی پارە</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="returnHistoryList">
-                                        <tr>
-                                            <td colspan="4" style="text-align: center; padding: 30px;">هیچ مێژوویەک نییە</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- بەشی سەرفەکانی مخزن -->
-                    <div class="tab-content" id="inventoryExpenses">
-                        <div class="item-form">
-                            <h3 style="margin-bottom: 15px; color: var(--primary);">
-                                <i class="fas fa-hand-holding-usd"></i> سەرفەکانی مخزن (واسڵکردن بۆ شەریک)
-                            </h3>
-                            
-                            <div class="search-container">
-                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">ناوی شەریک:</label>
-                                <div class="search-box">
-                                    <input type="text" id="inventoryExpensePartnerSearch" placeholder="گەڕان بەدوای ناوی شەریک..." autocomplete="off">
-                                    <i class="fas fa-search"></i>
-                                    <div class="suggestions" id="inventoryExpensePartnerSuggestions"></div>
-                                </div>
-                            </div>
-                            
-                            <div id="selectedInventoryExpensePartnerInfo" style="display: none; margin-top: 15px; background-color: var(--gray-light); border-radius: var(--border-radius); padding: 15px;">
-                                <div style="display: flex; align-items: center; justify-content: space-between;">
-                                    <h4 style="color: var(--primary);">زانیاری شەریک</h4>
-                                    <span class="badge">شەریک</span>
-                                </div>
-                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                                    <div>
-                                        <p><strong>ناو:</strong> <span id="selectedInventoryExpensePartnerName"></span></p>
-                                        <p><strong>موبایل:</strong> <span id="selectedInventoryExpensePartnerPhone"></span></p>
-                                    </div>
-                                    <div>
-                                        <p><strong>قەرز:</strong> <span id="selectedInventoryExpensePartnerDebt"></span></p>
-                                        <p><strong>کۆتا واسڵ:</strong> <span id="selectedInventoryExpensePartnerLastDate"></span></p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div id="inventoryExpenseForm" style="display: none; margin-top: 20px;">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="inventoryExpenseAmount">بڕی پارە <span style="color: var(--danger);">*</span></label>
-                                        <input type="number" id="inventoryExpenseAmount" placeholder="بڕی پارە بە دینار" min="1">
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="inventoryExpenseDate">بەروار</label>
-                                        <input type="date" id="inventoryExpenseDate">
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="inventoryExpenseMethod">شێواز</label>
-                                        <select id="inventoryExpenseMethod">
-                                            <option value="cash">نەقدی</option>
-                                            <option value="transfer">گوازینەوە</option>
-                                            <option value="check">چەک</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="inventoryExpenseReason">هۆکار</label>
-                                    <input type="text" id="inventoryExpenseReason" placeholder="نوسینی هۆکار..." value="کڕینەوە لە مخزن">
-                                </div>
-                                
-                                <div style="background-color: #fff3cd; border-radius: var(--border-radius); padding: 10px; margin: 15px 0;">
-                                    <p id="inventoryExpenseSummary">بڕی پارە: ٠ دینار | شێواز: نەقدی</p>
-                                </div>
-                                
-                                <div class="action-buttons">
-                                    <button class="btn btn-danger" onclick="resetInventoryExpenseForm()">
-                                        <i class="fas fa-redo-alt"></i> ڕێکخستنەوە
-                                    </button>
-                                    <button class="btn btn-success" onclick="submitInventoryExpense()">
-                                        <i class="fas fa-check-circle"></i> تۆمارکردن
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="list-box" style="margin-top: 20px;">
-                            <div class="list-header">
-                                <h3>کۆی واسڵی ئەمرۆ</h3>
-                                <div class="list-actions">
-                                    <button onclick="refreshTodayCash()"><i class="fas fa-sync-alt"></i> نوێکردنەوە</button>
-                                </div>
-                            </div>
-                            <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: var(--border-radius); padding: 20px; margin-bottom: 15px;">
-                                <div style="font-size: 1.1rem;">کۆی گشتی واسڵی ئەمرۆ</div>
-                                <div style="font-size: 2rem; font-weight: bold;" id="todayCashDisplay">٠ دینار</div>
-                            </div>
-                            
-                            <div style="max-height: 300px; overflow-y: auto;">
-                                <table style="width: 100%; border-collapse: collapse;">
-                                    <thead style="background-color: var(--gray-light);">
-                                        <tr>
-                                            <th style="padding: 8px;">کات</th>
-                                            <th style="padding: 8px;">شەریک</th>
-                                            <th style="padding: 8px;">بڕی پارە</th>
-                                            <th style="padding: 8px;">شێواز</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="todayCashList">
-                                        <tr>
-                                            <td colspan="4" style="text-align: center; padding: 20px;">هیچ واسڵێک نییە</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -2903,7 +2672,8 @@
             purchases: [],
             cashHistory: [],
             expenseHistory: [],
-            damagedProducts: []
+            damagedProducts: [],
+            dailySettlements: []
         };
 
         let currentUser = null;
@@ -2916,14 +2686,6 @@
         let selectedDamageProduct = null;
         let editingProductId = null;
         let barcodeBuffer = '';
-
-        // ==================== داتا نوێیەکان ====================
-        let returnHistory = []; // مێژووی گەڕاندنەوەکان
-        let inventoryPurchaseCart = []; // سەبەتەی کڕینەوە لە مخزن
-        let selectedPartnerForInventoryPurchase = null;
-        let selectedPartnerForInventoryExpense = null;
-        let selectedProductForReturn = null;
-        let inventoryPurchasePaymentMethod = 'cash';
 
         // ==================== چوونەژوورەوە ====================
         document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -2993,63 +2755,54 @@
             if (sectionId === 'customers') refreshCustomersList();
             if (sectionId === 'partners') refreshPartnersList();
             if (sectionId === 'cashSettlement') refreshCashDisplay();
-            if (sectionId === 'inventoryAccounting') {
-                refreshLowStockForPurchase();
-                refreshReturnHistory();
-                refreshTodayCash();
-                setupInventoryPurchasePartnerSearch();
-                setupReturnProductSearch();
-                setupInventoryExpensePartnerSearch();
-            }
+            if (sectionId === 'dailySettlement') refreshDailySettlement();
         }
 
-        // ==================== نوێکردنەوەی داشبۆرد ====================
+        // ==================== نوێکردنەوەی داشبۆرد (دەستکاری کراو) ====================
         function refreshDashboard() {
-            // کۆی پارە
-            document.getElementById('cashBalanceDisplay').innerHTML = `${systemData.cashBalance.toLocaleString()} <span>دینار</span>`;
+            // ١. کۆی گشتی پارەی واسڵ کراو
+            const totalCashSettled = systemData.cashHistory.reduce((sum, r) => sum + r.amount, 0);
+            document.getElementById('totalCashSettledDisplay').innerHTML = `${totalCashSettled.toLocaleString()} <span>دینار</span>`;
             
-            // کۆی کڕین
-            const totalPurchases = systemData.purchases.reduce((sum, p) => sum + p.total, 0);
-            document.getElementById('totalPurchaseDisplay').innerHTML = `${totalPurchases.toLocaleString()} <span>دینار</span>`;
+            // ٢. کۆی گشتی پارەی واسڵ کراوی ئەمرۆ
+            const today = new Date().toISOString().split('T')[0];
+            const todayCashSettled = systemData.cashHistory
+                .filter(r => r.date === today)
+                .reduce((sum, r) => sum + r.amount, 0);
+            document.getElementById('todayCashSettledDisplay').innerHTML = `${todayCashSettled.toLocaleString()} <span>دینار</span>`;
+            document.getElementById('todayCashChange').textContent = `ئەمڕۆ: ${today}`;
             
-            // جیاوازی
+            // ٣. کۆی گشتی کڕین بە نەقدی
+            const totalCashPurchase = systemData.purchases
+                .filter(p => p.payment === 'cash')
+                .reduce((sum, p) => sum + p.total, 0);
+            document.getElementById('totalCashPurchaseDisplay').innerHTML = `${totalCashPurchase.toLocaleString()} <span>دینار</span>`;
+            
+            // ٤. کۆی گشتی قەرزەکان (قەرزی کەسەکان + قەرزی شەریکەکان)
+            const customersDebt = systemData.customers.reduce((sum, c) => sum + (c.debt || 0), 0);
+            const partnersDebt = systemData.partners.reduce((sum, p) => sum + (p.debt > 0 ? p.debt : 0), 0);
+            const totalDebtOverall = customersDebt + partnersDebt;
+            document.getElementById('totalDebtOverallDisplay').innerHTML = `${totalDebtOverall.toLocaleString()} <span>دینار</span>`;
+            
+            // ٥. کۆی گشتی سەرفکردن (expenseHistory + damagedProducts)
             const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + e.amount, 0);
-            const difference = systemData.cashBalance - totalPurchases - totalExpenses;
-            document.getElementById('differenceDisplay').innerHTML = `${difference.toLocaleString()} <span>دینار</span>`;
+            const totalDamages = systemData.damagedProducts.reduce((sum, d) => sum + d.totalLoss, 0);
+            const totalExpensesOverall = totalExpenses + totalDamages;
+            document.getElementById('totalExpensesDisplay').innerHTML = `${totalExpensesOverall.toLocaleString()} <span>دینار</span>`;
             
-            // کۆی کاڵای کەم بوو
+            // ٦. کۆی گشتی راس مال = کۆی گشتی پارەی واسڵ کراو - (کڕینی نەقدی + سەرفکردن)
+            const totalCapital = totalCashSettled - (totalCashPurchase + totalExpensesOverall);
+            document.getElementById('totalCapitalDisplay').innerHTML = `${totalCapital.toLocaleString()} <span>دینار</span>`;
+            document.getElementById('capitalChange').textContent = totalCapital >= 0 ? 'سەرمایەی پۆزەتیڤ' : 'سەرمایەی نێگەتیڤ';
+            
+            // ٧. کۆی قازانج = کۆی گشتی پارەی واسڵ کراو - (کڕینی نەقدی + سەرفکردن)
+            // (هاوشێوەی راس مالە بەڵام بە ناوی قازانج)
+            const totalProfit = totalCashSettled - (totalCashPurchase + totalExpensesOverall);
+            document.getElementById('totalProfitDisplay').innerHTML = `${totalProfit.toLocaleString()} <span>دینار</span>`;
+            document.getElementById('profitChange').textContent = totalProfit >= 0 ? 'قازانج' : 'زیان';
+            
+            // لیستی کاڵای کەم بوو (وەک خۆی)
             const lowStockProducts = systemData.products.filter(p => p.stock <= 5);
-            document.getElementById('lowStockCount').innerHTML = `${lowStockProducts.length} <span>جۆر</span>`;
-            
-            // کۆی قەرزداران
-            const totalDebt = systemData.customers.reduce((sum, c) => sum + (c.debt || 0), 0);
-            document.getElementById('totalDebtDisplay').innerHTML = `${totalDebt.toLocaleString()} <span>دینار</span>`;
-            
-            // قەرزی شەریکەکان
-            const partnerDebt = systemData.partners.reduce((sum, p) => sum + (p.debt || 0), 0);
-            document.getElementById('partnerDebtDisplay').innerHTML = `${partnerDebt.toLocaleString()} <span>دینار</span>`;
-            
-            // کۆی سەرفکردن
-            const monthlyExpense = systemData.expenseHistory.reduce((sum, e) => sum + e.amount, 0);
-            document.getElementById('monthlyExpenseTotal').innerHTML = `${monthlyExpense.toLocaleString()} <span>دینار</span>`;
-            
-            // سەرمایە
-            const totalSales = systemData.sales.reduce((sum, s) => sum + s.total, 0);
-            const totalDamage = systemData.damagedProducts.reduce((sum, d) => sum + d.totalLoss, 0);
-            const capital = systemData.cashBalance + totalPurchases - totalExpenses - totalDamage;
-            document.getElementById('capitalBalanceDisplay').innerHTML = `${capital.toLocaleString()} <span>دینار</span>`;
-            
-            // ڕێژەی قازانج
-            if (totalPurchases > 0) {
-                const profit = totalSales - totalPurchases;
-                const profitRate = Math.round((profit / totalPurchases) * 100);
-                document.getElementById('profitRateDisplay').textContent = profitRate + '%';
-                document.getElementById('profitChange').textContent = profit > 0 ? 'قازانج' : 'زەرەر';
-            } else {
-                document.getElementById('profitRateDisplay').textContent = '٠٪';
-            }
-            
-            // لیستی کاڵای کەم بوو
             const lowStockList = document.getElementById('lowStockList');
             lowStockList.innerHTML = '';
             
@@ -3064,7 +2817,7 @@
                 });
             }
             
-            // لیستی قەرزداران
+            // لیستی قەرزداران (وەک خۆی)
             const debtorsList = document.getElementById('debtorsList');
             debtorsList.innerHTML = '';
             
@@ -3079,9 +2832,6 @@
                     debtorsList.appendChild(li);
                 });
             }
-
-            // کۆی واسڵی ئەمرۆ
-            refreshTodayCash();
         }
 
         // ==================== بەشی فرۆشتن ====================
@@ -3864,7 +3614,6 @@
             
             refreshCashDisplay();
             refreshDashboard();
-            refreshTodayCash();
         });
 
         document.getElementById('submitCustomerCashBtn')?.addEventListener('click', function() {
@@ -3913,7 +3662,6 @@
             
             refreshCashDisplay();
             refreshDashboard();
-            refreshTodayCash();
         });
 
         function updateCashTotals() {
@@ -3965,7 +3713,6 @@
                 
                 refreshCashDisplay();
                 refreshDashboard();
-                refreshTodayCash();
                 showNotification('سڕایەوە', 'info');
             }
         };
@@ -3985,6 +3732,73 @@
         window.printCashHistory = function() {
             window.print();
         };
+
+        // ==================== بەشی حیسابات کردنی ئەمرۆ ====================
+        function refreshDailySettlement() {
+            // نیشاندانی بەروار و کاتی ئێستا
+            const today = new Date();
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('ckb-IR');
+            document.getElementById('currentTime').textContent = today.toLocaleTimeString('ckb-IR', { hour: '2-digit', minute: '2-digit' });
+            
+            // پارەی واسڵ کراوی ئەمرۆ
+            const todayStr = today.toISOString().split('T')[0];
+            const todayCash = systemData.cashHistory
+                .filter(r => r.date === todayStr)
+                .reduce((sum, r) => sum + r.amount, 0);
+            document.getElementById('dailySettledAmount').textContent = todayCash.toLocaleString() + ' دینار';
+            
+            // کۆی گشتی پارەی واسڵ کراو (هەموو)
+            const totalCash = systemData.cashHistory.reduce((sum, r) => sum + r.amount, 0);
+            document.getElementById('summaryTotalCash').textContent = totalCash.toLocaleString() + ' دینار';
+            
+            // کۆی گشتی کڕین
+            const totalPurchases = systemData.purchases
+                .filter(p => p.payment === 'cash')
+                .reduce((sum, p) => sum + p.total, 0);
+            document.getElementById('summaryTotalPurchases').textContent = totalPurchases.toLocaleString() + ' دینار';
+            
+            // کۆی گشتی سەرفکردن
+            const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + e.amount, 0) +
+                                  systemData.damagedProducts.reduce((sum, d) => sum + d.totalLoss, 0);
+            document.getElementById('summaryTotalExpenses').textContent = totalExpenses.toLocaleString() + ' دینار';
+            
+            // کۆی گشتی قەرزەکان
+            const customersDebt = systemData.customers.reduce((sum, c) => sum + (c.debt || 0), 0);
+            const partnersDebt = systemData.partners.reduce((sum, p) => sum + (p.debt > 0 ? p.debt : 0), 0);
+            const totalDebt = customersDebt + partnersDebt;
+            document.getElementById('summaryTotalDebt').textContent = totalDebt.toLocaleString() + ' دینار';
+            
+            // راس مال و قازانج
+            const capital = totalCash - (totalPurchases + totalExpenses);
+            document.getElementById('summaryCapital').textContent = capital.toLocaleString() + ' دینار';
+            document.getElementById('summaryProfit').textContent = capital.toLocaleString() + ' دینار';
+        }
+
+        // تەواوکردنی حیساباتی ئەمرۆ (گواستنەوەی پارەی ئەمرۆ بۆ کۆی گشتی)
+        document.getElementById('completeDailySettlement')?.addEventListener('click', function() {
+            if (confirm('دڵنیایت لە تەواوکردنی حیساباتی ئەمرۆ؟ ئەم کردارە پارەی ئەمرۆ دەگوازێتەوە بۆ کۆی گشتی.')) {
+                // لێرەدا دەتوانی پارەی ئەمرۆ تۆمار بکەیت وەک "تەواو بوو"
+                // بۆ نموونە: زیادکردنی ئایتمێک بۆ مێژوو کە دەڵێت "حیساباتی ئەمرۆ تەواو کرا"
+                
+                systemData.dailySettlements = systemData.dailySettlements || [];
+                systemData.dailySettlements.push({
+                    date: new Date().toISOString().split('T')[0],
+                    amount: systemData.cashHistory
+                        .filter(r => r.date === new Date().toISOString().split('T')[0])
+                        .reduce((sum, r) => sum + r.amount, 0),
+                    timestamp: new Date().toISOString()
+                });
+                
+                showNotification('حیساباتی ئەمرۆ بە سەرکەوتوویی تەواو کرا', 'success');
+                refreshDailySettlement();
+                refreshDashboard();
+            }
+        });
+
+        document.getElementById('refreshDailySettlement')?.addEventListener('click', function() {
+            refreshDailySettlement();
+            showNotification('نوێ کرایەوە', 'info');
+        });
 
         // ==================== بەشی مخزن ====================
         function refreshInventory() {
@@ -4425,531 +4239,6 @@
             }
         };
 
-        // ==================== فەنکشنەکانی کڕینەوە لە مخزن ====================
-        function setupInventoryPurchasePartnerSearch() {
-            const input = document.getElementById('inventoryPurchasePartnerSearch');
-            const suggestions = document.getElementById('inventoryPurchasePartnerSuggestions');
-            
-            if (!input) return;
-            
-            input.addEventListener('input', function() {
-                if (this.value.length < 2) {
-                    suggestions.style.display = 'none';
-                    return;
-                }
-                
-                const results = systemData.partners.filter(p => 
-                    p.name.toLowerCase().includes(this.value.toLowerCase())
-                );
-                
-                suggestions.innerHTML = '';
-                
-                results.slice(0, 5).forEach(p => {
-                    const div = document.createElement('div');
-                    div.className = 'suggestion-item';
-                    div.textContent = p.name;
-                    div.onclick = () => selectPartnerForInventoryPurchase(p);
-                    suggestions.appendChild(div);
-                });
-                
-                suggestions.style.display = results.length > 0 ? 'block' : 'none';
-            });
-        }
-
-        function selectPartnerForInventoryPurchase(partner) {
-            selectedPartnerForInventoryPurchase = partner;
-            document.getElementById('selectedInventoryPurchasePartnerName').textContent = partner.name;
-            
-            let debtText = 'بێ قەرز';
-            if (partner.debt > 0) debtText = `${partner.debt.toLocaleString()} دینار (قەرزدار)`;
-            else if (partner.debt < 0) debtText = `${Math.abs(partner.debt).toLocaleString()} دینار (قەرزدارم)`;
-            document.getElementById('selectedInventoryPurchasePartnerDebt').textContent = debtText;
-            
-            document.getElementById('selectedInventoryPurchasePartnerInfo').style.display = 'block';
-            
-            // پیشاندانی کاڵا کەم بووەکان
-            refreshLowStockForPurchase();
-            
-            document.getElementById('inventoryPurchasePartnerSearch').value = '';
-            suggestions.style.display = 'none';
-        }
-
-        function refreshLowStockForPurchase() {
-            const list = document.getElementById('lowStockForPurchaseList');
-            if (!list) return;
-            
-            const lowStockProducts = systemData.products.filter(p => p.stock <= 5);
-            
-            list.innerHTML = '';
-            
-            if (lowStockProducts.length === 0) {
-                list.innerHTML = '<li class="list-item">هیچ کاڵایەکی کەم نییە</li>';
-                return;
-            }
-            
-            lowStockProducts.forEach(p => {
-                const li = document.createElement('li');
-                li.className = 'list-item';
-                li.innerHTML = `
-                    <div>
-                        <strong>${p.name}</strong>
-                        <div style="font-size: 0.9rem;">بەردەست: ${p.stock} ${getUnitName(p.unit)}</div>
-                    </div>
-                    <div>
-                        <button class="btn btn-primary btn-sm" onclick="addToInventoryPurchaseCart(${p.id})">
-                            <i class="fas fa-cart-plus"></i> زیادکردن
-                        </button>
-                    </div>
-                `;
-                list.appendChild(li);
-            });
-        }
-
-        function addToInventoryPurchaseCart(productId) {
-            const product = systemData.products.find(p => p.id === productId);
-            if (!product) return;
-            
-            const existing = inventoryPurchaseCart.find(item => item.id === product.id);
-            
-            if (existing) {
-                existing.quantity++;
-            } else {
-                inventoryPurchaseCart.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.purchasePrice || 0,
-                    quantity: 1,
-                    unit: product.unit
-                });
-            }
-            
-            updateInventoryPurchaseCartDisplay();
-        }
-
-        function updateInventoryPurchaseCartDisplay() {
-            const container = document.getElementById('inventoryPurchaseCartItems');
-            let total = 0;
-            
-            if (inventoryPurchaseCart.length === 0) {
-                container.innerHTML = '<p style="text-align: center; padding: 20px;">هیچ کاڵایەک هەڵنەبژێردراوە</p>';
-                document.getElementById('inventoryPurchaseTotal').textContent = '٠ دینار';
-                return;
-            }
-            
-            let html = '';
-            inventoryPurchaseCart.forEach((item, index) => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                
-                html += `
-                    <div class="cart-item" style="margin-bottom: 10px;">
-                        <div style="flex: 2;">
-                            <strong>${item.name}</strong>
-                            <div style="font-size: 0.9rem;">${item.price.toLocaleString()} دینار/${getUnitName(item.unit)}</div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 5px;">
-                            <button class="btn-quantity" onclick="changeInventoryPurchaseQuantity(${index}, -1)">-</button>
-                            <span>${item.quantity}</span>
-                            <button class="btn-quantity" onclick="changeInventoryPurchaseQuantity(${index}, 1)">+</button>
-                            <button class="btn btn-danger btn-sm" onclick="removeFromInventoryPurchaseCart(${index})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                        <div style="font-weight: bold; margin-right: 10px;">${itemTotal.toLocaleString()} دینار</div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-            document.getElementById('inventoryPurchaseTotal').textContent = total.toLocaleString() + ' دینار';
-        }
-
-        function changeInventoryPurchaseQuantity(index, change) {
-            const newQuantity = inventoryPurchaseCart[index].quantity + change;
-            if (newQuantity < 1) {
-                removeFromInventoryPurchaseCart(index);
-            } else {
-                inventoryPurchaseCart[index].quantity = newQuantity;
-                updateInventoryPurchaseCartDisplay();
-            }
-        }
-
-        function removeFromInventoryPurchaseCart(index) {
-            inventoryPurchaseCart.splice(index, 1);
-            updateInventoryPurchaseCartDisplay();
-        }
-
-        function clearInventoryPurchaseCart() {
-            if (confirm('دڵنیای لە پاککردنەوەی سەبەتە؟')) {
-                inventoryPurchaseCart = [];
-                updateInventoryPurchaseCartDisplay();
-            }
-        }
-
-        function selectInventoryPurchasePayment(method) {
-            inventoryPurchasePaymentMethod = method;
-            document.getElementById('inventoryPurchasePaymentCash').classList.remove('selected');
-            document.getElementById('inventoryPurchasePaymentCredit').classList.remove('selected');
-            document.getElementById(`inventoryPurchasePayment${method.charAt(0).toUpperCase() + method.slice(1)}`).classList.add('selected');
-        }
-
-        function completeInventoryPurchase() {
-            if (inventoryPurchaseCart.length === 0) {
-                showNotification('تکایە کاڵا هەڵبژێرە!', 'error');
-                return;
-            }
-            
-            if (!selectedPartnerForInventoryPurchase && inventoryPurchasePaymentMethod === 'credit') {
-                showNotification('بۆ قەرز کردن، تکایە شەریک هەڵبژێرە!', 'error');
-                return;
-            }
-            
-            const total = inventoryPurchaseCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
-            // زیادکردنی کاڵا بۆ مخزن
-            inventoryPurchaseCart.forEach(item => {
-                const product = systemData.products.find(p => p.id === item.id);
-                if (product) {
-                    product.stock += item.quantity;
-                }
-            });
-            
-            // تۆمارکردن لە مێژووی کڕین
-            const purchase = {
-                id: systemData.purchases.length + 1,
-                code: `PUR-${new Date().getFullYear()}-${systemData.purchases.length + 1}`,
-                partner: selectedPartnerForInventoryPurchase ? selectedPartnerForInventoryPurchase.name : 'نەناسراو',
-                date: new Date().toISOString().split('T')[0],
-                total: total,
-                payment: inventoryPurchasePaymentMethod,
-                items: inventoryPurchaseCart.map(item => ({
-                    name: item.name,
-                    quantity: item.quantity,
-                    price: item.price,
-                    total: item.price * item.quantity
-                }))
-            };
-            
-            systemData.purchases.unshift(purchase);
-            
-            // کەمکردنەوەی پارە یان زیادکردنی قەرز
-            if (inventoryPurchasePaymentMethod === 'cash') {
-                systemData.cashBalance -= total;
-            } else if (selectedPartnerForInventoryPurchase) {
-                selectedPartnerForInventoryPurchase.debt = (selectedPartnerForInventoryPurchase.debt || 0) - total;
-            }
-            
-            // پاککردنەوە
-            inventoryPurchaseCart = [];
-            selectedPartnerForInventoryPurchase = null;
-            updateInventoryPurchaseCartDisplay();
-            document.getElementById('selectedInventoryPurchasePartnerInfo').style.display = 'none';
-            document.getElementById('inventoryPurchasePartnerSearch').value = '';
-            
-            // نوێکردنەوە
-            refreshDashboard();
-            refreshLowStockForPurchase();
-            refreshTodayCash();
-            
-            showNotification('کڕینەوە لە مخزن بە سەرکەوتوویی تەواو بوو!', 'success');
-        }
-
-        // ==================== فەنکشنەکانی گەڕاندنەوەی کاڵا ====================
-        function setupReturnProductSearch() {
-            const input = document.getElementById('returnProductSearch');
-            const suggestions = document.getElementById('returnProductSuggestions');
-            
-            if (!input) return;
-            
-            input.addEventListener('input', function() {
-                if (this.value.length < 2) {
-                    suggestions.style.display = 'none';
-                    return;
-                }
-                
-                const results = systemData.products.filter(p => 
-                    p.name.toLowerCase().includes(this.value.toLowerCase())
-                );
-                
-                suggestions.innerHTML = '';
-                
-                results.slice(0, 5).forEach(p => {
-                    const div = document.createElement('div');
-                    div.className = 'suggestion-item';
-                    div.innerHTML = `${p.name} (بەردەست: ${p.stock} ${getUnitName(p.unit)})`;
-                    div.onclick = () => selectProductForReturn(p);
-                    suggestions.appendChild(div);
-                });
-                
-                suggestions.style.display = results.length > 0 ? 'block' : 'none';
-            });
-        }
-
-        function selectProductForReturn(product) {
-            selectedProductForReturn = product;
-            document.getElementById('returnProductName').textContent = product.name;
-            document.getElementById('returnProductPrice').textContent = (product.purchasePrice || 0).toLocaleString() + ' دینار';
-            document.getElementById('returnProductStock').textContent = product.stock + ' ' + getUnitName(product.unit);
-            document.getElementById('returnProductUnit').textContent = getUnitName(product.unit);
-            document.getElementById('selectedReturnProductInfo').style.display = 'block';
-            document.getElementById('returnForm').style.display = 'block';
-            
-            document.getElementById('returnPrice').value = product.purchasePrice || 0;
-            document.getElementById('returnDate').value = new Date().toISOString().split('T')[0];
-            
-            document.getElementById('returnProductSearch').value = '';
-            document.getElementById('returnProductSuggestions').style.display = 'none';
-        }
-
-        function calculateReturnTotal() {
-            const quantity = parseInt(document.getElementById('returnQuantity').value) || 0;
-            const price = parseInt(document.getElementById('returnPrice').value) || 0;
-            const total = quantity * price;
-            
-            document.getElementById('returnTotal').value = total.toLocaleString() + ' دینار';
-            document.getElementById('summaryQuantity').textContent = quantity;
-            document.getElementById('summaryPrice').textContent = price.toLocaleString();
-            document.getElementById('summaryTotal').textContent = total.toLocaleString() + ' دینار';
-        }
-
-        function resetReturnForm() {
-            document.getElementById('returnQuantity').value = '';
-            document.getElementById('returnTotal').value = '٠ دینار';
-            document.getElementById('returnReason').value = 'damaged';
-            document.getElementById('summaryQuantity').textContent = '٠';
-            document.getElementById('summaryPrice').textContent = '٠';
-            document.getElementById('summaryTotal').textContent = '٠ دینار';
-        }
-
-        function submitReturn() {
-            if (!selectedProductForReturn) {
-                showNotification('تکایە کاڵایەک هەڵبژێرە!', 'error');
-                return;
-            }
-            
-            const quantity = parseInt(document.getElementById('returnQuantity').value);
-            if (!quantity || quantity <= 0) {
-                showNotification('تکایە بڕی کاڵا داخڵ بکە!', 'error');
-                return;
-            }
-            
-            if (quantity > selectedProductForReturn.stock) {
-                showNotification('بڕی کاڵا لە مخزن تەواوە!', 'error');
-                return;
-            }
-            
-            const price = selectedProductForReturn.purchasePrice || 0;
-            const total = quantity * price;
-            
-            // کەمکردنەوەی کاڵا لە مخزن
-            selectedProductForReturn.stock -= quantity;
-            
-            // کەمکردنەوەی پارە لە کاش (ئەگەر کاڵا گەڕێنرایەوە، شەریک دەبێت پارە بداتەوە)
-            systemData.cashBalance += total;
-            
-            // تۆمارکردن لە مێژووی گەڕاندنەوە
-            const returnRecord = {
-                id: returnHistory.length + 1,
-                productId: selectedProductForReturn.id,
-                productName: selectedProductForReturn.name,
-                quantity: quantity,
-                price: price,
-                total: total,
-                date: document.getElementById('returnDate').value,
-                reason: document.getElementById('returnReason').value
-            };
-            
-            returnHistory.push(returnRecord);
-            
-            // پاککردنەوە
-            document.getElementById('selectedReturnProductInfo').style.display = 'none';
-            document.getElementById('returnForm').style.display = 'none';
-            selectedProductForReturn = null;
-            resetReturnForm();
-            
-            // نوێکردنەوە
-            refreshReturnHistory();
-            refreshDashboard();
-            refreshTodayCash();
-            
-            showNotification('گەڕاندنەوەی کاڵا تۆمار کرا', 'success');
-        }
-
-        function refreshReturnHistory() {
-            const tbody = document.getElementById('returnHistoryList');
-            if (!tbody) return;
-            
-            tbody.innerHTML = '';
-            
-            if (returnHistory.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px;">هیچ مێژوویەک نییە</td></tr>';
-                return;
-            }
-            
-            returnHistory.slice().reverse().forEach(r => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="padding: 8px;">${r.date}</td>
-                    <td style="padding: 8px;">${r.productName}</td>
-                    <td style="padding: 8px;">${r.quantity}</td>
-                    <td style="padding: 8px; color: var(--success);">${r.total.toLocaleString()} دینار</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // ==================== فەنکشنەکانی سەرفەکانی مخزن ====================
-        function setupInventoryExpensePartnerSearch() {
-            const input = document.getElementById('inventoryExpensePartnerSearch');
-            const suggestions = document.getElementById('inventoryExpensePartnerSuggestions');
-            
-            if (!input) return;
-            
-            input.addEventListener('input', function() {
-                if (this.value.length < 2) {
-                    suggestions.style.display = 'none';
-                    return;
-                }
-                
-                const results = systemData.partners.filter(p => 
-                    p.name.toLowerCase().includes(this.value.toLowerCase())
-                );
-                
-                suggestions.innerHTML = '';
-                
-                results.slice(0, 5).forEach(p => {
-                    const div = document.createElement('div');
-                    div.className = 'suggestion-item';
-                    div.textContent = p.name;
-                    div.onclick = () => selectPartnerForInventoryExpense(p);
-                    suggestions.appendChild(div);
-                });
-                
-                suggestions.style.display = results.length > 0 ? 'block' : 'none';
-            });
-        }
-
-        function selectPartnerForInventoryExpense(partner) {
-            selectedPartnerForInventoryExpense = partner;
-            document.getElementById('selectedInventoryExpensePartnerName').textContent = partner.name;
-            document.getElementById('selectedInventoryExpensePartnerPhone').textContent = partner.phone || '-';
-            
-            let debtText = 'بێ قەرز';
-            if (partner.debt > 0) debtText = `${partner.debt.toLocaleString()} دینار (قەرزدار)`;
-            else if (partner.debt < 0) debtText = `${Math.abs(partner.debt).toLocaleString()} دینار (قەرزدارم)`;
-            document.getElementById('selectedInventoryExpensePartnerDebt').textContent = debtText;
-            
-            const last = systemData.cashHistory
-                .filter(h => h.type === 'partner' && h.personId === partner.id)
-                .sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time))[0];
-            
-            document.getElementById('selectedInventoryExpensePartnerLastDate').textContent = last ? `${last.date} ${last.time}` : 'هێشتا نییە';
-            
-            document.getElementById('selectedInventoryExpensePartnerInfo').style.display = 'block';
-            document.getElementById('inventoryExpenseForm').style.display = 'block';
-            
-            document.getElementById('inventoryExpensePartnerSearch').value = '';
-            document.getElementById('inventoryExpensePartnerSuggestions').style.display = 'none';
-            setDefaultDates();
-        }
-
-        function resetInventoryExpenseForm() {
-            document.getElementById('inventoryExpenseAmount').value = '';
-            document.getElementById('inventoryExpenseReason').value = 'کڕینەوە لە مخزن';
-            document.getElementById('inventoryExpenseMethod').value = 'cash';
-            updateInventoryExpenseSummary();
-        }
-
-        function updateInventoryExpenseSummary() {
-            const amount = parseInt(document.getElementById('inventoryExpenseAmount').value) || 0;
-            const method = document.getElementById('inventoryExpenseMethod').value;
-            const methodText = method === 'cash' ? 'نەقدی' : method === 'transfer' ? 'گوازینەوە' : 'چەک';
-            
-            document.getElementById('inventoryExpenseSummary').innerHTML = `بڕی پارە: ${amount.toLocaleString()} دینار | شێواز: ${methodText}`;
-        }
-
-        document.getElementById('inventoryExpenseAmount')?.addEventListener('input', updateInventoryExpenseSummary);
-        document.getElementById('inventoryExpenseMethod')?.addEventListener('change', updateInventoryExpenseSummary);
-
-        function submitInventoryExpense() {
-            if (!selectedPartnerForInventoryExpense) {
-                showNotification('تکایە شەریکێک هەڵبژێرە!', 'error');
-                return;
-            }
-            
-            const amount = parseInt(document.getElementById('inventoryExpenseAmount').value);
-            if (!amount || amount <= 0) {
-                showNotification('تکایە بڕی پارە داخڵ بکە!', 'error');
-                return;
-            }
-            
-            const record = {
-                id: systemData.cashHistory.length + 1,
-                type: 'partner',
-                personId: selectedPartnerForInventoryExpense.id,
-                personName: selectedPartnerForInventoryExpense.name,
-                amount: amount,
-                date: document.getElementById('inventoryExpenseDate').value,
-                time: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }),
-                method: document.getElementById('inventoryExpenseMethod').value,
-                reason: document.getElementById('inventoryExpenseReason').value || 'کڕینەوە لە مخزن'
-            };
-            
-            systemData.cashHistory.push(record);
-            systemData.cashBalance += amount;
-            
-            // نوێکردنەوەی قەرز
-            if (selectedPartnerForInventoryExpense.debt > 0) {
-                selectedPartnerForInventoryExpense.debt = Math.max(0, selectedPartnerForInventoryExpense.debt - amount);
-            } else {
-                selectedPartnerForInventoryExpense.debt = (selectedPartnerForInventoryExpense.debt || 0) - amount;
-            }
-            
-            // پاککردنەوە
-            document.getElementById('selectedInventoryExpensePartnerInfo').style.display = 'none';
-            document.getElementById('inventoryExpenseForm').style.display = 'none';
-            selectedPartnerForInventoryExpense = null;
-            resetInventoryExpenseForm();
-            
-            // نوێکردنەوە
-            refreshTodayCash();
-            refreshDashboard();
-            refreshCashDisplay();
-            
-            showNotification('سەرفەکانی مخزن تۆمار کرا', 'success');
-        }
-
-        // ==================== فەنکشنەکانی کۆی واسڵی ئەمرۆ ====================
-        function refreshTodayCash() {
-            const today = new Date().toISOString().split('T')[0];
-            const todayCash = systemData.cashHistory.filter(h => h.date === today);
-            const todayTotal = todayCash.reduce((sum, h) => sum + h.amount, 0);
-            
-            document.getElementById('todayCashDisplay').textContent = todayTotal.toLocaleString() + ' دینار';
-            document.getElementById('todayCashTotalDisplay').innerHTML = `${todayTotal.toLocaleString()} <span>دینار</span>`;
-            
-            const list = document.getElementById('todayCashList');
-            if (!list) return;
-            
-            list.innerHTML = '';
-            
-            if (todayCash.length === 0) {
-                list.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px;">هیچ واسڵێک نییە</td></tr>';
-                return;
-            }
-            
-            todayCash.forEach(h => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="padding: 8px;">${h.time || '--:--'}</td>
-                    <td style="padding: 8px;">${h.personName}</td>
-                    <td style="padding: 8px; color: var(--success);">${h.amount.toLocaleString()} دینار</td>
-                    <td style="padding: 8px;">${h.method === 'cash' ? 'نەقدی' : 'گوازینەوە'}</td>
-                `;
-                list.appendChild(tr);
-            });
-        }
-
         // ==================== نوێکردنەوەی هەموو بەشەکان ====================
         function refreshAllDisplays() {
             refreshDashboard();
@@ -4960,10 +4249,9 @@
             refreshPurchaseHistory();
             refreshExpiryList();
             refreshDamageList();
+            refreshDailySettlement();
             updateCashTotals();
             updateCashHistory();
-            refreshTodayCash();
-            refreshReturnHistory();
         }
 
         // ==================== گوێگرتن لە کارلێکەکان ====================
@@ -5055,30 +4343,6 @@
                 if (this.dataset.lossTab === 'expiryProducts') refreshExpiryList();
                 if (this.dataset.lossTab === 'damagedProducts') refreshDamageList();
                 if (this.dataset.lossTab === 'addDamage') setupDamageSearch();
-            });
-        });
-
-        // تاباتەکانی حیساباتی مخزن
-        document.querySelectorAll('[data-inventory-accounting-tab]').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('[data-inventory-accounting-tab]').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                
-                document.querySelectorAll('#inventoryAccountingSection .tab-content').forEach(c => c.classList.remove('active'));
-                document.getElementById(this.dataset.inventoryAccountingTab).classList.add('active');
-                
-                if (this.dataset.inventoryAccountingTab === 'purchaseFromInventory') {
-                    refreshLowStockForPurchase();
-                    setupInventoryPurchasePartnerSearch();
-                }
-                if (this.dataset.inventoryAccountingTab === 'returnToInventory') {
-                    refreshReturnHistory();
-                    setupReturnProductSearch();
-                }
-                if (this.dataset.inventoryAccountingTab === 'inventoryExpenses') {
-                    refreshTodayCash();
-                    setupInventoryExpensePartnerSearch();
-                }
             });
         });
 
