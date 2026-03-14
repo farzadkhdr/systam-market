@@ -1343,6 +1343,17 @@
             border-radius: 20px;
             font-size: 0.8rem;
         }
+        
+        /* ستایل بۆ ڕیزەکانی بەسەرچوون */
+        .expired-row {
+            background-color: #f8d7da;
+        }
+        .critical-row {
+            background-color: #fff3cd;
+        }
+        .warning-row {
+            background-color: #fff3cd;
+        }
     </style>
 </head>
 <body>
@@ -1479,7 +1490,6 @@
                         بەرێوبەرایەتی
                     </a>
                 </li>
-                <!-- بەشی جەرد کردنی کاڵا -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" data-section="inventoryAudit">
                         <i class="fas fa-clipboard-check"></i>
@@ -2609,14 +2619,331 @@
                 </div>
             </section>
 
-            <!-- بەشی بەسەرچوون و تێکچوون -->
+            <!-- بەشی بەسەرچوون و تێکچوون (نوێکراوە) -->
             <section id="lossProfitSection" class="content-section">
                 <h2 class="section-title">بەسەرچوون و تێکچوون</h2>
-                <div style="text-align: center; padding: 50px; color: var(--gray); background-color: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
-                    <i class="fas fa-chart-line fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
-                    <h3 style="margin-bottom: 15px;">بەشی بەسەرچوون و تێکچوون</h3>
-                    <p style="margin-bottom: 20px;">ئەم بەشە لە وەشانی داهاتوودا بەردەست دەبێت.</p>
-                    <p>لێرەدا هەژماری بەسەرچوون و تێکچوونەکان پیشان دەدرێت.</p>
+                
+                <div class="sale-purchase-container">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-loss-tab="expiryProducts">کاڵا بەسەرچووەکان</button>
+                        <button class="tab-btn" data-loss-tab="damagedProducts">کاڵا تێکچووەکان</button>
+                        <button class="tab-btn" data-loss-tab="addDamage">زیادکردنی کاڵای تێکچوو</button>
+                    </div>
+                    
+                    <!-- بەشی ١: کاڵا بەسەرچووەکان (نزیک لە بەسەرچوون و بەسەرچوو) -->
+                    <div class="tab-content active" id="expiryProducts">
+                        <div class="item-form" style="margin-bottom: 30px;">
+                            <h3 style="margin-bottom: 20px; color: var(--primary);">
+                                <i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i> 
+                                کاڵا نزیک لە بەسەرچوون و بەسەرچوو
+                            </h3>
+                            
+                            <div class="search-container">
+                                <div class="search-box">
+                                    <input type="text" id="expirySearch" placeholder="گەڕان بەدوای ناوی کاڵا...">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                            </div>
+                            
+                            <div style="background-color: #fff3cd; border-radius: var(--border-radius); padding: 15px; margin-bottom: 20px; border-right: 4px solid #ffc107;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <i class="fas fa-info-circle" style="color: #856404; font-size: 1.5rem;"></i>
+                                    <div>
+                                        <strong style="color: #856404;">ئاگاداری:</strong>
+                                        <span style="color: #856404;">کاڵای نزیک لە بەسەرچوون (کەمتر لە ٧ ڕۆژ) و کاڵا بەسەرچووەکان لەم لیستەدا پیشان دەدرێن.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="list-box">
+                                <div class="list-header">
+                                    <h3>لیستی کاڵا بەسەرچووەکان</h3>
+                                    <div class="list-actions">
+                                        <button id="refreshExpiryList" class="btn btn-info">
+                                            <i class="fas fa-sync-alt"></i> نوێکردنەوە
+                                        </button>
+                                        <button id="printExpiryList" class="btn btn-warning">
+                                            <i class="fas fa-print"></i> پرێنتکردن
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div style="max-height: 500px; overflow-y: auto;">
+                                    <table style="width: 100%; border-collapse: collapse;" id="expiryProductsTable">
+                                        <thead style="background-color: var(--gray-light); position: sticky; top: 0;">
+                                            <tr>
+                                                <th style="padding: 12px; text-align: right;">#</th>
+                                                <th style="padding: 12px; text-align: right;">وێنە</th>
+                                                <th style="padding: 12px; text-align: right;">ناوی کاڵا</th>
+                                                <th style="padding: 12px; text-align: right;">بارکۆد</th>
+                                                <th style="padding: 12px; text-align: right;">بڕ</th>
+                                                <th style="padding: 12px; text-align: right;">بەرواری بەسەرچوون</th>
+                                                <th style="padding: 12px; text-align: right;">ڕۆژی ماوە</th>
+                                                <th style="padding: 12px; text-align: right;">نرخی کڕین</th>
+                                                <th style="padding: 12px; text-align: right;">نرخی فرۆشتن</th>
+                                                <th style="padding: 12px; text-align: right;">کردارەکان</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="expiryProductsList">
+                                            <!-- کاڵا بەسەرچووەکان لێرە زیاد دەکرێن -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #f72585, #b5179e); color: white; border-radius: var(--border-radius);">
+                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center;">
+                                        <div>
+                                            <i class="fas fa-clock fa-2x"></i>
+                                            <h4 style="margin: 10px 0; font-size: 1rem;">نزیک لە بەسەرچوون</h4>
+                                            <div style="font-size: 1.5rem; font-weight: bold;" id="nearExpiryCount">٠</div>
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-times-circle fa-2x"></i>
+                                            <h4 style="margin: 10px 0; font-size: 1rem;">بەسەرچوو</h4>
+                                            <div style="font-size: 1.5rem; font-weight: bold;" id="expiredCount">٠</div>
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-boxes fa-2x"></i>
+                                            <h4 style="margin: 10px 0; font-size: 1rem;">کۆی بڕ</h4>
+                                            <div style="font-size: 1.5rem; font-weight: bold;" id="totalExpiryQuantity">٠</div>
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-coins fa-2x"></i>
+                                            <h4 style="margin: 10px 0; font-size: 1rem;">کۆی زەرەر (دینار)</h4>
+                                            <div style="font-size: 1.5rem; font-weight: bold;" id="totalExpiryLoss">٠</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی ٢: لیستی کاڵا تێکچووەکان -->
+                    <div class="tab-content" id="damagedProducts">
+                        <div class="item-form" style="margin-bottom: 30px;">
+                            <h3 style="margin-bottom: 20px; color: var(--primary);">
+                                <i class="fas fa-times-circle" style="color: #dc3545;"></i> 
+                                لیستی کاڵا تێکچووەکان
+                            </h3>
+                            
+                            <div class="search-container">
+                                <div class="search-box">
+                                    <input type="text" id="damageSearch" placeholder="گەڕان بەدوای ناوی کاڵا یان هۆکار...">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="list-box">
+                                <div class="list-header">
+                                    <h3>مێژووی کاڵا تێکچووەکان</h3>
+                                    <div class="list-actions">
+                                        <button id="refreshDamageList" class="btn btn-info">
+                                            <i class="fas fa-sync-alt"></i> نوێکردنەوە
+                                        </button>
+                                        <button id="printDamageList" class="btn btn-warning">
+                                            <i class="fas fa-print"></i> پرێنتکردن
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div style="max-height: 500px; overflow-y: auto;">
+                                    <table style="width: 100%; border-collapse: collapse;" id="damagedProductsTable">
+                                        <thead style="background-color: var(--gray-light); position: sticky; top: 0;">
+                                            <tr>
+                                                <th style="padding: 12px; text-align: right;">#</th>
+                                                <th style="padding: 12px; text-align: right;">بەروار</th>
+                                                <th style="padding: 12px; text-align: right;">ناوی کاڵا</th>
+                                                <th style="padding: 12px; text-align: right;">بارکۆد</th>
+                                                <th style="padding: 12px; text-align: right;">بڕ</th>
+                                                <th style="padding: 12px; text-align: right;">یەکە</th>
+                                                <th style="padding: 12px; text-align: right;">نرخی کڕین</th>
+                                                <th style="padding: 12px; text-align: right;">کۆی زەرەر</th>
+                                                <th style="padding: 12px; text-align: right;">هۆکار</th>
+                                                <th style="padding: 12px; text-align: right;">کردارەکان</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="damagedProductsList">
+                                            <!-- کاڵا تێکچووەکان لێرە زیاد دەکرێن -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #dc3545, #b02a37); color: white; border-radius: var(--border-radius);">
+                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
+                                        <div>
+                                            <i class="fas fa-boxes fa-2x"></i>
+                                            <h4 style="margin: 10px 0; font-size: 1rem;">کۆی بڕی تێکچوو</h4>
+                                            <div style="font-size: 1.5rem; font-weight: bold;" id="totalDamagedQuantity">٠</div>
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-coins fa-2x"></i>
+                                            <h4 style="margin: 10px 0; font-size: 1rem;">کۆی زەرەر (دینار)</h4>
+                                            <div style="font-size: 1.5rem; font-weight: bold;" id="totalDamageLoss">٠</div>
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-calendar-alt fa-2x"></i>
+                                            <h4 style="margin: 10px 0; font-size: 1rem;">ژ. تۆمارەکان</h4>
+                                            <div style="font-size: 1.5rem; font-weight: bold;" id="totalDamageRecords">٠</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بەشی ٣: زیادکردنی کاڵای تێکچوو -->
+                    <div class="tab-content" id="addDamage">
+                        <div class="item-form">
+                            <h3 style="margin-bottom: 20px; color: var(--primary);">
+                                <i class="fas fa-plus-circle"></i> 
+                                زیادکردنی کاڵای تێکچوو
+                            </h3>
+                            
+                            <div style="background-color: #f8d7da; border-radius: var(--border-radius); padding: 15px; margin-bottom: 20px; border-right: 4px solid #dc3545;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <i class="fas fa-exclamation-circle" style="color: #721c24; font-size: 1.5rem;"></i>
+                                    <div>
+                                        <strong style="color: #721c24;">تێبینی:</strong>
+                                        <span style="color: #721c24;">کاتێ کاڵای تێکچوو زیاد دەکەیت، بڕەکە لە مخزن کەم دەبێتەوە و لە سەرمایە (راس مال) دەکەمێتەوە.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- گەڕان بەدوای کاڵا -->
+                            <div class="search-container" style="margin-bottom: 25px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 500;">
+                                    <i class="fas fa-box"></i> گەڕان بەدوای کاڵا:
+                                </label>
+                                <div class="search-box">
+                                    <input type="text" id="damageProductSearch" placeholder="ناوی کاڵا یان بارکۆد بنووسە..." autocomplete="off">
+                                    <i class="fas fa-search"></i>
+                                    <div class="suggestions" id="damageProductSuggestions"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- زانیاری کاڵای هەڵبژێردراو -->
+                            <div id="selectedDamageProductInfo" style="display: none; margin-bottom: 25px; background-color: var(--gray-light); border-radius: var(--border-radius); padding: 20px;">
+                                <div style="display: flex; align-items: center; gap: 20px;">
+                                    <div id="damageProductImage" style="width: 80px; height: 80px; background-color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                        <i class="fas fa-box fa-3x" style="color: var(--gray);"></i>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: var(--primary); margin-bottom: 10px;" id="damageProductName"></h4>
+                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                                            <div>
+                                                <small style="color: var(--gray);">بارکۆد:</small>
+                                                <p><strong id="damageProductBarcode"></strong></p>
+                                            </div>
+                                            <div>
+                                                <small style="color: var(--gray);">بڕی بەردەست:</small>
+                                                <p><strong id="damageProductStock"></strong></p>
+                                            </div>
+                                            <div>
+                                                <small style="color: var(--gray);">نرخی کڕین:</small>
+                                                <p><strong id="damageProductPrice"></strong></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- فۆرمی زیادکردنی کاڵای تێکچوو -->
+                            <div id="damageForm" style="display: none;">
+                                <div style="border-top: 2px dashed var(--gray-light); padding-top: 25px;">
+                                    <h4 style="margin-bottom: 20px; color: var(--dark);">
+                                        <i class="fas fa-clipboard-list"></i> زانیاری تێکچوون
+                                    </h4>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="damageQuantity">
+                                                <i class="fas fa-sort-amount-up"></i> بڕی کاڵای تێکچوو <span style="color: var(--danger);">*</span>
+                                            </label>
+                                            <input type="number" id="damageQuantity" placeholder="بڕی کاڵا" min="1" step="1">
+                                            <small style="color: var(--gray);" id="availableStockHint"></small>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="damageUnit">یەکە</label>
+                                            <select id="damageUnit">
+                                                <option value="piece">پارچە</option>
+                                                <option value="carton">کارتۆن</option>
+                                                <option value="unit">دانە</option>
+                                                <option value="kg">کیلۆ</option>
+                                                <option value="meter">مەتر</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="damageDate">بەرواری تێکچوون</label>
+                                            <input type="date" id="damageDate">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="damageReason">هۆکاری تێکچوون <span style="color: var(--danger);">*</span></label>
+                                            <select id="damageReason">
+                                                <option value="expired">بەسەرچوون</option>
+                                                <option value="broken">شکاندن/زیان</option>
+                                                <option value="damaged">تێکچوون لە کاتی گواستنەوە</option>
+                                                <option value="storage">تێکچوون لە کۆگا</option>
+                                                <option value="returned">گەڕاندراوە بە حاڵەتی خراپ</option>
+                                                <option value="other">هۆکاری تر</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="damageCustomReason">هۆکاری تر (ئەگەر هۆکاری تر هەڵبژارد)</label>
+                                            <input type="text" id="damageCustomReason" placeholder="نوسینی هۆکار...">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="damageNotes">تێبینی (ئارەزوومەندانە)</label>
+                                        <textarea id="damageNotes" rows="3" placeholder="نوسینی تێبینی..."></textarea>
+                                    </div>
+                                    
+                                    <!-- پوختەی زیان -->
+                                    <div style="background-color: #f8d7da; border-radius: var(--border-radius); padding: 15px; margin: 20px 0;">
+                                        <div style="display: flex; align-items: center; gap: 15px;">
+                                            <i class="fas fa-chart-line" style="color: #721c24; font-size: 2rem;"></i>
+                                            <div style="flex: 1;">
+                                                <h5 style="color: #721c24; margin-bottom: 10px;">پوختەی زیان</h5>
+                                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                                                    <div>
+                                                        <small style="color: #721c24;">بڕی تێکچوو:</small>
+                                                        <p style="font-weight: bold; color: #721c24;" id="damageQuantitySummary">٠</p>
+                                                    </div>
+                                                    <div>
+                                                        <small style="color: #721c24;">نرخی یەکە:</small>
+                                                        <p style="font-weight: bold; color: #721c24;" id="damageUnitPriceSummary">٠ دینار</p>
+                                                    </div>
+                                                    <div>
+                                                        <small style="color: #721c24;">کۆی زیان:</small>
+                                                        <p style="font-weight: bold; color: #721c24; font-size: 1.2rem;" id="damageTotalSummary">٠ دینار</p>
+                                                    </div>
+                                                    <div>
+                                                        <small style="color: #721c24;">ڕێکەوت:</small>
+                                                        <p style="font-weight: bold; color: #721c24;" id="damageDateSummary"></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="action-buttons">
+                                        <button class="btn btn-danger" id="resetDamageForm">
+                                            <i class="fas fa-redo-alt"></i> ڕێکخستنەوە
+                                        </button>
+                                        <button class="btn btn-success" id="submitDamageBtn">
+                                            <i class="fas fa-check-circle"></i> تۆمارکردنی کاڵای تێکچوو
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -2929,7 +3256,8 @@
             purchases: [],
             cashBalance: 10000000, // 10 ملیۆن دینار بۆ نموونە
             expenseHistory: [],
-            paymentHistory: []
+            paymentHistory: [],
+            damagedProducts: [] // بۆ کاڵا تێکچووەکان
         };
 
         // داتای نموونەیی بۆ مێژووی کڕین
@@ -2949,6 +3277,7 @@
         let selectedPartner = null;
         let selectedPartnerForCash = null;
         let selectedCustomerForCash = null;
+        let selectedDamageProduct = null;
         let editingProductId = null;
         let barcodeBuffer = '';
         let barcodeTimeout = null;
@@ -3261,6 +3590,23 @@
                 }
             );
             
+            // زیادکردنی کاڵا تێکچووی نموونەیی
+            sampleData.damagedProducts.push({
+                id: 1,
+                productId: 3,
+                productName: "سەرعەی بێلایین",
+                barcode: "BR1003",
+                quantity: 2,
+                unit: "piece",
+                purchasePrice: 75000,
+                totalLoss: 150000,
+                date: "2024-01-15",
+                reason: "expired",
+                customReason: "",
+                notes: "بەسەرچووە لە کۆگا",
+                timestamp: "2024-01-15T10:30:00.000Z"
+            });
+            
             // نوێکردنەوەی داشبۆرد
             populateSampleData();
             
@@ -3343,6 +3689,14 @@
             // نوێکردنەوەی داشبۆرد کاتێ بەشی داشبۆرد پیشان دەدرێ
             if (sectionId === 'dashboard') {
                 populateSampleData();
+            }
+            
+            // نوێکردنەوەی بەشی بەسەرچوون و تێکچوون
+            if (sectionId === 'lossProfit') {
+                setTimeout(() => {
+                    displayExpiryProducts();
+                    displayDamagedProducts();
+                }, 100);
             }
         }
 
@@ -4441,8 +4795,8 @@
                     hasSecondaryUnit: product.hasSecondaryUnit,
                     secondaryUnit: product.secondaryUnit,
                     secondaryUnitQuantity: product.secondaryUnitQuantity,
-                    salePrice: product.salePrice, // هەڵگرتنی نرخی فرۆشتن بۆ پێشنیاری گۆڕانکاری
-                    currentPurchasePrice: product.purchasePrice, // نرخی کڕینی ئێستا
+                    salePrice: product.salePrice,
+                    currentPurchasePrice: product.purchasePrice,
                     hasExpiryDate: product.hasExpiryDate,
                     expiryDate: product.expiryDate,
                     expiryWarningDays: product.expiryWarningDays
@@ -7019,9 +7373,13 @@
             const profitRateDisplay = document.getElementById('profitRateDisplay');
             
             if (capitalDisplay) {
-                // بۆ نموونە، سەرمایە بە کۆی کڕین + پارەی نەقدی دەهێنینەوە
+                // کۆی کڕین + کۆی سەرفکردن + کۆی زەرەری تێکچوون
                 const totalPurchases = samplePurchaseData.purchases.reduce((sum, purchase) => sum + purchase.total, 0);
-                const capital = sampleData.cashBalance + totalPurchases;
+                const totalExpenses = sampleData.expenseHistory.reduce((sum, expense) => sum + expense.amount, 0);
+                const totalDamageLoss = sampleData.damagedProducts.reduce((sum, damage) => sum + damage.totalLoss, 0);
+                
+                // سەرمایە = پارەی نەقدی + نرخی کاڵاکان - زەرەرەکان
+                const capital = sampleData.cashBalance + totalPurchases - totalExpenses - totalDamageLoss;
                 capitalDisplay.innerHTML = `${capital.toLocaleString()} <span>دینار</span>`;
             }
             
@@ -7977,6 +8335,748 @@
                 }
             });
         }
+
+        // ==============================================
+        // بەشی بەسەرچوون و تێکچوون - فەنکشنەکان
+        // ==============================================
+
+        // فەنکشنی پێشاندانی کاڵا بەسەرچووەکان
+        function displayExpiryProducts() {
+            const expiryList = document.getElementById('expiryProductsList');
+            if (!expiryList) return;
+            
+            const today = new Date();
+            const sevenDaysFromNow = new Date(today);
+            sevenDaysFromNow.setDate(today.getDate() + 7);
+            
+            let nearExpiryCount = 0;
+            let expiredCount = 0;
+            let totalQuantity = 0;
+            let totalLoss = 0;
+            
+            // فلترکردنی کاڵاکان کە بەرواری بەسەرچوونیان هەیە
+            const productsWithExpiry = sampleData.products.filter(p => p.hasExpiryDate && p.expiryDate);
+            
+            // ڕیزکردن بەپێی نزیکترین بەروار
+            productsWithExpiry.sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate));
+            
+            expiryList.innerHTML = '';
+            
+            if (productsWithExpiry.length === 0) {
+                expiryList.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="padding: 40px; text-align: center; color: var(--gray);">
+                            <i class="fas fa-calendar-check fa-3x" style="margin-bottom: 15px;"></i>
+                            <p>هیچ کاڵایەک بە بەرواری بەسەرچوون نییە</p>
+                        </td>
+                    </tr>
+                `;
+                
+                document.getElementById('nearExpiryCount').textContent = '٠';
+                document.getElementById('expiredCount').textContent = '٠';
+                document.getElementById('totalExpiryQuantity').textContent = '٠';
+                document.getElementById('totalExpiryLoss').textContent = '٠';
+                return;
+            }
+            
+            productsWithExpiry.forEach((product, index) => {
+                const expiryDate = new Date(product.expiryDate);
+                const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                
+                // تەنها کاڵا نزیک لە بەسەرچوون (کەمتر لە ٧ ڕۆژ) و بەسەرچووەکان پیشان بدە
+                if (daysUntilExpiry <= 7) {
+                    if (daysUntilExpiry <= 0) {
+                        expiredCount++;
+                    } else {
+                        nearExpiryCount++;
+                    }
+                    
+                    totalQuantity += product.stock;
+                    totalLoss += product.stock * product.purchasePrice;
+                    
+                    const row = document.createElement('tr');
+                    row.style.borderBottom = '1px solid var(--gray-light)';
+                    
+                    // دیاریکردنی کلاسی ڕیز بەپێی بەسەرچوون
+                    let statusClass = '';
+                    let statusText = '';
+                    
+                    if (daysUntilExpiry <= 0) {
+                        statusClass = 'expired-row';
+                        statusText = 'بەسەرچووە';
+                    } else if (daysUntilExpiry <= 3) {
+                        statusClass = 'critical-row';
+                        statusText = 'زۆر نزیکە';
+                    } else {
+                        statusClass = 'warning-row';
+                        statusText = 'نزیکە';
+                    }
+                    
+                    // دروستکردنی وێنە
+                    const imageHTML = product.image 
+                        ? `<img src="${product.image}" style="width: 50px; height: 50px; border-radius: 5px; object-fit: cover;">`
+                        : `<div style="width: 50px; height: 50px; background-color: var(--gray-light); border-radius: 5px; display: flex; align-items: center; justify-content: center; color: var(--gray);">
+                            <i class="fas fa-box"></i>
+                           </div>`;
+                    
+                    row.innerHTML = `
+                        <td style="padding: 15px;">${index + 1}</td>
+                        <td style="padding: 15px;">${imageHTML}</td>
+                        <td style="padding: 15px;">
+                            <strong>${product.name}</strong>
+                            <div style="font-size: 0.85rem; color: var(--gray);">${statusText}</div>
+                        </td>
+                        <td style="padding: 15px;">${product.barcode}</td>
+                        <td style="padding: 15px; font-weight: bold;">${product.stock}</td>
+                        <td style="padding: 15px;">${product.expiryDate}</td>
+                        <td style="padding: 15px;">
+                            <span style="background-color: ${daysUntilExpiry <= 0 ? '#dc3545' : daysUntilExpiry <= 3 ? '#fd7e14' : '#ffc107'}; 
+                                         color: ${daysUntilExpiry <= 0 ? 'white' : '#212529'}; 
+                                         padding: 5px 10px; border-radius: 20px; font-weight: bold;">
+                                ${daysUntilExpiry <= 0 ? 'بەسەرچووە' : daysUntilExpiry + ' ڕۆژ'}
+                            </span>
+                        </td>
+                        <td style="padding: 15px;">${product.purchasePrice.toLocaleString()} دینار</td>
+                        <td style="padding: 15px;">${product.salePrice.toLocaleString()} دینار</td>
+                        <td style="padding: 15px;">
+                            <button class="btn btn-danger btn-sm" onclick="moveExpiredToDamage(${product.id})" title="گواستنەوە بۆ تێکچوو">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    expiryList.appendChild(row);
+                }
+            });
+            
+            // نوێکردنەوەی کۆی گشتی
+            document.getElementById('nearExpiryCount').textContent = nearExpiryCount;
+            document.getElementById('expiredCount').textContent = expiredCount;
+            document.getElementById('totalExpiryQuantity').textContent = totalQuantity;
+            document.getElementById('totalExpiryLoss').textContent = totalLoss.toLocaleString() + ' دینار';
+        }
+
+        // گواستنەوەی کاڵای بەسەرچوو بۆ تێکچوون
+        window.moveExpiredToDamage = function(productId) {
+            const product = sampleData.products.find(p => p.id === productId);
+            if (!product) return;
+            
+            if (confirm(`دڵنیایت دەتەوێت ${product.name} بگوازیتەوە بۆ لیستی کاڵا تێکچووەکان؟`)) {
+                // دروستکردنی تۆماری تێکچوون
+                const damageRecord = {
+                    id: sampleData.damagedProducts.length + 1,
+                    productId: product.id,
+                    productName: product.name,
+                    barcode: product.barcode,
+                    quantity: product.stock,
+                    unit: product.unit,
+                    purchasePrice: product.purchasePrice,
+                    totalLoss: product.stock * product.purchasePrice,
+                    date: new Date().toISOString().split('T')[0],
+                    reason: 'expired',
+                    customReason: 'بەسەرچووە',
+                    notes: 'گواسترایەوە لە لیستی بەسەرچوون',
+                    timestamp: new Date().toISOString()
+                };
+                
+                sampleData.damagedProducts.push(damageRecord);
+                
+                // کەمکردنەوەی پارە لە سەرمایە
+                sampleData.cashBalance -= damageRecord.totalLoss;
+                
+                // سڕینەوەی کاڵاکە لە مخزن
+                const productIndex = sampleData.products.findIndex(p => p.id === productId);
+                if (productIndex !== -1) {
+                    sampleData.products.splice(productIndex, 1);
+                }
+                
+                // نوێکردنەوەی نیشاندان
+                displayExpiryProducts();
+                displayDamagedProducts();
+                updateDashboardCash();
+                updateAllDashboardCards();
+                populateSampleData();
+                
+                showNotification(`${product.name} بە سەرکەوتوویی گواسترایەوە بۆ لیستی تێکچوو`, 'success');
+            }
+        };
+
+        // گەڕان لە بەشی بەسەرچوون
+        document.getElementById('expirySearch')?.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#expiryProductsList tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // نوێکردنەوەی لیستی بەسەرچوون
+        document.getElementById('refreshExpiryList')?.addEventListener('click', function() {
+            displayExpiryProducts();
+            showNotification('لیستی کاڵا بەسەرچووەکان نوێ کرایەوە!', 'info');
+        });
+
+        // پرێنتکردنی لیستی بەسەرچوون
+        document.getElementById('printExpiryList')?.addEventListener('click', function() {
+            printExpiryReport();
+        });
+
+        // فەنکشنی پرێنتکردنی ڕاپۆرتی بەسەرچوون
+        function printExpiryReport() {
+            const printWindow = window.open('', '_blank');
+            
+            const rows = document.querySelectorAll('#expiryProductsList tr');
+            let tableRows = '';
+            
+            rows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    tableRows += row.outerHTML;
+                }
+            });
+            
+            const nearExpiry = document.getElementById('nearExpiryCount').textContent;
+            const expired = document.getElementById('expiredCount').textContent;
+            const totalQty = document.getElementById('totalExpiryQuantity').textContent;
+            const totalLoss = document.getElementById('totalExpiryLoss').textContent;
+            
+            const printHTML = `
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>ڕاپۆرتی کاڵا بەسەرچووەکان</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; }
+                        h1 { color: #4361ee; text-align: center; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th { background-color: #4361ee; color: white; padding: 12px; text-align: right; }
+                        td { padding: 10px; border-bottom: 1px solid #ddd; }
+                        .summary { 
+                            margin-top: 20px; 
+                            padding: 15px; 
+                            background: linear-gradient(135deg, #f72585, #b5179e); 
+                            color: white; 
+                            border-radius: 10px; 
+                            text-align: center;
+                        }
+                        .footer { text-align: center; margin-top: 30px; color: #6c757d; }
+                    </style>
+                </head>
+                <body>
+                    <h1>ڕاپۆرتی کاڵا بەسەرچووەکان - الکترۆنیات</h1>
+                    <p>بەرواری چاپ: ${new Date().toLocaleDateString('ar-IQ')}</p>
+                    
+                    <div class="summary">
+                        <h3>پوختە</h3>
+                        <p>نزیک لە بەسەرچوون: ${nearExpiry} | بەسەرچوو: ${expired} | کۆی بڕ: ${totalQty} | کۆی زەرەر: ${totalLoss}</p>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>ناوی کاڵا</th>
+                                <th>بارکۆد</th>
+                                <th>بڕ</th>
+                                <th>بەرواری بەسەرچوون</th>
+                                <th>ڕۆژی ماوە</th>
+                                <th>نرخی کڕین</th>
+                                <th>نرخی فرۆشتن</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                    
+                    <div class="footer">
+                        <p>سیستەمی فرۆشتی ئەلکترۆنیات</p>
+                    </div>
+                    
+                    <script>
+                        window.onload = function() { window.print(); }
+                    <\/script>
+                </body>
+                </html>
+            `;
+            
+            printWindow.document.open();
+            printWindow.document.write(printHTML);
+            printWindow.document.close();
+        }
+
+        // ==============================================
+        // بەشی تێکچوون - فەنکشنەکان
+        // ==============================================
+
+        // پێشاندانی لیستی کاڵا تێکچووەکان
+        function displayDamagedProducts() {
+            const damagedList = document.getElementById('damagedProductsList');
+            if (!damagedList) return;
+            
+            damagedList.innerHTML = '';
+            
+            if (sampleData.damagedProducts.length === 0) {
+                damagedList.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="padding: 40px; text-align: center; color: var(--gray);">
+                            <i class="fas fa-box-open fa-3x" style="margin-bottom: 15px;"></i>
+                            <p>هیچ کاڵایەکی تێکچوو تۆمارنەکراوە</p>
+                        </td>
+                    </tr>
+                `;
+                
+                document.getElementById('totalDamagedQuantity').textContent = '٠';
+                document.getElementById('totalDamageLoss').textContent = '٠';
+                document.getElementById('totalDamageRecords').textContent = '٠';
+                return;
+            }
+            
+            let totalQuantity = 0;
+            let totalLoss = 0;
+            
+            // ڕیزکردن بەپێی بەروار (نوێترین یەکەم)
+            const sortedDamages = [...sampleData.damagedProducts].sort((a, b) => 
+                new Date(b.date) - new Date(a.date)
+            );
+            
+            sortedDamages.forEach((damage, index) => {
+                totalQuantity += damage.quantity;
+                totalLoss += damage.totalLoss;
+                
+                const row = document.createElement('tr');
+                row.style.borderBottom = '1px solid var(--gray-light)';
+                
+                const reasonText = damage.reason === 'other' ? damage.customReason : 
+                    (damage.reason === 'expired' ? 'بەسەرچوون' :
+                     damage.reason === 'broken' ? 'شکاندن/زیان' :
+                     damage.reason === 'damaged' ? 'تێکچوون لە گواستنەوە' :
+                     damage.reason === 'storage' ? 'تێکچوون لە کۆگا' :
+                     damage.reason === 'returned' ? 'گەڕاندراوە بە حاڵەتی خراپ' : 'هۆکاری تر');
+                
+                row.innerHTML = `
+                    <td style="padding: 15px;">${index + 1}</td>
+                    <td style="padding: 15px;">${damage.date}</td>
+                    <td style="padding: 15px;"><strong>${damage.productName}</strong></td>
+                    <td style="padding: 15px;">${damage.barcode || '-'}</td>
+                    <td style="padding: 15px; font-weight: bold; color: #dc3545;">${damage.quantity}</td>
+                    <td style="padding: 15px;">${getUnitName(damage.unit)}</td>
+                    <td style="padding: 15px;">${damage.purchasePrice.toLocaleString()} دینار</td>
+                    <td style="padding: 15px; font-weight: bold; color: #dc3545;">${damage.totalLoss.toLocaleString()} دینار</td>
+                    <td style="padding: 15px;">${reasonText} ${damage.notes ? '<br><small>' + damage.notes + '</small>' : ''}</td>
+                    <td style="padding: 15px;">
+                        <button class="btn btn-danger btn-sm" onclick="deleteDamageRecord(${damage.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                damagedList.appendChild(row);
+            });
+            
+            // نوێکردنەوەی کۆی گشتی
+            document.getElementById('totalDamagedQuantity').textContent = totalQuantity;
+            document.getElementById('totalDamageLoss').textContent = totalLoss.toLocaleString() + ' دینار';
+            document.getElementById('totalDamageRecords').textContent = sampleData.damagedProducts.length;
+        }
+
+        // گەڕان لە بەشی تێکچوون
+        document.getElementById('damageSearch')?.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#damagedProductsList tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // نوێکردنەوەی لیستی تێکچوون
+        document.getElementById('refreshDamageList')?.addEventListener('click', function() {
+            displayDamagedProducts();
+            showNotification('لیستی کاڵا تێکچووەکان نوێ کرایەوە!', 'info');
+        });
+
+        // پرێنتکردنی لیستی تێکچوون
+        document.getElementById('printDamageList')?.addEventListener('click', function() {
+            printDamageReport();
+        });
+
+        // فەنکشنی پرێنتکردنی ڕاپۆرتی تێکچوون
+        function printDamageReport() {
+            const printWindow = window.open('', '_blank');
+            
+            const rows = document.querySelectorAll('#damagedProductsList tr');
+            let tableRows = '';
+            
+            rows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    tableRows += row.outerHTML;
+                }
+            });
+            
+            const totalQty = document.getElementById('totalDamagedQuantity').textContent;
+            const totalLoss = document.getElementById('totalDamageLoss').textContent;
+            const totalRecords = document.getElementById('totalDamageRecords').textContent;
+            
+            const printHTML = `
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>ڕاپۆرتی کاڵا تێکچووەکان</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; }
+                        h1 { color: #4361ee; text-align: center; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th { background-color: #dc3545; color: white; padding: 12px; text-align: right; }
+                        td { padding: 10px; border-bottom: 1px solid #ddd; }
+                        .summary { 
+                            margin-top: 20px; 
+                            padding: 15px; 
+                            background: linear-gradient(135deg, #dc3545, #b02a37); 
+                            color: white; 
+                            border-radius: 10px; 
+                            text-align: center;
+                        }
+                        .footer { text-align: center; margin-top: 30px; color: #6c757d; }
+                    </style>
+                </head>
+                <body>
+                    <h1>ڕاپۆرتی کاڵا تێکچووەکان - الکترۆنیات</h1>
+                    <p>بەرواری چاپ: ${new Date().toLocaleDateString('ar-IQ')}</p>
+                    
+                    <div class="summary">
+                        <h3>پوختە</h3>
+                        <p>کۆی بڕی تێکچوو: ${totalQty} | کۆی زەرەر: ${totalLoss} | ژمارەی تۆمارەکان: ${totalRecords}</p>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>بەروار</th>
+                                <th>ناوی کاڵا</th>
+                                <th>بارکۆد</th>
+                                <th>بڕ</th>
+                                <th>یەکە</th>
+                                <th>نرخی کڕین</th>
+                                <th>کۆی زەرەر</th>
+                                <th>هۆکار</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                    
+                    <div class="footer">
+                        <p>سیستەمی فرۆشتی ئەلکترۆنیات</p>
+                    </div>
+                    
+                    <script>
+                        window.onload = function() { window.print(); }
+                    <\/script>
+                </body>
+                </html>
+            `;
+            
+            printWindow.document.open();
+            printWindow.document.write(printHTML);
+            printWindow.document.close();
+        }
+
+        // سڕینەوەی تۆماری تێکچوون
+        window.deleteDamageRecord = function(damageId) {
+            if (!confirm('دڵنیای لە سڕینەوەی ئەم تۆماری تێکچوونە؟')) return;
+            
+            const index = sampleData.damagedProducts.findIndex(d => d.id === damageId);
+            if (index !== -1) {
+                const damage = sampleData.damagedProducts[index];
+                
+                // گەڕاندنەوەی کاڵاکە بۆ مخزن (ئەگەر ویستت)
+                if (confirm('ئایا دەتەوێت کاڵاکە بگەڕێنیتەوە بۆ مخزن؟')) {
+                    // دۆزینەوەی کاڵاکە
+                    let product = sampleData.products.find(p => p.id === damage.productId);
+                    
+                    if (product) {
+                        product.stock += damage.quantity;
+                    } else {
+                        // دروستکردنی کاڵای نوێ
+                        const newProduct = {
+                            id: sampleData.products.length + 1,
+                            name: damage.productName,
+                            barcode: damage.barcode || `BR${sampleData.products.length + 1000}`,
+                            purchasePrice: damage.purchasePrice,
+                            salePrice: Math.round(damage.purchasePrice * 1.2),
+                            stock: damage.quantity,
+                            unit: damage.unit,
+                            hasExpiryDate: false,
+                            expiryDate: null,
+                            expiryWarningDays: null
+                        };
+                        sampleData.products.push(newProduct);
+                    }
+                    
+                    // گەڕاندنەوەی پارە بۆ سەرمایە
+                    sampleData.cashBalance += damage.totalLoss;
+                }
+                
+                // سڕینەوەی تۆمارەکە
+                sampleData.damagedProducts.splice(index, 1);
+                
+                // نوێکردنەوەی نیشاندان
+                displayDamagedProducts();
+                displayExpiryProducts();
+                populateSampleData();
+                updateDashboardCash();
+                updateAllDashboardCards();
+                
+                showNotification('تۆماری تێکچوون بە سەرکەوتوویی سڕایەوە!', 'success');
+            }
+        };
+
+        // ==============================================
+        // فەنکشنەکانی زیادکردنی کاڵای تێکچوو
+        // ==============================================
+
+        // گەڕان بەدوای کاڵا بۆ تێکچوون
+        const damageProductSearch = document.getElementById('damageProductSearch');
+        const damageSuggestions = document.getElementById('damageProductSuggestions');
+
+        if (damageProductSearch && damageSuggestions) {
+            damageProductSearch.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                
+                if (query.length < 1) {
+                    damageSuggestions.style.display = 'none';
+                    return;
+                }
+                
+                const filteredProducts = sampleData.products.filter(p => 
+                    p.name.toLowerCase().includes(query) || 
+                    (p.barcode && p.barcode.includes(query))
+                );
+                
+                damageSuggestions.innerHTML = '';
+                
+                if (filteredProducts.length === 0) {
+                    damageSuggestions.style.display = 'none';
+                    return;
+                }
+                
+                filteredProducts.forEach(product => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    
+                    const imageHTML = product.image 
+                        ? `<img src="${product.image}" style="width: 40px; height: 40px; border-radius: 5px; object-fit: cover; margin-left: 10px;">`
+                        : '';
+                    
+                    div.innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            ${imageHTML}
+                            <div style="flex: 1;">
+                                <div><strong>${product.name}</strong></div>
+                                <div style="font-size: 0.9rem; color: var(--gray);">
+                                    بەردەست: ${product.stock} | نرخی کڕین: ${product.purchasePrice.toLocaleString()} دینار
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    div.addEventListener('click', function() {
+                        selectProductForDamage(product);
+                        damageProductSearch.value = product.name;
+                        damageSuggestions.style.display = 'none';
+                    });
+                    
+                    damageSuggestions.appendChild(div);
+                });
+                
+                damageSuggestions.style.display = 'block';
+            });
+        }
+
+        // هەڵبژاردنی کاڵا بۆ تێکچوون
+        function selectProductForDamage(product) {
+            selectedDamageProduct = product;
+            
+            // نیشاندانی زانیاری کاڵا
+            document.getElementById('damageProductName').textContent = product.name;
+            document.getElementById('damageProductBarcode').textContent = product.barcode || '-';
+            document.getElementById('damageProductStock').textContent = product.stock + ' ' + getUnitName(product.unit);
+            document.getElementById('damageProductPrice').textContent = product.purchasePrice.toLocaleString() + ' دینار';
+            
+            // نیشاندانی وێنە
+            const imageContainer = document.getElementById('damageProductImage');
+            if (product.image) {
+                imageContainer.innerHTML = `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            } else {
+                imageContainer.innerHTML = '<i class="fas fa-box fa-3x" style="color: var(--gray);"></i>';
+            }
+            
+            // نیشاندانی بەشەکان
+            document.getElementById('selectedDamageProductInfo').style.display = 'block';
+            document.getElementById('damageForm').style.display = 'block';
+            
+            // نوێکردنەوەی پوختە
+            updateDamageSummary();
+            
+            // دانانی بەرواری خۆکار
+            document.getElementById('damageDate').value = new Date().toISOString().split('T')[0];
+            
+            // دانانی بڕی کەمترین
+            document.getElementById('damageQuantity').value = 1;
+            document.getElementById('damageQuantity').max = product.stock;
+            document.getElementById('availableStockHint').textContent = `کەمترین: ١, زۆرترین: ${product.stock}`;
+        }
+
+        // نوێکردنەوەی پوختەی تێکچوون
+        function updateDamageSummary() {
+            if (!selectedDamageProduct) return;
+            
+            const quantity = parseInt(document.getElementById('damageQuantity').value) || 1;
+            const unit = document.getElementById('damageUnit').value;
+            const date = document.getElementById('damageDate').value;
+            
+            document.getElementById('damageQuantitySummary').textContent = quantity + ' ' + getUnitName(unit);
+            document.getElementById('damageUnitPriceSummary').textContent = selectedDamageProduct.purchasePrice.toLocaleString() + ' دینار';
+            
+            const totalLoss = quantity * selectedDamageProduct.purchasePrice;
+            document.getElementById('damageTotalSummary').textContent = totalLoss.toLocaleString() + ' دینار';
+            document.getElementById('damageDateSummary').textContent = date;
+        }
+
+        // گوێگرتن لە گۆڕانکاری لە فۆرمی تێکچوون
+        document.getElementById('damageQuantity')?.addEventListener('input', updateDamageSummary);
+        document.getElementById('damageUnit')?.addEventListener('change', updateDamageSummary);
+        document.getElementById('damageDate')?.addEventListener('change', updateDamageSummary);
+
+        // ڕێکخستنەوەی فۆرمی تێکچوون
+        document.getElementById('resetDamageForm')?.addEventListener('click', function() {
+            resetDamageForm();
+        });
+
+        function resetDamageForm() {
+            selectedDamageProduct = null;
+            document.getElementById('damageProductSearch').value = '';
+            document.getElementById('selectedDamageProductInfo').style.display = 'none';
+            document.getElementById('damageForm').style.display = 'none';
+            document.getElementById('damageQuantity').value = '1';
+            document.getElementById('damageUnit').value = 'piece';
+            document.getElementById('damageReason').value = 'expired';
+            document.getElementById('damageCustomReason').value = '';
+            document.getElementById('damageNotes').value = '';
+            document.getElementById('damageDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('damageProductSuggestions').style.display = 'none';
+        }
+
+        // تۆمارکردنی کاڵای تێکچوو
+        document.getElementById('submitDamageBtn')?.addEventListener('click', function() {
+            submitDamage();
+        });
+
+        function submitDamage() {
+            if (!selectedDamageProduct) {
+                showNotification('تکایە یەکەم جار کاڵایەک هەڵبژێرە!', 'error');
+                return;
+            }
+            
+            const quantity = parseInt(document.getElementById('damageQuantity').value);
+            if (!quantity || quantity <= 0) {
+                showNotification('تکایە بڕی کاڵای تێکچوو داخڵ بکە!', 'error');
+                return;
+            }
+            
+            if (quantity > selectedDamageProduct.stock) {
+                showNotification(`بڕی داخڵکراو لە بڕی بەردەست زیاترە! (بەردەست: ${selectedDamageProduct.stock})`, 'error');
+                return;
+            }
+            
+            const reason = document.getElementById('damageReason').value;
+            const customReason = document.getElementById('damageCustomReason').value;
+            const notes = document.getElementById('damageNotes').value;
+            const date = document.getElementById('damageDate').value;
+            const unit = document.getElementById('damageUnit').value;
+            
+            if (reason === 'other' && !customReason) {
+                showNotification('تکایە هۆکاری تێکچوون بنووسە!', 'error');
+                return;
+            }
+            
+            const totalLoss = quantity * selectedDamageProduct.purchasePrice;
+            
+            // دروستکردنی تۆماری تێکچوون
+            const damageRecord = {
+                id: sampleData.damagedProducts.length + 1,
+                productId: selectedDamageProduct.id,
+                productName: selectedDamageProduct.name,
+                barcode: selectedDamageProduct.barcode,
+                quantity: quantity,
+                unit: unit,
+                purchasePrice: selectedDamageProduct.purchasePrice,
+                totalLoss: totalLoss,
+                date: date,
+                reason: reason,
+                customReason: customReason,
+                notes: notes,
+                timestamp: new Date().toISOString()
+            };
+            
+            sampleData.damagedProducts.push(damageRecord);
+            
+            // کەمکردنەوەی کاڵا لە مخزن
+            selectedDamageProduct.stock -= quantity;
+            
+            // کەمکردنەوەی پارە لە سەرمایە (بە نرخی کڕین)
+            sampleData.cashBalance -= totalLoss;
+            
+            // نوێکردنەوەی نیشاندان
+            displayDamagedProducts();
+            displayExpiryProducts();
+            populateSampleData();
+            updateDashboardCash();
+            updateAllDashboardCards();
+            
+            showNotification(`${quantity} ${getUnitName(unit)} ${selectedDamageProduct.name} وەک کاڵای تێکچوو تۆمار کرا`, 'success');
+            
+            // ڕێکخستنەوەی فۆرم
+            resetDamageForm();
+        }
+
+        // چالاککردنی تاباتەکانی بەشی بەسەرچوون و تێکچوون
+        document.querySelectorAll('[data-loss-tab]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-loss-tab');
+                
+                document.querySelectorAll('[data-loss-tab]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('#lossProfitSection .tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                document.getElementById(tabId).classList.add('active');
+                
+                // نوێکردنەوەی نیشاندان کاتێ تابەکان دەکرێنەوە
+                if (tabId === 'expiryProducts') {
+                    displayExpiryProducts();
+                } else if (tabId === 'damagedProducts') {
+                    displayDamagedProducts();
+                }
+            });
+        });
 
         // ==============================================
         // کارگێڕە گشتییەکان
