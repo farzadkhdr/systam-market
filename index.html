@@ -2198,7 +2198,7 @@
                                     <thead style="background-color: var(--gray-light); position: sticky; top: 0;">
                                         <tr>
                                             <th style="padding: 12px;">کات</th>
-                                            <th style="padding: 12px;">فاکتوور</th>
+                                            <th style="padding: 12px;">کۆدی فاکتوور</th>
                                             <th style="padding: 12px;">کڕیار</th>
                                             <th style="padding: 12px;">جۆر</th>
                                             <th style="padding: 12px;">بڕ</th>
@@ -3391,6 +3391,7 @@
                     code: "INV-2023-001",
                     customer: "عەلی محەممەد",
                     date: "2023-12-15",
+                    time: "10:30",
                     total: 600000,
                     payment: "credit",
                     items: [
@@ -3402,6 +3403,7 @@
                     code: "INV-2023-002",
                     customer: "حوسێن عەلی",
                     date: "2023-12-14",
+                    time: "14:15",
                     total: 950000,
                     payment: "cash",
                     items: [
@@ -4270,11 +4272,16 @@
                 }
             });
             
+            const now = new Date();
+            const todayDate = now.toISOString().split('T')[0];
+            const currentTime = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+            
             const newSale = {
                 id: sampleData.sales.length + 1,
                 code: invoiceCode,
                 customer: paymentType === 'credit' && selectedCustomer ? selectedCustomer.name : 'کڕیاری نەناسراو',
-                date: new Date().toISOString().split('T')[0],
+                date: todayDate,
+                time: currentTime,
                 total: total,
                 payment: paymentType,
                 items: cart.map(item => ({
@@ -4284,7 +4291,7 @@
                     price: item.price,
                     total: item.price * item.quantity
                 })),
-                timestamp: new Date().toISOString()
+                timestamp: now.toISOString()
             };
             
             sampleData.sales.unshift(newSale);
@@ -4301,6 +4308,11 @@
             updateCartDisplay();
             updateAllDashboardCards();
             populateSampleData();
+            
+            // نوێکردنەوەی فرۆشتنەکانی ئەمرۆ
+            setTimeout(() => {
+                updateTodaySalesDisplay();
+            }, 100);
             
             showNotification(`فرۆشتنەکە بە سەرکەوتوویی تەواو بوو! کۆدی فاکتوورە: ${invoiceCode}`, 'success');
             
@@ -4576,6 +4588,8 @@
             }
             
             const cashAmount = parseInt(amount);
+            const now = new Date();
+            const currentTime = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
             
             const cashRecord = {
                 id: cashSettlementHistory.length + 1,
@@ -4584,12 +4598,12 @@
                 personName: selectedPartnerForCash.name,
                 amount: cashAmount,
                 date: document.getElementById('partnerCashDate').value,
-                time: document.getElementById('partnerCashTime').value,
+                time: document.getElementById('partnerCashTime').value || currentTime,
                 method: document.getElementById('partnerCashMethod').value,
                 reason: document.getElementById('partnerCashReason').value,
                 reference: document.getElementById('partnerCashReference').value,
                 notes: document.getElementById('partnerCashNotes').value,
-                timestamp: new Date().toISOString()
+                timestamp: now.toISOString()
             };
             
             cashSettlementHistory.push(cashRecord);
@@ -4613,6 +4627,10 @@
             updateCashTotals();
             updateAllDashboardCards();
             
+            // نوێکردنەوەی واسڵکردنەکانی ئەمرۆ
+            updateTodayCashDisplay();
+            updateTodaySalesDisplay();
+            
             showNotification(`واسڵکردنی ${cashAmount.toLocaleString()} دینار بۆ ${partner.name} تۆمار کرا`, 'success');
             
             resetPartnerCashForm();
@@ -4631,6 +4649,8 @@
             }
             
             const cashAmount = parseInt(amount);
+            const now = new Date();
+            const currentTime = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
             
             const cashRecord = {
                 id: cashSettlementHistory.length + 1,
@@ -4639,12 +4659,12 @@
                 personName: selectedCustomerForCash.name,
                 amount: cashAmount,
                 date: document.getElementById('customerCashDate').value,
-                time: document.getElementById('customerCashTime').value,
+                time: document.getElementById('customerCashTime').value || currentTime,
                 method: document.getElementById('customerCashMethod').value,
                 reason: document.getElementById('customerCashReason').value,
                 reference: document.getElementById('customerCashReference').value,
                 notes: document.getElementById('customerCashNotes').value,
-                timestamp: new Date().toISOString()
+                timestamp: now.toISOString()
             };
             
             cashSettlementHistory.push(cashRecord);
@@ -4667,6 +4687,10 @@
             updateCashHistoryDisplay();
             updateCashTotals();
             updateAllDashboardCards();
+            
+            // نوێکردنەوەی واسڵکردنەکانی ئەمرۆ
+            updateTodayCashDisplay();
+            updateTodaySalesDisplay();
             
             showNotification(`واسڵکردنی ${cashAmount.toLocaleString()} دینار بۆ ${customer.name} تۆمار کرا`, 'success');
             
@@ -5175,12 +5199,13 @@
             const todaySalesTotal = document.getElementById('todaySalesTotal');
             const todayAllSalesTotal = document.getElementById('todayAllSalesTotal');
             const todayAllList = document.getElementById('todayAllList');
+            const todayDate = new Date().toISOString().split('T')[0];
 
             if (!todaySalesList || !todaySalesTotal) return;
 
+            // کۆکردنەوەی فرۆشتنەکانی ئەمرۆ
             const todaySales = sampleData.sales.filter(sale => {
-                const saleDate = sale.date || sale.timestamp?.split('T')[0];
-                return saleDate === todayDate;
+                return sale.date === todayDate;
             });
 
             const totalSales = todaySales.reduce((sum, sale) => sum + sale.total, 0);
@@ -5189,6 +5214,7 @@
                 todayAllSalesTotal.textContent = `${totalSales.toLocaleString()} دینار`;
             }
 
+            // نمایشی فرۆشتنەکان
             todaySalesList.innerHTML = '';
             if (todaySales.length === 0) {
                 todaySalesList.innerHTML = '<tr><td colspan="5" style="padding: 30px; text-align: center;">هیچ فرۆشتنێک ئەمرۆ تۆمار نەکراوە</td></tr>';
@@ -5197,7 +5223,7 @@
                     const row = document.createElement('tr');
                     row.style.borderBottom = '1px solid var(--gray-light)';
                     row.innerHTML = `
-                        <td style="padding: 12px;">${sale.date || '00:00'}</td>
+                        <td style="padding: 12px;">${sale.time || '00:00'}</td>
                         <td style="padding: 12px;">${sale.code}</td>
                         <td style="padding: 12px;">${sale.customer}</td>
                         <td style="padding: 12px;">
@@ -5211,12 +5237,13 @@
                 });
             }
 
+            // نمایشی هەموو جوڵەکانی ئەمرۆ
             if (todayAllList) {
                 const allActivities = [];
 
                 todaySales.forEach(sale => {
                     allActivities.push({
-                        time: sale.date || '00:00',
+                        time: sale.time || '00:00',
                         type: 'فرۆشتن',
                         typeClass: 'text-primary',
                         icon: 'fa-shopping-cart',
@@ -5329,7 +5356,7 @@
                 .filter(sale => (sale.date || sale.timestamp?.split('T')[0]) === todayDate)
                 .map(sale => `
                     <tr>
-                        <td>${sale.date || '00:00'}</td>
+                        <td>${sale.time || '00:00'}</td>
                         <td>${sale.code}</td>
                         <td>${sale.customer}</td>
                         <td>${sale.payment === 'cash' ? 'نەقدی' : 'قەرز'}</td>
