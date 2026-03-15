@@ -1449,6 +1449,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="profitSettlement">
+                        <i class="fas fa-chart-pie"></i>
+                        حیساب کردنی قازانج
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="#" class="nav-link" data-section="inventory">
                         <i class="fas fa-warehouse"></i>
                         مخزن
@@ -1960,7 +1966,7 @@
                 </div>
             </section>
 
-            <!-- بەشی حیسابات کردنی ئەمرۆ (بەشی نوێ) -->
+            <!-- بەشی حیسابات کردنی ئەمرۆ -->
             <section id="dailySettlementSection" class="content-section">
                 <h2 class="section-title">حیسابات کردنی ئەمرۆ</h2>
                 
@@ -2042,6 +2048,99 @@
                                 <i class="fas fa-info-circle"></i> 
                                 کاتێک "تەواوکردنی حیساباتی ئەمرۆ" دەکەیت، پارەی ئەمرۆ دەگوازرێتەوە بۆ "کۆی گشتی پارەی واسڵ کراو" و ئاماری ئەمرۆ ڕێک دەخرێتەوە.
                             </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- بەشی حیساب کردنی قازانج (نوێ) -->
+            <section id="profitSettlementSection" class="content-section">
+                <h2 class="section-title">حیساب کردنی قازانج</h2>
+                
+                <div class="sale-purchase-container">
+                    <div class="item-form">
+                        <h3 style="margin-bottom: 20px; color: var(--primary);">
+                            <i class="fas fa-chart-pie"></i> یەکلاکردنەوەی قازانج
+                        </h3>
+                        
+                        <div style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: var(--border-radius); padding: 20px; margin-bottom: 25px;">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; text-align: center;">
+                                <div>
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">راس مال (سەرمایە)</div>
+                                    <div style="font-size: 1.8rem; font-weight: bold;" id="profitCapitalAmount">٠ دینار</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">قازانجی ئێستا</div>
+                                    <div style="font-size: 1.8rem; font-weight: bold;" id="profitCurrentAmount">٠ دینار</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
+                            <div style="background-color: var(--gray-light); border-radius: var(--border-radius); padding: 15px; text-align: center;">
+                                <p style="color: var(--gray); margin-bottom: 5px;">کۆی پارەی واسڵ کراو</p>
+                                <p style="font-size: 1.3rem; font-weight: bold; color: var(--success);" id="profitTotalCash">٠ دینار</p>
+                            </div>
+                            <div style="background-color: var(--gray-light); border-radius: var(--border-radius); padding: 15px; text-align: center;">
+                                <p style="color: var(--gray); margin-bottom: 5px;">کۆی کڕین (نەقدی)</p>
+                                <p style="font-size: 1.3rem; font-weight: bold; color: var(--danger);" id="profitTotalPurchases">٠ دینار</p>
+                            </div>
+                            <div style="background-color: var(--gray-light); border-radius: var(--border-radius); padding: 15px; text-align: center;">
+                                <p style="color: var(--gray); margin-bottom: 5px;">کۆی سەرفکردن</p>
+                                <p style="font-size: 1.3rem; font-weight: bold; color: var(--warning);" id="profitTotalExpenses">٠ دینار</p>
+                            </div>
+                        </div>
+                        
+                        <div style="background-color: #e8f4fd; border-radius: var(--border-radius); padding: 20px; margin-bottom: 25px;">
+                            <h4 style="margin-bottom: 15px;">مێژووی یەکلاکردنەوەکانی پێشوو</h4>
+                            
+                            <div style="max-height: 200px; overflow-y: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead style="background-color: var(--primary); color: white;">
+                                        <tr>
+                                            <th style="padding: 8px;">بەروار</th>
+                                            <th style="padding: 8px;">راس مال</th>
+                                            <th style="padding: 8px;">قازانج</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="profitHistoryList">
+                                        <tr>
+                                            <td colspan="3" style="text-align: center; padding: 20px;">هیچ مێژوویەک نییە</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px; padding: 15px; background-color: #fff3cd; border-radius: var(--border-radius); border-right: 4px solid #ffc107;">
+                            <p style="color: #856404;">
+                                <i class="fas fa-info-circle"></i> 
+                                کاتێک "یەکلاکردنەوەی قازانج" دەکەیت، قازانجی ئێستا دەگوازرێتەوە بۆ مێژوو و لە سفرەوە دەست پێدەکەیت.
+                            </p>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="profitSettlementDate">بەرواری یەکلاکردنەوە</label>
+                                <input type="date" id="profitSettlementDate" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="profitNote">تێبینی (ئارەزوومەندانە)</label>
+                                <input type="text" id="profitNote" placeholder="بۆ نموونە: قازانجی مانگی یەک">
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-success" id="completeProfitSettlement">
+                                <i class="fas fa-check-double"></i> یەکلاکردنەوەی قازانج
+                            </button>
+                            <button class="btn btn-primary" id="refreshProfitSettlement">
+                                <i class="fas fa-sync-alt"></i> نوێکردنەوە
+                            </button>
+                            <button class="btn btn-danger" id="resetProfitSettlement">
+                                <i class="fas fa-redo-alt"></i> ڕێکخستنەوە
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -2676,6 +2775,7 @@
             dailySettlements: []
         };
 
+        let profitHistory = []; // مێژووی یەکلاکردنەوەی قازانج
         let currentUser = null;
         let saleCart = [];
         let purchaseCart = [];
@@ -2756,9 +2856,10 @@
             if (sectionId === 'partners') refreshPartnersList();
             if (sectionId === 'cashSettlement') refreshCashDisplay();
             if (sectionId === 'dailySettlement') refreshDailySettlement();
+            if (sectionId === 'profitSettlement') refreshProfitSettlement();
         }
 
-        // ==================== نوێکردنەوەی داشبۆرد (دەستکاری کراو) ====================
+        // ==================== نوێکردنەوەی داشبۆرد ====================
         function refreshDashboard() {
             // ١. کۆی گشتی پارەی واسڵ کراو
             const totalCashSettled = systemData.cashHistory.reduce((sum, r) => sum + r.amount, 0);
@@ -2796,12 +2897,11 @@
             document.getElementById('capitalChange').textContent = totalCapital >= 0 ? 'سەرمایەی پۆزەتیڤ' : 'سەرمایەی نێگەتیڤ';
             
             // ٧. کۆی قازانج = کۆی گشتی پارەی واسڵ کراو - (کڕینی نەقدی + سەرفکردن)
-            // (هاوشێوەی راس مالە بەڵام بە ناوی قازانج)
             const totalProfit = totalCashSettled - (totalCashPurchase + totalExpensesOverall);
             document.getElementById('totalProfitDisplay').innerHTML = `${totalProfit.toLocaleString()} <span>دینار</span>`;
             document.getElementById('profitChange').textContent = totalProfit >= 0 ? 'قازانج' : 'زیان';
             
-            // لیستی کاڵای کەم بوو (وەک خۆی)
+            // لیستی کاڵای کەم بوو
             const lowStockProducts = systemData.products.filter(p => p.stock <= 5);
             const lowStockList = document.getElementById('lowStockList');
             lowStockList.innerHTML = '';
@@ -2817,7 +2917,7 @@
                 });
             }
             
-            // لیستی قەرزداران (وەک خۆی)
+            // لیستی قەرزداران
             const debtorsList = document.getElementById('debtorsList');
             debtorsList.innerHTML = '';
             
@@ -2912,7 +3012,13 @@
             results.slice(0, 5).forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'suggestion-item';
-                div.innerHTML = `${p.name} - ${p.salePrice.toLocaleString()} دینار (بەردەست: ${p.stock})`;
+                
+                // زیادکردنی وێنە بۆ پێشنیار
+                const imageHtml = p.image ? 
+                    `<img src="${p.image}" style="width: 30px; height: 30px; border-radius: 5px; margin-left: 10px; object-fit: cover;">` : 
+                    `<div style="width: 30px; height: 30px; background-color: var(--primary); border-radius: 5px; margin-left: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">${p.name.charAt(0)}</div>`;
+                
+                div.innerHTML = `<div style="display: flex; align-items: center;">${imageHtml} ${p.name} - ${p.salePrice.toLocaleString()} دینار (بەردەست: ${p.stock})</div>`;
                 div.onclick = () => addToSaleCart(p);
                 suggestions.appendChild(div);
             });
@@ -2937,7 +3043,8 @@
                         name: product.name,
                         price: product.salePrice,
                         quantity: 1,
-                        stock: product.stock
+                        stock: product.stock,
+                        image: product.image
                     });
                 } else {
                     showNotification('بڕی کاڵا لە مخزن تەواوە!', 'error');
@@ -2965,9 +3072,14 @@
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
                 
+                const imageHtml = item.image ? 
+                    `<img src="${item.image}" style="width: 40px; height: 40px; border-radius: 5px; object-fit: cover; margin-left: 10px;">` : 
+                    `<div style="width: 40px; height: 40px; background-color: var(--primary); border-radius: 5px; margin-left: 10px; display: flex; align-items: center; justify-content: center; color: white;">${item.name.charAt(0)}</div>`;
+                
                 html += `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
+                    <div class="cart-item" style="display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center;">
+                            ${imageHtml}
                             <div>
                                 <div><strong>${item.name}</strong></div>
                                 <div style="font-size: 0.9rem;">${item.price.toLocaleString()} دینار</div>
@@ -2980,8 +3092,8 @@
                             <button class="btn btn-danger btn-sm" onclick="removeFromSaleCart(${index})" style="margin-right: 10px;">
                                 <i class="fas fa-trash"></i>
                             </button>
+                            <span style="font-weight: bold; margin-right: 10px;">${itemTotal.toLocaleString()} دینار</span>
                         </div>
-                        <div style="margin-right: 15px; font-weight: bold;">${itemTotal.toLocaleString()} دینار</div>
                     </div>
                 `;
             });
@@ -3125,6 +3237,8 @@
             // نوێکردنەوە
             refreshDashboard();
             refreshSaleHistory();
+            refreshDailySettlement();
+            refreshProfitSettlement();
             
             showNotification('فرۆشتن بە سەرکەوتوویی تەواو بوو!', 'success');
         }
@@ -3410,6 +3524,8 @@
             // نوێکردنەوە
             refreshDashboard();
             refreshPurchaseHistory();
+            refreshDailySettlement();
+            refreshProfitSettlement();
             
             showNotification('کڕین بە سەرکەوتوویی تەواو بوو!', 'success');
         }
@@ -3614,6 +3730,8 @@
             
             refreshCashDisplay();
             refreshDashboard();
+            refreshDailySettlement();
+            refreshProfitSettlement();
         });
 
         document.getElementById('submitCustomerCashBtn')?.addEventListener('click', function() {
@@ -3662,6 +3780,8 @@
             
             refreshCashDisplay();
             refreshDashboard();
+            refreshDailySettlement();
+            refreshProfitSettlement();
         });
 
         function updateCashTotals() {
@@ -3713,6 +3833,8 @@
                 
                 refreshCashDisplay();
                 refreshDashboard();
+                refreshDailySettlement();
+                refreshProfitSettlement();
                 showNotification('سڕایەوە', 'info');
             }
         };
@@ -3792,11 +3914,116 @@
                 showNotification('حیساباتی ئەمرۆ بە سەرکەوتوویی تەواو کرا', 'success');
                 refreshDailySettlement();
                 refreshDashboard();
+                refreshProfitSettlement();
             }
         });
 
         document.getElementById('refreshDailySettlement')?.addEventListener('click', function() {
             refreshDailySettlement();
+            showNotification('نوێ کرایەوە', 'info');
+        });
+
+        // ==================== بەشی حیساب کردنی قازانج ====================
+        function refreshProfitSettlement() {
+            // کۆی گشتی پارەی واسڵ کراو
+            const totalCash = systemData.cashHistory.reduce((sum, r) => sum + r.amount, 0);
+            
+            // کۆی گشتی کڕینی نەقدی
+            const totalPurchases = systemData.purchases
+                .filter(p => p.payment === 'cash')
+                .reduce((sum, p) => sum + p.total, 0);
+            
+            // کۆی گشتی سەرفکردن
+            const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + e.amount, 0) +
+                                  systemData.damagedProducts.reduce((sum, d) => sum + d.totalLoss, 0);
+            
+            // راس مال و قازانج
+            const capital = totalCash - (totalPurchases + totalExpenses);
+            
+            // نیشاندان
+            document.getElementById('profitTotalCash').textContent = totalCash.toLocaleString() + ' دینار';
+            document.getElementById('profitTotalPurchases').textContent = totalPurchases.toLocaleString() + ' دینار';
+            document.getElementById('profitTotalExpenses').textContent = totalExpenses.toLocaleString() + ' دینار';
+            
+            document.getElementById('profitCapitalAmount').textContent = capital.toLocaleString() + ' دینار';
+            document.getElementById('profitCurrentAmount').textContent = capital.toLocaleString() + ' دینار';
+            
+            // نیشاندانی مێژووی یەکلاکردنەوەکان
+            displayProfitHistory();
+        }
+
+        function displayProfitHistory() {
+            const tbody = document.getElementById('profitHistoryList');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            if (profitHistory.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">هیچ مێژوویەک نییە</td></tr>';
+                return;
+            }
+            
+            // ڕیزکردن بەپێی بەروار (نوێترین لە سەرەوە)
+            const sorted = [...profitHistory].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sorted.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="padding: 8px; border-bottom: 1px solid var(--gray-light);">${item.date}</td>
+                    <td style="padding: 8px; border-bottom: 1px solid var(--gray-light); font-weight: bold;">${item.capital.toLocaleString()} دینار</td>
+                    <td style="padding: 8px; border-bottom: 1px solid var(--gray-light); color: var(--success); font-weight: bold;">${item.profit.toLocaleString()} دینار</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // یەکلاکردنەوەی قازانج
+        document.getElementById('completeProfitSettlement')?.addEventListener('click', function() {
+            const totalCash = systemData.cashHistory.reduce((sum, r) => sum + r.amount, 0);
+            const totalPurchases = systemData.purchases
+                .filter(p => p.payment === 'cash')
+                .reduce((sum, p) => sum + p.total, 0);
+            const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + e.amount, 0) +
+                                  systemData.damagedProducts.reduce((sum, d) => sum + d.totalLoss, 0);
+            
+            const capital = totalCash - (totalPurchases + totalExpenses);
+            
+            if (capital === 0) {
+                if (!confirm('قازانج سفرە. دڵنیایت لە تۆمارکردن؟')) return;
+            }
+            
+            const dateInput = document.getElementById('profitSettlementDate');
+            const date = dateInput.value || new Date().toISOString().split('T')[0];
+            const note = document.getElementById('profitNote').value;
+            
+            // تۆمارکردن لە مێژوو
+            profitHistory.push({
+                date: date,
+                capital: capital,
+                profit: capital,
+                note: note,
+                timestamp: new Date().toISOString()
+            });
+            
+            showNotification(`قازانج بە سەرکەوتوویی یەکلایی کرایەوە: ${capital.toLocaleString()} دینار`, 'success');
+            
+            // نوێکردنەوەی نیشاندان
+            refreshProfitSettlement();
+            
+            // پاککردنەوەی فۆرم
+            document.getElementById('profitNote').value = '';
+        });
+
+        // ڕێکخستنەوە (سفرکردنەوەی قازانج بەبێ تۆمارکردن)
+        document.getElementById('resetProfitSettlement')?.addEventListener('click', function() {
+            if (!confirm('دڵنیایت لە ڕێکخستنەوەی قازانج؟ ئەم کردارە تۆمار ناکرێت.')) return;
+            
+            refreshProfitSettlement();
+            showNotification('ڕێکخرایەوە', 'info');
+        });
+
+        document.getElementById('refreshProfitSettlement')?.addEventListener('click', function() {
+            refreshProfitSettlement();
             showNotification('نوێ کرایەوە', 'info');
         });
 
@@ -3815,15 +4042,26 @@
             systemData.products.forEach(p => {
                 const li = document.createElement('li');
                 li.className = 'list-item';
+                
+                // دروستکردنی وێنە
+                const imageHtml = p.image ? 
+                    `<img src="${p.image}" class="product-image-small" style="width: 40px; height: 40px; border-radius: 5px; margin-left: 10px; object-fit: cover;">` : 
+                    `<div style="width: 40px; height: 40px; background-color: var(--primary); border-radius: 5px; margin-left: 10px; display: flex; align-items: center; justify-content: center; color: white;">${p.name.charAt(0)}</div>`;
+                
                 li.innerHTML = `
-                    <div>
-                        <div><strong>${p.name}</strong></div>
-                        <div style="font-size: 0.9rem;">بارکۆد: ${p.barcode || '-'}</div>
+                    <div style="display: flex; align-items: center;">
+                        ${imageHtml}
+                        <div>
+                            <div><strong>${p.name}</strong></div>
+                            <div style="font-size: 0.9rem;">بارکۆد: ${p.barcode || '-'}</div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="item-value">${p.stock} ${getUnitName(p.unit)}</div>
-                        <div style="font-size: 0.9rem;">${p.salePrice.toLocaleString()} دینار</div>
-                        <div style="margin-top: 5px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div>
+                            <div class="item-value">${p.stock} ${getUnitName(p.unit)}</div>
+                            <div style="font-size: 0.9rem;">${p.salePrice.toLocaleString()} دینار</div>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
                             <button class="btn btn-info btn-sm" onclick="editProduct(${p.id})"><i class="fas fa-edit"></i></button>
                             <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})"><i class="fas fa-trash"></i></button>
                         </div>
@@ -3855,6 +4093,21 @@
             document.getElementById('expiryWarningGroup').style.display = this.checked ? 'block' : 'none';
         });
 
+        document.getElementById('productImage')?.addEventListener('change', function(e) {
+            const preview = document.getElementById('imagePreview');
+            const file = e.target.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = '<p style="color: var(--gray); font-size: 0.9rem;">هیچ وێنەیەک نییە</p>';
+            }
+        });
+
         document.getElementById('saveProductBtn')?.addEventListener('click', function() {
             const name = document.getElementById('productName').value.trim();
             const salePrice = parseInt(document.getElementById('salePrice').value);
@@ -3865,6 +4118,22 @@
                 return;
             }
             
+            // هەڵگرتنی وێنە
+            let imageData = null;
+            const fileInput = document.getElementById('productImage');
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageData = e.target.result;
+                    saveProductWithImage(name, salePrice, stock, imageData);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                saveProductWithImage(name, salePrice, stock, null);
+            }
+        });
+
+        function saveProductWithImage(name, salePrice, stock, imageData) {
             const product = {
                 id: editingProductId || systemData.products.length + 1,
                 name: name,
@@ -3873,6 +4142,7 @@
                 salePrice: salePrice,
                 stock: stock,
                 unit: document.getElementById('primaryUnit').value,
+                image: imageData,
                 hasExpiryDate: document.getElementById('hasExpiryDate').checked,
                 expiryDate: document.getElementById('hasExpiryDate').checked ? document.getElementById('expiryDate').value : null,
                 expiryWarningDays: document.getElementById('hasExpiryDate').checked ? parseInt(document.getElementById('expiryWarningDays').value) : null
@@ -3880,7 +4150,13 @@
             
             if (editingProductId) {
                 const index = systemData.products.findIndex(p => p.id === editingProductId);
-                if (index !== -1) systemData.products[index] = product;
+                if (index !== -1) {
+                    // پاراستنی وێنەی کۆن ئەگەر وێنەی نوێ هەڵنەگیرابێت
+                    if (!product.image && systemData.products[index].image) {
+                        product.image = systemData.products[index].image;
+                    }
+                    systemData.products[index] = product;
+                }
             } else {
                 systemData.products.push(product);
             }
@@ -3890,7 +4166,7 @@
             resetProductForm();
             refreshInventory();
             showNotification('کاڵا هەڵگیرا', 'success');
-        });
+        }
 
         function resetProductForm() {
             document.getElementById('productName').value = '';
@@ -3906,7 +4182,7 @@
             document.getElementById('primaryUnit').value = 'piece';
             document.getElementById('secondaryUnit').value = '';
             document.getElementById('secondaryUnitQuantity').value = '';
-            document.getElementById('imagePreview').innerHTML = '<p style="color: var(--gray);">هیچ وێنەیەک نییە</p>';
+            document.getElementById('imagePreview').innerHTML = '<p style="color: var(--gray); font-size: 0.9rem;">هیچ وێنەیەک نییە</p>';
             editingProductId = null;
         }
 
@@ -3923,12 +4199,24 @@
             document.getElementById('stockQuantity').value = product.stock;
             document.getElementById('primaryUnit').value = product.unit || 'piece';
             
+            // نیشاندانی وێنە
+            const preview = document.getElementById('imagePreview');
+            if (product.image) {
+                preview.innerHTML = `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            } else {
+                preview.innerHTML = '<p style="color: var(--gray); font-size: 0.9rem;">هیچ وێنەیەک نییە</p>';
+            }
+            
             if (product.hasExpiryDate) {
                 document.getElementById('hasExpiryDate').checked = true;
                 document.getElementById('expiryDateGroup').style.display = 'block';
                 document.getElementById('expiryWarningGroup').style.display = 'block';
                 document.getElementById('expiryDate').value = product.expiryDate || '';
                 document.getElementById('expiryWarningDays').value = product.expiryWarningDays || 30;
+            } else {
+                document.getElementById('hasExpiryDate').checked = false;
+                document.getElementById('expiryDateGroup').style.display = 'none';
+                document.getElementById('expiryWarningGroup').style.display = 'none';
             }
             
             document.getElementById('productForm').style.display = 'block';
@@ -4196,6 +4484,8 @@
             refreshExpiryList();
             refreshDamageList();
             refreshDashboard();
+            refreshDailySettlement();
+            refreshProfitSettlement();
             showNotification('کاڵای تێکچوو تۆمار کرا', 'success');
         });
 
@@ -4224,6 +4514,8 @@
                 refreshExpiryList();
                 refreshDamageList();
                 refreshDashboard();
+                refreshDailySettlement();
+                refreshProfitSettlement();
                 showNotification('گواسترایەوە بۆ تێکچوو', 'info');
             }
         };
@@ -4250,9 +4542,40 @@
             refreshExpiryList();
             refreshDamageList();
             refreshDailySettlement();
+            refreshProfitSettlement();
             updateCashTotals();
             updateCashHistory();
         }
+
+        // ==================== زیادکردنی گوێگری بۆ بارکۆد (سکانەر) ====================
+        document.addEventListener('keypress', function(e) {
+            // ئەگەر ناوێکی چالاک وەک input هەیە، پشتگوێی بکە
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            // کۆکردنەوەی ژمارەکان
+            if (!isNaN(parseInt(e.key))) {
+                barcodeBuffer += e.key;
+                
+                // ئەگەر ٣ ژمارە کۆبکرایەوە، دەست بکە بە گەڕان
+                if (barcodeBuffer.length >= 3) {
+                    const product = systemData.products.find(p => p.barcode === barcodeBuffer);
+                    if (product) {
+                        // ئەگەر لە بەشی فرۆشتندا بین، زیاد بکە بۆ سەبەتە
+                        if (document.getElementById('newSale').classList.contains('active')) {
+                            addToSaleCart(product);
+                            showNotification(`${product.name} زیاد کرا بۆ سەبەتە`, 'success');
+                        }
+                    }
+                    barcodeBuffer = '';
+                }
+                
+                // دوای ٢ چرکە بەفر بکەرەوە
+                clearTimeout(window.barcodeTimeout);
+                window.barcodeTimeout = setTimeout(() => {
+                    barcodeBuffer = '';
+                }, 2000);
+            }
+        });
 
         // ==================== گوێگرتن لە کارلێکەکان ====================
         document.querySelectorAll('.nav-link').forEach(link => {
