@@ -6,7 +6,7 @@
     <title>سیستەمی فرۆشتی ئەلکترۆنیات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* هەموو CSS لێرە - وەک خۆی دەمێنێتەوە */
+        /* هەموو CSS لێرە */
         :root {
             --primary: #4361ee;
             --primary-dark: #3a56d4;
@@ -1718,7 +1718,9 @@
                     
                     <!-- بەشی فرۆشتن (نوێکراوە) -->
                     <div class="tab-content active" id="newSale">
-                        <!-- سەبەتەی فرۆشتن لێرە بە JavaScript دروست دەکرێت -->
+                        <div class="cart-container" id="saleCartContainer">
+                            <!-- سەبەتەی فرۆشتن لێرە بە JavaScript دروست دەکرێت -->
+                        </div>
                     </div>
                     
                     <!-- بەشی کڕین -->
@@ -3118,7 +3120,6 @@
         let editingProductId = null;
         let barcodeBuffer = '';
         let barcodeTimeout = null;
-        let dateTimeInterval = null;
 
         // ==============================================
         // کۆدی چوونەژوورەوە
@@ -3176,12 +3177,6 @@
             document.getElementById('username').value = 'farzad';
             document.getElementById('password').value = 'farzad1234';
             
-            // ڕاگرتنی ئینتەرڤاڵی کات
-            if (dateTimeInterval) {
-                clearInterval(dateTimeInterval);
-                dateTimeInterval = null;
-            }
-            
             updateCartDisplay();
             showNotification('بە سەرکەوتوویی چوویتە دەرەوە', 'info');
         });
@@ -3233,20 +3228,11 @@
                 document.getElementById('sidebar').classList.remove('active');
             }
             
-            // ڕاگرتنی ئینتەرڤاڵی کات کاتێک لە بەشی فرۆشتن دەچیتە دەرەوە
-            if (sectionId !== 'salesPurchases') {
-                if (dateTimeInterval) {
-                    clearInterval(dateTimeInterval);
-                    dateTimeInterval = null;
-                }
-            }
-            
             if (sectionId === 'salesPurchases') {
                 setTimeout(() => {
                     const newSaleTab = document.querySelector('#newSale');
                     if (newSaleTab && newSaleTab.classList.contains('active')) {
                         initializeSaleSystem();
-                        startDateTimeUpdater();
                     }
                 }, 100);
             }
@@ -3269,29 +3255,6 @@
             if (sectionId === 'dashboard') {
                 updateAllDashboardCards();
             }
-        }
-
-        function startDateTimeUpdater() {
-            // ڕاگرتنی ئینتەرڤاڵی پێشوو ئەگەر هەبوو
-            if (dateTimeInterval) {
-                clearInterval(dateTimeInterval);
-            }
-            
-            // نوێکردنەوەی کات و بەروار هەر چرکەیەک
-            dateTimeInterval = setInterval(() => {
-                const dateDisplay = document.getElementById('currentDateDisplay');
-                const timeDisplay = document.getElementById('currentTimeDisplay');
-                
-                if (dateDisplay && timeDisplay) {
-                    const now = new Date();
-                    dateDisplay.textContent = now.toLocaleDateString('ar-IQ');
-                    timeDisplay.textContent = now.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                } else {
-                    // ئەگەر دیار نەبوو، ئینتەرڤاڵەکە ڕابگرە
-                    clearInterval(dateTimeInterval);
-                    dateTimeInterval = null;
-                }
-            }, 1000);
         }
 
         function setDefaultDateTime() {
@@ -3672,23 +3635,6 @@
                     </div>
                 </div>
                 
-                <!-- زیادکردنی بەشی کات و بەروار -->
-                <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: var(--border-radius); padding: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <i class="fas fa-calendar-alt" style="margin-left: 8px;"></i>
-                        <span id="currentDateDisplay">${new Date().toLocaleDateString('ar-IQ')}</span>
-                    </div>
-                    <div>
-                        <i class="fas fa-clock" style="margin-left: 8px;"></i>
-                        <span id="currentTimeDisplay">${new Date().toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' })}</span>
-                    </div>
-                    <div>
-                        <span class="badge" style="background-color: rgba(255,255,255,0.2); color: white; padding: 5px 10px;">
-                            <i class="fas fa-shopping-cart"></i> فرۆشتن
-                        </span>
-                    </div>
-                </div>
-                
                 <div class="search-container" style="margin-bottom: 15px;">
                     <div class="search-box">
                         <input type="text" id="productSearchSale" placeholder="گەڕان بەدوای کاڵا یان بارکۆد...">
@@ -3844,7 +3790,7 @@
                         }
                     }
                     
-                    updateCartTimeSummary();
+                    updateCartSummary();
                 });
             });
             
@@ -3946,9 +3892,7 @@
             
             if (existingIndex !== -1) {
                 cart[existingIndex].quantity += quantity;
-                cart[existingIndex].lastUpdated = new Date().toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             } else {
-                const now = new Date();
                 const cartItem = {
                     id: productId,
                     name: product.name,
@@ -3960,11 +3904,7 @@
                     barcode: product.barcode,
                     hasSecondaryUnit: product.hasSecondaryUnit,
                     secondaryUnit: product.secondaryUnit,
-                    secondaryUnitQuantity: product.secondaryUnitQuantity,
-                    // زیادکردنی کات
-                    addedTime: now.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-                    addedDate: now.toLocaleDateString('ar-IQ'),
-                    lastUpdated: now.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                    secondaryUnitQuantity: product.secondaryUnitQuantity
                 };
                 
                 cart.push(cartItem);
@@ -3993,7 +3933,7 @@
                 `;
                 
                 cartTotalSale.textContent = '٠ دینار';
-                updateCartTimeSummary();
+                cartSummary.innerHTML = '';
                 return;
             }
             
@@ -4025,11 +3965,7 @@
                             <div style="font-size: 0.9rem; color: var(--gray); margin-top: 5px;">
                                 بارکۆد: ${item.barcode}
                             </div>
-                            <!-- زیادکردنی کاتی زیادکردنی کاڵا -->
-                            <div style="font-size: 0.8rem; color: var(--info); margin-top: 3px;">
-                                <i class="far fa-clock"></i> زیاد کرا: ${item.addedTime}
-                            </div>
-                            <div style="display: flex; align-items: center; margin-top: 10px; gap: 10px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; margin-top: 10px; gap: 10px;">
                                 <div style="display: flex; align-items: center; background-color: var(--gray-light); border-radius: 5px; padding: 2px 5px;">
                                     <button class="btn-quantity" onclick="updateCartItemQuantity(${index}, -1)">
                                         <i class="fas fa-minus"></i>
@@ -4071,50 +4007,29 @@
             });
             
             cartTotalSale.textContent = total.toLocaleString() + ' دینار';
-            updateCartTimeSummary(total, totalItems);
+            updateCartSummary();
         }
 
-        function updateCartTimeSummary(total, totalItems) {
+        function updateCartSummary() {
             const cartSummary = document.getElementById('cartSummary');
             if (!cartSummary) return;
             
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
-            const dateStr = now.toLocaleDateString('ar-IQ');
+            if (cart.length === 0) {
+                cartSummary.innerHTML = '';
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
             
             const paymentType = document.querySelector('#newSale .payment-option.selected')?.getAttribute('data-payment') || 'cash';
+            let summaryText = `${totalItems} کاڵا | ${total.toLocaleString()} دینار | ${paymentType === 'cash' ? 'نەقدی' : 'قەرز'}`;
             
-            // ژماردنی کاڵا کە لە ١٠ خولەکی ڕابردوو زیاد کراون
-            const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
-            const recentItems = cart.filter(item => {
-                if (!item.addedTime) return false;
-                const [hours, minutes, seconds] = item.addedTime.split(':');
-                const itemTime = new Date();
-                itemTime.setHours(parseInt(hours), parseInt(minutes), parseInt(seconds) || 0);
-                return itemTime > tenMinutesAgo;
-            }).length;
+            if (paymentType === 'credit' && selectedCustomer) {
+                summaryText += ` | کەس: ${selectedCustomer.name}`;
+            }
             
-            let summaryHTML = `
-                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--gray-light);">
-                    <div style="display: flex; justify-content: space-between; color: var(--gray); font-size: 0.9rem;">
-                        <span><i class="far fa-calendar-alt"></i> ${dateStr}</span>
-                        <span><i class="far fa-clock"></i> ${timeStr}</span>
-                        <span><i class="fas fa-shopping-bag"></i> ${totalItems || 0} کاڵا</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
-                        <span style="color: var(--info);">
-                            <i class="fas fa-hourglass-half"></i> 
-                            ${recentItems} کاڵا لە ١٠ خولەکی ڕابردوو
-                        </span>
-                        <span style="color: ${paymentType === 'cash' ? 'var(--success)' : 'var(--warning)'};">
-                            <i class="fas fa-${paymentType === 'cash' ? 'money-bill' : 'file-invoice'}"></i>
-                            ${paymentType === 'cash' ? 'نەقدی' : 'قەرز'}
-                        </span>
-                    </div>
-                </div>
-            `;
-            
-            cartSummary.innerHTML = summaryHTML;
+            cartSummary.innerHTML = summaryText;
         }
 
         window.updateCartItemQuantity = function(index, change, newValue = null) {
@@ -4141,7 +4056,6 @@
             }
             
             cart[index].quantity = newQuantity;
-            cart[index].lastUpdated = new Date().toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             updateCartDisplay();
         };
 
@@ -4153,7 +4067,6 @@
             
             if (newUnit === product.unit || (product.hasSecondaryUnit && newUnit === product.secondaryUnit)) {
                 cart[index].unit = newUnit;
-                cart[index].lastUpdated = new Date().toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 
                 if (newUnit === product.unit) {
                     cart[index].price = cart[index].originalPrice;
@@ -4175,7 +4088,6 @@
             }
             
             cart[index].price = newPrice;
-            cart[index].lastUpdated = new Date().toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             updateCartDisplay();
         };
 
@@ -4203,17 +4115,6 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <!-- زیادکردنی زانیاری کات -->
-                            <div style="background-color: var(--gray-light); padding: 10px; border-radius: var(--border-radius); margin-bottom: 20px;">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span><i class="far fa-clock"></i> زیاد کرا: ${item.addedTime || 'نەزانراو'}</span>
-                                    <span><i class="far fa-calendar-alt"></i> ${item.addedDate || 'ئەمرۆ'}</span>
-                                </div>
-                                <div style="margin-top: 5px;">
-                                    <span><i class="fas fa-sync-alt"></i> دوایین نوێکردنەوە: ${item.lastUpdated || 'نەزانراو'}</span>
-                                </div>
-                            </div>
-                        
                             <div class="form-group">
                                 <label>بڕ</label>
                                 <input type="number" id="editQuantity" value="${item.quantity}" min="1" max="${product.stock}" style="width: 100%; padding: 10px;">
@@ -4273,7 +4174,6 @@
             cart[index].quantity = newQuantity;
             cart[index].unit = newUnit;
             cart[index].price = newPrice;
-            cart[index].lastUpdated = new Date().toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             
             updateCartDisplay();
             document.getElementById('editCartItemModal').remove();
@@ -4389,17 +4289,8 @@
             
             sampleData.sales.unshift(newSale);
             
-            // ===== گۆڕانکاری: ئەگەر فرۆشتن بە نەقد بوو، بچێتە ناو حیسابی ئەمرۆ (نەک ڕاستەوخۆ بۆ کۆی گشتی) =====
             if (paymentType === 'cash') {
-                todayCashRecords.push({
-                    id: todayCashRecords.length + 1,
-                    amount: total,
-                    method: 'cash',
-                    reason: `فرۆشتن - ${invoiceCode}`,
-                    time: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }),
-                    timestamp: new Date().toISOString()
-                });
-                // sampleData.cashBalance += total; // ئەم هێڵە لابراوە
+                sampleData.cashBalance += total;
             } else if (paymentType === 'credit' && selectedCustomer) {
                 selectedCustomer.debt += total;
             }
@@ -4409,8 +4300,6 @@
             
             updateCartDisplay();
             updateAllDashboardCards();
-            updateTodayCashDisplay();
-            updateTodaySalesDisplay();
             populateSampleData();
             
             showNotification(`فرۆشتنەکە بە سەرکەوتوویی تەواو بوو! کۆدی فاکتوورە: ${invoiceCode}`, 'success');
@@ -4704,18 +4593,7 @@
             };
             
             cashSettlementHistory.push(cashRecord);
-            
-            // ===== گۆڕانکاری: زیادکردن بۆ حیسابی ئەمرۆ (نەک ڕاستەوخۆ بۆ کۆی گشتی) =====
-            todayCashRecords.push({
-                id: todayCashRecords.length + 1,
-                amount: cashAmount,
-                method: cashRecord.method,
-                reason: `واسڵکردن بۆ شەریک - ${selectedPartnerForCash.name}${cashRecord.reason ? ': ' + cashRecord.reason : ''}`,
-                time: cashRecord.time,
-                timestamp: new Date().toISOString()
-            });
-            
-            // sampleData.cashBalance += cashAmount; // ئەم هێڵە لابراوە
+            sampleData.cashBalance += cashAmount;
             
             let partner = selectedPartnerForCash;
             
@@ -4733,10 +4611,9 @@
             
             updateCashHistoryDisplay();
             updateCashTotals();
-            updateTodayCashDisplay();
             updateAllDashboardCards();
             
-            showNotification(`واسڵکردنی ${cashAmount.toLocaleString()} دینار بۆ ${partner.name} تۆمار کرا (لە حیسابی ئەمرۆ)`, 'success');
+            showNotification(`واسڵکردنی ${cashAmount.toLocaleString()} دینار بۆ ${partner.name} تۆمار کرا`, 'success');
             
             resetPartnerCashForm();
         };
@@ -4771,18 +4648,7 @@
             };
             
             cashSettlementHistory.push(cashRecord);
-            
-            // ===== گۆڕانکاری: زیادکردن بۆ حیسابی ئەمرۆ (نەک ڕاستەوخۆ بۆ کۆی گشتی) =====
-            todayCashRecords.push({
-                id: todayCashRecords.length + 1,
-                amount: cashAmount,
-                method: cashRecord.method,
-                reason: `واسڵکردن بۆ کەس - ${selectedCustomerForCash.name}${cashRecord.reason ? ': ' + cashRecord.reason : ''}`,
-                time: cashRecord.time,
-                timestamp: new Date().toISOString()
-            });
-            
-            // sampleData.cashBalance += cashAmount; // ئەم هێڵە لابراوە
+            sampleData.cashBalance += cashAmount;
             
             let customer = selectedCustomerForCash;
             
@@ -4800,10 +4666,9 @@
             
             updateCashHistoryDisplay();
             updateCashTotals();
-            updateTodayCashDisplay();
             updateAllDashboardCards();
             
-            showNotification(`واسڵکردنی ${cashAmount.toLocaleString()} دینار بۆ ${customer.name} تۆمار کرا (لە حیسابی ئەمرۆ)`, 'success');
+            showNotification(`واسڵکردنی ${cashAmount.toLocaleString()} دینار بۆ ${customer.name} تۆمار کرا`, 'success');
             
             resetCustomerCashForm();
         };
@@ -5303,24 +5168,6 @@
             if (todayAllCashTotal) {
                 todayAllCashTotal.textContent = `${totalToday.toLocaleString()} دینار`;
             }
-            
-            // نوێکردنەوەی پشکنینی بڕی پارە لە فۆرمی گواستنەوە
-            const dailyCashAmount = document.getElementById('dailyCashAmount');
-            if (dailyCashAmount) {
-                dailyCashAmount.max = totalToday;
-                dailyCashAmount.setAttribute('max', totalToday);
-                
-                // زیادکردنی تێبینی لەسەر کۆی پارە
-                const maxNote = document.getElementById('dailyCashMaxNote') || document.createElement('small');
-                if (!document.getElementById('dailyCashMaxNote')) {
-                    maxNote.id = 'dailyCashMaxNote';
-                    maxNote.style.color = 'var(--info)';
-                    maxNote.style.display = 'block';
-                    maxNote.style.marginTop = '5px';
-                    dailyCashAmount.parentNode.appendChild(maxNote);
-                }
-                maxNote.textContent = `کۆی گشتی ئەمرۆ: ${totalToday.toLocaleString()} دینار`;
-            }
         }
 
         function updateTodaySalesDisplay() {
@@ -5428,34 +5275,32 @@
             const now = new Date();
             const time = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
 
-            // پشکنینی ئەوەی کە بڕی پارە لە حیسابی ئەمرۆ کەمتر نییە
-            const totalTodayCash = todayCashRecords.reduce((sum, record) => sum + record.amount, 0);
-            if (amount > totalTodayCash) {
-                showNotification(`بڕی پارە نابێت لە کۆی حیسابی ئەمرۆ زیاتر بێت! (کۆی ئەمرۆ: ${totalTodayCash.toLocaleString()} دینار)`, 'error');
-                return;
-            }
+            const record = {
+                id: todayCashRecords.length + 1,
+                amount: amount,
+                method: method,
+                reason: reason,
+                time: time,
+                timestamp: now.toISOString()
+            };
+            todayCashRecords.push(record);
 
-            // کەمکردنەوە لە حیسابی ئەمرۆ و زیادکردن بۆ کۆی گشتی
-            // زیادکردن بۆ کۆی پارەی واسڵ کراو
             sampleData.cashBalance += amount;
-            
-            // تۆمارکردنی گواستنەوەکە
-            const transferRecord = {
+
+            cashSettlementHistory.push({
                 id: cashSettlementHistory.length + 1,
-                type: 'transfer',
-                personName: 'گواستنەوە لە حیسابی ئەمرۆ',
+                type: 'daily',
+                personName: 'حیسابی ئەمرۆ',
                 amount: amount,
                 date: todayDate,
                 time: time,
                 method: method,
-                reason: reason || 'گواستنەوەی پارە بۆ کۆی گشتی',
+                reason: reason || 'واسڵکردنی پارەی ئەمرۆ',
                 reference: '',
                 notes: '',
                 timestamp: now.toISOString()
-            };
-            cashSettlementHistory.push(transferRecord);
+            });
 
-            // نوێکردنەوەی پیشاندانەکان
             updateTodayCashDisplay();
             updateTodaySalesDisplay();
             updateAllDashboardCards();
@@ -5463,7 +5308,7 @@
             amountInput.value = '';
             document.getElementById('dailyCashReason').value = '';
 
-            showNotification(`${amount.toLocaleString()} دینار بە سەرکەوتوویی گواسترایەوە لە حیسابی ئەمرۆ بۆ کۆی پارەی واسڵ کراو`, 'success');
+            showNotification(`${amount.toLocaleString()} دینار بە سەرکەوتوویی گواسترایەوە بۆ کۆی پارەی واسڵ کراو`, 'success');
         }
 
         window.refreshTodaySales = function() {
@@ -6083,7 +5928,6 @@
                         if (tabId === 'newSale') {
                             setTimeout(() => {
                                 initializeSaleSystem();
-                                startDateTimeUpdater();
                             }, 100);
                         }
                         
