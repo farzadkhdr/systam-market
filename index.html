@@ -2761,7 +2761,7 @@
     </div>
 
     <script>
-        // ==================== داتا سەرەتاییەکان (لە سفرەوە) ====================
+        // ==================== داتا سەرەتاییەکان (چاککراو بۆ هەڵگرتنی داتا) ====================
         let systemData = {
             cashBalance: 0,
             products: [],
@@ -2787,6 +2787,175 @@
         let editingProductId = null;
         let barcodeBuffer = '';
 
+        // ==================== فەنکشنەکانی هەڵگرتنی داتا ====================
+        function loadSystemData() {
+            const savedData = localStorage.getItem('electronicsSystemData');
+            if (savedData) {
+                try {
+                    systemData = JSON.parse(savedData);
+                } catch (e) {
+                    console.error('هەڵەیەک ڕویدا لە خوێندنەوەی داتا');
+                    initializeDefaultData();
+                }
+            } else {
+                initializeDefaultData();
+            }
+            
+            // بارکردنی مێژووی قازانج
+            const savedProfitHistory = localStorage.getItem('profitHistory');
+            if (savedProfitHistory) {
+                try {
+                    profitHistory = JSON.parse(savedProfitHistory);
+                } catch (e) {
+                    profitHistory = [];
+                }
+            }
+        }
+
+        function initializeDefaultData() {
+            systemData = {
+                cashBalance: 0,
+                products: [],
+                customers: [],
+                partners: [],
+                sales: [],
+                purchases: [],
+                cashHistory: [],
+                expenseHistory: [],
+                damagedProducts: [],
+                dailySettlements: []
+            };
+            
+            // زیادکردنی داتای نموونەیی
+            addSampleData();
+        }
+
+        function addSampleData() {
+            // کەسەکان
+            systemData.customers = [
+                { id: 1, name: 'فەرزاد محەمەد', phone: '٠٧٧٠١٢٣٤٥٦٧', address: 'سلێمانی', debt: 25000 },
+                { id: 2, name: 'دیار حەمە', phone: '٠٧٧٠١٢٣٤٥٦٨', address: 'هەولێر', debt: 0 },
+                { id: 3, name: 'ڕێبین عومەر', phone: '٠٧٧٠١٢٣٤٥٦٩', address: 'دهۆک', debt: 15000 }
+            ];
+            
+            // شەریکەکان
+            systemData.partners = [
+                { id: 1, name: 'کەریم عەلی', phone: '٠٧٧٠٧٦٥٤٣٢١', address: 'سلێمانی', debt: -50000 },
+                { id: 2, name: 'محەمەد نەجمەدین', phone: '٠٧٧٠٧٦٥٤٣٢٢', address: 'سلێمانی', debt: 0 }
+            ];
+            
+            // کاڵاکان
+            systemData.products = [
+                { 
+                    id: 1, 
+                    name: 'مۆبایل سامسۆنگ A14', 
+                    barcode: '8806090555555',
+                    purchasePrice: 200000, 
+                    salePrice: 250000, 
+                    stock: 15, 
+                    unit: 'piece',
+                    hasExpiryDate: false
+                },
+                { 
+                    id: 2, 
+                    name: 'لپتۆپ Lenovo', 
+                    barcode: '194252297777',
+                    purchasePrice: 650000, 
+                    salePrice: 750000, 
+                    stock: 8, 
+                    unit: 'piece',
+                    hasExpiryDate: false
+                },
+                { 
+                    id: 3, 
+                    name: 'پاوەر بانک', 
+                    barcode: '6935172800000',
+                    purchasePrice: 15000, 
+                    salePrice: 25000, 
+                    stock: 3, 
+                    unit: 'piece',
+                    hasExpiryDate: true,
+                    expiryDate: '2025-06-15',
+                    expiryWarningDays: 30
+                },
+                { 
+                    id: 4, 
+                    name: 'کێبڵ USB-C', 
+                    barcode: '6921468600000',
+                    purchasePrice: 3000, 
+                    salePrice: 5000, 
+                    stock: 45, 
+                    unit: 'piece',
+                    hasExpiryDate: false
+                }
+            ];
+            
+            // مێژووی فرۆشتن
+            systemData.sales = [
+                {
+                    id: 1,
+                    code: 'INV-2024-1',
+                    customer: 'فەرزاد محەمەد',
+                    date: '2024-01-15',
+                    total: 275000,
+                    payment: 'credit',
+                    items: [
+                        { name: 'مۆبایل سامسۆنگ A14', quantity: 1, price: 250000, total: 250000 },
+                        { name: 'پاوەر بانک', quantity: 1, price: 25000, total: 25000 }
+                    ]
+                },
+                {
+                    id: 2,
+                    code: 'INV-2024-2',
+                    customer: 'نەناسراو',
+                    date: '2024-01-16',
+                    total: 50000,
+                    payment: 'cash',
+                    items: [
+                        { name: 'کێبڵ USB-C', quantity: 10, price: 5000, total: 50000 }
+                    ]
+                }
+            ];
+            
+            // مێژووی کڕین
+            systemData.purchases = [
+                {
+                    id: 1,
+                    code: 'PUR-2024-1',
+                    partner: 'کەریم عەلی',
+                    date: '2024-01-10',
+                    total: 1000000,
+                    payment: 'credit',
+                    items: [
+                        { name: 'مۆبایل سامسۆنگ A14', quantity: 5, price: 200000, total: 1000000 }
+                    ]
+                }
+            ];
+            
+            // مێژووی واسڵکردن
+            systemData.cashHistory = [
+                { id: 1, type: 'customer', personId: 1, personName: 'فەرزاد محەمەد', amount: 50000, date: '2024-01-15', time: '10:30', method: 'cash', reason: 'بەشێک لە قەرز' },
+                { id: 2, type: 'partner', personId: 1, personName: 'کەریم عەلی', amount: 100000, date: '2024-01-14', time: '14:20', method: 'transfer', reason: 'پارەی شەریک' }
+            ];
+            
+            // سەرفکردن
+            systemData.expenseHistory = [
+                { id: 1, type: 'other', amount: 25000, date: '2024-01-13', category: 'rent', description: 'کرێی دوکان' }
+            ];
+            
+            // کاڵای تێکچوو
+            systemData.damagedProducts = [
+                { id: 1, productId: 3, productName: 'پاوەر بانک', quantity: 2, totalLoss: 30000, date: '2024-01-12', reason: 'expired' }
+            ];
+            
+            saveSystemData();
+        }
+
+        function saveSystemData() {
+            localStorage.setItem('electronicsSystemData', JSON.stringify(systemData));
+            localStorage.setItem('profitHistory', JSON.stringify(profitHistory));
+        }
+
         // ==================== چوونەژوورەوە ====================
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -2799,6 +2968,9 @@
                 document.getElementById('loginPage').style.display = 'none';
                 document.getElementById('mainPage').style.display = 'flex';
                 document.getElementById('currentUser').textContent = 'فەرزاد';
+                
+                // بارکردنی داتا لە localStorage
+                loadSystemData();
                 
                 // دانانی بەرواری خۆکار
                 setDefaultDates();
@@ -2862,21 +3034,21 @@
         // ==================== نوێکردنەوەی داشبۆرد ====================
         function refreshDashboard() {
             // ١. کۆی گشتی پارەی واسڵ کراو
-            const totalCashSettled = systemData.cashHistory.reduce((sum, r) => sum + r.amount, 0);
+            const totalCashSettled = systemData.cashHistory.reduce((sum, r) => sum + (r.amount || 0), 0);
             document.getElementById('totalCashSettledDisplay').innerHTML = `${totalCashSettled.toLocaleString()} <span>دینار</span>`;
             
             // ٢. کۆی گشتی پارەی واسڵ کراوی ئەمرۆ
             const today = new Date().toISOString().split('T')[0];
             const todayCashSettled = systemData.cashHistory
                 .filter(r => r.date === today)
-                .reduce((sum, r) => sum + r.amount, 0);
+                .reduce((sum, r) => sum + (r.amount || 0), 0);
             document.getElementById('todayCashSettledDisplay').innerHTML = `${todayCashSettled.toLocaleString()} <span>دینار</span>`;
             document.getElementById('todayCashChange').textContent = `ئەمڕۆ: ${today}`;
             
             // ٣. کۆی گشتی کڕین بە نەقدی
             const totalCashPurchase = systemData.purchases
                 .filter(p => p.payment === 'cash')
-                .reduce((sum, p) => sum + p.total, 0);
+                .reduce((sum, p) => sum + (p.total || 0), 0);
             document.getElementById('totalCashPurchaseDisplay').innerHTML = `${totalCashPurchase.toLocaleString()} <span>دینار</span>`;
             
             // ٤. کۆی گشتی قەرزەکان (قەرزی کەسەکان + قەرزی شەریکەکان)
@@ -2886,8 +3058,8 @@
             document.getElementById('totalDebtOverallDisplay').innerHTML = `${totalDebtOverall.toLocaleString()} <span>دینار</span>`;
             
             // ٥. کۆی گشتی سەرفکردن (expenseHistory + damagedProducts)
-            const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + e.amount, 0);
-            const totalDamages = systemData.damagedProducts.reduce((sum, d) => sum + d.totalLoss, 0);
+            const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + (e.amount || 0), 0);
+            const totalDamages = systemData.damagedProducts.reduce((sum, d) => sum + (d.totalLoss || 0), 0);
             const totalExpensesOverall = totalExpenses + totalDamages;
             document.getElementById('totalExpensesDisplay').innerHTML = `${totalExpensesOverall.toLocaleString()} <span>دینار</span>`;
             
@@ -2902,7 +3074,7 @@
             document.getElementById('profitChange').textContent = totalProfit >= 0 ? 'قازانج' : 'زیان';
             
             // لیستی کاڵای کەم بوو
-            const lowStockProducts = systemData.products.filter(p => p.stock <= 5);
+            const lowStockProducts = systemData.products.filter(p => (p.stock || 0) <= 5);
             const lowStockList = document.getElementById('lowStockList');
             lowStockList.innerHTML = '';
             
@@ -2921,17 +3093,20 @@
             const debtorsList = document.getElementById('debtorsList');
             debtorsList.innerHTML = '';
             
-            const debtors = systemData.customers.filter(c => c.debt > 0);
+            const debtors = systemData.customers.filter(c => (c.debt || 0) > 0);
             if (debtors.length === 0) {
                 debtorsList.innerHTML = '<li class="list-item">هیچ قەرزدارێک نییە</li>';
             } else {
                 debtors.slice(0, 5).forEach(c => {
                     const li = document.createElement('li');
                     li.className = 'list-item';
-                    li.innerHTML = `<span class="item-name">${c.name}</span> <span class="item-value debt-positive">${c.debt.toLocaleString()} دینار</span>`;
+                    li.innerHTML = `<span class="item-name">${c.name}</span> <span class="item-value debt-positive">${(c.debt || 0).toLocaleString()} دینار</span>`;
                     debtorsList.appendChild(li);
                 });
             }
+            
+            // هەڵگرتنی داتا دوای نوێکردنەوە
+            saveSystemData();
         }
 
         // ==================== بەشی فرۆشتن ====================
@@ -3234,11 +3409,12 @@
             selectedCustomer = null;
             updateSaleCartDisplay();
             
-            // نوێکردنەوە
+            // نوێکردنەوە و هەڵگرتن
             refreshDashboard();
             refreshSaleHistory();
             refreshDailySettlement();
             refreshProfitSettlement();
+            saveSystemData();
             
             showNotification('فرۆشتن بە سەرکەوتوویی تەواو بوو!', 'success');
         }
@@ -3521,11 +3697,12 @@
             selectedPartner = null;
             updatePurchaseCartDisplay();
             
-            // نوێکردنەوە
+            // نوێکردنەوە و هەڵگرتن
             refreshDashboard();
             refreshPurchaseHistory();
             refreshDailySettlement();
             refreshProfitSettlement();
+            saveSystemData();
             
             showNotification('کڕین بە سەرکەوتوویی تەواو بوو!', 'success');
         }
@@ -3732,6 +3909,7 @@
             refreshDashboard();
             refreshDailySettlement();
             refreshProfitSettlement();
+            saveSystemData();
         });
 
         document.getElementById('submitCustomerCashBtn')?.addEventListener('click', function() {
@@ -3782,12 +3960,13 @@
             refreshDashboard();
             refreshDailySettlement();
             refreshProfitSettlement();
+            saveSystemData();
         });
 
         function updateCashTotals() {
-            const total = systemData.cashHistory.reduce((sum, r) => sum + r.amount, 0);
-            const partnerTotal = systemData.cashHistory.filter(r => r.type === 'partner').reduce((sum, r) => sum + r.amount, 0);
-            const customerTotal = systemData.cashHistory.filter(r => r.type === 'customer').reduce((sum, r) => sum + r.amount, 0);
+            const total = systemData.cashHistory.reduce((sum, r) => sum + (r.amount || 0), 0);
+            const partnerTotal = systemData.cashHistory.filter(r => r.type === 'partner').reduce((sum, r) => sum + (r.amount || 0), 0);
+            const customerTotal = systemData.cashHistory.filter(r => r.type === 'customer').reduce((sum, r) => sum + (r.amount || 0), 0);
             
             document.getElementById('totalCashDisplay').textContent = total.toLocaleString() + ' دینار';
             document.getElementById('totalCashPartnerDisplay').textContent = partnerTotal.toLocaleString() + ' دینار';
@@ -3812,7 +3991,7 @@
                     <td style="padding: 8px;">${r.date} ${r.time}</td>
                     <td style="padding: 8px;">${r.type === 'partner' ? 'شەریک' : 'کەس'}</td>
                     <td style="padding: 8px;">${r.personName}</td>
-                    <td style="padding: 8px; color: var(--success); font-weight: bold;">${r.amount.toLocaleString()} دینار</td>
+                    <td style="padding: 8px; color: var(--success); font-weight: bold;">${(r.amount || 0).toLocaleString()} دینار</td>
                     <td style="padding: 8px;">${r.method === 'cash' ? 'نەقدی' : 'گوازینەوە'}</td>
                     <td style="padding: 8px;">
                         <button class="btn btn-danger btn-sm" onclick="deleteCashRecord(${r.id})"><i class="fas fa-trash"></i></button>
@@ -3828,13 +4007,14 @@
             const index = systemData.cashHistory.findIndex(r => r.id === id);
             if (index !== -1) {
                 const record = systemData.cashHistory[index];
-                systemData.cashBalance -= record.amount;
+                systemData.cashBalance -= (record.amount || 0);
                 systemData.cashHistory.splice(index, 1);
                 
                 refreshCashDisplay();
                 refreshDashboard();
                 refreshDailySettlement();
                 refreshProfitSettlement();
+                saveSystemData();
                 showNotification('سڕایەوە', 'info');
             }
         };
@@ -3866,22 +4046,22 @@
             const todayStr = today.toISOString().split('T')[0];
             const todayCash = systemData.cashHistory
                 .filter(r => r.date === todayStr)
-                .reduce((sum, r) => sum + r.amount, 0);
+                .reduce((sum, r) => sum + (r.amount || 0), 0);
             document.getElementById('dailySettledAmount').textContent = todayCash.toLocaleString() + ' دینار';
             
             // کۆی گشتی پارەی واسڵ کراو (هەموو)
-            const totalCash = systemData.cashHistory.reduce((sum, r) => sum + r.amount, 0);
+            const totalCash = systemData.cashHistory.reduce((sum, r) => sum + (r.amount || 0), 0);
             document.getElementById('summaryTotalCash').textContent = totalCash.toLocaleString() + ' دینار';
             
             // کۆی گشتی کڕین
             const totalPurchases = systemData.purchases
                 .filter(p => p.payment === 'cash')
-                .reduce((sum, p) => sum + p.total, 0);
+                .reduce((sum, p) => sum + (p.total || 0), 0);
             document.getElementById('summaryTotalPurchases').textContent = totalPurchases.toLocaleString() + ' دینار';
             
             // کۆی گشتی سەرفکردن
-            const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + e.amount, 0) +
-                                  systemData.damagedProducts.reduce((sum, d) => sum + d.totalLoss, 0);
+            const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + (e.amount || 0), 0) +
+                                  systemData.damagedProducts.reduce((sum, d) => sum + (d.totalLoss || 0), 0);
             document.getElementById('summaryTotalExpenses').textContent = totalExpenses.toLocaleString() + ' دینار';
             
             // کۆی گشتی قەرزەکان
@@ -3894,6 +4074,8 @@
             const capital = totalCash - (totalPurchases + totalExpenses);
             document.getElementById('summaryCapital').textContent = capital.toLocaleString() + ' دینار';
             document.getElementById('summaryProfit').textContent = capital.toLocaleString() + ' دینار';
+            
+            saveSystemData();
         }
 
         // تەواوکردنی حیساباتی ئەمرۆ (گواستنەوەی پارەی ئەمرۆ بۆ کۆی گشتی)
@@ -3907,10 +4089,11 @@
                     date: new Date().toISOString().split('T')[0],
                     amount: systemData.cashHistory
                         .filter(r => r.date === new Date().toISOString().split('T')[0])
-                        .reduce((sum, r) => sum + r.amount, 0),
+                        .reduce((sum, r) => sum + (r.amount || 0), 0),
                     timestamp: new Date().toISOString()
                 });
                 
+                saveSystemData();
                 showNotification('حیساباتی ئەمرۆ بە سەرکەوتوویی تەواو کرا', 'success');
                 refreshDailySettlement();
                 refreshDashboard();
@@ -3926,16 +4109,16 @@
         // ==================== بەشی حیساب کردنی قازانج ====================
         function refreshProfitSettlement() {
             // کۆی گشتی پارەی واسڵ کراو
-            const totalCash = systemData.cashHistory.reduce((sum, r) => sum + r.amount, 0);
+            const totalCash = systemData.cashHistory.reduce((sum, r) => sum + (r.amount || 0), 0);
             
             // کۆی گشتی کڕینی نەقدی
             const totalPurchases = systemData.purchases
                 .filter(p => p.payment === 'cash')
-                .reduce((sum, p) => sum + p.total, 0);
+                .reduce((sum, p) => sum + (p.total || 0), 0);
             
             // کۆی گشتی سەرفکردن
-            const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + e.amount, 0) +
-                                  systemData.damagedProducts.reduce((sum, d) => sum + d.totalLoss, 0);
+            const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + (e.amount || 0), 0) +
+                                  systemData.damagedProducts.reduce((sum, d) => sum + (d.totalLoss || 0), 0);
             
             // راس مال و قازانج
             const capital = totalCash - (totalPurchases + totalExpenses);
@@ -3950,6 +4133,8 @@
             
             // نیشاندانی مێژووی یەکلاکردنەوەکان
             displayProfitHistory();
+            
+            saveSystemData();
         }
 
         function displayProfitHistory() {
@@ -3970,8 +4155,8 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="padding: 8px; border-bottom: 1px solid var(--gray-light);">${item.date}</td>
-                    <td style="padding: 8px; border-bottom: 1px solid var(--gray-light); font-weight: bold;">${item.capital.toLocaleString()} دینار</td>
-                    <td style="padding: 8px; border-bottom: 1px solid var(--gray-light); color: var(--success); font-weight: bold;">${item.profit.toLocaleString()} دینار</td>
+                    <td style="padding: 8px; border-bottom: 1px solid var(--gray-light); font-weight: bold;">${(item.capital || 0).toLocaleString()} دینار</td>
+                    <td style="padding: 8px; border-bottom: 1px solid var(--gray-light); color: var(--success); font-weight: bold;">${(item.profit || 0).toLocaleString()} دینار</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -3979,12 +4164,12 @@
 
         // یەکلاکردنەوەی قازانج
         document.getElementById('completeProfitSettlement')?.addEventListener('click', function() {
-            const totalCash = systemData.cashHistory.reduce((sum, r) => sum + r.amount, 0);
+            const totalCash = systemData.cashHistory.reduce((sum, r) => sum + (r.amount || 0), 0);
             const totalPurchases = systemData.purchases
                 .filter(p => p.payment === 'cash')
-                .reduce((sum, p) => sum + p.total, 0);
-            const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + e.amount, 0) +
-                                  systemData.damagedProducts.reduce((sum, d) => sum + d.totalLoss, 0);
+                .reduce((sum, p) => sum + (p.total || 0), 0);
+            const totalExpenses = systemData.expenseHistory.reduce((sum, e) => sum + (e.amount || 0), 0) +
+                                  systemData.damagedProducts.reduce((sum, d) => sum + (d.totalLoss || 0), 0);
             
             const capital = totalCash - (totalPurchases + totalExpenses);
             
@@ -4005,6 +4190,7 @@
                 timestamp: new Date().toISOString()
             });
             
+            saveSystemData();
             showNotification(`قازانج بە سەرکەوتوویی یەکلایی کرایەوە: ${capital.toLocaleString()} دینار`, 'success');
             
             // نوێکردنەوەی نیشاندان
@@ -4059,7 +4245,7 @@
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <div>
                             <div class="item-value">${p.stock} ${getUnitName(p.unit)}</div>
-                            <div style="font-size: 0.9rem;">${p.salePrice.toLocaleString()} دینار</div>
+                            <div style="font-size: 0.9rem;">${(p.salePrice || 0).toLocaleString()} دینار</div>
                         </div>
                         <div style="display: flex; gap: 5px;">
                             <button class="btn btn-info btn-sm" onclick="editProduct(${p.id})"><i class="fas fa-edit"></i></button>
@@ -4069,6 +4255,8 @@
                 `;
                 list.appendChild(li);
             });
+            
+            saveSystemData();
         }
 
         function getUnitName(unit) {
@@ -4165,6 +4353,7 @@
             document.getElementById('addProductBtn').style.display = 'block';
             resetProductForm();
             refreshInventory();
+            saveSystemData();
             showNotification('کاڵا هەڵگیرا', 'success');
         }
 
@@ -4230,6 +4419,7 @@
             if (index !== -1) {
                 systemData.products.splice(index, 1);
                 refreshInventory();
+                saveSystemData();
                 showNotification('کاڵا سڕایەوە', 'info');
             }
         };
@@ -4255,11 +4445,13 @@
                         <div style="font-size: 0.9rem;">${c.phone || '-'}</div>
                     </div>
                     <div>
-                        <div class="${c.debt > 0 ? 'debt-positive' : 'debt-zero'}">${c.debt > 0 ? c.debt.toLocaleString() + ' دینار' : 'بێ قەرز'}</div>
+                        <div class="${c.debt > 0 ? 'debt-positive' : 'debt-zero'}">${c.debt > 0 ? (c.debt || 0).toLocaleString() + ' دینار' : 'بێ قەرز'}</div>
                     </div>
                 `;
                 list.appendChild(li);
             });
+            
+            saveSystemData();
         }
 
         document.getElementById('saveCustomerBtn')?.addEventListener('click', function() {
@@ -4283,6 +4475,7 @@
             
             document.querySelector('[data-tab="customersList"]').click();
             refreshCustomersList();
+            saveSystemData();
             showNotification('کەس زیاد کرا', 'success');
         });
 
@@ -4303,10 +4496,10 @@
                 let debtClass = 'debt-zero';
                 
                 if (p.debt > 0) {
-                    debtText = `${p.debt.toLocaleString()} دینار (قەرزدار)`;
+                    debtText = `${(p.debt || 0).toLocaleString()} دینار (قەرزدار)`;
                     debtClass = 'debt-positive';
                 } else if (p.debt < 0) {
-                    debtText = `${Math.abs(p.debt).toLocaleString()} دینار (قەرزدارم)`;
+                    debtText = `${Math.abs(p.debt || 0).toLocaleString()} دینار (قەرزدارم)`;
                     debtClass = 'debt-negative';
                 }
                 
@@ -4318,6 +4511,8 @@
                 `;
                 list.appendChild(li);
             });
+            
+            saveSystemData();
         }
 
         document.getElementById('savePartnerBtn')?.addEventListener('click', function() {
@@ -4341,6 +4536,7 @@
             
             document.querySelector('[data-tab="partnersList"]').click();
             refreshPartnersList();
+            saveSystemData();
             showNotification('شەریک زیاد کرا', 'success');
         });
 
@@ -4401,7 +4597,7 @@
                     <td style="padding: 10px;">${d.date}</td>
                     <td style="padding: 10px;">${d.productName}</td>
                     <td style="padding: 10px;">${d.quantity}</td>
-                    <td style="padding: 10px; color: var(--danger);">${d.totalLoss.toLocaleString()} دینار</td>
+                    <td style="padding: 10px; color: var(--danger);">${(d.totalLoss || 0).toLocaleString()} دینار</td>
                     <td style="padding: 10px;">
                         <button class="btn btn-danger btn-sm" onclick="deleteDamage(${d.id})"><i class="fas fa-trash"></i></button>
                     </td>
@@ -4486,6 +4682,7 @@
             refreshDashboard();
             refreshDailySettlement();
             refreshProfitSettlement();
+            saveSystemData();
             showNotification('کاڵای تێکچوو تۆمار کرا', 'success');
         });
 
@@ -4516,6 +4713,7 @@
                 refreshDashboard();
                 refreshDailySettlement();
                 refreshProfitSettlement();
+                saveSystemData();
                 showNotification('گواسترایەوە بۆ تێکچوو', 'info');
             }
         };
@@ -4527,6 +4725,7 @@
             if (index !== -1) {
                 systemData.damagedProducts.splice(index, 1);
                 refreshDamageList();
+                saveSystemData();
                 showNotification('سڕایەوە', 'info');
             }
         };
@@ -4545,6 +4744,7 @@
             refreshProfitSettlement();
             updateCashTotals();
             updateCashHistory();
+            saveSystemData();
         }
 
         // ==================== زیادکردنی گوێگری بۆ بارکۆد (سکانەر) ====================
@@ -4771,12 +4971,20 @@
 
         // ==================== دەستپێکردن ====================
         document.addEventListener('DOMContentLoaded', function() {
+            // بارکردنی داتا لە localStorage
+            loadSystemData();
+            
             // دانانی بەروار و کاتی خۆکار
             setDefaultDates();
             
             // دەستپێکردنی سیستەمی فرۆشتن
             initializeSaleSystem();
             initializePurchaseSystem();
+            
+            // چالاککردنی گەڕانی شەریک و کەس
+            setupPartnerCashSearch();
+            setupCustomerCashSearch();
+            setupDamageSearch();
             
             // نوێکردنەوەی هەموو بەشەکان
             refreshAllDisplays();
