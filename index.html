@@ -2176,8 +2176,22 @@
                             
                             <div class="action-buttons">
                                 <button class="btn btn-success" id="submitDailyCashBtn">
-                                    <i class="fas fa-check-circle"></i> گواستنەوە بۆ کۆی پارەی واسڵ کراو
+                                    <i class="fas fa-check-circle"></i> زیادکردن بۆ حیسابی ڕۆژانە
                                 </button>
+                            </div>
+                            
+                            <!-- دوگمەی گواستنەوە بۆ حیسابی سەرەکی -->
+                            <div style="margin-top: 30px; border-top: 2px solid var(--gray-light); padding-top: 20px;">
+                                <h4 style="margin-bottom: 15px;">گواستنەوەی پارە بۆ حیسابی سەرەکی</h4>
+                                <div style="display: flex; gap: 15px; align-items: center;">
+                                    <div class="form-group" style="flex: 1;">
+                                        <label>بڕی پارە بۆ گواستنەوە</label>
+                                        <input type="text" id="transferAmountDisplay" class="form-control" readonly value="٠ دینار" style="background-color: var(--gray-light); font-weight: bold;">
+                                    </div>
+                                    <button class="btn btn-success" id="transferDailyCashBtn" style="margin-top: 20px;">
+                                        <i class="fas fa-arrow-right"></i> گواستنەوە بۆ حیسابی سەرەکی
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4261,7 +4275,11 @@
             
             const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const invoiceCode = `INV-${new Date().getFullYear()}-${sampleData.sales.length + 1}`;
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const time = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
             
+            // کەمکردنەوەی ستۆک
             cart.forEach(item => {
                 const product = sampleData.products.find(p => p.id === item.id);
                 if (product) {
@@ -4274,7 +4292,7 @@
                 id: sampleData.sales.length + 1,
                 code: invoiceCode,
                 customer: paymentType === 'credit' && selectedCustomer ? selectedCustomer.name : 'کڕیاری نەناسراو',
-                date: new Date().toISOString().split('T')[0],
+                date: today,
                 total: total,
                 payment: paymentType,
                 items: cart.map(item => ({
@@ -4284,13 +4302,38 @@
                     price: item.price,
                     total: item.price * item.quantity
                 })),
-                timestamp: new Date().toISOString()
+                timestamp: now.toISOString()
             };
             
             sampleData.sales.unshift(newSale);
             
+            // زیادکردنی پارە بۆ حیسابی ڕۆژانە (نەک cashBalance)
             if (paymentType === 'cash') {
-                sampleData.cashBalance += total;
+                const dailyRecord = {
+                    id: todayCashRecords.length + 1,
+                    amount: total,
+                    method: 'cash',
+                    reason: `فرۆشتن - ${invoiceCode}`,
+                    time: time,
+                    timestamp: now.toISOString(),
+                    saleCode: invoiceCode
+                };
+                todayCashRecords.push(dailyRecord);
+                
+                // تۆمارکردن لە مێژووی پارەواسڵکردن
+                cashSettlementHistory.push({
+                    id: cashSettlementHistory.length + 1,
+                    type: 'daily',
+                    personName: 'فرۆشتی ڕۆژانە',
+                    amount: total,
+                    date: today,
+                    time: time,
+                    method: 'cash',
+                    reason: `فرۆشتن - ${invoiceCode}`,
+                    reference: invoiceCode,
+                    notes: '',
+                    timestamp: now.toISOString()
+                });
             } else if (paymentType === 'credit' && selectedCustomer) {
                 selectedCustomer.debt += total;
             }
@@ -4301,6 +4344,8 @@
             updateCartDisplay();
             updateAllDashboardCards();
             populateSampleData();
+            updateTodaySalesDisplay();
+            updateTodayCashDisplay();
             
             showNotification(`فرۆشتنەکە بە سەرکەوتوویی تەواو بوو! کۆدی فاکتوورە: ${invoiceCode}`, 'success');
             
@@ -4576,6 +4621,9 @@
             }
             
             const cashAmount = parseInt(amount);
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const time = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
             
             const cashRecord = {
                 id: cashSettlementHistory.length + 1,
@@ -4589,20 +4637,29 @@
                 reason: document.getElementById('partnerCashReason').value,
                 reference: document.getElementById('partnerCashReference').value,
                 notes: document.getElementById('partnerCashNotes').value,
-                timestamp: new Date().toISOString()
+                timestamp: now.toISOString()
             };
             
             cashSettlementHistory.push(cashRecord);
-            sampleData.cashBalance += cashAmount;
+            
+            // زیادکردنی پارە بۆ حیسابی ڕۆژانە (نەک cashBalance)
+            const dailyRecord = {
+                id: todayCashRecords.length + 1,
+                amount: cashAmount,
+                method: cashRecord.method,
+                reason: cashRecord.reason || `پارەواسڵکردن بۆ شەریک - ${selectedPartnerForCash.name}`,
+                time: cashRecord.time,
+                timestamp: now.toISOString(),
+                personId: selectedPartnerForCash.id,
+                personName: selectedPartnerForCash.name,
+                type: 'partner'
+            };
+            todayCashRecords.push(dailyRecord);
             
             let partner = selectedPartnerForCash;
             
             if (partner.debt > 0) {
-                if (cashAmount >= partner.debt) {
-                    partner.debt = partner.debt - cashAmount;
-                } else {
-                    partner.debt = partner.debt - cashAmount;
-                }
+                partner.debt = partner.debt - cashAmount;
             } else if (partner.debt < 0) {
                 partner.debt = partner.debt - cashAmount;
             } else {
@@ -4612,6 +4669,7 @@
             updateCashHistoryDisplay();
             updateCashTotals();
             updateAllDashboardCards();
+            updateTodayCashDisplay();
             
             showNotification(`واسڵکردنی ${cashAmount.toLocaleString()} دینار بۆ ${partner.name} تۆمار کرا`, 'success');
             
@@ -4631,6 +4689,9 @@
             }
             
             const cashAmount = parseInt(amount);
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const time = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
             
             const cashRecord = {
                 id: cashSettlementHistory.length + 1,
@@ -4644,20 +4705,29 @@
                 reason: document.getElementById('customerCashReason').value,
                 reference: document.getElementById('customerCashReference').value,
                 notes: document.getElementById('customerCashNotes').value,
-                timestamp: new Date().toISOString()
+                timestamp: now.toISOString()
             };
             
             cashSettlementHistory.push(cashRecord);
-            sampleData.cashBalance += cashAmount;
+            
+            // زیادکردنی پارە بۆ حیسابی ڕۆژانە (نەک cashBalance)
+            const dailyRecord = {
+                id: todayCashRecords.length + 1,
+                amount: cashAmount,
+                method: cashRecord.method,
+                reason: cashRecord.reason || `پارەواسڵکردن بۆ کەس - ${selectedCustomerForCash.name}`,
+                time: cashRecord.time,
+                timestamp: now.toISOString(),
+                personId: selectedCustomerForCash.id,
+                personName: selectedCustomerForCash.name,
+                type: 'customer'
+            };
+            todayCashRecords.push(dailyRecord);
             
             let customer = selectedCustomerForCash;
             
             if (customer.debt > 0) {
-                if (cashAmount >= customer.debt) {
-                    customer.debt = customer.debt - cashAmount;
-                } else {
-                    customer.debt = customer.debt - cashAmount;
-                }
+                customer.debt = customer.debt - cashAmount;
             } else if (customer.debt < 0) {
                 customer.debt = customer.debt - cashAmount;
             } else {
@@ -4667,6 +4737,7 @@
             updateCashHistoryDisplay();
             updateCashTotals();
             updateAllDashboardCards();
+            updateTodayCashDisplay();
             
             showNotification(`واسڵکردنی ${cashAmount.toLocaleString()} دینار بۆ ${customer.name} تۆمار کرا`, 'success');
             
@@ -4699,9 +4770,9 @@
                 const row = document.createElement('tr');
                 row.style.borderBottom = '1px solid var(--gray-light)';
                 
-                const typeIcon = record.type === 'partner' ? 'fa-handshake' : 'fa-user';
-                const typeClass = record.type === 'partner' ? 'text-primary' : 'text-info';
-                const typeText = record.type === 'partner' ? 'شەریک' : 'کەس';
+                const typeIcon = record.type === 'partner' ? 'fa-handshake' : record.type === 'customer' ? 'fa-user' : 'fa-calendar-day';
+                const typeClass = record.type === 'partner' ? 'text-primary' : record.type === 'customer' ? 'text-info' : 'text-success';
+                const typeText = record.type === 'partner' ? 'شەریک' : record.type === 'customer' ? 'کەس' : 'ڕۆژانە';
                 
                 const methodNames = {
                     'cash': 'نەقدی',
@@ -4717,7 +4788,7 @@
                         <small style="color: var(--gray);">${record.time}</small>
                     </td>
                     <td style="padding: 15px;">
-                        <i class="fas ${typeIcon}" style="color: ${record.type === 'partner' ? 'var(--primary)' : 'var(--info)'}; margin-left: 5px;"></i>
+                        <i class="fas ${typeIcon}" style="color: ${record.type === 'partner' ? 'var(--primary)' : record.type === 'customer' ? 'var(--info)' : 'var(--success)'}; margin-left: 5px;"></i>
                         <span class="${typeClass}">${typeText}</span>
                     </td>
                     <td style="padding: 15px;">
@@ -4781,7 +4852,7 @@
                 
                 if (filterType !== 'all') {
                     const typeCell = row.cells[2]?.textContent || '';
-                    const typeValue = typeCell.includes('شەریک') ? 'partner' : 'customer';
+                    const typeValue = typeCell.includes('شەریک') ? 'partner' : typeCell.includes('کەس') ? 'customer' : 'daily';
                     if (typeValue !== filterType) show = false;
                 }
                 
@@ -4850,7 +4921,7 @@
                             <div style="border-top: 2px dashed var(--gray-light); padding-top: 20px;">
                                 <p><strong>ژمارەی قەبض:</strong> RCP-${record.id.toString().padStart(4, '0')}</p>
                                 <p><strong>بەروار و کات:</strong> ${record.date} ${record.time}</p>
-                                <p><strong>جۆر:</strong> ${record.type === 'partner' ? 'شەریک' : 'کەس'}</p>
+                                <p><strong>جۆر:</strong> ${record.type === 'partner' ? 'شەریک' : record.type === 'customer' ? 'کەس' : 'ڕۆژانە'}</p>
                                 <p><strong>ناو:</strong> ${record.personName}</p>
                                 <p><strong>بڕی پارە:</strong> <span style="color: var(--success); font-size: 1.3rem; font-weight: bold;">${record.amount.toLocaleString()} دینار</span></p>
                                 <p><strong>شێوازی پارەدان:</strong> ${methodNames[record.method] || record.method}</p>
@@ -4960,7 +5031,7 @@
                         </div>
                         <div class="row">
                             <span>جۆر:</span>
-                            <strong>${record.type === 'partner' ? 'شەریک' : 'کەس'}</strong>
+                            <strong>${record.type === 'partner' ? 'شەریک' : record.type === 'customer' ? 'کەس' : 'ڕۆژانە'}</strong>
                         </div>
                         
                         <div class="amount">
@@ -5017,27 +5088,16 @@
             if (index !== -1) {
                 const record = cashSettlementHistory[index];
                 
-                sampleData.cashBalance -= record.amount;
-                
-                if (record.type === 'partner') {
-                    const partner = sampleData.partners.find(p => p.id === record.personId);
-                    if (partner) {
-                        if (partner.debt < 0) {
-                            partner.debt += record.amount;
-                            if (partner.debt > 0) partner.debt = 0;
-                        } else {
-                            partner.debt += record.amount;
-                        }
-                    }
-                } else if (record.type === 'customer') {
-                    const customer = sampleData.customers.find(c => c.id === record.personId);
-                    if (customer) {
-                        if (customer.debt < 0) {
-                            customer.debt += record.amount;
-                            if (customer.debt > 0) customer.debt = 0;
-                        } else {
-                            customer.debt += record.amount;
-                        }
+                // ئەگەر تۆمارەکە لە حیسابی ڕۆژانەش بوو، لەوێش بسڕەوە
+                if (record.type === 'daily' || record.type === 'partner' || record.type === 'customer') {
+                    const todayIndex = todayCashRecords.findIndex(t => 
+                        t.amount === record.amount && 
+                        t.time === record.time && 
+                        t.reason?.includes(record.reason)
+                    );
+                    if (todayIndex !== -1) {
+                        sampleData.cashBalance -= record.amount; // کەمکردنەوەی پارە لە حیسابی سەرەکی ئەگەر گواسترابێتەوە
+                        todayCashRecords.splice(todayIndex, 1);
                     }
                 }
                 
@@ -5045,6 +5105,7 @@
                 updateCashHistoryDisplay();
                 updateCashTotals();
                 updateAllDashboardCards();
+                updateTodayCashDisplay();
                 showNotification('تۆمارەکە بە سەرکەوتوویی سڕایەوە!', 'success');
             }
         };
@@ -5262,6 +5323,58 @@
             }
         }
 
+        // ==============================================
+        // فەنکشنی گواستنەوەی پارە لە ڕۆژانە بۆ سەرەکی
+        // ==============================================
+        function transferDailyCashToMain() {
+            if (todayCashRecords.length === 0) {
+                showNotification('هیچ پارەیەک نییە بۆ گواستنەوە!', 'error');
+                return;
+            }
+            
+            const totalToday = todayCashRecords.reduce((sum, record) => sum + record.amount, 0);
+            
+            if (totalToday === 0) {
+                showNotification('کۆی پارەی ڕۆژانە سفەرە!', 'error');
+                return;
+            }
+            
+            if (!confirm(`دڵنیای لە گواستنەوەی ${totalToday.toLocaleString()} دینار بۆ حیسابی سەرەکی؟`)) {
+                return;
+            }
+            
+            // زیادکردنی پارە بۆ cashBalance
+            sampleData.cashBalance += totalToday;
+            
+            // تۆمارکردنی گواستنەوەکە لە مێژوو
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const time = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+            
+            cashSettlementHistory.push({
+                id: cashSettlementHistory.length + 1,
+                type: 'transfer',
+                personName: 'گواستنەوەی ڕۆژانە',
+                amount: totalToday,
+                date: today,
+                time: time,
+                method: 'cash',
+                reason: 'گواستنەوەی پارەی ڕۆژانە بۆ حیسابی سەرەکی',
+                reference: '',
+                notes: `گواسترایەوە لە ${todayCashRecords.length} تۆماری ڕۆژانە`,
+                timestamp: now.toISOString()
+            });
+            
+            // پاککردنەوەی تۆمارەکانی ڕۆژانە
+            todayCashRecords = [];
+            
+            updateTodayCashDisplay();
+            updateCashHistoryDisplay();
+            updateAllDashboardCards();
+            
+            showNotification(`${totalToday.toLocaleString()} دینار بە سەرکەوتوویی گواسترایەوە بۆ حیسابی سەرەکی!`, 'success');
+        }
+
         function submitDailyCash() {
             const amountInput = document.getElementById('dailyCashAmount');
             if (!amountInput || !amountInput.value || parseInt(amountInput.value) <= 0) {
@@ -5279,36 +5392,33 @@
                 id: todayCashRecords.length + 1,
                 amount: amount,
                 method: method,
-                reason: reason,
+                reason: reason || 'زیادکردنی پارە بۆ حیسابی ڕۆژانە',
                 time: time,
                 timestamp: now.toISOString()
             };
             todayCashRecords.push(record);
 
-            sampleData.cashBalance += amount;
-
             cashSettlementHistory.push({
                 id: cashSettlementHistory.length + 1,
                 type: 'daily',
-                personName: 'حیسابی ئەمرۆ',
+                personName: 'زیادکردنی پارە',
                 amount: amount,
                 date: todayDate,
                 time: time,
                 method: method,
-                reason: reason || 'واسڵکردنی پارەی ئەمرۆ',
+                reason: reason || 'زیادکردنی پارە بۆ حیسابی ڕۆژانە',
                 reference: '',
                 notes: '',
                 timestamp: now.toISOString()
             });
 
             updateTodayCashDisplay();
-            updateTodaySalesDisplay();
             updateAllDashboardCards();
 
             amountInput.value = '';
             document.getElementById('dailyCashReason').value = '';
 
-            showNotification(`${amount.toLocaleString()} دینار بە سەرکەوتوویی گواسترایەوە بۆ کۆی پارەی واسڵ کراو`, 'success');
+            showNotification(`${amount.toLocaleString()} دینار زیاد کرا بۆ حیسابی ڕۆژانە`, 'success');
         }
 
         window.refreshTodaySales = function() {
@@ -5845,6 +5955,21 @@
                 if (submitBtn) {
                     submitBtn.addEventListener('click', submitDailyCash);
                 }
+                
+                // زیادکردنی دوگمەی گواستنەوە بۆ حیسابی سەرەکی
+                const transferBtn = document.getElementById('transferDailyCashBtn');
+                if (transferBtn) {
+                    transferBtn.addEventListener('click', transferDailyCashToMain);
+                }
+                
+                // نوێکردنەوەی بڕی پارە کە دەگوازرێتەوە
+                setInterval(() => {
+                    const transferDisplay = document.getElementById('transferAmountDisplay');
+                    if (transferDisplay) {
+                        const total = todayCashRecords.reduce((sum, r) => sum + r.amount, 0);
+                        transferDisplay.value = `${total.toLocaleString()} دینار`;
+                    }
+                }, 1000);
 
                 document.querySelectorAll('[data-daily-tab]').forEach(btn => {
                     btn.addEventListener('click', function() {
