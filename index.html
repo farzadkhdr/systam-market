@@ -764,6 +764,7 @@
         <div class="tabs">
           <div class="tab active" data-tab="newSale">➕ فرۆشتنی نوێ</div>
           <div class="tab" data-tab="history">📋 مێژووی فرۆشتن</div>
+          <div class="tab" data-tab="return">↩️ گەڕانەوەی فرۆشتن</div>
         </div>
         <div class="panel active" id="newSalePanel">
           <div class="new-sale-layout">
@@ -821,6 +822,74 @@
             <div class="history-list" id="historyList"></div>
           </div>
           <div id="historyInvoiceDetail" style="margin-top:1rem; display:none;" class="card-glass invoice-preview"></div>
+        </div>
+        <div class="panel" id="returnPanel">
+          <div class="card-glass">
+            <h3 style="margin-bottom: 1rem;"><i class="fas fa-undo-alt"></i> گەڕانەوەی کاڵا لە فرۆشتن</h3>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">🔍 گەڕان بەدوای فاکتووری فرۆشتن (ژمارە یان ناوی کڕیار):</label>
+              <div class="search-box" style="margin-top: 0.3rem;">
+                <input type="text" id="returnInvoiceSearch" placeholder="ژمارەی فاکتوورە یان ناوی کڕیار...">
+                <button onclick="searchSaleForReturn()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="returnInvoiceSuggestions"></div>
+            </div>
+            <div id="selectedSaleForReturn" style="display: none; background: #f8fafc; border-radius: 1rem; padding: 1rem; margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <strong id="returnInvoiceId"></strong>
+                <span id="returnInvoiceDate"></span>
+              </div>
+              <div>کڕیار: <span id="returnCustomerName"></span></div>
+              <div>کۆی فاکتوورە: <span id="returnInvoiceTotal"></span> د.ع</div>
+              <div style="margin-top: 0.5rem;"><strong>کاڵاکان:</strong></div>
+              <div id="returnInvoiceItemsList" style="margin-right: 1rem; font-size: 0.9rem;"></div>
+            </div>
+            <div id="returnProductSelection" style="display: none;">
+              <div style="margin: 1rem 0;">
+                <label style="font-weight: 600;">📦 هەڵبژاردنی کاڵا بۆ گەڕانەوە:</label>
+                <select id="returnProductSelect" class="customer-badge" style="width: 100%; margin-top: 0.3rem;" onchange="updateReturnProductInfo()">
+                  <option value="">-- کاڵایەک هەڵبژێرە --</option>
+                </select>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                  <label style="font-weight: 600;">نرخی فرۆشتن:</label>
+                  <input type="number" id="returnPrice" readonly style="width: 100%; padding: 0.5rem; border-radius: 1rem; background: #f1f5f9;">
+                </div>
+                <div>
+                  <label style="font-weight: 600;">بڕی فرۆشراو:</label>
+                  <input type="number" id="returnMaxQty" readonly style="width: 100%; padding: 0.5rem; border-radius: 1rem; background: #f1f5f9;">
+                </div>
+              </div>
+              <div style="margin-top: 1rem;">
+                <label style="font-weight: 600;">بڕی گەڕانەوە:</label>
+                <input type="number" id="returnQuantity" value="1" min="1" style="width: 100%; padding: 0.5rem; border-radius: 1rem;">
+              </div>
+              <div style="margin: 1rem 0;">
+                <label style="font-weight: 600;">جۆری گەڕانەوە:</label>
+                <select id="returnType" class="customer-badge" style="width: 100%; margin-top: 0.3rem;" onchange="toggleReturnCustomerSearch()">
+                  <option value="cash">کەمکردنەوەی پارە (نەقدی)</option>
+                  <option value="debt">کەمکردنەوەی قەرزی کەس</option>
+                </select>
+              </div>
+              <div id="returnCustomerSearchDiv" style="display: none; margin-bottom: 1rem;">
+                <label style="font-weight: 600;">👤 گەڕان بەدوای کەس بۆ کەمکردنەوەی قەرز:</label>
+                <div class="search-box" style="margin-top: 0.3rem;">
+                  <input type="text" id="returnCustomerSearch" placeholder="ناوی کەسەکە...">
+                  <button onclick="searchReturnCustomer()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="suggestions" id="returnCustomerSuggestions"></div>
+                <div id="selectedReturnCustomerBadge" style="margin-top: 0.5rem;"></div>
+              </div>
+              <button onclick="submitSalesReturn()" style="background:#dc2626; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%; margin-top:0.5rem;">
+                <i class="fas fa-undo-alt"></i> تۆمارکردنی گەڕانەوە
+              </button>
+            </div>
+          </div>
+          <div id="returnHistoryList" class="card-glass" style="margin-top: 1.5rem;">
+            <h4><i class="fas fa-history"></i> مێژووی گەڕانەوەکان</h4>
+            <div id="returnHistoryContainer" style="max-height: 300px; overflow-y: auto;"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1657,6 +1726,12 @@
       let purchaseCart = [];
       let selectedPurchasePartner = null;
 
+      // ---------- Sales Return Data ----------
+      let returnHistory = JSON.parse(localStorage.getItem('market_return_history') || '[]');
+      let selectedReturnSale = null;
+      let selectedReturnProduct = null;
+      let selectedReturnCustomerForDebt = null;
+
       // Agent state variables
       let selectedAgentId = null;
       let selectedAgentForInventory = null;
@@ -1709,6 +1784,12 @@
 
       function savePurchaseHistory() {
         localStorage.setItem('market_purchase_history', JSON.stringify(purchaseHistory));
+        updateStats();
+      }
+
+      function saveReturnHistory() {
+        localStorage.setItem('market_return_history', JSON.stringify(returnHistory));
+        renderReturnHistory();
         updateStats();
       }
 
@@ -1766,6 +1847,7 @@
         populateBarcodeSelect();
         renderMoneyHistory();
         renderPurchaseHistory();
+        renderReturnHistory();
         document.getElementById('personDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کەسێک هەڵبژێرە بۆ بینینی زانیاری</p>';
         document.getElementById('partnerDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">شەریکێک هەڵبژێرە بۆ بینینی زانیاری</p>';
         document.getElementById('agentDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">مەندوبێک هەڵبژێرە بۆ بینینی زانیاری</p>';
@@ -1918,7 +2000,7 @@
           const el = document.getElementById(targetId);
           if (el) el.style.display = 'block';
         }
-        if (view === 'sales') { renderCart(); updateInvoicePreview(); renderHistory(); }
+        if (view === 'sales') { renderCart(); updateInvoicePreview(); renderHistory(); renderReturnHistory(); }
         else if (view === 'settings') { renderSettingsPanels(); }
         else if (view === 'dashboard') { updateStats(); renderDashboardModules(); }
         else if (view === 'persons') { renderPersonsList(); document.getElementById('personDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کەسێک هەڵبژێرە بۆ بینینی زانیاری</p>'; }
@@ -2457,7 +2539,7 @@
                         <td style="padding:0.5rem; text-align:center; color:#2563eb;">${item.returned || 0}</td>
                         <td style="padding:0.5rem; text-align:center; font-weight:bold; color:${remaining > 0 ? '#059669' : '#94a3b8'};">${remaining}</td>
                         <td style="padding:0.5rem; text-align:center;">${item.price.toLocaleString()}</td>
-                      </tr>`;
+                       </tr>`;
                   }).join('')}
                   <tr style="font-weight:bold; background:#f8fafc;">
                     <td style="padding:0.5rem;">کۆی گشتی</td>
@@ -2466,7 +2548,7 @@
                     <td style="padding:0.5rem; text-align:center;">${agent.inventory.reduce((s,i) => s + (i.returned||0), 0)}</td>
                     <td style="padding:0.5rem; text-align:center;">${totalProducts}</td>
                     <td style="padding:0.5rem; text-align:center;">${totalSoldValue.toLocaleString()}</td>
-                  </tr>
+                   </tr>
                 </tbody>
               </table>
             </div>
@@ -2587,7 +2669,7 @@
                   <th style="padding:0.8rem;">گەڕاوە</th>
                   <th style="padding:0.8rem;">ماوە (نەقس)</th>
                   <th style="padding:0.8rem;">نرخ</th>
-                </tr>
+                </table>
               </thead>
               <tbody>
                 ${agent.inventory.map(item => {
@@ -2603,7 +2685,7 @@
                         ${remaining}
                       </td>
                       <td style="padding:0.8rem; text-align:center;">${item.price.toLocaleString()}</td>
-                    </tr>`;
+                     </tr>`;
                 }).join('')}
               </tbody>
             </table>
@@ -3240,7 +3322,7 @@
         invNumEl.textContent = 'K' + (Math.floor(Math.random() * 9000) + 1000);
         const now = new Date();
         dateEl.textContent = now.toLocaleString('ckb');
-        if (!purchaseCart.length) { bodyEl.innerHTML = '<tr><td colspan="4">هیچ کاڵایەک نییە</td></tr>'; totalEl.textContent = '0'; } else { bodyEl.innerHTML = purchaseCart.map(i => `<tr><td>${i.product.name}</td><td>${i.quantity}</td><td>${i.unitPrice}</td><td>${i.unitPrice * i.quantity}</td></tr>`).join(''); totalEl.textContent = purchaseCart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0).toLocaleString(); }
+        if (!purchaseCart.length) { bodyEl.innerHTML = '<tr><td colspan="4">هیچ کاڵایەک نییە<\/td></td>'; totalEl.textContent = '0'; } else { bodyEl.innerHTML = purchaseCart.map(i => `<tr><td>${i.product.name}</td><td>${i.quantity}</td><td>${i.unitPrice}</td><td>${i.unitPrice * i.quantity}</td></tr>`).join(''); totalEl.textContent = purchaseCart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0).toLocaleString(); }
         if (selectedPurchasePartner) {
           const isCredit = document.getElementById('creditPurchaseCheck')?.checked || false;
           const newDebt = purchaseCart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0);
@@ -3353,6 +3435,220 @@
         }
       };
 
+      // ========== SALES RETURN FUNCTIONS ==========
+      window.searchSaleForReturn = function() {
+        const query = document.getElementById('returnInvoiceSearch').value.trim().toLowerCase();
+        const suggestionsDiv = document.getElementById('returnInvoiceSuggestions');
+        if (!query) { suggestionsDiv.style.display = 'none'; return; }
+        
+        const filtered = saleHistory.filter(s => s.id.toLowerCase().includes(query) || s.customer.toLowerCase().includes(query));
+        if (filtered.length) {
+          suggestionsDiv.innerHTML = filtered.map(s => `<div class="suggestion-item" data-invid="${s.id}">🧾 ${s.id} - ${s.customer} (${s.date}) - ${s.total.toLocaleString()} د.ع</div>`).join('');
+          suggestionsDiv.style.display = 'block';
+          suggestionsDiv.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const invId = this.dataset.invid;
+              const sale = saleHistory.find(s => s.id === invId);
+              if (sale) {
+                selectedReturnSale = sale;
+                document.getElementById('selectedSaleForReturn').style.display = 'block';
+                document.getElementById('returnInvoiceId').textContent = sale.id;
+                document.getElementById('returnInvoiceDate').textContent = sale.date;
+                document.getElementById('returnCustomerName').textContent = sale.customer;
+                document.getElementById('returnInvoiceTotal').textContent = sale.total.toLocaleString();
+                
+                const itemsHtml = sale.items.map(i => `<div>• ${i.name} (${i.qty} × ${i.price} د.ع)</div>`).join('');
+                document.getElementById('returnInvoiceItemsList').innerHTML = itemsHtml;
+                
+                const productSelect = document.getElementById('returnProductSelect');
+                productSelect.innerHTML = '<option value="">-- کاڵایەک هەڵبژێرە --</option>' + 
+                  sale.items.map((item, idx) => `<option value="${idx}">${item.name} (فرۆشراو: ${item.qty})</option>`).join('');
+                
+                document.getElementById('returnProductSelection').style.display = 'block';
+                document.getElementById('returnQuantity').value = 1;
+                selectedReturnProduct = null;
+                document.getElementById('returnPrice').value = '';
+                document.getElementById('returnMaxQty').value = '';
+                document.getElementById('returnCustomerSearchDiv').style.display = 'none';
+                document.getElementById('returnType').value = 'cash';
+                selectedReturnCustomerForDebt = null;
+                document.getElementById('selectedReturnCustomerBadge').innerHTML = '';
+                document.getElementById('returnCustomerSearch').value = '';
+              }
+              suggestionsDiv.style.display = 'none';
+              document.getElementById('returnInvoiceSearch').value = sale.id;
+            });
+          });
+        } else {
+          suggestionsDiv.style.display = 'none';
+        }
+      };
+
+      window.updateReturnProductInfo = function() {
+        const idx = document.getElementById('returnProductSelect').value;
+        if (idx !== "" && selectedReturnSale && selectedReturnSale.items[idx]) {
+          selectedReturnProduct = { ...selectedReturnSale.items[idx], originalIndex: parseInt(idx) };
+          document.getElementById('returnPrice').value = selectedReturnProduct.price;
+          document.getElementById('returnMaxQty').value = selectedReturnProduct.qty;
+          document.getElementById('returnQuantity').max = selectedReturnProduct.qty;
+          document.getElementById('returnQuantity').value = 1;
+        } else {
+          selectedReturnProduct = null;
+          document.getElementById('returnPrice').value = '';
+          document.getElementById('returnMaxQty').value = '';
+        }
+      };
+
+      window.toggleReturnCustomerSearch = function() {
+        const type = document.getElementById('returnType').value;
+        const div = document.getElementById('returnCustomerSearchDiv');
+        div.style.display = type === 'debt' ? 'block' : 'none';
+        if (type !== 'debt') {
+          selectedReturnCustomerForDebt = null;
+          document.getElementById('selectedReturnCustomerBadge').innerHTML = '';
+          document.getElementById('returnCustomerSearch').value = '';
+        }
+      };
+
+      window.searchReturnCustomer = function() {
+        const query = document.getElementById('returnCustomerSearch').value.trim().toLowerCase();
+        const suggestions = document.getElementById('returnCustomerSuggestions');
+        if (!query) { suggestions.style.display = 'none'; return; }
+        const filtered = customers.filter(c => c.name.toLowerCase().includes(query));
+        if (filtered.length) {
+          suggestions.innerHTML = filtered.map(c => `<div class="suggestion-item" data-cid="${c.id}">👤 ${c.name} (قەرز: ${(c.debt||0).toLocaleString()})</div>`).join('');
+          suggestions.style.display = 'block';
+          suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const cid = parseInt(this.dataset.cid);
+              selectedReturnCustomerForDebt = customers.find(c => c.id === cid);
+              if (selectedReturnCustomerForDebt) {
+                document.getElementById('selectedReturnCustomerBadge').innerHTML = `<span class="customer-badge">👤 ${selectedReturnCustomerForDebt.name}</span>`;
+                document.getElementById('returnCustomerSearch').value = selectedReturnCustomerForDebt.name;
+              }
+              suggestions.style.display = 'none';
+            });
+          });
+        } else { suggestions.style.display = 'none'; }
+      };
+
+      window.submitSalesReturn = function() {
+        if (!selectedReturnSale) { alert('تکایە فاکتوورێک هەڵبژێرە'); return; }
+        if (!selectedReturnProduct) { alert('تکایە کاڵایەک هەڵبژێرە بۆ گەڕانەوە'); return; }
+        
+        const returnQty = parseInt(document.getElementById('returnQuantity').value);
+        if (isNaN(returnQty) || returnQty < 1 || returnQty > selectedReturnProduct.qty) {
+          alert('بڕی گەڕانەوە نادروستە');
+          return;
+        }
+        
+        const returnType = document.getElementById('returnType').value;
+        if (returnType === 'debt' && !selectedReturnCustomerForDebt) {
+          alert('تکایە کەسێک هەڵبژێرە بۆ کەمکردنەوەی قەرز');
+          return;
+        }
+        
+        const refundAmount = returnQty * selectedReturnProduct.price;
+        
+        const product = warehouseProducts.find(p => p.name === selectedReturnProduct.name);
+        if (product) {
+          product.quantity += returnQty;
+          saveWarehouseProducts();
+        } else {
+          const newId = warehouseProducts.length ? Math.max(...warehouseProducts.map(p => p.id)) + 1 : 1;
+          warehouseProducts.push({
+            id: newId,
+            name: selectedReturnProduct.name,
+            barcode: '',
+            image: '',
+            quantity: returnQty,
+            unit: 'عدد',
+            secondQty: 0,
+            buyPrice: selectedReturnProduct.price,
+            sellPrice: selectedReturnProduct.price,
+            expiryDate: ''
+          });
+          saveWarehouseProducts();
+        }
+        
+        const originalSale = saleHistory.find(s => s.id === selectedReturnSale.id);
+        if (originalSale) {
+          const saleItem = originalSale.items[selectedReturnProduct.originalIndex];
+          if (saleItem) {
+            saleItem.qty -= returnQty;
+            if (saleItem.qty === 0) {
+              originalSale.items.splice(selectedReturnProduct.originalIndex, 1);
+            }
+            originalSale.total = originalSale.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
+            saveSaleHistory();
+          }
+        }
+        
+        if (returnType === 'debt' && selectedReturnCustomerForDebt) {
+          selectedReturnCustomerForDebt.debt = Math.max(0, (selectedReturnCustomerForDebt.debt || 0) - refundAmount);
+          if (!selectedReturnCustomerForDebt.movements) selectedReturnCustomerForDebt.movements = [];
+          selectedReturnCustomerForDebt.movements.push({
+            type: 'return',
+            date: new Date().toLocaleString('ckb'),
+            amount: refundAmount,
+            note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedReturnSale.id}`,
+            invoiceId: 'RET' + Date.now()
+          });
+          saveCustomers();
+        }
+        
+        const returnRecord = {
+          id: 'RET' + Date.now(),
+          date: new Date().toLocaleString('ckb'),
+          originalInvoiceId: selectedReturnSale.id,
+          customer: returnType === 'debt' ? selectedReturnCustomerForDebt.name : selectedReturnSale.customer,
+          productName: selectedReturnProduct.name,
+          quantity: returnQty,
+          price: selectedReturnProduct.price,
+          refundAmount: refundAmount,
+          type: returnType,
+          note: returnType === 'debt' ? 'کەمکرایەوە لە قەرز' : 'گەڕانەوەی پارە (نەقدی)'
+        };
+        
+        returnHistory.unshift(returnRecord);
+        saveReturnHistory();
+        
+        alert(`گەڕانەوە بە سەرکەوتوویی تۆمارکرا!\nکاڵا: ${selectedReturnProduct.name}\nبڕ: ${returnQty}\nبەهای گەڕاوە: ${refundAmount.toLocaleString()} د.ع`);
+        
+        selectedReturnSale = null;
+        selectedReturnProduct = null;
+        selectedReturnCustomerForDebt = null;
+        document.getElementById('selectedSaleForReturn').style.display = 'none';
+        document.getElementById('returnProductSelection').style.display = 'none';
+        document.getElementById('returnInvoiceSearch').value = '';
+        document.getElementById('returnCustomerSearch').value = '';
+        document.getElementById('selectedReturnCustomerBadge').innerHTML = '';
+        document.getElementById('returnType').value = 'cash';
+        document.getElementById('returnCustomerSearchDiv').style.display = 'none';
+        document.getElementById('returnInvoiceSuggestions').style.display = 'none';
+        updateStats();
+        renderProductsGrid();
+        renderHistory();
+      };
+
+      function renderReturnHistory() {
+        const container = document.getElementById('returnHistoryContainer');
+        if (!container) return;
+        if (!returnHistory.length) {
+          container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ گەڕانەوەیەک تۆمار نەکراوە</p>';
+          return;
+        }
+        container.innerHTML = returnHistory.map(r => `
+          <div class="history-row">
+            <div><strong>${r.id}</strong><br><span style="font-size:0.7rem;">${r.date}</span></div>
+            <div>📄 ${r.originalInvoiceId}<br>👤 ${r.customer}</div>
+            <div>📦 ${r.productName}<br>✕ ${r.quantity}</div>
+            <div>💰 ${r.refundAmount.toLocaleString()} د.ع</div>
+            <div><span style="font-size:0.7rem; background:${r.type === 'debt' ? '#dbeafe' : '#fef3c7'}; padding:0.2rem 0.5rem; border-radius:1rem;">${r.type === 'debt' ? 'کەمکردنەوەی قەرز' : 'گەڕانەوەی پارە'}</span></div>
+          </div>
+        `).join('');
+      }
+
       // ---------- Tab Event Listeners ----------
       document.addEventListener('click', function(e) {
         if (e.target.classList.contains('tab')) {
@@ -3398,7 +3694,9 @@
             e.target.classList.add('active');
             document.getElementById('newSalePanel').classList.toggle('active', e.target.dataset.tab === 'newSale');
             document.getElementById('historyPanel').classList.toggle('active', e.target.dataset.tab === 'history');
+            document.getElementById('returnPanel').classList.toggle('active', e.target.dataset.tab === 'return');
             if (e.target.dataset.tab === 'history') renderHistory();
+            if (e.target.dataset.tab === 'return') renderReturnHistory();
           }
           if (e.target.dataset.agenttab) {
             document.querySelectorAll('[data-agenttab]').forEach(t => t.classList.remove('active'));
@@ -4161,7 +4459,7 @@
       }
 
       window.createBackup = function() {
-        const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts };
+        const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory };
         backupHistory.unshift({ date: backupData.date, data: backupData });
         if (backupHistory.length > 10) backupHistory.pop();
         localStorage.setItem('market_backup_history', JSON.stringify(backupHistory));
@@ -4170,7 +4468,7 @@
       };
 
       window.downloadBackup = function() {
-        const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts };
+        const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory };
         const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -4206,6 +4504,7 @@
             if (backupData.moneyRequests) { moneyRequests = backupData.moneyRequests; saveMoneyRequests(); }
             if (backupData.purchaseHistory) { purchaseHistory = backupData.purchaseHistory; savePurchaseHistory(); }
             if (backupData.expiredDamagedProducts) { expiredDamagedProducts = backupData.expiredDamagedProducts; saveExpiryDamage(); }
+            if (backupData.returnHistory) { returnHistory = backupData.returnHistory; saveReturnHistory(); }
             renderDashboardModules();
             renderPersonsList();
             renderPartnersList();
@@ -4214,6 +4513,7 @@
             populateBarcodeSelect();
             renderMoneyHistory();
             renderPurchaseHistory();
+            renderReturnHistory();
             alert('باکەپ بە سەرکەوتوویی گەڕێندرایەوە');
           } catch (err) { alert('فایلی باکەپ نادروستە'); }
         };
@@ -4256,6 +4556,7 @@
           if (backup.data.moneyRequests) { moneyRequests = backup.data.moneyRequests; saveMoneyRequests(); }
           if (backup.data.purchaseHistory) { purchaseHistory = backup.data.purchaseHistory; savePurchaseHistory(); }
           if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backup.data.expiredDamagedProducts; saveExpiryDamage(); }
+          if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
           renderDashboardModules();
           renderPersonsList();
           renderPartnersList();
@@ -4264,6 +4565,7 @@
           populateBarcodeSelect();
           renderMoneyHistory();
           renderPurchaseHistory();
+          renderReturnHistory();
           alert('باکەپ گەڕێندرایەوە');
         }
       };
@@ -4272,7 +4574,7 @@
 
       window.addEventListener('beforeunload', function(e) {
         if (autoBackupEnabled) {
-          const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts };
+          const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory };
           backupHistory.unshift({ date: backupData.date, data: backupData });
           if (backupHistory.length > 10) backupHistory.pop();
           localStorage.setItem('market_backup_history', JSON.stringify(backupHistory));
@@ -4427,7 +4729,7 @@
         invNumberSpan.textContent = 'F' + (Math.floor(Math.random() * 9000) + 1000);
         const now = new Date();
         document.getElementById('invoiceDate').textContent = now.toLocaleString('ckb');
-        if (!cart.length) { invoiceBody.innerHTML = '<tr><td colspan="4">هیچ کاڵایەک نییە</td></tr>'; invTotal.textContent = '0'; } else { invoiceBody.innerHTML = cart.map(i => `<tr><td>${i.product.name}</td><td>${i.quantity}</td><td>${i.unitPrice}</td><td>${i.unitPrice * i.quantity}</td></tr>`).join(''); invTotal.textContent = cart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0).toLocaleString(); }
+        if (!cart.length) { invoiceBody.innerHTML = '<tr><td colspan="4">هیچ کاڵایەک نییە<\/td></tr>'; invTotal.textContent = '0'; } else { invoiceBody.innerHTML = cart.map(i => `<tr><td>${i.product.name}</td><td>${i.quantity}</td><td>${i.unitPrice}</td><td>${i.unitPrice * i.quantity}</td></tr>`).join(''); invTotal.textContent = cart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0).toLocaleString(); }
         if (currentCustomer && creditCheck.checked) { const newDebt = cart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0); invoiceCustomerInfo.innerHTML = `👤 کڕیار: ${currentCustomer.name} | قەرزاری پێشوو: ${(currentCustomer.debt || 0).toLocaleString()} | ئێستا: ${((currentCustomer.debt || 0) + newDebt).toLocaleString()}`; } else { invoiceCustomerInfo.innerHTML = '👤 کڕیار: کاش | قەرزاری پێشوو: 0'; }
       }
 
