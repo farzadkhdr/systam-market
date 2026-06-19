@@ -675,6 +675,31 @@
       border-radius: 2rem;
       border: 1px solid #cbd5e1;
     }
+    /* Permission checkbox styles */
+    .perm-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #7c3aed;
+    }
+    .perm-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 0.8rem;
+      transition: background 0.2s;
+    }
+    .perm-item:hover {
+      background: #e2e8f0;
+    }
+    .perm-item .perm-label {
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
     @media print {
       body {
         background: white;
@@ -1842,6 +1867,153 @@
         </div>
       </div>
     </div>
+
+    <!-- ===== SECURITY MODULE VIEW (NEW) ===== -->
+    <div id="securityView" style="display: none;">
+      <div class="module-view-container">
+        <div class="back-header">
+          <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+          <div class="page-title"><i class="fas fa-shield-alt" style="color:#7c3aed;"></i> پاراستن و سکویریتی</div>
+        </div>
+        
+        <div class="tabs">
+          <div class="tab active" data-securitytab="admin">👤 بەڕێوەبەر</div>
+          <div class="tab" data-securitytab="employees">👥 کارمەندەکان</div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div class="panel active" id="securityAdminPanel">
+          <div class="card-glass" style="max-width: 800px; margin: 0 auto;">
+            
+            <!-- گۆڕینی پاسووردی بەڕێوەبەر -->
+            <div style="background: #f8fafc; border-radius: 1.5rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <h3 style="margin-bottom: 1rem;"><i class="fas fa-key" style="color:#2563eb;"></i> گۆڕینی پاسووردی بەڕێوەبەر</h3>
+              <div style="margin-bottom: 0.8rem;">
+                <label style="font-weight: 600;">پاسووردی کۆن:</label>
+                <input type="password" id="adminCurrentPassword" placeholder="پاسووردی ئێستا" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <div style="margin-bottom: 0.8rem;">
+                <label style="font-weight: 600;">پاسووردی نوێ:</label>
+                <input type="password" id="adminNewPassword" placeholder="پاسووردی نوێ" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <div style="margin-bottom: 0.8rem;">
+                <label style="font-weight: 600;">پشتڕاستکردنەوەی پاسووردی نوێ:</label>
+                <input type="password" id="adminConfirmPassword" placeholder="دووبارە پاسووردی نوێ بنووسە" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <button onclick="changeAdminPassword()" style="background:#2563eb; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:bold;"><i class="fas fa-save"></i> گۆڕینی پاسوورد</button>
+              
+              <!-- دروستکردنەوەی پاسوورد -->
+              <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px dashed #e2e8f0;">
+                <h4 style="margin-bottom: 0.8rem; color:#dc2626;"><i class="fas fa-exclamation-triangle"></i> پاسووردت لەبیر چووە؟</h4>
+                <p style="font-size: 0.85rem; color:#64748b; margin-bottom: 0.8rem;">ئەگەر پاسووردی بەڕێوەبەرت لەبیر چووە، پاسووردی پرۆگرامێر بنووسە بۆ دروستکردنەوەی پاسووردی نوێ.</p>
+                <div style="margin-bottom: 0.8rem;">
+                  <label style="font-weight: 600;">پاسووردی پرۆگرامێر:</label>
+                  <input type="password" id="programmerPassword" placeholder="پاسووردی پرۆگرامێر" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+                </div>
+                <div style="margin-bottom: 0.8rem;">
+                  <label style="font-weight: 600;">پاسووردی نوێ بۆ بەڕێوەبەر:</label>
+                  <input type="password" id="adminResetNewPassword" placeholder="پاسووردی نوێ" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+                </div>
+                <button onclick="resetAdminPassword()" style="background:#dc2626; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:bold;"><i class="fas fa-undo"></i> دروستکردنەوەی پاسوورد</button>
+              </div>
+            </div>
+
+            <!-- گۆڕینی ویزەر نەیمی بەڕێوەبەر -->
+            <div style="background: #f8fafc; border-radius: 1.5rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <h3 style="margin-bottom: 1rem;"><i class="fas fa-user-edit" style="color:#7c3aed;"></i> گۆڕینی ویزەر نەیمی بەڕێوەبەر</h3>
+              <div style="margin-bottom: 0.8rem;">
+                <label style="font-weight: 600;">ویزەر نەیمی نوێ:</label>
+                <input type="text" id="adminNewUsername" placeholder="ناوی بەکارهێنەری نوێ" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <div style="margin-bottom: 0.8rem;">
+                <label style="font-weight: 600;">پاسووردی بەڕێوەبەر:</label>
+                <input type="password" id="adminUsernamePassword" placeholder="پاسووردی ئێستا" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <button onclick="changeAdminUsername()" style="background:#7c3aed; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:bold;"><i class="fas fa-save"></i> گۆڕینی ویزەر نەیم</button>
+            </div>
+
+            <!-- زانیاریی ئێستا -->
+            <div style="background: #dbeafe; border-radius: 1.5rem; padding: 1rem;">
+              <p><strong>👤 ویزەر نەیمی ئێستا:</strong> <span id="currentAdminUsernameDisplay">farzad</span></p>
+              <p><strong>🔒 پاسووردی ئێستا:</strong> <span id="currentAdminPasswordDisplay">••••••••</span></p>
+              <p style="font-size: 0.8rem; color:#64748b; margin-top: 0.5rem;">📌 پاسووردی پرۆگرامێر: farzad@0101</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Employees Permissions Panel -->
+        <div class="panel" id="securityEmployeesPanel">
+          <div class="card-glass" style="max-width: 900px; margin: 0 auto;">
+            
+            <!-- مۆڵەتی بەکارهێنانی کارمەندەکان -->
+            <div style="background: #f8fafc; border-radius: 1.5rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <h3 style="margin-bottom: 1rem;"><i class="fas fa-user-lock" style="color:#7c3aed;"></i> مۆڵەتی بەکارهێنانی کارمەندەکان</h3>
+              <p style="font-size: 0.85rem; color:#64748b; margin-bottom: 1rem;">کارمەندێک هەڵبژێرە و مۆڵەتی بەکارهێنانی هەر بەشێک دیاری بکە.</p>
+              
+              <div style="margin-bottom: 1rem;">
+                <label style="font-weight: 600;">گەڕان بەدوای کارمەند:</label>
+                <div class="search-box" style="margin-bottom: 0.5rem;">
+                  <input type="text" id="securityEmployeeSearch" placeholder="ناوی کارمەند..." oninput="searchSecurityEmployee()">
+                  <button onclick="searchSecurityEmployee()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="suggestions" id="securityEmployeeSuggestions"></div>
+                <div id="selectedSecurityEmployeeBadge" style="margin-top: 0.5rem;"></div>
+              </div>
+
+              <div id="securityEmployeePermissionsContent" style="display: none;">
+                <div style="background: #fef9c3; padding: 1rem; border-radius: 1.5rem; margin-bottom: 1rem;">
+                  <strong>👤 کارمەند: <span id="securityEmployeeName"></span></strong>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.5rem; margin-bottom: 1rem;">
+                  <div id="securityPermissionsCheckboxes"></div>
+                </div>
+                
+                <button onclick="saveEmployeePermissions()" style="background:#7c3aed; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:bold;"><i class="fas fa-save"></i> پاشەکەوتکردنی مۆڵەتەکان</button>
+              </div>
+            </div>
+
+            <!-- گۆڕینی پاسووردی کارمەند -->
+            <div style="background: #f8fafc; border-radius: 1.5rem; padding: 1.5rem;">
+              <h3 style="margin-bottom: 1rem;"><i class="fas fa-key" style="color:#059669;"></i> گۆڕینی پاسووردی کارمەند</h3>
+              <p style="font-size: 0.85rem; color:#64748b; margin-bottom: 1rem;">پێویستی بە پاسووردی بەڕێوەبەر هەیە بۆ گۆڕینی پاسووردی کارمەند.</p>
+              
+              <div style="margin-bottom: 1rem;">
+                <label style="font-weight: 600;">گەڕان بەدوای کارمەند:</label>
+                <div class="search-box" style="margin-bottom: 0.5rem;">
+                  <input type="text" id="employeePasswordSearch" placeholder="ناوی کارمەند..." oninput="searchEmployeeForPassword()">
+                  <button onclick="searchEmployeeForPassword()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="suggestions" id="employeePasswordSuggestions"></div>
+                <div id="selectedEmployeePasswordBadge" style="margin-top: 0.5rem;"></div>
+              </div>
+
+              <div id="employeePasswordChangeContent" style="display: none;">
+                <div style="background: #fef9c3; padding: 1rem; border-radius: 1.5rem; margin-bottom: 1rem;">
+                  <strong>👤 کارمەند: <span id="employeePasswordName"></span></strong>
+                </div>
+                
+                <div style="margin-bottom: 0.8rem;">
+                  <label style="font-weight: 600;">پاسووردی بەڕێوەبەر:</label>
+                  <input type="password" id="adminPasswordForEmployee" placeholder="پاسووردی بەڕێوەبەر" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+                </div>
+                <div style="margin-bottom: 0.8rem;">
+                  <label style="font-weight: 600;">پاسووردی نوێ بۆ کارمەند:</label>
+                  <input type="password" id="employeeNewPassword" placeholder="پاسووردی نوێ" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+                </div>
+                <div style="margin-bottom: 0.8rem;">
+                  <label style="font-weight: 600;">پشتڕاستکردنەوەی پاسووردی نوێ:</label>
+                  <input type="password" id="employeeConfirmPassword" placeholder="دووبارە پاسووردی نوێ بنووسە" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+                </div>
+                <button onclick="changeEmployeePassword()" style="background:#059669; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:bold;"><i class="fas fa-save"></i> گۆڕینی پاسووردی کارمەند</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END SECURITY MODULE -->
+
   </div>
 
   <script>
@@ -1942,7 +2114,7 @@
         container.innerHTML = todayTransactions.map(t => `
           <div class="history-row">
             <div><strong>${t.id}</strong><br><span style="font-size:0.7rem;">${t.date}</span></div>
-            <div>${t.type === 'sale' ? '🛒 فرۆشتن' : t.type === 'money_request' ? '💰 واسڵ' : t.type === 'purchase_return' ? '↩️ گەڕانەوەی کڕین' : t.type === 'sales_return' ? '↩️ گەڕانەوەی فرۆشتن' : t.type === 'salary' ? '💼 موچە' : '📋 دیکە'}</div>
+            <div>${t.type === 'sale' ? '🛒 فرۆشتن' : t.type === 'money_request' ? '💰 واسڵ' : t.type === 'purchase_return' ? '↩️ گەڕانەوەی کڕین' : t.type === 'sales_return' ? '↩️ گەڕانەوەی فرۆشتن' : t.type === 'salary' ? '💼 موچە' : t.type === 'sales_return_cash' ? '↩️ گەڕانەوەی فرۆشتن (نەقدی)' : '📋 دیکە'}</div>
             <div style="font-weight:bold; color:#059669;">+${t.amount.toLocaleString()} د.ع</div>
             <div style="font-size:0.8rem;">${t.description}</div>
             ${t.invoiceId ? `<div style="font-size:0.7rem; color:#64748b;">📄 ${t.invoiceId}</div>` : ''}
@@ -1976,7 +2148,7 @@
         { id: 'agent_report', icon: 'fa-file-alt', label: 'راپۆرتی مەندوب', color: '#dbeafe', text: '#1e40af' },
         { id: 'give_agent', icon: 'fa-box-open', label: 'پێدانی کاڵاکان بە مەندوبەکان', color: '#f3e8ff', text: '#6b21a8' },
         { id: 'take_agent', icon: 'fa-arrow-down', label: 'وەرگرتن لە مەندوب', color: '#d1fae5', text: '#065f46' },
-        { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکیوریتی', color: '#e0e7ff', text: '#3730a3' }
+        { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکویریتی', color: '#e0e7ff', text: '#3730a3' }
       ];
 
       // ---------- Default order ----------
@@ -2127,6 +2299,291 @@
       let warePurchaseCart = [];
       let productImageData = '';
       let selectedMoneyEntity = null;
+
+      // ========== SECURITY & PERMISSIONS ==========
+      // Admin credentials (default)
+      let adminCredentials = JSON.parse(localStorage.getItem('market_admin_credentials') || JSON.stringify({
+        username: 'farzad',
+        password: 'farzad1234'
+      }));
+
+      // Employee permissions
+      let employeePermissions = JSON.parse(localStorage.getItem('market_employee_permissions') || '{}');
+
+      // Security module - Admin password change
+      window.changeAdminPassword = function() {
+        const currentPass = document.getElementById('adminCurrentPassword').value.trim();
+        const newPass = document.getElementById('adminNewPassword').value.trim();
+        const confirmPass = document.getElementById('adminConfirmPassword').value.trim();
+        
+        if (!currentPass || !newPass || !confirmPass) {
+          alert('تکایە هەموو خانەکان پڕبکەرەوە');
+          return;
+        }
+        
+        if (currentPass !== adminCredentials.password) {
+          alert('پاسووردی کۆن هەڵەیە!');
+          return;
+        }
+        
+        if (newPass.length < 6) {
+          alert('پاسووردی نوێ دەبێت لە 6 پیت زیاتر بێت');
+          return;
+        }
+        
+        if (newPass !== confirmPass) {
+          alert('پاسووردی نوێ و پشتڕاستکردنەوە یەکسان نین');
+          return;
+        }
+        
+        adminCredentials.password = newPass;
+        localStorage.setItem('market_admin_credentials', JSON.stringify(adminCredentials));
+        
+        document.getElementById('adminCurrentPassword').value = '';
+        document.getElementById('adminNewPassword').value = '';
+        document.getElementById('adminConfirmPassword').value = '';
+        
+        updateAdminDisplay();
+        alert('پاسووردی بەڕێوەبەر بە سەرکەوتوویی گۆڕدرا!');
+      };
+
+      // Reset admin password using programmer password
+      window.resetAdminPassword = function() {
+        const programmerPass = document.getElementById('programmerPassword').value.trim();
+        const newPass = document.getElementById('adminResetNewPassword').value.trim();
+        
+        if (!programmerPass || !newPass) {
+          alert('تکایە هەموو خانەکان پڕبکەرەوە');
+          return;
+        }
+        
+        if (programmerPass !== 'farzad@0101') {
+          alert('پاسووردی پرۆگرامێر هەڵەیە!');
+          return;
+        }
+        
+        if (newPass.length < 6) {
+          alert('پاسووردی نوێ دەبێت لە 6 پیت زیاتر بێت');
+          return;
+        }
+        
+        adminCredentials.password = newPass;
+        localStorage.setItem('market_admin_credentials', JSON.stringify(adminCredentials));
+        
+        document.getElementById('programmerPassword').value = '';
+        document.getElementById('adminResetNewPassword').value = '';
+        
+        updateAdminDisplay();
+        alert('پاسووردی بەڕێوەبەر بە سەرکەوتوویی دروستکرایەوە!');
+      };
+
+      // Change admin username
+      window.changeAdminUsername = function() {
+        const newUsername = document.getElementById('adminNewUsername').value.trim();
+        const password = document.getElementById('adminUsernamePassword').value.trim();
+        
+        if (!newUsername || !password) {
+          alert('تکایە هەموو خانەکان پڕبکەرەوە');
+          return;
+        }
+        
+        if (password !== adminCredentials.password) {
+          alert('پاسووردی بەڕێوەبەر هەڵەیە!');
+          return;
+        }
+        
+        adminCredentials.username = newUsername;
+        localStorage.setItem('market_admin_credentials', JSON.stringify(adminCredentials));
+        
+        document.getElementById('adminNewUsername').value = '';
+        document.getElementById('adminUsernamePassword').value = '';
+        
+        updateAdminDisplay();
+        alert('ویزەر نەیمی بەڕێوەبەر بە سەرکەوتوویی گۆڕدرا!');
+      };
+
+      function updateAdminDisplay() {
+        const display = document.getElementById('currentAdminUsernameDisplay');
+        const passDisplay = document.getElementById('currentAdminPasswordDisplay');
+        if (display) display.textContent = adminCredentials.username;
+        if (passDisplay) passDisplay.textContent = '••••••••';
+      }
+
+      // Search employee for permissions
+      window.searchSecurityEmployee = function() {
+        const query = document.getElementById('securityEmployeeSearch').value.trim().toLowerCase();
+        const suggestions = document.getElementById('securityEmployeeSuggestions');
+        if (!query) { suggestions.style.display = 'none'; return; }
+        const filtered = employees.filter(e => e.name.toLowerCase().includes(query));
+        if (filtered.length) {
+          suggestions.innerHTML = filtered.map(e => `
+            <div class="suggestion-item" data-eid="${e.id}">
+              <span>👤 ${e.name}</span>
+              <span style="font-size:0.8rem; color:#64748b;">📱 ${e.phone}</span>
+            </div>
+          `).join('');
+          suggestions.style.display = 'block';
+          suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const eid = parseInt(this.dataset.eid);
+              const emp = employees.find(e => e.id === eid);
+              if (emp) {
+                selectedSecurityEmployee = emp;
+                document.getElementById('securityEmployeeName').textContent = emp.name;
+                document.getElementById('selectedSecurityEmployeeBadge').innerHTML = `
+                  <span class="customer-badge">👤 ${emp.name}</span>
+                `;
+                document.getElementById('securityEmployeeSearch').value = emp.name;
+                document.getElementById('securityEmployeePermissionsContent').style.display = 'block';
+                renderEmployeePermissions(emp);
+              }
+              suggestions.style.display = 'none';
+            });
+          });
+        } else { suggestions.style.display = 'none'; }
+      };
+
+      let selectedSecurityEmployee = null;
+
+      function renderEmployeePermissions(employee) {
+        const container = document.getElementById('securityPermissionsCheckboxes');
+        if (!container) return;
+        
+        // Get all module IDs except security itself
+        const moduleIds = allModules.map(m => m.id);
+        
+        // Get current permissions for this employee
+        const perms = employeePermissions[employee.id] || {};
+        
+        container.innerHTML = moduleIds.map(moduleId => {
+          const mod = allModules.find(m => m.id === moduleId);
+          if (!mod) return '';
+          const isChecked = perms[moduleId] !== false; // Default to true if not set
+          return `
+            <div class="perm-item" style="background:${isChecked ? '#dbeafe' : '#fee2e2'};">
+              <i class="fas ${mod.icon}" style="color:${mod.text};"></i>
+              <label class="perm-label">
+                <input type="checkbox" class="perm-checkbox" data-module="${moduleId}" ${isChecked ? 'checked' : ''}>
+                ${mod.label}
+              </label>
+            </div>
+          `;
+        }).join('');
+      }
+
+      window.saveEmployeePermissions = function() {
+        if (!selectedSecurityEmployee) {
+          alert('تکایە کارمەندێک هەڵبژێرە');
+          return;
+        }
+        
+        const checkboxes = document.querySelectorAll('.perm-checkbox');
+        const perms = {};
+        checkboxes.forEach(cb => {
+          perms[cb.dataset.module] = cb.checked;
+        });
+        
+        employeePermissions[selectedSecurityEmployee.id] = perms;
+        localStorage.setItem('market_employee_permissions', JSON.stringify(employeePermissions));
+        
+        alert(`مۆڵەتەکانی ${selectedSecurityEmployee.name} پاشەکەوتکرا!`);
+      };
+
+      // Search employee for password change
+      window.searchEmployeeForPassword = function() {
+        const query = document.getElementById('employeePasswordSearch').value.trim().toLowerCase();
+        const suggestions = document.getElementById('employeePasswordSuggestions');
+        if (!query) { suggestions.style.display = 'none'; return; }
+        const filtered = employees.filter(e => e.name.toLowerCase().includes(query));
+        if (filtered.length) {
+          suggestions.innerHTML = filtered.map(e => `
+            <div class="suggestion-item" data-eid="${e.id}">
+              <span>👤 ${e.name}</span>
+              <span style="font-size:0.8rem; color:#64748b;">📱 ${e.phone}</span>
+            </div>
+          `).join('');
+          suggestions.style.display = 'block';
+          suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const eid = parseInt(this.dataset.eid);
+              const emp = employees.find(e => e.id === eid);
+              if (emp) {
+                selectedEmployeeForPassword = emp;
+                document.getElementById('employeePasswordName').textContent = emp.name;
+                document.getElementById('selectedEmployeePasswordBadge').innerHTML = `
+                  <span class="customer-badge">👤 ${emp.name}</span>
+                `;
+                document.getElementById('employeePasswordSearch').value = emp.name;
+                document.getElementById('employeePasswordChangeContent').style.display = 'block';
+              }
+              suggestions.style.display = 'none';
+            });
+          });
+        } else { suggestions.style.display = 'none'; }
+      };
+
+      let selectedEmployeeForPassword = null;
+
+      window.changeEmployeePassword = function() {
+        if (!selectedEmployeeForPassword) {
+          alert('تکایە کارمەندێک هەڵبژێرە');
+          return;
+        }
+        
+        const adminPass = document.getElementById('adminPasswordForEmployee').value.trim();
+        const newPass = document.getElementById('employeeNewPassword').value.trim();
+        const confirmPass = document.getElementById('employeeConfirmPassword').value.trim();
+        
+        if (!adminPass || !newPass || !confirmPass) {
+          alert('تکایە هەموو خانەکان پڕبکەرەوە');
+          return;
+        }
+        
+        if (adminPass !== adminCredentials.password) {
+          alert('پاسووردی بەڕێوەبەر هەڵەیە!');
+          return;
+        }
+        
+        if (newPass.length < 6) {
+          alert('پاسووردی نوێ دەبێت لە 6 پیت زیاتر بێت');
+          return;
+        }
+        
+        if (newPass !== confirmPass) {
+          alert('پاسووردی نوێ و پشتڕاستکردنەوە یەکسان نین');
+          return;
+        }
+        
+        selectedEmployeeForPassword.password = newPass;
+        saveEmployees();
+        
+        document.getElementById('adminPasswordForEmployee').value = '';
+        document.getElementById('employeeNewPassword').value = '';
+        document.getElementById('employeeConfirmPassword').value = '';
+        document.getElementById('employeePasswordChangeContent').style.display = 'none';
+        document.getElementById('selectedEmployeePasswordBadge').innerHTML = '';
+        document.getElementById('employeePasswordSearch').value = '';
+        
+        alert(`پاسووردی ${selectedEmployeeForPassword.name} بە سەرکەوتوویی گۆڕدرا!`);
+        selectedEmployeeForPassword = null;
+      };
+
+      // Security tab event listener
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('tab') && e.target.dataset.securitytab) {
+          document.querySelectorAll('[data-securitytab]').forEach(t => t.classList.remove('active'));
+          e.target.classList.add('active');
+          const tab = e.target.dataset.securitytab;
+          document.getElementById('securityAdminPanel').classList.toggle('active', tab === 'admin');
+          document.getElementById('securityEmployeesPanel').classList.toggle('active', tab === 'employees');
+          if (tab === 'admin') updateAdminDisplay();
+        }
+      });
+
+      // Initialize security display
+      updateAdminDisplay();
+
+      // ---------- END SECURITY SECTION ----------
 
       function saveEmployees() {
         localStorage.setItem('market_employees', JSON.stringify(employees));
@@ -2362,6 +2819,7 @@
           }, 100);
         }
         else if (moduleId === 'employees') navigateTo('employees');
+        else if (moduleId === 'security') navigateTo('security');
         else alert('ئەم بەشە ئێستا تەنیا هەندێک بەش کارایە');
       };
 
@@ -2373,7 +2831,7 @@
       };
 
       window.navigateTo = function(view) {
-        const views = ['dashboardView', 'salesView', 'settingsView', 'personsView', 'partnersView', 'warehouseView', 'pricingView', 'barcodeView', 'moneyRequestView', 'purchaseView', 'agentsView', 'expiryView', 'giveAgentView', 'cashRegisterView', 'employeesView'];
+        const views = ['dashboardView', 'salesView', 'settingsView', 'personsView', 'partnersView', 'warehouseView', 'pricingView', 'barcodeView', 'moneyRequestView', 'purchaseView', 'agentsView', 'expiryView', 'giveAgentView', 'cashRegisterView', 'employeesView', 'securityView'];
         views.forEach(v => {
           const el = document.getElementById(v);
           if (el) el.style.display = 'none';
@@ -2393,7 +2851,8 @@
           'expiry': 'expiryView',
           'giveAgent': 'giveAgentView',
           'cashRegister': 'cashRegisterView',
-          'employees': 'employeesView'
+          'employees': 'employeesView',
+          'security': 'securityView'
         };
         const targetId = viewMap[view];
         if (targetId) {
@@ -2415,6 +2874,7 @@
         else if (view === 'giveAgent') { giveAgentCart = []; selectedGiveAgent = null; renderGiveAgentCart(); document.getElementById('giveAgentSearch').value = ''; document.getElementById('giveProductSearch').value = ''; document.getElementById('giveAgentNote').value = ''; document.getElementById('selectedGiveAgentBadge').innerHTML = ''; }
         else if (view === 'cashRegister') { updateCashStats(); renderCashRegisterHistory(); }
         else if (view === 'employees') { renderEmployeesList(); renderEmployeeSalaryHistory(); renderEmployeeLeaveHistory(); document.getElementById('employeeDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کارمەندێک هەڵبژێرە بۆ بینینی زانیاری</p>'; }
+        else if (view === 'security') { updateAdminDisplay(); }
       };
 
       // ========== EMPLOYEE FUNCTIONS ==========
@@ -2641,7 +3101,7 @@
         // Update employee's current salary
         selectedEmployeeForSalary.salary = amount;
         
-        // 🆕 Add to cash register (salary expense)
+        // Add to cash register (salary expense)
         addToCashRegister(amount, 'salary', `موچەی ${selectedEmployeeForSalary.name} - ${month}`, `SAL-${Date.now()}`);
         
         saveEmployees();
@@ -3255,6 +3715,7 @@
           });
           saveCustomers();
         } else {
+          // Remove from cash register
           const today = new Date().toLocaleDateString('ckb');
           if (cashRegister.lastResetDate === today) {
             cashRegister.totalToday = Math.max(0, cashRegister.totalToday - refundAmount);
@@ -3477,6 +3938,7 @@
             if (tab === 'salary') renderEmployeeSalaryHistory();
             if (tab === 'leave') renderEmployeeLeaveHistory();
           }
+          // Security tab is handled in its own section above
         }
         if (e.target.classList.contains('settings-tab')) {
           document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
