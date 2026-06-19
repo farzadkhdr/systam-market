@@ -1707,6 +1707,141 @@
         </div>
       </div>
     </div>
+
+    <!-- Employees Module View -->
+    <div id="employeesView" style="display: none;">
+      <div class="module-view-container">
+        <div class="back-header">
+          <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+          <div class="page-title"><i class="fas fa-id-badge" style="color:#2563eb;"></i> کارمەندەکان</div>
+        </div>
+        <div class="tabs">
+          <div class="tab active" data-emptab="list">📋 لیستی کارمەندەکان</div>
+          <div class="tab" data-emptab="add">➕ زیادکردنی کارمەند</div>
+          <div class="tab" data-emptab="salary">💰 داهاتی کارمەند</div>
+          <div class="tab" data-emptab="leave">📅 مۆڵەتی کارمەند</div>
+        </div>
+
+        <div class="panel active" id="employeesListPanel">
+          <div class="card-glass" style="margin-bottom: 1rem;">
+            <div class="search-box">
+              <input type="text" id="employeeSearchInput" placeholder="گەڕان بە ناوی کارمەند..." oninput="filterEmployees()">
+              <button onclick="filterEmployees()"><i class="fas fa-search"></i></button>
+            </div>
+          </div>
+          <div class="persons-layout">
+            <div class="persons-list" id="employeesListContainer"></div>
+            <div class="person-detail-panel" id="employeeDetailPanel"><p style="color:#94a3b8; text-align:center;">کارمەندێک هەڵبژێرە بۆ بینینی زانیاری</p></div>
+          </div>
+        </div>
+
+        <div class="panel" id="employeesAddPanel">
+          <div class="card-glass" style="max-width: 600px; margin: 0 auto;">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-user-plus"></i> زیادکردنی کارمەندی نوێ</h3>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">ناوی تەواو:</label>
+              <input type="text" id="newEmployeeName" placeholder="ناوی کارمەند..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">ژمارە مۆبایل:</label>
+              <input type="tel" id="newEmployeePhone" placeholder="07xx xxx xxxx" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">ویزەیر نەم (ناوی بەکارهێنەر):</label>
+              <input type="text" id="newEmployeeUsername" placeholder="ناوی بەکارهێنەری تایبەت..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">پاسوورد:</label>
+              <input type="password" id="newEmployeePassword" placeholder="پاسوورد..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">ناونیشان:</label>
+              <textarea id="newEmployeeAddress" placeholder="ناونیشانی کارمەند..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem; resize:vertical;" rows="3"></textarea>
+            </div>
+            <button onclick="addNewEmployee()" style="background:#2563eb; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-save"></i> پاشەکەوتکردن</button>
+          </div>
+        </div>
+
+        <div class="panel" id="employeesSalaryPanel">
+          <div class="card-glass">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-money-bill-wave"></i> پێدانی موچە بە کارمەند</h3>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">گەڕان بەدوای کارمەند:</label>
+              <div class="search-box" style="margin-bottom: 0.5rem;">
+                <input type="text" id="employeeSalarySearch" placeholder="ناوی کارمەند..." oninput="searchEmployeeForSalary()">
+                <button onclick="searchEmployeeForSalary()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="employeeSalarySuggestions"></div>
+              <div id="selectedEmployeeSalaryInfo" style="margin-top: 0.5rem; display: none;">
+                <div style="background:#fef9c3; padding:1rem; border-radius:1.5rem;">
+                  <strong>👤 ناو: <span id="employeeSalaryName"></span></strong><br>
+                  📱 مۆبایل: <span id="employeeSalaryPhone"></span><br>
+                  💰 موچە: <span id="employeeSalaryAmount"></span> دینار
+                </div>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <label style="font-weight: 600;">بڕی موچە:</label>
+                <input type="number" id="employeeSalaryAmountInput" placeholder="بڕی موچە" min="1" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <div>
+                <label style="font-weight: 600;">مانگ:</label>
+                <input type="month" id="employeeSalaryMonth" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">تێبینی:</label>
+              <textarea id="employeeSalaryNote" placeholder="تێبینی..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;" rows="2"></textarea>
+            </div>
+            <button onclick="submitEmployeeSalary()" style="background:#059669; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-check-circle"></i> پێدانی موچە</button>
+            <div id="employeeSalaryHistory" style="margin-top: 2rem;">
+              <h4 style="margin-bottom: 0.5rem;">📋 مێژووی موچەکان</h4>
+              <div class="history-list" id="employeeSalaryList" style="max-height: 250px; overflow-y: auto;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="employeesLeavePanel">
+          <div class="card-glass">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-calendar-alt"></i> مۆڵەتی کارمەند</h3>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">گەڕان بەدوای کارمەند:</label>
+              <div class="search-box" style="margin-bottom: 0.5rem;">
+                <input type="text" id="employeeLeaveSearch" placeholder="ناوی کارمەند..." oninput="searchEmployeeForLeave()">
+                <button onclick="searchEmployeeForLeave()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="employeeLeaveSuggestions"></div>
+              <div id="selectedEmployeeLeaveInfo" style="margin-top: 0.5rem; display: none;">
+                <div style="background:#fef9c3; padding:1rem; border-radius:1.5rem;">
+                  <strong>👤 ناو: <span id="employeeLeaveName"></span></strong><br>
+                  📱 مۆبایل: <span id="employeeLeavePhone"></span>
+                </div>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <label style="font-weight: 600;">بەرواری دەستپێک:</label>
+                <input type="date" id="employeeLeaveStart" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <div>
+                <label style="font-weight: 600;">بەرواری کۆتایی:</label>
+                <input type="date" id="employeeLeaveEnd" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">هۆکاری مۆڵەت:</label>
+              <textarea id="employeeLeaveReason" placeholder="هۆکاری مۆڵەت..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;" rows="2"></textarea>
+            </div>
+            <button onclick="submitEmployeeLeave()" style="background:#7c3aed; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-save"></i> تۆمارکردنی مۆڵەت</button>
+            <div id="employeeLeaveHistory" style="margin-top: 2rem;">
+              <h4 style="margin-bottom: 0.5rem;">📋 مێژووی مۆڵەتەکان</h4>
+              <div class="history-list" id="employeeLeaveList" style="max-height: 250px; overflow-y: auto;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -1807,7 +1942,7 @@
         container.innerHTML = todayTransactions.map(t => `
           <div class="history-row">
             <div><strong>${t.id}</strong><br><span style="font-size:0.7rem;">${t.date}</span></div>
-            <div>${t.type === 'sale' ? '🛒 فرۆشتن' : t.type === 'money_request' ? '💰 واسڵ' : t.type === 'purchase_return' ? '↩️ گەڕانەوەی کڕین' : t.type === 'sales_return' ? '↩️ گەڕانەوەی فرۆشتن' : '📋 دیکە'}</div>
+            <div>${t.type === 'sale' ? '🛒 فرۆشتن' : t.type === 'money_request' ? '💰 واسڵ' : t.type === 'purchase_return' ? '↩️ گەڕانەوەی کڕین' : t.type === 'sales_return' ? '↩️ گەڕانەوەی فرۆشتن' : t.type === 'salary' ? '💼 موچە' : '📋 دیکە'}</div>
             <div style="font-weight:bold; color:#059669;">+${t.amount.toLocaleString()} د.ع</div>
             <div style="font-size:0.8rem;">${t.description}</div>
             ${t.invoiceId ? `<div style="font-size:0.7rem; color:#64748b;">📄 ${t.invoiceId}</div>` : ''}
@@ -1912,6 +2047,38 @@
         { id: 4, name: 'شەکر', barcode: '445566', image: '', quantity: 20, unit: 'کیلۆ', secondQty: 0, buyPrice: 1500, sellPrice: 1800, expiryDate: '2026-05-20' }
       ]));
 
+      // ---------- Employees Data ----------
+      let employees = JSON.parse(localStorage.getItem('market_employees') || JSON.stringify([
+        { 
+          id: 1, 
+          name: 'محەممەد رەسول', 
+          phone: '0750 111 1111', 
+          address: 'هەولێر، شەقامی 60 مەتری',
+          username: 'mhamad',
+          password: '123456',
+          salary: 750000,
+          salaryHistory: [
+            { month: '2025-01', amount: 750000, date: '2025-01-30', note: 'موچەی مانگی یەک' },
+            { month: '2025-02', amount: 750000, date: '2025-02-28', note: 'موچەی مانگی دوو' }
+          ],
+          leaves: [
+            { start: '2025-03-01', end: '2025-03-03', reason: 'نەخۆشی' },
+            { start: '2025-03-10', end: '2025-03-12', reason: 'مۆڵەتی خێزانی' }
+          ]
+        },
+        { 
+          id: 2, 
+          name: 'فەرهاد عەلی', 
+          phone: '0750 222 2222', 
+          address: 'سلێمانی، شەقامی سەرەکی',
+          username: 'farhad',
+          password: '654321',
+          salary: 600000,
+          salaryHistory: [],
+          leaves: []
+        }
+      ]));
+
       // ---------- Expiry & Damage Data ----------
       let expiredDamagedProducts = JSON.parse(localStorage.getItem('market_expiry_damage') || '[]');
 
@@ -1947,6 +2114,11 @@
       let giveAgentCart = [];
       let selectedGiveAgent = null;
 
+      // Employee state variables
+      let selectedEmployeeId = null;
+      let selectedEmployeeForSalary = null;
+      let selectedEmployeeForLeave = null;
+
       // Other state variables
       let selectedPersonId = null;
       let selectedPartnerId = null;
@@ -1955,6 +2127,11 @@
       let warePurchaseCart = [];
       let productImageData = '';
       let selectedMoneyEntity = null;
+
+      function saveEmployees() {
+        localStorage.setItem('market_employees', JSON.stringify(employees));
+        updateStats();
+      }
 
       function saveCustomers() {
         localStorage.setItem('market_customers', JSON.stringify(customers));
@@ -2061,9 +2238,13 @@
         renderReturnHistory();
         renderPurchaseReturnHistory();
         renderCashRegisterHistory();
+        renderEmployeesList();
+        renderEmployeeSalaryHistory();
+        renderEmployeeLeaveHistory();
         document.getElementById('personDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کەسێک هەڵبژێرە بۆ بینینی زانیاری</p>';
         document.getElementById('partnerDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">شەریکێک هەڵبژێرە بۆ بینینی زانیاری</p>';
         document.getElementById('agentDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">مەندوبێک هەڵبژێرە بۆ بینینی زانیاری</p>';
+        document.getElementById('employeeDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کارمەندێک هەڵبژێرە بۆ بینینی زانیاری</p>';
       });
 
       let backupHistory = JSON.parse(localStorage.getItem('market_backup_history') || '[]');
@@ -2180,6 +2361,7 @@
             document.getElementById('agentsWasslPanel').classList.add('active');
           }, 100);
         }
+        else if (moduleId === 'employees') navigateTo('employees');
         else alert('ئەم بەشە ئێستا تەنیا هەندێک بەش کارایە');
       };
 
@@ -2191,7 +2373,7 @@
       };
 
       window.navigateTo = function(view) {
-        const views = ['dashboardView', 'salesView', 'settingsView', 'personsView', 'partnersView', 'warehouseView', 'pricingView', 'barcodeView', 'moneyRequestView', 'purchaseView', 'agentsView', 'expiryView', 'giveAgentView', 'cashRegisterView'];
+        const views = ['dashboardView', 'salesView', 'settingsView', 'personsView', 'partnersView', 'warehouseView', 'pricingView', 'barcodeView', 'moneyRequestView', 'purchaseView', 'agentsView', 'expiryView', 'giveAgentView', 'cashRegisterView', 'employeesView'];
         views.forEach(v => {
           const el = document.getElementById(v);
           if (el) el.style.display = 'none';
@@ -2210,7 +2392,8 @@
           'agents': 'agentsView',
           'expiry': 'expiryView',
           'giveAgent': 'giveAgentView',
-          'cashRegister': 'cashRegisterView'
+          'cashRegister': 'cashRegisterView',
+          'employees': 'employeesView'
         };
         const targetId = viewMap[view];
         if (targetId) {
@@ -2231,6 +2414,385 @@
         else if (view === 'expiry') { renderExpiryProducts(); renderDamagedProducts(); }
         else if (view === 'giveAgent') { giveAgentCart = []; selectedGiveAgent = null; renderGiveAgentCart(); document.getElementById('giveAgentSearch').value = ''; document.getElementById('giveProductSearch').value = ''; document.getElementById('giveAgentNote').value = ''; document.getElementById('selectedGiveAgentBadge').innerHTML = ''; }
         else if (view === 'cashRegister') { updateCashStats(); renderCashRegisterHistory(); }
+        else if (view === 'employees') { renderEmployeesList(); renderEmployeeSalaryHistory(); renderEmployeeLeaveHistory(); document.getElementById('employeeDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کارمەندێک هەڵبژێرە بۆ بینینی زانیاری</p>'; }
+      };
+
+      // ========== EMPLOYEE FUNCTIONS ==========
+
+      // Render employees list
+      function renderEmployeesList(list = employees) {
+        const container = document.getElementById('employeesListContainer');
+        if (!container) return;
+        if (!list.length) { container.innerHTML = '<p style="text-align:center; color:#94a3b8;">هیچ کارمەندێک نەدۆزرایەوە</p>'; return; }
+        container.innerHTML = list.map(emp => `
+          <div class="person-card ${selectedEmployeeId === emp.id ? 'selected' : ''}" onclick="selectEmployee(${emp.id})">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div><strong>${emp.name}</strong><div style="font-size:0.8rem; color:#64748b;">📱 ${emp.phone}</div></div>
+              <span style="background:#dbeafe; padding:0.3rem 0.8rem; border-radius:1rem; font-size:0.8rem;">👤 ${emp.username}</span>
+            </div>
+          </div>`).join('');
+      }
+
+      window.filterEmployees = function() {
+        const query = document.getElementById('employeeSearchInput')?.value.trim().toLowerCase() || '';
+        const filtered = query ? employees.filter(e => e.name.toLowerCase().includes(query) || e.phone.includes(query) || e.username.toLowerCase().includes(query)) : employees;
+        renderEmployeesList(filtered);
+      };
+
+      window.selectEmployee = function(employeeId) {
+        selectedEmployeeId = employeeId;
+        const emp = employees.find(e => e.id === employeeId);
+        if (!emp) return;
+        renderEmployeesList();
+        renderEmployeeDetail(emp);
+      };
+
+      function renderEmployeeDetail(emp) {
+        const panel = document.getElementById('employeeDetailPanel');
+        if (!panel) return;
+        const totalSalary = emp.salaryHistory?.reduce((sum, s) => sum + s.amount, 0) || 0;
+        const totalLeaves = emp.leaves?.length || 0;
+        panel.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:1.5rem;">
+            <div>
+              <h2 style="margin-bottom:0.5rem;">${emp.name}</h2>
+              <div style="color:#64748b; margin-bottom:0.3rem;">📱 ${emp.phone}</div>
+              <div style="color:#64748b; margin-bottom:0.3rem;">👤 ناوی بەکارهێنەر: ${emp.username}</div>
+              ${emp.address ? `<div style="color:#64748b;">📍 ${emp.address}</div>` : ''}
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn-icon" onclick="editEmployee(${emp.id})" title="دەستکاری"><i class="fas fa-edit" style="color:#2563eb;"></i></button>
+              <button class="btn-icon" onclick="deleteEmployee(${emp.id})" title="سڕینەوە"><i class="fas fa-trash-alt" style="color:#dc2626;"></i></button>
+            </div>
+          </div>
+          <div style="background:#dbeafe; padding:1rem; border-radius:1rem; margin-bottom:1.5rem;">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+              <div><strong>💰 موچە: </strong>${(emp.salary || 0).toLocaleString()} د.ع</div>
+              <div><strong>💳 کۆی موچەی پێدراو: </strong>${totalSalary.toLocaleString()} د.ع</div>
+              <div><strong>📅 ژمارەی مۆڵەت: </strong>${totalLeaves}</div>
+            </div>
+          </div>
+          
+          <div class="section-mini-title"><i class="fas fa-money-bill-wave" style="color:#059669;"></i> مێژووی موچەکان</div>
+          <div style="margin-bottom:1rem; max-height:200px; overflow-y:auto;">
+            ${emp.salaryHistory?.length ? emp.salaryHistory.map(s => `
+              <div class="movement-card">
+                <div style="display:flex; justify-content:space-between;">
+                  <strong>${s.month}</strong>
+                  <span>${s.date}</span>
+                </div>
+                <div>بڕ: ${s.amount.toLocaleString()} د.ع</div>
+                ${s.note ? `<div style="font-size:0.85rem;">${s.note}</div>` : ''}
+              </div>
+            `).join('') : '<p style="color:#94a3b8;">هیچ موچەیەک تۆمار نەکراوە</p>'}
+          </div>
+
+          <div class="section-mini-title"><i class="fas fa-calendar-alt" style="color:#7c3aed;"></i> مێژووی مۆڵەتەکان</div>
+          <div style="max-height:200px; overflow-y:auto;">
+            ${emp.leaves?.length ? emp.leaves.map(l => `
+              <div class="movement-card">
+                <div style="display:flex; justify-content:space-between;">
+                  <strong>📅 ${l.start} → ${l.end}</strong>
+                </div>
+                <div>هۆکار: ${l.reason}</div>
+              </div>
+            `).join('') : '<p style="color:#94a3b8;">هیچ مۆڵەتێک تۆمار نەکراوە</p>'}
+          </div>
+        `;
+      }
+
+      window.addNewEmployee = function() {
+        const name = document.getElementById('newEmployeeName')?.value.trim();
+        const phone = document.getElementById('newEmployeePhone')?.value.trim();
+        const username = document.getElementById('newEmployeeUsername')?.value.trim();
+        const password = document.getElementById('newEmployeePassword')?.value.trim();
+        const address = document.getElementById('newEmployeeAddress')?.value.trim();
+        
+        if (!name || !phone || !username || !password) {
+          alert('تکایە هەموو خانە پڕبکەرەوە (ناو، مۆبایل، ویزەیر نەم، پاسوورد)');
+          return;
+        }
+        
+        if (employees.find(e => e.username === username)) {
+          alert('ئەم ویزەیر نەمە پێشتر بەکارهاتووە! تکایە ناوێکی تر هەڵبژێرە');
+          return;
+        }
+        
+        const newId = employees.length ? Math.max(...employees.map(e => e.id)) + 1 : 1;
+        employees.push({
+          id: newId,
+          name,
+          phone,
+          address: address || '',
+          username,
+          password,
+          salary: 0,
+          salaryHistory: [],
+          leaves: []
+        });
+        saveEmployees();
+        document.getElementById('newEmployeeName').value = '';
+        document.getElementById('newEmployeePhone').value = '';
+        document.getElementById('newEmployeeUsername').value = '';
+        document.getElementById('newEmployeePassword').value = '';
+        document.getElementById('newEmployeeAddress').value = '';
+        alert('کارمەندی نوێ بە سەرکەوتوویی زیادکرا');
+        renderEmployeesList();
+      };
+
+      window.editEmployee = function(employeeId) {
+        const emp = employees.find(e => e.id === employeeId);
+        if (!emp) return;
+        const newName = prompt('ناوی نوێ:', emp.name);
+        if (newName === null) return;
+        const newPhone = prompt('ژمارە مۆبایلی نوێ:', emp.phone);
+        if (newPhone === null) return;
+        const newUsername = prompt('ویزەیر نەمی نوێ:', emp.username);
+        if (newUsername === null) return;
+        const newPassword = prompt('پاسووردی نوێ:', emp.password);
+        if (newPassword === null) return;
+        const newAddress = prompt('ناونیشانی نوێ:', emp.address || '');
+        if (newAddress === null) return;
+        
+        emp.name = newName.trim() || emp.name;
+        emp.phone = newPhone.trim() || emp.phone;
+        emp.username = newUsername.trim() || emp.username;
+        emp.password = newPassword.trim() || emp.password;
+        emp.address = newAddress.trim() || '';
+        saveEmployees();
+        renderEmployeesList();
+        renderEmployeeDetail(emp);
+      };
+
+      window.deleteEmployee = function(employeeId) {
+        const emp = employees.find(e => e.id === employeeId);
+        if (!emp) return;
+        if (!confirm(`دڵنیایت لە سڕینەوەی "${emp.name}"؟`)) return;
+        employees = employees.filter(e => e.id !== employeeId);
+        selectedEmployeeId = null;
+        saveEmployees();
+        renderEmployeesList();
+        document.getElementById('employeeDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کارمەندێک هەڵبژێرە بۆ بینینی زانیاری</p>';
+      };
+
+      // Salary functions
+      window.searchEmployeeForSalary = function() {
+        const query = document.getElementById('employeeSalarySearch')?.value.trim().toLowerCase() || '';
+        const suggestions = document.getElementById('employeeSalarySuggestions');
+        if (!query) { suggestions.style.display = 'none'; return; }
+        const filtered = employees.filter(e => e.name.toLowerCase().includes(query) || e.phone.includes(query) || e.username.toLowerCase().includes(query));
+        if (filtered.length) {
+          suggestions.innerHTML = filtered.map(e => `
+            <div class="suggestion-item" data-eid="${e.id}">
+              <span>👤 ${e.name}</span>
+              <span style="font-size:0.8rem; color:#64748b;">📱 ${e.phone}</span>
+            </div>
+          `).join('');
+          suggestions.style.display = 'block';
+          suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const eid = parseInt(this.dataset.eid);
+              const emp = employees.find(e => e.id === eid);
+              if (emp) {
+                selectedEmployeeForSalary = emp;
+                document.getElementById('employeeSalaryName').textContent = emp.name;
+                document.getElementById('employeeSalaryPhone').textContent = emp.phone;
+                document.getElementById('employeeSalaryAmount').textContent = (emp.salary || 0).toLocaleString();
+                document.getElementById('employeeSalaryAmountInput').value = emp.salary || 0;
+                document.getElementById('selectedEmployeeSalaryInfo').style.display = 'block';
+                document.getElementById('employeeSalarySearch').value = emp.name;
+                
+                // Set default month to current month
+                const now = new Date();
+                const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+                document.getElementById('employeeSalaryMonth').value = month;
+              }
+              suggestions.style.display = 'none';
+            });
+          });
+        } else { suggestions.style.display = 'none'; }
+      };
+
+      window.submitEmployeeSalary = function() {
+        if (!selectedEmployeeForSalary) { alert('تکایە کارمەندێک هەڵبژێرە'); return; }
+        const amount = parseInt(document.getElementById('employeeSalaryAmountInput')?.value);
+        if (!amount || amount <= 0) { alert('تکایە بڕی موچەی دروست بنووسە'); return; }
+        const month = document.getElementById('employeeSalaryMonth')?.value;
+        if (!month) { alert('تکایە مانگ دیاری بکە'); return; }
+        const note = document.getElementById('employeeSalaryNote')?.value.trim() || '';
+        
+        // Check if salary for this month already exists
+        const existing = selectedEmployeeForSalary.salaryHistory?.find(s => s.month === month);
+        if (existing) {
+          if (!confirm(`موچەی مانگی ${month} پێشتر تۆمارکراوە. دەتەوێت بیگۆڕیت؟`)) return;
+          existing.amount = amount;
+          existing.note = note;
+          existing.date = new Date().toLocaleString('ckb');
+        } else {
+          if (!selectedEmployeeForSalary.salaryHistory) selectedEmployeeForSalary.salaryHistory = [];
+          selectedEmployeeForSalary.salaryHistory.push({
+            month: month,
+            amount: amount,
+            date: new Date().toLocaleString('ckb'),
+            note: note
+          });
+        }
+        
+        // Update employee's current salary
+        selectedEmployeeForSalary.salary = amount;
+        
+        // 🆕 Add to cash register (salary expense)
+        addToCashRegister(amount, 'salary', `موچەی ${selectedEmployeeForSalary.name} - ${month}`, `SAL-${Date.now()}`);
+        
+        saveEmployees();
+        renderEmployeeSalaryHistory();
+        renderEmployeeDetail(selectedEmployeeForSalary);
+        renderCashRegisterHistory();
+        document.getElementById('employeeSalaryNote').value = '';
+        alert(`موچەی ${selectedEmployeeForSalary.name} بە سەرکەوتوویی تۆمارکرا!`);
+      };
+
+      function renderEmployeeSalaryHistory() {
+        const container = document.getElementById('employeeSalaryList');
+        if (!container) return;
+        // Show all salary records from all employees
+        const allRecords = [];
+        employees.forEach(emp => {
+          if (emp.salaryHistory) {
+            emp.salaryHistory.forEach(s => {
+              allRecords.push({ ...s, employeeName: emp.name, employeeId: emp.id });
+            });
+          }
+        });
+        allRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        if (!allRecords.length) {
+          container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ موچەیەک تۆمار نەکراوە</p>';
+          return;
+        }
+        container.innerHTML = allRecords.map(r => `
+          <div class="history-row">
+            <div><strong>${r.employeeName}</strong></div>
+            <div>${r.month}</div>
+            <div style="font-weight:bold; color:#059669;">${r.amount.toLocaleString()} د.ع</div>
+            <div style="font-size:0.8rem;">${r.date}</div>
+            <div>
+              <button class="btn-icon" onclick="deleteSalaryRecord(${r.employeeId}, '${r.month}')" title="سڕینەوە"><i class="fas fa-trash-alt" style="color:#dc2626;"></i></button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      window.deleteSalaryRecord = function(employeeId, month) {
+        if (!confirm(`دڵنیایت لە سڕینەوەی موچەی مانگی ${month}؟`)) return;
+        const emp = employees.find(e => e.id === employeeId);
+        if (!emp) return;
+        emp.salaryHistory = emp.salaryHistory?.filter(s => s.month !== month) || [];
+        if (emp.salaryHistory.length > 0) {
+          emp.salary = emp.salaryHistory[emp.salaryHistory.length - 1].amount;
+        } else {
+          emp.salary = 0;
+        }
+        saveEmployees();
+        renderEmployeeSalaryHistory();
+        renderEmployeeDetail(emp);
+        alert('موچە سڕکرایەوە');
+      };
+
+      // Leave functions
+      window.searchEmployeeForLeave = function() {
+        const query = document.getElementById('employeeLeaveSearch')?.value.trim().toLowerCase() || '';
+        const suggestions = document.getElementById('employeeLeaveSuggestions');
+        if (!query) { suggestions.style.display = 'none'; return; }
+        const filtered = employees.filter(e => e.name.toLowerCase().includes(query) || e.phone.includes(query) || e.username.toLowerCase().includes(query));
+        if (filtered.length) {
+          suggestions.innerHTML = filtered.map(e => `
+            <div class="suggestion-item" data-eid="${e.id}">
+              <span>👤 ${e.name}</span>
+              <span style="font-size:0.8rem; color:#64748b;">📱 ${e.phone}</span>
+            </div>
+          `).join('');
+          suggestions.style.display = 'block';
+          suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const eid = parseInt(this.dataset.eid);
+              const emp = employees.find(e => e.id === eid);
+              if (emp) {
+                selectedEmployeeForLeave = emp;
+                document.getElementById('employeeLeaveName').textContent = emp.name;
+                document.getElementById('employeeLeavePhone').textContent = emp.phone;
+                document.getElementById('selectedEmployeeLeaveInfo').style.display = 'block';
+                document.getElementById('employeeLeaveSearch').value = emp.name;
+              }
+              suggestions.style.display = 'none';
+            });
+          });
+        } else { suggestions.style.display = 'none'; }
+      };
+
+      window.submitEmployeeLeave = function() {
+        if (!selectedEmployeeForLeave) { alert('تکایە کارمەندێک هەڵبژێرە'); return; }
+        const start = document.getElementById('employeeLeaveStart')?.value;
+        const end = document.getElementById('employeeLeaveEnd')?.value;
+        const reason = document.getElementById('employeeLeaveReason')?.value.trim();
+        
+        if (!start || !end) { alert('تکایە بەرواری دەستپێک و کۆتایی دیاری بکە'); return; }
+        if (new Date(start) > new Date(end)) { alert('بەرواری دەستپێک دەبێت پێش بەرواری کۆتایی بێت'); return; }
+        
+        if (!selectedEmployeeForLeave.leaves) selectedEmployeeForLeave.leaves = [];
+        selectedEmployeeForLeave.leaves.push({
+          start: start,
+          end: end,
+          reason: reason || 'بێ هۆکار'
+        });
+        
+        saveEmployees();
+        renderEmployeeLeaveHistory();
+        renderEmployeeDetail(selectedEmployeeForLeave);
+        document.getElementById('employeeLeaveReason').value = '';
+        document.getElementById('employeeLeaveStart').value = '';
+        document.getElementById('employeeLeaveEnd').value = '';
+        alert('مۆڵەتی کارمەند بە سەرکەوتوویی تۆمارکرا');
+      };
+
+      function renderEmployeeLeaveHistory() {
+        const container = document.getElementById('employeeLeaveList');
+        if (!container) return;
+        const allLeaves = [];
+        employees.forEach(emp => {
+          if (emp.leaves) {
+            emp.leaves.forEach(l => {
+              allLeaves.push({ ...l, employeeName: emp.name, employeeId: emp.id });
+            });
+          }
+        });
+        allLeaves.sort((a, b) => new Date(b.start) - new Date(a.start));
+        
+        if (!allLeaves.length) {
+          container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ مۆڵەتێک تۆمار نەکراوە</p>';
+          return;
+        }
+        container.innerHTML = allLeaves.map(l => `
+          <div class="history-row">
+            <div><strong>${l.employeeName}</strong></div>
+            <div>📅 ${l.start} → ${l.end}</div>
+            <div style="font-size:0.8rem;">${l.reason}</div>
+            <div>
+              <button class="btn-icon" onclick="deleteLeaveRecord(${l.employeeId}, '${l.start}', '${l.end}')" title="سڕینەوە"><i class="fas fa-trash-alt" style="color:#dc2626;"></i></button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      window.deleteLeaveRecord = function(employeeId, start, end) {
+        if (!confirm(`دڵنیایت لە سڕینەوەی مۆڵەتی ${start} - ${end}؟`)) return;
+        const emp = employees.find(e => e.id === employeeId);
+        if (!emp) return;
+        emp.leaves = emp.leaves?.filter(l => !(l.start === start && l.end === end)) || [];
+        saveEmployees();
+        renderEmployeeLeaveHistory();
+        renderEmployeeDetail(emp);
+        alert('مۆڵەت سڕکرایەوە');
       };
 
       // ========== PURCHASE RETURN FUNCTIONS ==========
@@ -2398,7 +2960,6 @@
           };
           moneyRequests.unshift(moneyRecord);
           saveMoneyRequests();
-          // 🆕 Add to cash register
           addToCashRegister(refundAmount, 'purchase_return', `گەڕانەوەی کڕین - ${selectedPurchaseReturn.partner}`, selectedPurchaseReturn.id);
         } else if (returnType === 'debt' && selectedPurchaseReturnPartnerForDebt) {
           // Reduce partner's debt
@@ -2475,7 +3036,6 @@
         if (confirm('دڵنیایت لە سڕینەوەی ئەم تۆمارە؟')) {
           const record = purchaseReturnHistory.find(r => r.id === returnId);
           if (record) {
-            // Reverse the effects
             const product = warehouseProducts.find(p => p.name === record.productName);
             if (product) {
               product.quantity += record.quantity;
@@ -2483,7 +3043,6 @@
             }
             
             if (record.type === 'cash') {
-              // Remove from money requests
               const moneyRecord = moneyRequests.find(m => m.note && m.note.includes(record.originalInvoiceId));
               if (moneyRecord) {
                 moneyRequests = moneyRequests.filter(m => m.id !== moneyRecord.id);
@@ -2497,7 +3056,6 @@
               }
             }
             
-            // Restore purchase invoice
             const purchase = purchaseHistory.find(p => p.id === record.originalInvoiceId);
             if (purchase) {
               const existingItem = purchase.items.find(i => i.name === record.productName);
@@ -2697,8 +3255,6 @@
           });
           saveCustomers();
         } else {
-          // 🆕 Cash return - subtract from cash register
-          // We subtract the refund amount from today's cash
           const today = new Date().toLocaleDateString('ckb');
           if (cashRegister.lastResetDate === today) {
             cashRegister.totalToday = Math.max(0, cashRegister.totalToday - refundAmount);
@@ -2775,7 +3331,6 @@
         if (confirm('دڵنیایت لە سڕینەوەی ئەم تۆمارە؟')) {
           const record = returnHistory.find(r => r.id === returnId);
           if (record) {
-            // Reverse the effects
             const product = warehouseProducts.find(p => p.name === record.productName);
             if (product) {
               product.quantity = Math.max(0, product.quantity - record.quantity);
@@ -2790,7 +3345,6 @@
               }
             }
             
-            // Restore sale invoice
             const sale = saleHistory.find(s => s.id === record.originalInvoiceId);
             if (sale) {
               const existingItem = sale.items.find(i => i.name === record.productName);
@@ -2910,6 +3464,19 @@
             if (e.target.dataset.expirytab === 'expiry') renderExpiryProducts();
             if (e.target.dataset.expirytab === 'damage') renderDamagedProducts();
           }
+          if (e.target.dataset.emptab) {
+            document.querySelectorAll('[data-emptab]').forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+            const tab = e.target.dataset.emptab;
+            document.getElementById('employeesListPanel').classList.toggle('active', tab === 'list');
+            document.getElementById('employeesAddPanel').classList.toggle('active', tab === 'add');
+            document.getElementById('employeesSalaryPanel').classList.toggle('active', tab === 'salary');
+            document.getElementById('employeesLeavePanel').classList.toggle('active', tab === 'leave');
+            
+            if (tab === 'list') renderEmployeesList();
+            if (tab === 'salary') renderEmployeeSalaryHistory();
+            if (tab === 'leave') renderEmployeeLeaveHistory();
+          }
         }
         if (e.target.classList.contains('settings-tab')) {
           document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
@@ -2997,7 +3564,6 @@
             savePartners();
           }
         }
-        // 🆕 Add to cash register
         addToCashRegister(amount, 'money_request', `واسڵی پارە - ${selectedMoneyEntity.name}`, invId);
         
         moneyRequests.unshift(record);
@@ -3627,7 +4193,7 @@
       }
 
       window.createBackup = function() {
-        const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory };
+        const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees };
         backupHistory.unshift({ date: backupData.date, data: backupData });
         if (backupHistory.length > 10) backupHistory.pop();
         localStorage.setItem('market_backup_history', JSON.stringify(backupHistory));
@@ -3636,7 +4202,7 @@
       };
 
       window.downloadBackup = function() {
-        const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory };
+        const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees };
         const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -3674,6 +4240,7 @@
             if (backupData.expiredDamagedProducts) { expiredDamagedProducts = backupData.expiredDamagedProducts; saveExpiryDamage(); }
             if (backupData.returnHistory) { returnHistory = backupData.returnHistory; saveReturnHistory(); }
             if (backupData.purchaseReturnHistory) { purchaseReturnHistory = backupData.purchaseReturnHistory; savePurchaseReturnHistory(); }
+            if (backupData.employees) { employees = backupData.employees; saveEmployees(); }
             renderDashboardModules();
             renderPersonsList();
             renderPartnersList();
@@ -3684,6 +4251,9 @@
             renderPurchaseHistory();
             renderReturnHistory();
             renderPurchaseReturnHistory();
+            renderEmployeesList();
+            renderEmployeeSalaryHistory();
+            renderEmployeeLeaveHistory();
             alert('باکەپ بە سەرکەوتوویی گەڕێندرایەوە');
           } catch (err) { alert('فایلی باکەپ نادروستە'); }
         };
@@ -3728,6 +4298,7 @@
           if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backup.data.expiredDamagedProducts; saveExpiryDamage(); }
           if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
           if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backup.data.purchaseReturnHistory; savePurchaseReturnHistory(); }
+          if (backup.data.employees) { employees = backup.data.employees; saveEmployees(); }
           renderDashboardModules();
           renderPersonsList();
           renderPartnersList();
@@ -3738,6 +4309,9 @@
           renderPurchaseHistory();
           renderReturnHistory();
           renderPurchaseReturnHistory();
+          renderEmployeesList();
+          renderEmployeeSalaryHistory();
+          renderEmployeeLeaveHistory();
           alert('باکەپ گەڕێندرایەوە');
         }
       };
@@ -3746,7 +4320,7 @@
 
       window.addEventListener('beforeunload', function(e) {
         if (autoBackupEnabled) {
-          const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory };
+          const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees };
           backupHistory.unshift({ date: backupData.date, data: backupData });
           if (backupHistory.length > 10) backupHistory.pop();
           localStorage.setItem('market_backup_history', JSON.stringify(backupHistory));
@@ -3917,7 +4491,6 @@
           currentCustomer.debt = (currentCustomer.debt || 0) + total; 
           saveCustomers(); 
         } else {
-          // 🆕 Add to cash register only for cash sales
           addToCashRegister(total, 'sale', `فرۆشتن - ${custName}`, invId);
         }
         cart.forEach(item => { 
@@ -3950,7 +4523,7 @@
       window.printInvoice = function(invId) { const sale = saleHistory.find(s => s.id === invId); if (!sale) return; const w = window.open('', '_blank'); w.document.write(`<html dir="rtl"><head><title>فاکتوورە ${invId}</title><style>body{font-family:'Segoe UI';padding:2rem;}table{width:100%;border-collapse:collapse;}td,th{padding:8px;border-bottom:1px solid #ccc;}</style></head><body><h2>${appearance.systemName}</h2><p>${invId} | ${sale.date}</p><table><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${sale.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table><h3>کۆ: ${sale.total}</h3><p>${sale.customer}</p></body></html>`); w.document.close(); w.print(); };
       window.deleteInvoice = function(invId) { if (confirm('دڵنیایت لە سڕینەوە؟')) { saleHistory = saleHistory.filter(s => s.id !== invId); saveSaleHistory(); renderHistory(historySearchInput?.value.trim() || ''); historyDetailDiv.style.display = 'none'; updateStats(); } };
 
-      // Initialize Stats
+      // Initialisation
       updateStats();
     })();
   </script>
