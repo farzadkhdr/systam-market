@@ -2662,8 +2662,18 @@
       cashRegisterTotal.textContent = cashRegister.totalToday.toLocaleString();
     }
     
-    const totalAll = moneyRequests.reduce((sum, r) => sum + r.amount, 0) + 
-                     saleHistory.reduce((sum, s) => sum + s.total, 0);
+    // کۆی گشتی پارەی واسڵکراو: فرۆشتن + واسڵی پارە + گەڕانەوەی کڕین - کڕین - موچە - گەڕانەوەی فرۆشتن
+    const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
+    const totalMoneyRequests = moneyRequests.reduce((sum, r) => sum + r.amount, 0);
+    const totalPurchaseReturns = purchaseReturnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
+    const totalPurchases = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0);
+    const totalSalaries = employees.reduce((sum, e) => {
+      return sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0);
+    }, 0);
+    const totalSalesReturns = returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
+    
+    const totalAll = totalSales + totalMoneyRequests + totalPurchaseReturns - totalPurchases - totalSalaries - totalSalesReturns;
+    
     const cashRegisterTotalAll = document.getElementById('cashRegisterTotalAll');
     if (cashRegisterTotalAll) {
       cashRegisterTotalAll.textContent = totalAll.toLocaleString();
@@ -2711,12 +2721,15 @@
       return;
     }
     
-    container.innerHTML = todayTransactions.map(t => `
+    // sort by date descending
+    const sorted = [...todayTransactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    container.innerHTML = sorted.map(t => `
       <div class="history-row" style="border-bottom: 1px solid #e2e8f0; padding: 0.8rem;">
         <div style="display: flex; flex-direction: column; gap: 0.2rem;">
           <div><strong>${t.id}</strong> <span style="font-size:0.7rem; color:#94a3b8;">${t.date}</span></div>
           <div style="font-size:0.9rem;">
-            <span style="background: ${t.type === 'sale' ? '#dbeafe' : t.type === 'money_request' ? '#fef3c7' : t.type === 'purchase_return' ? '#d1fae5' : t.type === 'sales_return_cash' ? '#fee2e2' : '#f3e8ff'}; padding: 0.2rem 0.8rem; border-radius: 1rem; font-size:0.75rem;">
+            <span style="background: ${t.type === 'sale' ? '#dbeafe' : t.type === 'money_request' ? '#fef3c7' : t.type === 'purchase_return' ? '#d1fae5' : t.type === 'sales_return_cash' ? '#fee2e2' : t.type === 'salary' ? '#f3e8ff' : '#f1f5f9'}; padding: 0.2rem 0.8rem; border-radius: 1rem; font-size:0.75rem;">
               ${t.type === 'sale' ? '🛒 فرۆشتن' : 
                 t.type === 'money_request' ? '💰 واسڵ' : 
                 t.type === 'purchase_return' ? '↩️ گەڕانەوەی کڕین' : 
@@ -2725,8 +2738,8 @@
             </span>
           </div>
         </div>
-        <div style="font-weight:bold; color:${t.type === 'sales_return_cash' ? '#dc2626' : '#059669'};">
-          ${t.type === 'sales_return_cash' ? '-' : '+'}${t.amount.toLocaleString()} د.ع
+        <div style="font-weight:bold; color:${t.amount < 0 ? '#dc2626' : '#059669'};">
+          ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString()} د.ع
         </div>
         <div style="font-size:0.8rem; color:#64748b; max-width:200px;">${t.description || ''}</div>
         ${t.invoiceId ? `<div style="font-size:0.7rem; color:#94a3b8;">📄 ${t.invoiceId}</div>` : ''}
@@ -3222,10 +3235,13 @@
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
-    const totalReceived = moneyRequests.reduce((sum, r) => sum + r.amount, 0);
-    const totalSpent = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0);
+    const totalReceived = moneyRequests.reduce((sum, r) => sum + r.amount, 0) + purchaseReturnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
+    const totalSpent = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) + 
+                       employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
+                       returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
     const today = new Date().toLocaleDateString('ckb');
-    const todayReceived = moneyRequests.filter(r => r.date.includes(today)).reduce((sum, r) => sum + r.amount, 0);
+    const todayReceived = moneyRequests.filter(r => r.date.includes(today)).reduce((sum, r) => sum + r.amount, 0) +
+                          purchaseReturnHistory.filter(r => r.date.includes(today)).reduce((sum, r) => sum + r.refundAmount, 0);
     const totalProducts = warehouseProducts.length;
     const totalPersons = customers.length;
     const myDebtToPartners = partners.reduce((sum, p) => sum + (p.debt || 0), 0);
@@ -3721,6 +3737,7 @@
     } else { suggestions.style.display = 'none'; }
   };
 
+  // ===== SUBMIT EMPLOYEE SALARY (UPDATED) =====
   window.submitEmployeeSalary = function() {
     if (!selectedEmployeeForSalary) { alert('تکایە کارمەندێک هەڵبژێرە'); return; }
     const amount = parseInt(document.getElementById('employeeSalaryAmountInput')?.value);
@@ -3746,7 +3763,9 @@
     }
     
     selectedEmployeeForSalary.salary = amount;
-    addToCashRegister(amount, 'salary', `موچەی ${selectedEmployeeForSalary.name} - ${month}`, `SAL-${Date.now()}`);
+    
+    // 🔥 تۆمارکردنی موچە لە سندوق (بە شێوەی نەرێنی چونکە پارە دەردەچێت)
+    addToCashRegister(-amount, 'salary', `موچەی ${selectedEmployeeForSalary.name} - ${month}`, `SAL-${Date.now()}`);
     
     saveEmployees();
     renderEmployeeSalaryHistory();
@@ -4009,6 +4028,7 @@
     } else { suggestions.style.display = 'none'; }
   };
 
+  // ===== SUBMIT PURCHASE RETURN (UPDATED) =====
   window.submitPurchaseReturn = function() {
     if (!selectedPurchaseReturn) { alert('تکایە فاکتوورێک هەڵبژێرە'); return; }
     if (!selectedPurchaseReturnProduct) { alert('تکایە کاڵایەک هەڵبژێرە بۆ گەڕانەوە'); return; }
@@ -4047,6 +4067,9 @@
     }
     
     if (returnType === 'cash') {
+      // 🔥 زیادکردنی پارەی گەڕاوە بۆ سندوق
+      addToCashRegister(refundAmount, 'purchase_return', `گەڕانەوەی کڕین - ${selectedPurchaseReturn.partner}`, selectedPurchaseReturn.id);
+      
       const moneyRecord = {
         id: 'PR' + Date.now(),
         date: new Date().toLocaleString('ckb'),
@@ -4058,7 +4081,6 @@
       };
       moneyRequests.unshift(moneyRecord);
       saveMoneyRequests();
-      addToCashRegister(refundAmount, 'purchase_return', `گەڕانەوەی کڕین - ${selectedPurchaseReturn.partner}`, selectedPurchaseReturn.id);
     } else if (returnType === 'debt' && selectedPurchaseReturnPartnerForDebt) {
       selectedPurchaseReturnPartnerForDebt.debt = Math.max(0, (selectedPurchaseReturnPartnerForDebt.debt || 0) - refundAmount);
       if (!selectedPurchaseReturnPartnerForDebt.movements) selectedPurchaseReturnPartnerForDebt.movements = [];
@@ -4284,6 +4306,7 @@
     } else { suggestions.style.display = 'none'; }
   };
 
+  // ===== SUBMIT SALES RETURN (UPDATED) =====
   window.submitSalesReturn = function() {
     if (!selectedReturnSale) { alert('تکایە فاکتوورێک هەڵبژێرە'); return; }
     if (!selectedReturnProduct) { alert('تکایە کاڵایەک هەڵبژێرە بۆ گەڕانەوە'); return; }
@@ -4348,19 +4371,8 @@
       });
       saveCustomers();
     } else {
-      const today = new Date().toLocaleDateString('ckb');
-      if (cashRegister.lastResetDate === today) {
-        cashRegister.totalToday = Math.max(0, cashRegister.totalToday - refundAmount);
-        cashRegister.dailyTransactions.push({
-          id: 'RET' + Date.now(),
-          date: new Date().toLocaleString('ckb'),
-          amount: -refundAmount,
-          type: 'sales_return_cash',
-          description: `گەڕانەوەی پارە بۆ کڕیار - ${selectedReturnSale.customer}`,
-          invoiceId: selectedReturnSale.id
-        });
-        saveCashRegister();
-      }
+      // 🔥 تۆمارکردنی گەڕانەوەی پارە لە سندوق (بە شێوەی نەرێنی چونکە پارە دەگەڕێتەوە بۆ کڕیار)
+      addToCashRegister(-refundAmount, 'sales_return_cash', `گەڕانەوەی پارە بۆ کڕیار - ${selectedReturnSale.customer}`, selectedReturnSale.id);
     }
     
     const returnRecord = {
@@ -4582,7 +4594,7 @@
     }
   });
 
-  // Money Request functions
+  // ===== MONEY REQUEST (UPDATED) =====
   window.onMoneyTypeChange = function() {
     selectedMoneyEntity = null;
     document.getElementById('selectedEntityInfo').style.display = 'none';
@@ -4619,6 +4631,7 @@
     } else { suggestions.style.display = 'none'; }
   };
 
+  // ===== SUBMIT MONEY REQUEST (UPDATED - with cash register) =====
   window.submitMoneyRequest = function() {
     if (!selectedMoneyEntity) { alert('تکایە کەس یان شەریک هەڵبژێرە'); return; }
     const amount = parseInt(document.getElementById('moneyAmount').value);
@@ -4655,6 +4668,8 @@
         savePartners();
       }
     }
+    
+    // 🔥 تۆمارکردنی واسڵی پارە لە سندوق
     addToCashRegister(amount, 'money_request', `واسڵی پارە - ${selectedMoneyEntity.name}`, invId);
     
     moneyRequests.unshift(record);
@@ -5165,16 +5180,30 @@
   window.setWareCartQty = function(idx, val) { const q = parseInt(val); if (!isNaN(q) && q > 0) { warePurchaseCart[idx].quantity = q; renderWarePurchaseCart(); } };
   window.removeWareCartItem = function(idx) { warePurchaseCart.splice(idx, 1); renderWarePurchaseCart(); };
 
+  // ===== COMPLETE WAREHOUSE PURCHASE (UPDATED - with cash register) =====
   window.completeWarehousePurchase = function() {
     if (!warePurchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
+    
+    const total = warePurchaseCart.reduce((s, i) => s + (i.product.buyPrice * i.quantity), 0);
+    const invId = 'WP' + Math.floor(Math.random() * 9000 + 1000);
+    
     warePurchaseCart.forEach(item => {
       const product = warehouseProducts.find(p => p.id === item.product.id);
-      if (product) { product.quantity += item.quantity; }
+      if (product) {
+        product.quantity += item.quantity;
+      }
     });
     saveWarehouseProducts();
+    
+    // 🔥 تۆمارکردنی کڕینی مخزن لە سندوق (بە شێوەی نەرێنی)
+    addToCashRegister(-total, 'purchase', `کڕینی مخزن - کاڵاکان`, invId);
+    
     warePurchaseCart = [];
     renderWarePurchaseCart();
-    alert('کڕین بە سەرکەوتوویی تۆمارکرا');
+    updateStats();
+    renderProductsGrid();
+    renderCashRegisterHistory();
+    alert(`کڕین بە سەرکەوتوویی تۆمارکرا!\nکۆی گشتی: ${total.toLocaleString()} د.ع`);
   };
 
   // Pricing Module Functions
@@ -5570,6 +5599,7 @@
     if (currentCustomer && creditCheck.checked) { const newDebt = cart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0); invoiceCustomerInfo.innerHTML = `👤 کڕیار: ${currentCustomer.name} | قەرزاری پێشوو: ${(currentCustomer.debt || 0).toLocaleString()} | ئێستا: ${((currentCustomer.debt || 0) + newDebt).toLocaleString()}`; } else { invoiceCustomerInfo.innerHTML = '👤 کڕیار: کاش | قەرزاری پێشوو: 0'; }
   }
 
+  // ===== COMPLETE SALE (UPDATED - with cash register) =====
   window.completeSale = function() {
     if (!cart.length) { alert('هیچ کاڵایەک نییە'); return; }
     const total = cart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0);
@@ -5582,6 +5612,7 @@
       currentCustomer.debt = (currentCustomer.debt || 0) + total; 
       saveCustomers(); 
     } else {
+      // 🔥 تۆمارکردنی فرۆشتن لە سندوق
       addToCashRegister(total, 'sale', `فرۆشتن - ${custName}`, invId);
     }
     cart.forEach(item => { 
@@ -5627,8 +5658,88 @@
   window.searchAgentForReturn = function() { /* Placeholder */ };
   window.searchAgentReturnProduct = function() { /* Placeholder */ };
   window.completeAgentReturn = function() { /* Placeholder */ };
-  window.searchAgentForWassl = function() { /* Placeholder */ };
-  window.submitAgentWassl = function() { /* Placeholder */ };
+  
+  // ===== SUBMIT AGENT WASSL (UPDATED - with cash register) =====
+  window.searchAgentForWassl = function() {
+    const query = document.getElementById('agentWasslSearch').value.trim().toLowerCase();
+    const suggestions = document.getElementById('agentWasslSuggestions');
+    if (!query) { suggestions.style.display = 'none'; return; }
+    const filtered = agents.filter(a => a.name.toLowerCase().includes(query) || a.phone.includes(query));
+    if (filtered.length) {
+      suggestions.innerHTML = filtered.map(a => `
+        <div class="suggestion-item" data-aid="${a.id}">
+          <span>👔 ${a.name}</span>
+          <span style="font-size:0.8rem; color:#64748b;">📱 ${a.phone}</span>
+          <span style="font-size:0.8rem;">قەرز: ${(a.debt||0).toLocaleString()}</span>
+        </div>
+      `).join('');
+      suggestions.style.display = 'block';
+      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const aid = parseInt(this.dataset.aid);
+          selectedAgentForWassl = agents.find(a => a.id === aid);
+          if (selectedAgentForWassl) {
+            document.getElementById('agentWasslName').textContent = selectedAgentForWassl.name;
+            document.getElementById('agentWasslPhone').textContent = selectedAgentForWassl.phone;
+            document.getElementById('agentWasslDebt').textContent = (selectedAgentForWassl.debt || 0).toLocaleString();
+            document.getElementById('selectedAgentWasslInfo').style.display = 'block';
+            document.getElementById('agentWasslSearch').value = selectedAgentForWassl.name;
+          }
+          suggestions.style.display = 'none';
+        });
+      });
+    } else { suggestions.style.display = 'none'; }
+  };
+
+  window.submitAgentWassl = function() {
+    if (!selectedAgentForWassl) { alert('تکایە مەندوبێک هەڵبژێرە'); return; }
+    const amount = parseInt(document.getElementById('agentWasslAmount').value);
+    if (!amount || amount <= 0) { alert('تکایە بڕی پارەی دروست بنووسە'); return; }
+    const note = document.getElementById('agentWasslNote').value.trim();
+    const now = new Date();
+    const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const invId = 'AW' + Math.floor(Math.random() * 9000 + 1000);
+    
+    selectedAgentForWassl.debt = Math.max(0, (selectedAgentForWassl.debt || 0) - amount);
+    if (!selectedAgentForWassl.movements) selectedAgentForWassl.movements = [];
+    selectedAgentForWassl.movements.push({
+      type: 'wassl',
+      date: dateStr,
+      amount: amount,
+      note: note,
+      invoiceId: invId
+    });
+    saveAgents();
+    
+    // 🔥 تۆمارکردنی واسڵی مەندوب لە سندوق
+    addToCashRegister(amount, 'money_request', `واسڵی مەندوب - ${selectedAgentForWassl.name}`, invId);
+    
+    moneyRequests.unshift({
+      id: invId,
+      date: dateStr,
+      type: 'agent',
+      entityId: selectedAgentForWassl.id,
+      entityName: selectedAgentForWassl.name,
+      entityPhone: selectedAgentForWassl.phone,
+      amount: amount,
+      note: note,
+      previousDebt: selectedAgentForWassl.debt + amount
+    });
+    saveMoneyRequests();
+    
+    document.getElementById('agentWasslAmount').value = '';
+    document.getElementById('agentWasslNote').value = '';
+    document.getElementById('agentWasslSearch').value = '';
+    document.getElementById('selectedAgentWasslInfo').style.display = 'none';
+    selectedAgentForWassl = null;
+    
+    renderCashRegisterHistory();
+    renderMoneyHistory();
+    renderAgentsList();
+    updateStats();
+    alert('واسڵی مەندوب بە سەرکەوتوویی تۆمارکرا');
+  };
+
   window.searchGiveAgent = function() { /* Placeholder */ };
   window.searchGiveProduct = function() { /* Placeholder */ };
   window.completeGiveAgent = function() { /* Placeholder */ };
@@ -5644,7 +5755,59 @@
   // Purchase Functions (Stubs)
   window.searchPurchaseProduct = function() { /* Placeholder */ };
   window.searchPurchasePartner = function() { /* Placeholder */ };
-  window.completePurchase = function() { /* Placeholder */ };
+  
+  // ===== COMPLETE PURCHASE (UPDATED - with cash register) =====
+  window.completePurchase = function() {
+    if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
+    if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
+    
+    const total = purchaseCart.reduce((s, i) => s + (i.product.buyPrice * i.quantity), 0);
+    const invId = 'P' + (Math.floor(Math.random() * 9000) + 1000);
+    const now = new Date();
+    const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const isCash = !document.getElementById('creditPurchaseCheck')?.checked;
+    
+    purchaseHistory.unshift({
+      id: invId,
+      date: dateStr,
+      partner: selectedPurchasePartner.name,
+      partnerId: selectedPurchasePartner.id,
+      total: total,
+      isCash: isCash,
+      items: purchaseCart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.product.buyPrice }))
+    });
+    savePurchaseHistory();
+    
+    purchaseCart.forEach(item => {
+      const product = warehouseProducts.find(p => p.id === item.product.id);
+      if (product) {
+        product.quantity += item.quantity;
+      }
+    });
+    saveWarehouseProducts();
+    
+    if (isCash) {
+      // 🔥 تۆمارکردنی کڕین لە سندوق (بە شێوەی نەرێنی چونکە پارە دەردەچێت)
+      addToCashRegister(-total, 'purchase', `کڕین لە ${selectedPurchasePartner.name}`, invId);
+    } else {
+      selectedPurchasePartner.debt = (selectedPurchasePartner.debt || 0) + total;
+      savePartners();
+    }
+    
+    purchaseCart = [];
+    selectedPurchasePartner = null;
+    renderPurchaseCart();
+    updatePurchaseInvoicePreview();
+    document.getElementById('selectedPurchasePartnerBadge').innerHTML = '<span class="customer-badge">🤝 شەریک هەڵنەبژێردراوە</span>';
+    document.getElementById('purchasePartnerSearch').value = '';
+    updateStats();
+    renderProductsGrid();
+    renderCashRegisterHistory();
+    renderPurchaseHistory();
+    
+    alert(`کڕین بە سەرکەوتوویی تۆمارکرا!\nژمارەی فاکتوورە: ${invId}\nکۆی گشتی: ${total.toLocaleString()} د.ع`);
+  };
+
   function renderPurchaseCart() { /* Placeholder */ }
   function updatePurchaseInvoicePreview() { /* Placeholder */ }
   function renderPurchaseHistory() { /* Placeholder */ }
