@@ -125,6 +125,9 @@
       background: #b91c1c;
       transform: scale(1.05);
     }
+    #dashboardStats {
+      display: none;
+    }
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -1122,7 +1125,7 @@
         <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> لۆگ ئاوت</button>
       </div>
     </div>
-    <div class="stats-grid">
+    <div id="dashboardStats" class="stats-grid">
       <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h4 id="statTotalSales">0</h4><span>کۆی فرۆشتن</span></div></div>
       <div class="stat-card"><div class="stat-icon green"><i class="fas fa-truck"></i></div><div class="stat-info"><h4 id="statTotalPurchases">0</h4><span>کۆی کڕین</span></div></div>
       <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی واسڵکراو</span></div></div>
@@ -2436,6 +2439,9 @@
       system.classList.remove('visible');
       system.classList.add('hidden');
     }
+    // کارتەکانی داشبۆرد شاراوە بکە
+    const dashboardStats = document.getElementById('dashboardStats');
+    if (dashboardStats) dashboardStats.style.display = 'none';
   }
 
   // Hide login overlay
@@ -2450,6 +2456,9 @@
       system.classList.add('visible');
     }
     isLoggedIn = true;
+    // کارتەکانی داشبۆرد بە شێوەی پێشگریمان شاراوە دەکەین
+    const dashboardStats = document.getElementById('dashboardStats');
+    if (dashboardStats) dashboardStats.style.display = 'none';
   }
 
   // Handle login
@@ -2515,6 +2524,9 @@
         // Update stats and render
         updateStats();
         renderDashboardModules();
+        // کارتەکان شاراوە بن لە سەرەتا
+        const dashboardStats = document.getElementById('dashboardStats');
+        if (dashboardStats) dashboardStats.style.display = 'none';
       } else {
         document.getElementById('loginErrorMessage').textContent = 'ناوی بەکارهێنەر یان پاسوورد هەڵەیە! تکایە دووبارە هەوڵبدە.';
         errorDiv.classList.add('show');
@@ -2614,6 +2626,9 @@
     
     // Navigate to dashboard but keep hidden until login
     navigateTo('dashboard');
+    // کارتەکان شاراوە بکە
+    const dashboardStats = document.getElementById('dashboardStats');
+    if (dashboardStats) dashboardStats.style.display = 'none';
   };
 
   // ---------- Cash Register Data ----------
@@ -3485,6 +3500,7 @@
     alert('ڕێکخستنی بەشەکان نوێکرایەوە و پاشەکەوتکرا');
   };
 
+  // ===== NAVIGATE FUNCTION =====
   window.navigateTo = function(view) {
     const views = ['dashboardView', 'salesView', 'settingsView', 'personsView', 'partnersView', 'warehouseView', 'pricingView', 'barcodeView', 'moneyRequestView', 'purchaseView', 'agentsView', 'expiryView', 'giveAgentView', 'cashRegisterView', 'employeesView', 'securityView'];
     views.forEach(v => {
@@ -3514,6 +3530,15 @@
       const el = document.getElementById(targetId);
       if (el) el.style.display = 'block';
     }
+    
+    // نمایش/شاردنەوەی کارتەکانی داشبۆرد
+    const dashboardStats = document.getElementById('dashboardStats');
+    if (view === 'dashboard' && dashboardStats) {
+      dashboardStats.style.display = 'grid';
+    } else if (dashboardStats) {
+      dashboardStats.style.display = 'none';
+    }
+    
     if (view === 'sales') { renderCart(); updateInvoicePreview(); renderHistory(); renderReturnHistory(); }
     else if (view === 'settings') { renderSettingsPanels(); }
     else if (view === 'dashboard') { updateStats(); renderDashboardModules(); }
