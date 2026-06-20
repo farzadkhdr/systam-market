@@ -1131,7 +1131,7 @@
       <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی واسڵکراو</span></div></div>
       <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-coins"></i></div><div class="stat-info"><h4 id="statTotalMoneySpent">0</h4><span>کۆی سەرفکراو</span></div></div>
       <div class="stat-card"><div class="stat-icon pink"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoneyReceived">0</h4><span>واسڵی ئەمرۆ</span></div></div>
-      <div class="stat-card" onclick="navigateTo('cashRegister')" style="cursor:pointer;"><div class="stat-icon yellow"><i class="fas fa-cash-register"></i></div><div class="stat-info"><h4 id="statTodayCash">0</h4><span>پارەی ئەمرۆ لە سندوق</span></div></div>
+      <!-- کارتی سندوق لابرا - ئێستا لە تابی سندوق پیشان دەدرێت -->
       <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-boxes"></i></div><div class="stat-info"><h4 id="statTotalProducts">0</h4><span>کۆی کاڵاکان</span></div></div>
       <div class="stat-card"><div class="stat-icon indigo"><i class="fas fa-users"></i></div><div class="stat-info"><h4 id="statTotalPersons">0</h4><span>کۆی کەسەکان</span></div></div>
       <div class="stat-card"><div class="stat-icon red"><i class="fas fa-hand-holding-heart"></i></div><div class="stat-info"><h4 id="statMyDebtToPartners">0</h4><span>قەرزاری من بۆ شەریک</span></div></div>
@@ -1738,37 +1738,56 @@
     </div>
   </div>
 
-  <!-- Cash Register Module View -->
+  <!-- Cash Register Module View (گۆڕانکاری کراوە) -->
   <div id="cashRegisterView" style="display: none;">
     <div class="module-view-container">
       <div class="back-header">
         <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
-        <div class="page-title"><i class="fas fa-cash-register" style="color:#d97706;"></i> سندوق</div>
+        <div class="page-title"><i class="fas fa-cash-register" style="color:#d97706;"></i> سندوق و واسڵەکانی ئەمرۆ</div>
       </div>
       <div class="card-glass">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
-          <div>
-            <h3><i class="fas fa-money-bill-wave" style="color:#059669;"></i> پارەی ئەمرۆ لە سندوق</h3>
-            <div style="font-size: 2.5rem; font-weight: 800; color: #059669;" id="cashRegisterTotal">0</div>
-            <div style="color: #64748b; font-size: 0.9rem;">کۆی پارەی واسڵکراوی ئەمڕۆ</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+          <div style="background: #dbeafe; border-radius: 1.5rem; padding: 1.5rem; text-align: center;">
+            <h3 style="color: #1e40af;"><i class="fas fa-money-bill-wave"></i> کۆی پارەی واسڵکراوی ئەمرۆ</h3>
+            <div style="font-size: 2.8rem; font-weight: 800; color: #059669;" id="cashRegisterTotal">0</div>
+            <div style="color: #64748b; font-size: 0.9rem;">هەموو پارەی واسڵکراو (فرۆشتن، واسڵی پارە، گەڕانەوە)</div>
           </div>
-          <div>
-            <button onclick="resetTodayCash()" style="background:#dc2626; color:white; border:none; padding:0.8rem 1.5rem; border-radius:2rem; font-weight:bold; cursor:pointer;">
-              <i class="fas fa-trash-alt"></i> سڕینەوەی هەموو پارەی ئەمرۆ
-            </button>
-            <button onclick="window.print()" style="background:#2563eb; color:white; border:none; padding:0.8rem 1.5rem; border-radius:2rem; font-weight:bold; cursor:pointer; margin-right:0.5rem;">
-              <i class="fas fa-print"></i> پرێنت
-            </button>
+          <div style="background: #fef3c7; border-radius: 1.5rem; padding: 1.5rem; text-align: center;">
+            <h3 style="color: #b45309;"><i class="fas fa-coins"></i> کۆی گشتی پارەی واسڵکراو</h3>
+            <div style="font-size: 2.8rem; font-weight: 800; color: #b45309;" id="cashRegisterTotalAll">0</div>
+            <div style="color: #64748b; font-size: 0.9rem;">هەموو پارەی واسڵکراو لە هەموو ڕۆژان</div>
           </div>
         </div>
         
         <div style="background: #fef9c3; padding: 1rem; border-radius: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #fcd34d;">
           <p style="font-weight: 600; margin-bottom: 0.3rem;">📌 تێبینی:</p>
-          <p style="color: #78350f; font-size: 0.9rem;">ئەم بەشە هەموو پارەی واسڵکراوی ئەمڕۆ پیشان دەدات. دوای حیسابکردنی جەگمەزە، دەتوانیت دوگمەی "سڕینەوەی هەموو پارەی ئەمرۆ" کلیک بکەیت بۆ ڕێکخستنەوەی سندوق. کاتێک فرۆشتنێک یان واسڵێک تۆمار دەکەیت، بە شێوەیەکی خۆکار زیاد دەبێت.</p>
+          <p style="color: #78350f; font-size: 0.9rem;">ئەم بەشە هەموو پارەی واسڵکراوی ئەمرۆ و هەموو حرکاتەکانی ئەمڕۆ پیشان دەدات. کاتێک فرۆشتنێک، گەڕانەوەی کاڵا، یان واسڵی پارە تۆمار دەکەیت، بە شێوەیەکی خۆکار زیاد دەبێت. دوای حیسابکردنی جەگمەزە، دەتوانیت دوگمەی "سڕینەوەی هەموو پارەی ئەمرۆ" کلیک بکەیت بۆ ڕێکخستنەوەی سندوق.</p>
         </div>
         
-        <h4 style="margin-bottom: 1rem;"><i class="fas fa-list"></i> لیستی پارەی ئەمرۆ</h4>
-        <div id="cashRegisterHistoryList" style="max-height: 400px; overflow-y: auto;"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+          <h4><i class="fas fa-list"></i> لیستی حرکاتەکانی ئەمرۆ</h4>
+          <div>
+            <button onclick="resetTodayCash()" style="background:#dc2626; color:white; border:none; padding:0.6rem 1.5rem; border-radius:2rem; font-weight:bold; cursor:pointer;">
+              <i class="fas fa-trash-alt"></i> سڕینەوەی هەموو پارەی ئەمرۆ
+            </button>
+            <button onclick="window.print()" style="background:#2563eb; color:white; border:none; padding:0.6rem 1.5rem; border-radius:2rem; font-weight:bold; cursor:pointer; margin-right:0.5rem;">
+              <i class="fas fa-print"></i> پرێنت
+            </button>
+          </div>
+        </div>
+        
+        <div id="cashRegisterHistoryList" style="max-height: 450px; overflow-y: auto;"></div>
+        
+        <div style="margin-top: 1.5rem; background: #f1f5f9; border-radius: 1rem; padding: 1rem;">
+          <h5 style="margin-bottom: 0.5rem;"><i class="fas fa-chart-pie"></i> پوختەی ئەمڕۆ</h5>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5rem;">
+            <div><span style="color:#64748b;">🛒 فرۆشتن:</span> <strong id="cashTodaySales">0</strong></div>
+            <div><span style="color:#64748b;">💰 واسڵی پارە:</span> <strong id="cashTodayMoneyRequests">0</strong></div>
+            <div><span style="color:#64748b;">↩️ گەڕانەوەی کڕین:</span> <strong id="cashTodayPurchaseReturns">0</strong></div>
+            <div><span style="color:#64748b;">↩️ گەڕانەوەی فرۆشتن:</span> <strong id="cashTodaySalesReturns">0</strong></div>
+            <div><span style="color:#64748b;">💼 موچە:</span> <strong id="cashTodaySalary">0</strong></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2389,19 +2408,13 @@
 <script>
 (function() {
   // ===== PERMISSION SYSTEM =====
-  // فانکشنی پشکنینی مۆڵەت
   function hasPermission(moduleId) {
-    // ئەگەر بەڕێوەبەر بێت، هەموو مۆڵەتێکی هەیە
     const loggedUser = JSON.parse(localStorage.getItem('market_logged_user') || '{}');
     if (loggedUser.role === 'admin') return true;
-    
-    // مۆڵەتەکانی کارمەند لە سێشن وەربگرە
     const perms = JSON.parse(sessionStorage.getItem('market_session_permissions') || '{}');
-    // بە پێشگرتن، ئەگەر مۆڵەتەکە نەدۆزرایەوە، بە ناڕێست (false) دابنێ
     return perms[moduleId] !== false;
   }
 
-  // فانکشنی ناسینی بەڕێوەبەر
   function isAdmin() {
     const loggedUser = JSON.parse(localStorage.getItem('market_logged_user') || '{}');
     return loggedUser.role === 'admin';
@@ -2410,7 +2423,6 @@
   // ===== LOGIN SYSTEM =====
   let isLoggedIn = false;
 
-  // Create particles
   function createParticles() {
     const container = document.getElementById('loginParticles');
     if (!container) return;
@@ -2427,7 +2439,6 @@
     }
   }
 
-  // Show login overlay
   function showLogin() {
     const overlay = document.getElementById('loginOverlay');
     const system = document.getElementById('mainApp');
@@ -2439,12 +2450,10 @@
       system.classList.remove('visible');
       system.classList.add('hidden');
     }
-    // کارتەکانی داشبۆرد شاراوە بکە
     const dashboardStats = document.getElementById('dashboardStats');
     if (dashboardStats) dashboardStats.style.display = 'none';
   }
 
-  // Hide login overlay
   function hideLogin() {
     const overlay = document.getElementById('loginOverlay');
     const system = document.getElementById('mainApp');
@@ -2456,34 +2465,27 @@
       system.classList.add('visible');
     }
     isLoggedIn = true;
-    // کارتەکانی داشبۆرد بە شێوەی پێشگریمان شاراوە دەکەین
     const dashboardStats = document.getElementById('dashboardStats');
     if (dashboardStats) dashboardStats.style.display = 'none';
   }
 
-  // Handle login
   window.handleLogin = function() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
     const btn = document.getElementById('loginBtn');
     const errorDiv = document.getElementById('loginError');
     
-    // Hide previous error
     errorDiv.classList.remove('show');
     
-    // Validate empty fields
     if (!username || !password) {
       document.getElementById('loginErrorMessage').textContent = 'تکایە ناوی بەکارهێنەر و پاسوورد پڕبکەرەوە!';
       errorDiv.classList.add('show');
       return;
     }
     
-    // Show loading state
     btn.classList.add('loading');
     
-    // Simulate network delay for smooth animation
     setTimeout(() => {
-      // Check admin credentials
       let isValid = false;
       let userRole = 'admin';
       let userName = 'بەڕێوەبەر';
@@ -2493,18 +2495,13 @@
         userRole = 'admin';
         userName = 'بەڕێوەبەر';
       } else {
-        // Check employee credentials
         const employee = employees.find(e => e.username === username && e.password === password);
         if (employee) {
           isValid = true;
           userRole = 'employee';
           userName = employee.name;
-          
-          // بارکردنی مۆڵەتەکانی ئەم کارمەندە بۆ سێشن
           const perms = employeePermissions[employee.id] || {};
-          // پاشەکەوتکردنی مۆڵەتەکان لە سێشن بۆ بەکارهێنانی لە UI
           sessionStorage.setItem('market_session_permissions', JSON.stringify(perms));
-          
           localStorage.setItem('market_logged_employee', JSON.stringify(employee));
         }
       }
@@ -2514,17 +2511,13 @@
       if (isValid) {
         localStorage.setItem('market_logged_user', JSON.stringify({ username, role: userRole, name: userName }));
         hideLogin();
-        // Update user role display
         const roleDisplay = document.getElementById('userRoleDisplay');
         if (roleDisplay) {
           roleDisplay.textContent = userRole === 'admin' ? '👑 بەڕێوەبەر' : `👤 ${userName}`;
         }
-        // Show welcome message
         showToast(`👋 بەخێربێیت ${userName}!`, 'success');
-        // Update stats and render
         updateStats();
         renderDashboardModules();
-        // کارتەکان شاراوە بن لە سەرەتا
         const dashboardStats = document.getElementById('dashboardStats');
         if (dashboardStats) dashboardStats.style.display = 'none';
       } else {
@@ -2536,7 +2529,6 @@
     }, 800);
   };
 
-  // Toast notification
   function showToast(message, type = 'info') {
     const existing = document.querySelector('.custom-toast');
     if (existing) existing.remove();
@@ -2562,14 +2554,12 @@
     toast.textContent = message;
     document.body.appendChild(toast);
     
-    // Trigger animation
     requestAnimationFrame(() => {
       toast.style.transform = 'translateY(0)';
       toast.style.opacity = '1';
       toast.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
     });
     
-    // Auto remove after 3 seconds
     setTimeout(() => {
       toast.style.transform = 'translateY(20px)';
       toast.style.opacity = '0';
@@ -2577,7 +2567,6 @@
     }, 3500);
   }
 
-  // Handle Enter key on login
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       const overlay = document.getElementById('loginOverlay');
@@ -2587,7 +2576,6 @@
     }
   });
 
-  // ---------- Real-time Date & Time ----------
   function updateDateTime() {
     const now = new Date();
     const dateStr = now.toLocaleDateString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -2602,31 +2590,25 @@
   updateDateTime();
   setInterval(updateDateTime, 1000);
 
-  // ---------- Logout Function ----------
   const originalLogout = window.logout;
   window.logout = function() {
     if (!confirm('دڵنیایت لە دەرچوون لە سیستەم؟')) return;
-    // Save all data
     localStorage.setItem('market_module_order', JSON.stringify(moduleOrder));
     localStorage.setItem('market_appearance_name', appearance.systemName);
     localStorage.setItem('market_appearance_icon', appearance.systemIcon);
     localStorage.setItem('market_appearance_bg', appearance.bgColor);
     
-    // Clear login session
     localStorage.removeItem('market_logged_user');
     localStorage.removeItem('market_logged_employee');
     sessionStorage.removeItem('market_session_permissions');
     isLoggedIn = false;
     
-    // Show login
     showLogin();
     document.getElementById('loginUsername').value = '';
     document.getElementById('loginPassword').value = '';
     document.getElementById('loginError').classList.remove('show');
     
-    // Navigate to dashboard but keep hidden until login
     navigateTo('dashboard');
-    // کارتەکان شاراوە بکە
     const dashboardStats = document.getElementById('dashboardStats');
     if (dashboardStats) dashboardStats.style.display = 'none';
   };
@@ -2675,15 +2657,19 @@
       saveCashRegister();
     }
     
-    const statTodayCash = document.getElementById('statTodayCash');
-    if (statTodayCash) {
-      statTodayCash.textContent = cashRegister.totalToday.toLocaleString();
-    }
-    
     const cashRegisterTotal = document.getElementById('cashRegisterTotal');
     if (cashRegisterTotal) {
       cashRegisterTotal.textContent = cashRegister.totalToday.toLocaleString();
     }
+    
+    const totalAll = moneyRequests.reduce((sum, r) => sum + r.amount, 0) + 
+                     saleHistory.reduce((sum, s) => sum + s.total, 0);
+    const cashRegisterTotalAll = document.getElementById('cashRegisterTotalAll');
+    if (cashRegisterTotalAll) {
+      cashRegisterTotalAll.textContent = totalAll.toLocaleString();
+    }
+    
+    renderCashRegisterHistory();
   }
 
   window.resetTodayCash = function() {
@@ -2702,20 +2688,48 @@
     if (!container) return;
     
     const today = new Date().toLocaleDateString('ckb');
-    const todayTransactions = cashRegister.dailyTransactions;
+    const todayTransactions = cashRegister.dailyTransactions || [];
+    
+    let totalSales = 0, totalMoneyRequests = 0, totalPurchaseReturns = 0, totalSalesReturns = 0, totalSalary = 0;
+    
+    todayTransactions.forEach(t => {
+      if (t.type === 'sale') totalSales += t.amount;
+      else if (t.type === 'money_request') totalMoneyRequests += t.amount;
+      else if (t.type === 'purchase_return') totalPurchaseReturns += t.amount;
+      else if (t.type === 'sales_return_cash') totalSalesReturns += t.amount;
+      else if (t.type === 'salary') totalSalary += t.amount;
+    });
+    
+    document.getElementById('cashTodaySales').textContent = totalSales.toLocaleString();
+    document.getElementById('cashTodayMoneyRequests').textContent = totalMoneyRequests.toLocaleString();
+    document.getElementById('cashTodayPurchaseReturns').textContent = totalPurchaseReturns.toLocaleString();
+    document.getElementById('cashTodaySalesReturns').textContent = totalSalesReturns.toLocaleString();
+    document.getElementById('cashTodaySalary').textContent = totalSalary.toLocaleString();
     
     if (!todayTransactions.length) {
-      container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ پارەیەک ئەمڕۆ واسڵ نەکراوە</p>';
+      container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:2rem;">هیچ حرکاتێک ئەمڕۆ تۆمار نەکراوە</p>';
       return;
     }
     
     container.innerHTML = todayTransactions.map(t => `
-      <div class="history-row">
-        <div><strong>${t.id}</strong><br><span style="font-size:0.7rem;">${t.date}</span></div>
-        <div>${t.type === 'sale' ? '🛒 فرۆشتن' : t.type === 'money_request' ? '💰 واسڵ' : t.type === 'purchase_return' ? '↩️ گەڕانەوەی کڕین' : t.type === 'sales_return' ? '↩️ گەڕانەوەی فرۆشتن' : t.type === 'salary' ? '💼 موچە' : t.type === 'sales_return_cash' ? '↩️ گەڕانەوەی فرۆشتن (نەقدی)' : '📋 دیکە'}</div>
-        <div style="font-weight:bold; color:#059669;">+${t.amount.toLocaleString()} د.ع</div>
-        <div style="font-size:0.8rem;">${t.description}</div>
-        ${t.invoiceId ? `<div style="font-size:0.7rem; color:#64748b;">📄 ${t.invoiceId}</div>` : ''}
+      <div class="history-row" style="border-bottom: 1px solid #e2e8f0; padding: 0.8rem;">
+        <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+          <div><strong>${t.id}</strong> <span style="font-size:0.7rem; color:#94a3b8;">${t.date}</span></div>
+          <div style="font-size:0.9rem;">
+            <span style="background: ${t.type === 'sale' ? '#dbeafe' : t.type === 'money_request' ? '#fef3c7' : t.type === 'purchase_return' ? '#d1fae5' : t.type === 'sales_return_cash' ? '#fee2e2' : '#f3e8ff'}; padding: 0.2rem 0.8rem; border-radius: 1rem; font-size:0.75rem;">
+              ${t.type === 'sale' ? '🛒 فرۆشتن' : 
+                t.type === 'money_request' ? '💰 واسڵ' : 
+                t.type === 'purchase_return' ? '↩️ گەڕانەوەی کڕین' : 
+                t.type === 'sales_return_cash' ? '↩️ گەڕانەوەی فرۆشتن' : 
+                t.type === 'salary' ? '💼 موچە' : '📋 دیکە'}
+            </span>
+          </div>
+        </div>
+        <div style="font-weight:bold; color:${t.type === 'sales_return_cash' ? '#dc2626' : '#059669'};">
+          ${t.type === 'sales_return_cash' ? '-' : '+'}${t.amount.toLocaleString()} د.ع
+        </div>
+        <div style="font-size:0.8rem; color:#64748b; max-width:200px;">${t.description || ''}</div>
+        ${t.invoiceId ? `<div style="font-size:0.7rem; color:#94a3b8;">📄 ${t.invoiceId}</div>` : ''}
       </div>
     `).join('');
   }
@@ -2749,7 +2763,6 @@
     { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکویریتی', color: '#e0e7ff', text: '#3730a3' }
   ];
 
-  // ---------- Default order ----------
   let moduleOrder = allModules.map(m => m.id);
   const savedOrder = localStorage.getItem('market_module_order');
   if (savedOrder) {
@@ -2761,27 +2774,23 @@
     } catch (e) {}
   }
 
-  // Load appearance
   let appearance = {
     systemName: localStorage.getItem('market_appearance_name') || 'مارکێت',
     systemIcon: localStorage.getItem('market_appearance_icon') || 'fa-store-alt',
     bgColor: localStorage.getItem('market_appearance_bg') || '#f8f9fe'
   };
 
-  // ---------- Persons Data ----------
   let customers = JSON.parse(localStorage.getItem('market_customers') || JSON.stringify([
     { id: 1, name: 'ئارام محەمەد', phone: '0750 111 2233', address: 'هەولێر، شەقامی 60 مەتری', debt: 45000, movements: [], purchaseReturns: [] },
     { id: 2, name: 'سارا عومەر', phone: '0750 444 5566', address: 'سلێمانی، گەڕەکی سەرشەقام', debt: 12000, movements: [], purchaseReturns: [] },
     { id: 3, name: 'دلێر عەلی', phone: '0750 777 8899', address: 'دهۆک، شەقامی بازاڕ', debt: 0, movements: [], purchaseReturns: [] }
   ]));
 
-  // ---------- Partners Data ----------
   let partners = JSON.parse(localStorage.getItem('market_partners') || JSON.stringify([
     { id: 1, name: 'کۆمپانیای ئاسۆ', phone: '0750 222 3344', address: 'هەولێر، شەقامی بازرگانی', debt: 150000, movements: [], type: 'کۆمپانیا' },
     { id: 2, name: 'بازرگانی دابین', phone: '0750 555 6677', address: 'سلێمانی، شەقامی سەرەکی', debt: 85000, movements: [], type: 'بازرگانی' }
   ]));
 
-  // ---------- Agents Data ----------
   let agents = JSON.parse(localStorage.getItem('market_agents') || JSON.stringify([
     { 
       id: 1, 
@@ -2809,7 +2818,6 @@
     }
   ]));
 
-  // ---------- Warehouse/Products Data ----------
   let warehouseProducts = JSON.parse(localStorage.getItem('market_warehouse_products') || JSON.stringify([
     { id: 1, name: 'شیری پاستێر', barcode: '623145', image: '', quantity: 50, unit: 'عدد', secondQty: 0, buyPrice: 1200, sellPrice: 1500, expiryDate: '2026-12-31' },
     { id: 2, name: 'نانی تەواو', barcode: '845210', image: '', quantity: 100, unit: 'عدد', secondQty: 0, buyPrice: 400, sellPrice: 500, expiryDate: '2026-06-15' },
@@ -2817,7 +2825,6 @@
     { id: 4, name: 'شەکر', barcode: '445566', image: '', quantity: 20, unit: 'کیلۆ', secondQty: 0, buyPrice: 1500, sellPrice: 1800, expiryDate: '2026-05-20' }
   ]));
 
-  // ---------- Employees Data ----------
   let employees = JSON.parse(localStorage.getItem('market_employees') || JSON.stringify([
     { 
       id: 1, 
@@ -2849,30 +2856,20 @@
     }
   ]));
 
-  // ---------- Expiry & Damage Data ----------
   let expiredDamagedProducts = JSON.parse(localStorage.getItem('market_expiry_damage') || '[]');
-
-  // ---------- Money Requests Data ----------
   let moneyRequests = JSON.parse(localStorage.getItem('market_money_requests') || '[]');
-
-  // ---------- Purchase Data ----------
   let purchaseHistory = JSON.parse(localStorage.getItem('market_purchase_history') || '[]');
   let purchaseCart = [];
   let selectedPurchasePartner = null;
-
-  // ---------- Purchase Return Data ----------
   let purchaseReturnHistory = JSON.parse(localStorage.getItem('market_purchase_return_history') || '[]');
   let selectedPurchaseReturn = null;
   let selectedPurchaseReturnProduct = null;
   let selectedPurchaseReturnPartnerForDebt = null;
-
-  // ---------- Sales Return Data ----------
   let returnHistory = JSON.parse(localStorage.getItem('market_return_history') || '[]');
   let selectedReturnSale = null;
   let selectedReturnProduct = null;
   let selectedReturnCustomerForDebt = null;
 
-  // Agent state variables
   let selectedAgentId = null;
   let selectedAgentForInventory = null;
   let selectedAgentForWassl = null;
@@ -2883,13 +2880,9 @@
   let currentSaleAgent = null;
   let giveAgentCart = [];
   let selectedGiveAgent = null;
-
-  // Employee state variables
   let selectedEmployeeId = null;
   let selectedEmployeeForSalary = null;
   let selectedEmployeeForLeave = null;
-
-  // Other state variables
   let selectedPersonId = null;
   let selectedPartnerId = null;
   let selectedPricingProducts = [];
@@ -2898,17 +2891,14 @@
   let productImageData = '';
   let selectedMoneyEntity = null;
 
-  // ========== SECURITY & PERMISSIONS ==========
-  // Admin credentials (default)
   let adminCredentials = JSON.parse(localStorage.getItem('market_admin_credentials') || JSON.stringify({
     username: 'farzad',
     password: 'farzad1234'
   }));
 
-  // Employee permissions
   let employeePermissions = JSON.parse(localStorage.getItem('market_employee_permissions') || '{}');
 
-  // Security module - Admin password change
+  // Security functions
   window.changeAdminPassword = function() {
     const currentPass = document.getElementById('adminCurrentPassword').value.trim();
     const newPass = document.getElementById('adminNewPassword').value.trim();
@@ -2945,7 +2935,6 @@
     alert('پاسووردی بەڕێوەبەر بە سەرکەوتوویی گۆڕدرا!');
   };
 
-  // Reset admin password using programmer password
   window.resetAdminPassword = function() {
     const programmerPass = document.getElementById('programmerPassword').value.trim();
     const newPass = document.getElementById('adminResetNewPassword').value.trim();
@@ -2975,7 +2964,6 @@
     alert('پاسووردی بەڕێوەبەر بە سەرکەوتوویی دروستکرایەوە!');
   };
 
-  // Change admin username
   window.changeAdminUsername = function() {
     const newUsername = document.getElementById('adminNewUsername').value.trim();
     const password = document.getElementById('adminUsernamePassword').value.trim();
@@ -3007,7 +2995,6 @@
     if (passDisplay) passDisplay.textContent = '••••••••';
   }
 
-  // Search employee for permissions
   window.searchSecurityEmployee = function() {
     const query = document.getElementById('securityEmployeeSearch').value.trim().toLowerCase();
     const suggestions = document.getElementById('securityEmployeeSuggestions');
@@ -3081,18 +3068,15 @@
     employeePermissions[selectedSecurityEmployee.id] = perms;
     localStorage.setItem('market_employee_permissions', JSON.stringify(employeePermissions));
     
-    // ئەگەر ئەم کارمەندە ئێستا چووبێتە ژوورەوە، مۆڵەتەکانی سێشن نوێبکەرەوە
     const loggedUser = JSON.parse(localStorage.getItem('market_logged_user') || '{}');
     if (loggedUser.role === 'employee' && loggedUser.username === selectedSecurityEmployee.username) {
       sessionStorage.setItem('market_session_permissions', JSON.stringify(perms));
-      // دووبارە بەشەکان ڕێکبخەرەوە (UI نوێبکەرەوە)
       renderDashboardModules();
     }
     
     alert(`مۆڵەتەکانی ${selectedSecurityEmployee.name} پاشەکەوتکرا!`);
   };
 
-  // Search employee for password change
   window.searchEmployeeForPassword = function() {
     const query = document.getElementById('employeePasswordSearch').value.trim().toLowerCase();
     const suggestions = document.getElementById('employeePasswordSuggestions');
@@ -3171,7 +3155,6 @@
     selectedEmployeeForPassword = null;
   };
 
-  // Security tab event listener
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('tab') && e.target.dataset.securitytab) {
       document.querySelectorAll('[data-securitytab]').forEach(t => t.classList.remove('active'));
@@ -3183,10 +3166,7 @@
     }
   });
 
-  // Initialize security display
   updateAdminDisplay();
-
-  // ---------- END SECURITY SECTION ----------
 
   function saveEmployees() {
     localStorage.setItem('market_employees', JSON.stringify(employees));
@@ -3239,7 +3219,6 @@
     updateStats();
   }
 
-  // ---------- STATS FUNCTION ----------
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
@@ -3282,7 +3261,6 @@
       if (toggle) toggle.checked = true;
     }
     
-    // Check login status
     const savedUser = localStorage.getItem('market_logged_user');
     if (savedUser) {
       try {
@@ -3339,12 +3317,10 @@
 
   let backupHistory = JSON.parse(localStorage.getItem('market_backup_history') || '[]');
 
-  // ===== RENDER DASHBOARD MODULES WITH PERMISSION CHECK =====
   function renderDashboardModules(containerId = 'allModulesContainer') {
     const container = document.getElementById(containerId);
     if (!container) return;
     
-    // تەنها ئەو بەشانە هەڵبژێرە کە مۆڵەتیان هەیە
     const modulesToShow = isAdmin() ? moduleOrder : moduleOrder.filter(id => hasPermission(id));
     
     container.innerHTML = modulesToShow.map(id => {
@@ -3424,9 +3400,7 @@
     }
   }
 
-  // ===== MODULE CLICK WITH PERMISSION CHECK =====
   window.moduleClick = function(moduleId) {
-    // پشکنینی مۆڵەت
     if (!hasPermission(moduleId) && !isAdmin()) {
       alert('تۆ مۆڵەتی بەکارهێنانی ئەم بەشەت نییە!');
       return;
@@ -3500,7 +3474,6 @@
     alert('ڕێکخستنی بەشەکان نوێکرایەوە و پاشەکەوتکرا');
   };
 
-  // ===== NAVIGATE FUNCTION =====
   window.navigateTo = function(view) {
     const views = ['dashboardView', 'salesView', 'settingsView', 'personsView', 'partnersView', 'warehouseView', 'pricingView', 'barcodeView', 'moneyRequestView', 'purchaseView', 'agentsView', 'expiryView', 'giveAgentView', 'cashRegisterView', 'employeesView', 'securityView'];
     views.forEach(v => {
@@ -3531,7 +3504,6 @@
       if (el) el.style.display = 'block';
     }
     
-    // نمایش/شاردنەوەی کارتەکانی داشبۆرد
     const dashboardStats = document.getElementById('dashboardStats');
     if (view === 'dashboard' && dashboardStats) {
       dashboardStats.style.display = 'grid';
@@ -3557,8 +3529,7 @@
     else if (view === 'security') { updateAdminDisplay(); }
   };
 
-  // ========== EMPLOYEE FUNCTIONS ==========
-
+  // Employee functions
   function renderEmployeesList(list = employees) {
     const container = document.getElementById('employeesListContainer');
     if (!container) return;
@@ -3714,7 +3685,6 @@
     document.getElementById('employeeDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کارمەندێک هەڵبژێرە بۆ بینینی زانیاری</p>';
   };
 
-  // Salary functions
   window.searchEmployeeForSalary = function() {
     const query = document.getElementById('employeeSalarySearch')?.value.trim().toLowerCase() || '';
     const suggestions = document.getElementById('employeeSalarySuggestions');
@@ -3832,7 +3802,6 @@
     alert('موچە سڕکرایەوە');
   };
 
-  // Leave functions
   window.searchEmployeeForLeave = function() {
     const query = document.getElementById('employeeLeaveSearch')?.value.trim().toLowerCase() || '';
     const suggestions = document.getElementById('employeeLeaveSuggestions');
@@ -3928,7 +3897,7 @@
     alert('مۆڵەت سڕکرایەوە');
   };
 
-  // ========== PURCHASE RETURN FUNCTIONS ==========
+  // Purchase Return functions
   window.searchPurchaseForReturn = function() {
     const query = document.getElementById('purchaseReturnSearch').value.trim().toLowerCase();
     const suggestionsDiv = document.getElementById('purchaseReturnSuggestions');
@@ -4058,14 +4027,12 @@
     
     const refundAmount = returnQty * selectedPurchaseReturnProduct.price;
     
-    // Reduce product quantity from warehouse
     const product = warehouseProducts.find(p => p.name === selectedPurchaseReturnProduct.name);
     if (product) {
       product.quantity = Math.max(0, product.quantity - returnQty);
       saveWarehouseProducts();
     }
     
-    // Update original purchase invoice
     const originalPurchase = purchaseHistory.find(p => p.id === selectedPurchaseReturn.id);
     if (originalPurchase) {
       const purchaseItem = originalPurchase.items[selectedPurchaseReturnProduct.originalIndex];
@@ -4079,7 +4046,6 @@
       }
     }
     
-    // Handle money return or debt reduction
     if (returnType === 'cash') {
       const moneyRecord = {
         id: 'PR' + Date.now(),
@@ -4094,7 +4060,6 @@
       saveMoneyRequests();
       addToCashRegister(refundAmount, 'purchase_return', `گەڕانەوەی کڕین - ${selectedPurchaseReturn.partner}`, selectedPurchaseReturn.id);
     } else if (returnType === 'debt' && selectedPurchaseReturnPartnerForDebt) {
-      // Reduce partner's debt
       selectedPurchaseReturnPartnerForDebt.debt = Math.max(0, (selectedPurchaseReturnPartnerForDebt.debt || 0) - refundAmount);
       if (!selectedPurchaseReturnPartnerForDebt.movements) selectedPurchaseReturnPartnerForDebt.movements = [];
       selectedPurchaseReturnPartnerForDebt.movements.push({
@@ -4107,7 +4072,6 @@
       savePartners();
     }
     
-    // Save to purchase return history
     const returnRecord = {
       id: 'PR' + Date.now(),
       date: new Date().toLocaleString('ckb'),
@@ -4208,7 +4172,7 @@
     }
   };
 
-  // ========== SALES RETURN FUNCTIONS ==========
+  // Sales Return functions
   window.searchSaleForReturn = function() {
     const query = document.getElementById('returnInvoiceSearch').value.trim().toLowerCase();
     const suggestionsDiv = document.getElementById('returnInvoiceSuggestions');
@@ -4338,7 +4302,6 @@
     
     const refundAmount = returnQty * selectedReturnProduct.price;
     
-    // INCREASE product quantity in warehouse (for sales return)
     const product = warehouseProducts.find(p => p.name === selectedReturnProduct.name);
     if (product) {
       product.quantity += returnQty;
@@ -4360,7 +4323,6 @@
       saveWarehouseProducts();
     }
     
-    // Update original sale invoice
     const originalSale = saleHistory.find(s => s.id === selectedReturnSale.id);
     if (originalSale) {
       const saleItem = originalSale.items[selectedReturnProduct.originalIndex];
@@ -4374,7 +4336,6 @@
       }
     }
     
-    // Handle debt reduction or cash return
     if (returnType === 'debt' && selectedReturnCustomerForDebt) {
       selectedReturnCustomerForDebt.debt = Math.max(0, (selectedReturnCustomerForDebt.debt || 0) - refundAmount);
       if (!selectedReturnCustomerForDebt.movements) selectedReturnCustomerForDebt.movements = [];
@@ -4387,7 +4348,6 @@
       });
       saveCustomers();
     } else {
-      // Remove from cash register
       const today = new Date().toLocaleDateString('ckb');
       if (cashRegister.lastResetDate === today) {
         cashRegister.totalToday = Math.max(0, cashRegister.totalToday - refundAmount);
@@ -4403,7 +4363,6 @@
       }
     }
     
-    // Save to return history
     const returnRecord = {
       id: 'RET' + Date.now(),
       date: new Date().toLocaleString('ckb'),
@@ -4498,7 +4457,6 @@
     }
   };
 
-  // ---------- Tab Event Listeners ----------
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('tab')) {
       if (e.target.dataset.purchasetab) {
@@ -4624,7 +4582,7 @@
     }
   });
 
-  // ========== MONEY REQUEST FUNCTIONS ==========
+  // Money Request functions
   window.onMoneyTypeChange = function() {
     selectedMoneyEntity = null;
     document.getElementById('selectedEntityInfo').style.display = 'none';
@@ -4849,7 +4807,7 @@
     renderAgentsList();
   };
 
-  // ---------- Persons Functions ----------
+  // Persons Functions
   window.filterPersons = function() {
     const query = document.getElementById('personSearchInput')?.value.trim().toLowerCase() || '';
     const filtered = query ? customers.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query) || (c.address && c.address.toLowerCase().includes(query))) : customers;
@@ -4951,7 +4909,7 @@
     renderPersonsList();
   };
 
-  // ---------- Partners Functions ----------
+  // Partners Functions
   window.filterPartners = function() {
     const query = document.getElementById('partnerSearchInput')?.value.trim().toLowerCase() || '';
     const filtered = query ? partners.filter(p => p.name.toLowerCase().includes(query) || p.phone.includes(query) || (p.address && p.address.toLowerCase().includes(query))) : partners;
@@ -5053,7 +5011,7 @@
     renderPartnersList();
   };
 
-  // ---------- Warehouse Functions ----------
+  // Warehouse Functions
   window.previewProductImage = function() {
     const fileInput = document.getElementById('productImageUpload');
     const preview = document.getElementById('productImagePreview');
@@ -5219,7 +5177,7 @@
     alert('کڕین بە سەرکەوتوویی تۆمارکرا');
   };
 
-  // ---------- Pricing Module Functions ----------
+  // Pricing Module Functions
   function renderPricingUI() { renderSelectedPricingProducts(); generateAllPrices(); }
 
   window.searchPricingProducts = function() {
@@ -5271,7 +5229,7 @@
     w.print();
   };
 
-  // ---------- Barcode Print Functions ----------
+  // Barcode Print Functions
   function populateBarcodeSelect() {
     const select = document.getElementById('barcodeProductSelect');
     if (!select) return;
@@ -5316,7 +5274,7 @@
     }, 300);
   };
 
-  // ---------- Settings Functions ----------
+  // Settings Functions
   function renderSettingsPanels() {
     const toggle = document.getElementById('autoBackupToggle');
     if (toggle) toggle.checked = autoBackupEnabled;
@@ -5508,7 +5466,7 @@
     if (invHeaderLogo) invHeaderLogo.innerHTML = `<i class="fas ${appearance.systemIcon}" style="font-size:2rem;"></i> <span>${appearance.systemName}</span>`;
   }
 
-  // ---------- Sales Data ----------
+  // Sales Data
   let cart = [];
   let currentCustomer = null;
   let saleHistory = JSON.parse(localStorage.getItem('market_sales_history') || JSON.stringify([
@@ -5656,10 +5614,7 @@
   window.printInvoice = function(invId) { const sale = saleHistory.find(s => s.id === invId); if (!sale) return; const w = window.open('', '_blank'); w.document.write(`<html dir="rtl"><head><title>فاکتوورە ${invId}</title><style>body{font-family:'Segoe UI';padding:2rem;}table{width:100%;border-collapse:collapse;}td,th{padding:8px;border-bottom:1px solid #ccc;}</style></head><body><h2>${appearance.systemName}</h2><p>${invId} | ${sale.date}</p><table><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${sale.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table><h3>کۆ: ${sale.total}</h3><p>${sale.customer}</p></body></html>`); w.document.close(); w.print(); };
   window.deleteInvoice = function(invId) { if (confirm('دڵنیایت لە سڕینەوە؟')) { saleHistory = saleHistory.filter(s => s.id !== invId); saveSaleHistory(); renderHistory(historySearchInput?.value.trim() || ''); historyDetailDiv.style.display = 'none'; updateStats(); } };
 
-  // ---------- AGENT FUNCTIONS (Simplified Stubs) ----------
-  // These are placeholder functions that were in the original code
-  // They should be expanded based on actual requirements
-
+  // Agent Functions (Stubs - Placeholder)
   function renderAgentsList() { /* Placeholder */ }
   window.filterAgents = function() { /* Placeholder */ };
   window.addNewAgent = function() { /* Placeholder */ };
@@ -5678,7 +5633,7 @@
   window.searchGiveProduct = function() { /* Placeholder */ };
   window.completeGiveAgent = function() { /* Placeholder */ };
 
-  // ---------- EXPIRY FUNCTIONS (Stubs) ----------
+  // Expiry Functions (Stubs)
   function renderExpiryProducts() { /* Placeholder */ }
   function renderDamagedProducts() { /* Placeholder */ }
   window.filterExpiryProducts = function() { /* Placeholder */ };
@@ -5686,7 +5641,7 @@
   window.searchDamageProduct = function() { /* Placeholder */ };
   window.addDamagedProduct = function() { /* Placeholder */ };
 
-  // ---------- PURCHASE FUNCTIONS ----------
+  // Purchase Functions (Stubs)
   window.searchPurchaseProduct = function() { /* Placeholder */ };
   window.searchPurchasePartner = function() { /* Placeholder */ };
   window.completePurchase = function() { /* Placeholder */ };
@@ -5695,8 +5650,10 @@
   function renderPurchaseHistory() { /* Placeholder */ }
   window.filterPurchaseHistory = function() { /* Placeholder */ };
 
-  // ---------- EMPLOYEE FUNCTIONS (Already defined above) ----------
-  // Render functions are defined above
+  // Render Agent Sale Cart (Stub)
+  function renderAgentSaleCart() { /* Placeholder */ }
+  function renderAgentReturnCart() { /* Placeholder */ }
+  function renderGiveAgentCart() { /* Placeholder */ }
 
   // Initialisation
   updateStats();
