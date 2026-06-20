@@ -244,6 +244,11 @@
       box-shadow: 0 20px 28px -10px rgba(0, 0, 0, 0.2);
       border-color: #cbd5e1;
     }
+    .module-card.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      filter: grayscale(1);
+    }
     .module-card.dragging {
       opacity: 0.4;
       transform: scale(0.95);
@@ -2380,6 +2385,25 @@
 
 <script>
 (function() {
+  // ===== PERMISSION SYSTEM =====
+  // فانکشنی پشکنینی مۆڵەت
+  function hasPermission(moduleId) {
+    // ئەگەر بەڕێوەبەر بێت، هەموو مۆڵەتێکی هەیە
+    const loggedUser = JSON.parse(localStorage.getItem('market_logged_user') || '{}');
+    if (loggedUser.role === 'admin') return true;
+    
+    // مۆڵەتەکانی کارمەند لە سێشن وەربگرە
+    const perms = JSON.parse(sessionStorage.getItem('market_session_permissions') || '{}');
+    // بە پێشگرتن، ئەگەر مۆڵەتەکە نەدۆزرایەوە، بە ناڕێست (false) دابنێ
+    return perms[moduleId] !== false;
+  }
+
+  // فانکشنی ناسینی بەڕێوەبەر
+  function isAdmin() {
+    const loggedUser = JSON.parse(localStorage.getItem('market_logged_user') || '{}');
+    return loggedUser.role === 'admin';
+  }
+
   // ===== LOGIN SYSTEM =====
   let isLoggedIn = false;
 
@@ -2466,7 +2490,12 @@
           isValid = true;
           userRole = 'employee';
           userName = employee.name;
-          // Store logged in employee info
+          
+          // بارکردنی مۆڵەتەکانی ئەم کارمەندە بۆ سێشن
+          const perms = employeePermissions[employee.id] || {};
+          // پاشەکەوتکردنی مۆڵەتەکان لە سێشن بۆ بەکارهێنانی لە UI
+          sessionStorage.setItem('market_session_permissions', JSON.stringify(perms));
+          
           localStorage.setItem('market_logged_employee', JSON.stringify(employee));
         }
       }
@@ -2574,6 +2603,7 @@
     // Clear login session
     localStorage.removeItem('market_logged_user');
     localStorage.removeItem('market_logged_employee');
+    sessionStorage.removeItem('market_session_permissions');
     isLoggedIn = false;
     
     // Show login
@@ -3036,6 +3066,14 @@
     employeePermissions[selectedSecurityEmployee.id] = perms;
     localStorage.setItem('market_employee_permissions', JSON.stringify(employeePermissions));
     
+    // ئەگەر ئەم کارمەندە ئێستا چووبێتە ژوورەوە، مۆڵەتەکانی سێشن نوێبکەرەوە
+    const loggedUser = JSON.parse(localStorage.getItem('market_logged_user') || '{}');
+    if (loggedUser.role === 'employee' && loggedUser.username === selectedSecurityEmployee.username) {
+      sessionStorage.setItem('market_session_permissions', JSON.stringify(perms));
+      // دووبارە بەشەکان ڕێکبخەرەوە (UI نوێبکەرەوە)
+      renderDashboardModules();
+    }
+    
     alert(`مۆڵەتەکانی ${selectedSecurityEmployee.name} پاشەکەوتکرا!`);
   };
 
@@ -3286,25 +3324,35 @@
 
   let backupHistory = JSON.parse(localStorage.getItem('market_backup_history') || '[]');
 
+  // ===== RENDER DASHBOARD MODULES WITH PERMISSION CHECK =====
   function renderDashboardModules(containerId = 'allModulesContainer') {
     const container = document.getElementById(containerId);
     if (!container) return;
-    container.innerHTML = moduleOrder.map(id => {
+    
+    // تەنها ئەو بەشانە هەڵبژێرە کە مۆڵەتیان هەیە
+    const modulesToShow = isAdmin() ? moduleOrder : moduleOrder.filter(id => hasPermission(id));
+    
+    container.innerHTML = modulesToShow.map(id => {
       const mod = allModules.find(m => m.id === id);
       if (!mod) return '';
       return `<div class="module-card" draggable="true" data-module-id="${mod.id}" style="cursor:grab;" onclick="window.moduleClick('${mod.id}')"><i class="fas ${mod.icon}" style="background:${mod.color};color:${mod.text};"></i><span>${mod.label}</span></div>`;
     }).join('');
+    
     attachDragEvents(container);
   }
 
   function renderSettingsLayoutModules() {
     const container = document.getElementById('layoutDragContainer');
     if (!container) return;
-    container.innerHTML = moduleOrder.map(id => {
+    
+    const modulesToShow = isAdmin() ? moduleOrder : moduleOrder.filter(id => hasPermission(id));
+    
+    container.innerHTML = modulesToShow.map(id => {
       const mod = allModules.find(m => m.id === id);
       if (!mod) return '';
       return `<div class="module-card" draggable="true" data-module-id="${mod.id}" style="cursor:grab;"><i class="fas ${mod.icon}" style="background:${mod.color};color:${mod.text};"></i><span>${mod.label}</span></div>`;
     }).join('');
+    
     attachDragEvents(container);
   }
 
@@ -3361,7 +3409,14 @@
     }
   }
 
+  // ===== MODULE CLICK WITH PERMISSION CHECK =====
   window.moduleClick = function(moduleId) {
+    // پشکنینی مۆڵەت
+    if (!hasPermission(moduleId) && !isAdmin()) {
+      alert('تۆ مۆڵەتی بەکارهێنانی ئەم بەشەت نییە!');
+      return;
+    }
+    
     if (moduleId === 'sales') navigateTo('sales');
     else if (moduleId === 'settings') navigateTo('settings');
     else if (moduleId === 'persons') navigateTo('persons');
