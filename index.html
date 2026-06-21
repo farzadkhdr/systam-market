@@ -180,7 +180,6 @@
     @media print { body { background:white; } .system-container { box-shadow:none; backdrop-filter:none; background:white; padding:0; } .back-header, .tabs, .new-sale-layout .card-glass:first-child, .history-search, .btn-icon, .back-btn, .no-print { display:none !important; } .invoice-preview { border:none; } .barcode-print-section { display:block; } .barcode-print-card { break-inside:avoid; margin-bottom:1rem; } .login-overlay { display:none !important; } }
     @media (max-width:700px) { .system-container { padding:1.2rem; } .module-section { grid-template-columns:repeat(3,1fr); } .login-box { padding:2rem 1.5rem; border-radius:2rem; } .login-logo-icon { width:60px; height:60px; font-size:2rem; } .login-logo h1 { font-size:1.5rem; } }
 
-    /* === NEW STYLES FOR TRANSFER === */
     .accounting-transfer-box {
       background: #f8fafc;
       border-radius: 1.5rem;
@@ -296,7 +295,7 @@
     <div id="dashboardStats" class="stats-grid">
       <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h4 id="statTotalSales">0</h4><span>کۆی فرۆشتن</span></div></div>
       <div class="stat-card"><div class="stat-icon green"><i class="fas fa-truck"></i></div><div class="stat-info"><h4 id="statTotalPurchases">0</h4><span>کۆی کڕین</span></div></div>
-      <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی واسڵکراو</span></div></div>
+      <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی پارەی واسڵکراو</span></div></div>
       <!-- Combined card for total spend + expenses -->
       <div class="stat-card"><div class="stat-icon red"><i class="fas fa-coins"></i></div><div class="stat-info"><h4 id="statTotalSpendAndExpenses">0</h4><span>کۆی سەرف و مەسروفات</span></div></div>
       <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoneyReceived">0</h4><span>واسڵی ئەمرۆ</span></div></div>
@@ -321,7 +320,7 @@
     <div class="footer-note">⚡ هەموو مافەکان پارێزراوە - سیستەمی مارکێت</div>
   </div>
 
-  <!-- ===== ACCOUNTING VIEW (حیساباتکردن) ===== -->
+  <!-- ===== ACCOUNTING VIEW ===== -->
   <div id="accountingView" style="display: none;">
     <div class="module-view-container">
       <div class="back-header">
@@ -1685,7 +1684,7 @@
     if (system) { system.classList.remove('hidden'); system.classList.add('visible'); }
     isLoggedIn = true;
     const dashboardStats = document.getElementById('dashboardStats');
-    if (dashboardStats) dashboardStats.style.display = 'none';
+    if (dashboardStats) dashboardStats.style.display = 'grid';
   }
 
   window.handleLogin = function() {
@@ -1728,8 +1727,6 @@
         showToast(`👋 بەخێربێیت ${userName}!`, 'success');
         updateStats();
         renderDashboardModules();
-        const dashboardStats = document.getElementById('dashboardStats');
-        if (dashboardStats) dashboardStats.style.display = 'none';
       } else {
         document.getElementById('loginErrorMessage').textContent = 'ناوی بەکارهێنەر یان پاسوورد هەڵەیە! تکایە دووبارە هەوڵبدە.';
         errorDiv.classList.add('show');
@@ -1929,8 +1926,14 @@
   // ===== ACCOUNTING / TRANSFER FUNCTION =====
   function updateAccountingDisplay() {
     const today = new Date().toLocaleDateString('ckb');
-    const todayMoney = moneyRequests.filter(r => r.date && r.date.includes(today)).reduce((sum, r) => sum + r.amount, 0);
-    const totalMoney = moneyRequests.reduce((sum, r) => sum + r.amount, 0);
+    // Today money (only regular, not transfers)
+    const todayMoney = moneyRequests
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .reduce((sum, r) => sum + r.amount, 0);
+    // Total money (only transfers)
+    const totalMoney = moneyRequests
+      .filter(r => r.isTransfer === true)
+      .reduce((sum, r) => sum + r.amount, 0);
     const accToday = document.getElementById('accTodayMoney');
     const accTotal = document.getElementById('accTotalMoney');
     if (accToday) accToday.textContent = todayMoney.toLocaleString();
@@ -1948,16 +1951,18 @@
       return;
     }
     const today = new Date().toLocaleDateString('ckb');
-    const todayMoney = moneyRequests.filter(r => r.date && r.date.includes(today)).reduce((sum, r) => sum + r.amount, 0);
+    const todayMoney = moneyRequests
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .reduce((sum, r) => sum + r.amount, 0);
     if (amount > todayMoney) {
       alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${todayMoney.toLocaleString()} د.ع) زیاترە!`);
       return;
     }
     if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ کۆی واسڵکراو؟`)) {
-      // Create a record that adds to total but doesn't affect today's money
-      // We'll use a special record with type 'transfer'
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+      
+      // Add to total money (transfer)
       moneyRequests.push({
         id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
         date: dateStr,
@@ -1966,17 +1971,27 @@
         entityPhone: '-',
         amount: amount,
         note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
-        previousDebt: 0,
         isTransfer: true
       });
+      
+      // Subtract from today money
+      moneyRequests.push({
+        id: 'TR-OUT' + Date.now(),
+        date: dateStr,
+        type: 'transfer_out',
+        entityName: 'کەمکردنەوەی واسڵی ئەمرۆ',
+        entityPhone: '-',
+        amount: -amount,
+        note: `گواستنەوە بۆ کۆی گشتی`,
+        isTransfer: false,
+        isExpense: true
+      });
+      
       localStorage.setItem('market_money_requests', JSON.stringify(moneyRequests));
-      // Subtract from today's money by adding a negative record? We'll handle via display logic.
-      // Instead, we'll just update the display and show toast.
       updateAccountingDisplay();
       updateStats();
       amountInput.value = '';
       showToast(`✅ ${amount.toLocaleString()} د.ع بە سەرکەوتوویی گواسترایەوە بۆ کۆی واسڵکراو!`, 'success');
-      // Refresh the view
       renderMoneyHistory();
     }
   };
@@ -2186,16 +2201,27 @@
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
-    const totalReceived = moneyRequests.reduce((sum, r) => sum + r.amount, 0) + purchaseReturnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
+    
+    // Total money received (ONLY from transfers)
+    const totalMoneyReceived = moneyRequests
+      .filter(r => r.isTransfer === true)
+      .reduce((sum, r) => sum + r.amount, 0);
+    
     const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
     const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
     const totalSpend = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
                        employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
                        returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
     const totalSpendAndExpenses = totalSpend + totalExpenses + totalGiveMoney;
+    
+    // Today money (only regular, not transfers)
     const today = new Date().toLocaleDateString('ckb');
-    const todayReceived = moneyRequests.filter(r => r.date && r.date.includes(today)).reduce((sum, r) => sum + r.amount, 0) +
-                          purchaseReturnHistory.filter(r => r.date && r.date.includes(today)).reduce((sum, r) => sum + r.refundAmount, 0);
+    const todayMoneyReceived = moneyRequests
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .reduce((sum, r) => sum + r.amount, 0) +
+      purchaseReturnHistory.filter(r => r.date && r.date.includes(today) && r.type === 'cash')
+      .reduce((sum, r) => sum + r.refundAmount, 0);
+    
     const totalProducts = warehouseProducts.length;
     const totalPersons = customers.length;
     const myDebtToPartners = partners.reduce((sum, p) => sum + (p.debt || 0), 0);
@@ -2213,9 +2239,9 @@
 
     if (statTotalSalesEl) statTotalSalesEl.textContent = totalSales.toLocaleString();
     if (statTotalPurchasesEl) statTotalPurchasesEl.textContent = totalPurchases.toLocaleString();
-    if (statTotalMoneyReceivedEl) statTotalMoneyReceivedEl.textContent = totalReceived.toLocaleString();
+    if (statTotalMoneyReceivedEl) statTotalMoneyReceivedEl.textContent = totalMoneyReceived.toLocaleString();
     if (statTotalSpendAndExpensesEl) statTotalSpendAndExpensesEl.textContent = totalSpendAndExpenses.toLocaleString();
-    if (statTodayMoneyReceivedEl) statTodayMoneyReceivedEl.textContent = todayReceived.toLocaleString();
+    if (statTodayMoneyReceivedEl) statTodayMoneyReceivedEl.textContent = todayMoneyReceived.toLocaleString();
     if (statTotalProductsEl) statTotalProductsEl.textContent = totalProducts;
     if (statTotalPersonsEl) statTotalPersonsEl.textContent = totalPersons;
     if (statMyDebtToPartnersEl) statMyDebtToPartnersEl.textContent = myDebtToPartners.toLocaleString();
@@ -2227,7 +2253,9 @@
   // ===== EXPENSE FUNCTIONS =====
   function updateExpenseStats() {
     const today = new Date().toLocaleDateString('ckb');
-    const todayMoney = moneyRequests.filter(r => r.date && r.date.includes(today)).reduce((sum, r) => sum + r.amount, 0);
+    const todayMoney = moneyRequests
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .reduce((sum, r) => sum + r.amount, 0);
     const todayExpense = expenseHistory.filter(e => e.date && e.date.includes(today)).reduce((sum, e) => sum + e.amount, 0);
     const remaining = todayMoney - todayExpense;
     const displayEl = document.getElementById('todayMoneyDisplay');
@@ -2240,7 +2268,9 @@
 
   function updateGiveStats() {
     const today = new Date().toLocaleDateString('ckb');
-    const todayMoney = moneyRequests.filter(r => r.date && r.date.includes(today)).reduce((sum, r) => sum + r.amount, 0);
+    const todayMoney = moneyRequests
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .reduce((sum, r) => sum + r.amount, 0);
     const todayGive = giveMoneyHistory.filter(g => g.date && g.date.includes(today)).reduce((sum, g) => sum + g.amount, 0);
     const displayEl = document.getElementById('todayMoneyGiveDisplay');
     const giveEl = document.getElementById('todayGiveDisplay');
@@ -2255,7 +2285,9 @@
     const dateTime = document.getElementById('expenseDateTime').value;
     if (!amount || amount <= 0) { alert('تکایە بڕی پارەی دروست بنووسە'); return; }
     const today = new Date().toLocaleDateString('ckb');
-    const todayMoney = moneyRequests.filter(r => r.date && r.date.includes(today)).reduce((sum, r) => sum + r.amount, 0);
+    const todayMoney = moneyRequests
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .reduce((sum, r) => sum + r.amount, 0);
     const todayExpense = expenseHistory.filter(e => e.date && e.date.includes(today)).reduce((sum, e) => sum + e.amount, 0);
     if (todayExpense + amount > todayMoney) {
       if (!confirm(`ئاگاداری! واسڵی ئەمرۆ ${todayMoney.toLocaleString()} د.عە و مەسروفاتەکە ${(todayExpense + amount).toLocaleString()} د.ع دەبێت. دەتەوێت بەردەوام بیت؟`)) return;
@@ -2263,7 +2295,22 @@
     const now = new Date();
     const dateStr = dateTime ? new Date(dateTime).toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : now.toLocaleString('ckb');
     expenseHistory.unshift({ id: 'EXP' + Math.floor(Math.random() * 9000 + 1000), date: dateStr, amount: amount, category: category, note: note || category, timestamp: dateTime || now.toISOString() });
+    
+    // Subtract from today money
+    moneyRequests.push({
+      id: 'EXP-MONEY' + Date.now(),
+      date: dateStr,
+      type: 'expense',
+      entityName: category,
+      entityPhone: '-',
+      amount: -amount,
+      note: note || category,
+      isTransfer: false,
+      isExpense: true
+    });
+    
     saveExpenseHistory();
+    saveMoneyRequests();
     document.getElementById('expenseAmount').value = '';
     document.getElementById('expenseNote').value = '';
     document.getElementById('expenseDateTime').value = '';
@@ -2307,8 +2354,15 @@
 
   window.deleteExpense = function(id) {
     if (!confirm('دڵنیایت لە سڕینەوەی ئەم مەسروفاتە؟')) return;
+    const record = expenseHistory.find(e => e.id === id);
+    if (record) {
+      // Remove the money deduction record
+      const moneyRecord = moneyRequests.find(r => r.id === 'EXP-MONEY' + record.timestamp?.replace(/[^0-9]/g, '') || '');
+      if (moneyRecord) moneyRequests = moneyRequests.filter(r => r.id !== moneyRecord.id);
+    }
     expenseHistory = expenseHistory.filter(e => e.id !== id);
     saveExpenseHistory();
+    saveMoneyRequests();
     renderExpenseHistory();
     updateExpenseStats();
     updateStats();
@@ -2365,7 +2419,9 @@
     const now = new Date();
     const dateStr = dateTime ? new Date(dateTime).toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : now.toLocaleString('ckb');
     const today = new Date().toLocaleDateString('ckb');
-    const todayMoney = moneyRequests.filter(r => r.date && r.date.includes(today)).reduce((sum, r) => sum + r.amount, 0);
+    const todayMoney = moneyRequests
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .reduce((sum, r) => sum + r.amount, 0);
     const todayGive = giveMoneyHistory.filter(g => g.date && g.date.includes(today)).reduce((sum, g) => sum + g.amount, 0);
     if (todayGive + amount > todayMoney) {
       if (!confirm(`ئاگاداری! واسڵی ئەمرۆ ${todayMoney.toLocaleString()} د.عە و پێدانی پارە ${(todayGive + amount).toLocaleString()} د.ع دەبێت. دەتەوێت بەردەوام بیت؟`)) return;
@@ -2389,7 +2445,22 @@
       }
     }
     giveMoneyHistory.unshift({ id: invId, date: dateStr, type: selectedGiveEntity.type, entityId: selectedGiveEntity.id, entityName: selectedGiveEntity.name, entityPhone: selectedGiveEntity.phone, amount: amount, note: note, timestamp: dateTime || now.toISOString() });
+    
+    // Subtract from today money
+    moneyRequests.push({
+      id: 'GIVE-MONEY' + Date.now(),
+      date: dateStr,
+      type: 'give_money',
+      entityName: selectedGiveEntity.name,
+      entityPhone: selectedGiveEntity.phone,
+      amount: -amount,
+      note: note,
+      isTransfer: false,
+      isExpense: true
+    });
+    
     saveGiveMoneyHistory();
+    saveMoneyRequests();
     selectedGiveEntity = null;
     document.getElementById('moneyGiveAmount').value = '';
     document.getElementById('moneyGiveNote').value = '';
@@ -2443,6 +2514,9 @@
     if (!confirm('دڵنیایت لە سڕینەوەی ئەم پارە پێدانە؟')) return;
     const record = giveMoneyHistory.find(g => g.id === id);
     if (record) {
+      // Remove from money records
+      const moneyRecord = moneyRequests.find(r => r.id === 'GIVE-MONEY' + record.timestamp?.replace(/[^0-9]/g, '') || '');
+      if (moneyRecord) moneyRequests = moneyRequests.filter(r => r.id !== moneyRecord.id);
       if (record.type === 'person') {
         const person = customers.find(c => c.id === record.entityId);
         if (person) { person.debt = Math.max(0, (person.debt || 0) - record.amount); person.movements = person.movements?.filter(m => m.invoiceId !== id) || []; saveCustomers(); }
@@ -2453,6 +2527,7 @@
     }
     giveMoneyHistory = giveMoneyHistory.filter(g => g.id !== id);
     saveGiveMoneyHistory();
+    saveMoneyRequests();
     renderGiveHistory();
     updateGiveStats();
     updateStats();
@@ -2693,7 +2768,7 @@
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const invId = 'W' + Math.floor(Math.random() * 9000 + 1000);
-    const record = { id: invId, date: dateStr, type: selectedMoneyEntity.type, entityId: selectedMoneyEntity.id, entityName: selectedMoneyEntity.name, entityPhone: selectedMoneyEntity.phone, amount: amount, note: note, previousDebt: selectedMoneyEntity.debt || 0 };
+    const record = { id: invId, date: dateStr, type: selectedMoneyEntity.type, entityId: selectedMoneyEntity.id, entityName: selectedMoneyEntity.name, entityPhone: selectedMoneyEntity.phone, amount: amount, note: note, previousDebt: selectedMoneyEntity.debt || 0, isTransfer: false };
     if (selectedMoneyEntity.type === 'person') {
       const person = customers.find(c => c.id === selectedMoneyEntity.id);
       if (person) { person.debt = Math.max(0, (person.debt || 0) - amount); if (!person.movements) person.movements = []; person.movements.push({ type: 'received', date: dateStr, amount: amount, note: note, invoiceId: invId }); saveCustomers(); }
@@ -2728,7 +2803,7 @@
       <div class="history-row">
         <div><strong>${r.id}</strong> | ${r.date}</div>
         <div>${r.type === 'person' ? '👤' : r.type === 'partner' ? '🤝' : '👔'} ${r.entityName}</div>
-        <div>${r.amount.toLocaleString()} د.ع</div>
+        <div style="${r.amount < 0 ? 'color:#dc2626;' : 'color:#059669;'}">${r.amount.toLocaleString()} د.ع</div>
         <div>
           <button class="btn-icon" onclick="window.viewMoneyInvoice('${r.id}')"><i class="fas fa-eye"></i></button>
           <button class="btn-icon" onclick="window.printMoneyInvoice('${r.id}')"><i class="fas fa-print"></i></button>
@@ -2759,9 +2834,10 @@
         <p><strong>ناو:</strong> ${record.entityName}</p>
         <p><strong>مۆبایل:</strong> ${record.entityPhone}</p>
         <p><strong>جۆر:</strong> ${record.type === 'person' ? 'کەس' : record.type === 'partner' ? 'شەریک' : 'مەندوب'}</p>
-        <p><strong>قەرزاری پێشوو:</strong> ${record.previousDebt.toLocaleString()} د.ع</p>
-        <p style="font-size:1.3rem; font-weight:800; color:#059669;"><strong>بڕی واسڵکراو:</strong> ${record.amount.toLocaleString()} د.ع</p>
+        <p><strong>قەرزاری پێشوو:</strong> ${record.previousDebt ? record.previousDebt.toLocaleString() : '0'} د.ع</p>
+        <p style="font-size:1.3rem; font-weight:800; ${record.amount < 0 ? 'color:#dc2626;' : 'color:#059669;'}"><strong>بڕ: </strong> ${record.amount.toLocaleString()} د.ع</p>
         ${record.note ? `<p><strong>تێبینی:</strong> ${record.note}</p>` : ''}
+        ${record.isTransfer ? '<p style="background:#dbeafe; padding:0.3rem 1rem; border-radius:1rem; display:inline-block;">🔄 گواستنەوە</p>' : ''}
       </div>`;
   };
 
@@ -2769,7 +2845,7 @@
     const record = moneyRequests.find(r => r.id === invId);
     if (!record) return;
     const w = window.open('', '_blank');
-    w.document.write(`<html dir="rtl"><head><title>واسڵ ${invId}</title><style>body{font-family:'Segoe UI';padding:2rem;}.card{border:2px solid #000;border-radius:1rem;padding:1.5rem;}</style></head><body><div class="card"><h2>واسڵی پارە</h2><p>کۆد: ${invId} | ${record.date}</p><p>ناو: ${record.entityName}</p><p>جۆر: ${record.type === 'person' ? 'کەس' : record.type === 'partner' ? 'شەریک' : 'مەندوب'}</p><p>بڕ: ${record.amount.toLocaleString()} د.ع</p>${record.note ? `<p>تێبینی: ${record.note}</p>` : ''}</div></body></html>`);
+    w.document.write(`<html dir="rtl"><head><title>واسڵ ${invId}</title><style>body{font-family:'Segoe UI';padding:2rem;}.card{border:2px solid #000;border-radius:1rem;padding:1.5rem;}</style></head><body><div class="card"><h2>واسڵی پارە</h2><p>کۆد: ${invId} | ${record.date}</p><p>ناو: ${record.entityName}</p><p>جۆر: ${record.type === 'person' ? 'کەس' : record.type === 'partner' ? 'شەریک' : 'مەندوب'}</p><p>بڕ: ${record.amount.toLocaleString()} د.ع</p>${record.note ? `<p>تێبینی: ${record.note}</p>` : ''}${record.isTransfer ? '<p>🔄 گواستنەوە</p>' : ''}</div></body></html>`);
     w.document.close();
     w.print();
   };
@@ -3595,6 +3671,22 @@
     cart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity = Math.max(0, product.quantity - item.quantity); });
     saveWarehouseProducts();
     saveSaleHistory();
+    
+    // Add to today money (only if not credit)
+    if (!creditCheck.checked) {
+      moneyRequests.push({
+        id: 'SALE-MONEY' + Date.now(),
+        date: dateStr,
+        type: 'sale',
+        entityName: custName,
+        entityPhone: '-',
+        amount: total,
+        note: `فرۆشتن ${invId}`,
+        isTransfer: false
+      });
+      saveMoneyRequests();
+    }
+    
     cart = [];
     currentCustomer = null;
     creditCheck.checked = false;
@@ -3712,8 +3804,24 @@
       const purchaseItem = originalPurchase.items[selectedPurchaseReturnProduct.originalIndex];
       if (purchaseItem) { purchaseItem.qty -= returnQty; if (purchaseItem.qty === 0) originalPurchase.items.splice(selectedPurchaseReturnProduct.originalIndex, 1); originalPurchase.total = originalPurchase.items.reduce((sum, i) => sum + (i.qty * i.price), 0); savePurchaseHistory(); }
     }
-    if (returnType === 'cash') { moneyRequests.unshift({ id: 'PR' + Date.now(), date: new Date().toLocaleString('ckb'), type: 'purchase_return', entityName: 'گەڕانەوەی کڕین', amount: refundAmount, note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedPurchaseReturn.id}`, previousDebt: 0 }); saveMoneyRequests(); }
-    else if (returnType === 'debt' && selectedPurchaseReturnPartnerForDebt) { selectedPurchaseReturnPartnerForDebt.debt = Math.max(0, (selectedPurchaseReturnPartnerForDebt.debt || 0) - refundAmount); if (!selectedPurchaseReturnPartnerForDebt.movements) selectedPurchaseReturnPartnerForDebt.movements = []; selectedPurchaseReturnPartnerForDebt.movements.push({ type: 'purchase_return', date: new Date().toLocaleString('ckb'), amount: refundAmount, note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedPurchaseReturn.id}`, invoiceId: 'PR' + Date.now() }); savePartners(); }
+    if (returnType === 'cash') {
+      // Add refund to today money
+      moneyRequests.push({
+        id: 'PR' + Date.now(),
+        date: new Date().toLocaleString('ckb'),
+        type: 'purchase_return',
+        entityName: 'گەڕانەوەی کڕین',
+        amount: refundAmount,
+        note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedPurchaseReturn.id}`,
+        isTransfer: false
+      });
+      saveMoneyRequests();
+    } else if (returnType === 'debt' && selectedPurchaseReturnPartnerForDebt) {
+      selectedPurchaseReturnPartnerForDebt.debt = Math.max(0, (selectedPurchaseReturnPartnerForDebt.debt || 0) - refundAmount);
+      if (!selectedPurchaseReturnPartnerForDebt.movements) selectedPurchaseReturnPartnerForDebt.movements = [];
+      selectedPurchaseReturnPartnerForDebt.movements.push({ type: 'purchase_return', date: new Date().toLocaleString('ckb'), amount: refundAmount, note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedPurchaseReturn.id}`, invoiceId: 'PR' + Date.now() });
+      savePartners();
+    }
     purchaseReturnHistory.unshift({ id: 'PR' + Date.now(), date: new Date().toLocaleString('ckb'), originalInvoiceId: selectedPurchaseReturn.id, partner: returnType === 'debt' ? selectedPurchaseReturnPartnerForDebt.name : selectedPurchaseReturn.partner, productName: selectedPurchaseReturnProduct.name, quantity: returnQty, price: selectedPurchaseReturnProduct.price, refundAmount: refundAmount, type: returnType, note: returnType === 'debt' ? 'کەمکرایەوە لە قەرزی شەریک' : 'وەرگرتنەوەی پارە (نەقدی)' });
     savePurchaseReturnHistory();
     alert(`گەڕانەوەی کڕین بە سەرکەوتوویی تۆمارکرا!\nکاڵا: ${selectedPurchaseReturnProduct.name}\nبڕ: ${returnQty}\nبەهای گەڕاوە: ${refundAmount.toLocaleString()} د.ع`);
@@ -3750,7 +3858,7 @@
     if (confirm('دڵنیایت لە سڕینەوەی ئەم تۆمارە؟')) {
       const record = purchaseReturnHistory.find(r => r.id === returnId);
       if (record) { const product = warehouseProducts.find(p => p.name === record.productName); if (product) { product.quantity += record.quantity; saveWarehouseProducts(); }
-        if (record.type === 'cash') { const moneyRecord = moneyRequests.find(m => m.note && m.note.includes(record.originalInvoiceId)); if (moneyRecord) { moneyRequests = moneyRequests.filter(m => m.id !== moneyRecord.id); saveMoneyRequests(); } }
+        if (record.type === 'cash') { const moneyRecord = moneyRequests.find(m => m.note && m.note.includes(record.originalInvoiceId) && m.amount > 0); if (moneyRecord) { moneyRequests = moneyRequests.filter(m => m.id !== moneyRecord.id); saveMoneyRequests(); } }
         else if (record.type === 'debt') { const partner = partners.find(p => p.name === record.partner); if (partner) { partner.debt = (partner.debt || 0) + record.refundAmount; savePartners(); } }
         const purchase = purchaseHistory.find(p => p.id === record.originalInvoiceId); if (purchase) { const existingItem = purchase.items.find(i => i.name === record.productName); if (existingItem) existingItem.qty += record.quantity; else purchase.items.push({ name: record.productName, qty: record.quantity, price: record.price }); purchase.total = purchase.items.reduce((sum, i) => sum + (i.qty * i.price), 0); savePurchaseHistory(); }
       }
@@ -3855,7 +3963,25 @@
       const saleItem = originalSale.items[selectedReturnProduct.originalIndex];
       if (saleItem) { saleItem.qty -= returnQty; if (saleItem.qty === 0) originalSale.items.splice(selectedReturnProduct.originalIndex, 1); originalSale.total = originalSale.items.reduce((sum, i) => sum + (i.qty * i.price), 0); saveSaleHistory(); }
     }
-    if (returnType === 'debt' && selectedReturnCustomerForDebt) { selectedReturnCustomerForDebt.debt = Math.max(0, (selectedReturnCustomerForDebt.debt || 0) - refundAmount); if (!selectedReturnCustomerForDebt.movements) selectedReturnCustomerForDebt.movements = []; selectedReturnCustomerForDebt.movements.push({ type: 'sales_return', date: new Date().toLocaleString('ckb'), amount: refundAmount, note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedReturnSale.id}`, invoiceId: 'RET' + Date.now() }); saveCustomers(); }
+    if (returnType === 'debt' && selectedReturnCustomerForDebt) {
+      selectedReturnCustomerForDebt.debt = Math.max(0, (selectedReturnCustomerForDebt.debt || 0) - refundAmount);
+      if (!selectedReturnCustomerForDebt.movements) selectedReturnCustomerForDebt.movements = [];
+      selectedReturnCustomerForDebt.movements.push({ type: 'sales_return', date: new Date().toLocaleString('ckb'), amount: refundAmount, note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedReturnSale.id}`, invoiceId: 'RET' + Date.now() });
+      saveCustomers();
+    } else if (returnType === 'cash') {
+      // Subtract from today money (refund means money goes back to customer)
+      moneyRequests.push({
+        id: 'RET-MONEY' + Date.now(),
+        date: new Date().toLocaleString('ckb'),
+        type: 'sales_return',
+        entityName: selectedReturnSale.customer,
+        amount: -refundAmount,
+        note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedReturnSale.id}`,
+        isTransfer: false,
+        isExpense: true
+      });
+      saveMoneyRequests();
+    }
     returnHistory.unshift({ id: 'RET' + Date.now(), date: new Date().toLocaleString('ckb'), originalInvoiceId: selectedReturnSale.id, customer: returnType === 'debt' ? selectedReturnCustomerForDebt.name : selectedReturnSale.customer, productName: selectedReturnProduct.name, quantity: returnQty, price: selectedReturnProduct.price, refundAmount: refundAmount, type: returnType, note: returnType === 'debt' ? 'کەمکرایەوە لە قەرز' : 'گەڕانەوەی پارە (نەقدی)' });
     saveReturnHistory();
     alert(`گەڕانەوە بە سەرکەوتوویی تۆمارکرا!\nکاڵا: ${selectedReturnProduct.name}\nبڕ: ${returnQty}\nبەهای گەڕاوە: ${refundAmount.toLocaleString()} د.ع`);
@@ -3895,6 +4021,10 @@
         const product = warehouseProducts.find(p => p.name === record.productName);
         if (product) { product.quantity = Math.max(0, product.quantity - record.quantity); saveWarehouseProducts(); }
         if (record.type === 'debt') { const customer = customers.find(c => c.name === record.customer); if (customer) { customer.debt = (customer.debt || 0) + record.refundAmount; saveCustomers(); } }
+        if (record.type === 'cash') {
+          const moneyRecord = moneyRequests.find(m => m.note && m.note.includes(record.originalInvoiceId) && m.amount < 0);
+          if (moneyRecord) { moneyRequests = moneyRequests.filter(m => m.id !== moneyRecord.id); saveMoneyRequests(); }
+        }
         const sale = saleHistory.find(s => s.id === record.originalInvoiceId);
         if (sale) { const existingItem = sale.items.find(i => i.name === record.productName); if (existingItem) existingItem.qty += record.quantity; else sale.items.push({ name: record.productName, qty: record.quantity, price: record.price }); sale.total = sale.items.reduce((sum, i) => sum + (i.qty * i.price), 0); saveSaleHistory(); }
       }
@@ -3983,7 +4113,7 @@
     saveWarehouseProducts();
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-    expiredDamagedProducts.push({ id: 'D' + Math.floor(Math.random() * 9000 + 1000), date: dateStr, productName: product.name, barcode: product.barcode, quantity: quantity, reason: reason || 'تێکچوو', type: 'damage' });
+    expiredDamagedProducts.push({ id: 'D' + Math.floor(Math.random() * 9000 + 1000), date: dateStr, productName: product.name, barcode: product.barcode, quantity: quantity, reason: reason || 'تێکچوون', type: 'damage' });
     saveExpiryDamage();
     document.getElementById('damageProductSearch').value = '';
     document.getElementById('damageQuantity').value = '1';
@@ -4154,6 +4284,23 @@
     purchaseCart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity += item.quantity; });
     saveWarehouseProducts();
     if (!isCash) { selectedPurchasePartner.debt = (selectedPurchasePartner.debt || 0) + total; savePartners(); }
+    
+    // Subtract from today money if cash purchase
+    if (isCash) {
+      moneyRequests.push({
+        id: 'PUR-MONEY' + Date.now(),
+        date: dateStr,
+        type: 'purchase',
+        entityName: selectedPurchasePartner.name,
+        entityPhone: selectedPurchasePartner.phone,
+        amount: -total,
+        note: `کڕین ${invId}`,
+        isTransfer: false,
+        isExpense: true
+      });
+      saveMoneyRequests();
+    }
+    
     purchaseCart = [];
     selectedPurchasePartner = null;
     renderPurchaseCart();
@@ -4427,6 +4574,22 @@
     if (isCredit && agentSaleCustomer) { customerName = agentSaleCustomer.name; agentSaleCustomer.debt = (agentSaleCustomer.debt || 0) + total; saveCustomers(); }
     saleHistory.unshift({ id: invId, date: dateStr, customer: customerName, agent: currentSaleAgent.name, total: total, items: agentSaleCart.map(i => ({ name: i.productName, qty: i.quantity, price: i.price })) });
     saveSaleHistory();
+    
+    // Add to today money (only if not credit)
+    if (!isCredit) {
+      moneyRequests.push({
+        id: 'AGENT-SALE-MONEY' + Date.now(),
+        date: dateStr,
+        type: 'agent_sale',
+        entityName: currentSaleAgent.name,
+        entityPhone: currentSaleAgent.phone,
+        amount: total,
+        note: `فرۆشتی مەندوب ${invId}`,
+        isTransfer: false
+      });
+      saveMoneyRequests();
+    }
+    
     agentSaleCart = [];
     renderAgentSaleCart();
     updateStats();
@@ -4561,7 +4724,21 @@
     if (!selectedAgentForWassl.movements) selectedAgentForWassl.movements = [];
     selectedAgentForWassl.movements.push({ type: 'wassl', date: dateStr, amount: amount, note: note, invoiceId: invId });
     saveAgents();
-    moneyRequests.unshift({ id: invId, date: dateStr, type: 'agent', entityId: selectedAgentForWassl.id, entityName: selectedAgentForWassl.name, entityPhone: selectedAgentForWassl.phone, amount: amount, note: note, previousDebt: selectedAgentForWassl.debt + amount });
+    
+    // Add to today money
+    moneyRequests.push({
+      id: invId,
+      date: dateStr,
+      type: 'agent',
+      entityId: selectedAgentForWassl.id,
+      entityName: selectedAgentForWassl.name,
+      entityPhone: selectedAgentForWassl.phone,
+      amount: amount,
+      note: note,
+      previousDebt: selectedAgentForWassl.debt + amount,
+      isTransfer: false
+    });
+    
     saveMoneyRequests();
     document.getElementById('agentWasslAmount').value = '';
     document.getElementById('agentWasslNote').value = '';
@@ -4833,6 +5010,21 @@
     else { if (!selectedEmployeeForSalary.salaryHistory) selectedEmployeeForSalary.salaryHistory = []; selectedEmployeeForSalary.salaryHistory.push({ month: month, amount: amount, date: new Date().toLocaleString('ckb'), note: note }); }
     selectedEmployeeForSalary.salary = amount;
     saveEmployees();
+    
+    // Subtract from today money
+    moneyRequests.push({
+      id: 'SALARY-MONEY' + Date.now(),
+      date: new Date().toLocaleString('ckb'),
+      type: 'salary',
+      entityName: selectedEmployeeForSalary.name,
+      entityPhone: selectedEmployeeForSalary.phone,
+      amount: -amount,
+      note: `موچەی مانگی ${month}`,
+      isTransfer: false,
+      isExpense: true
+    });
+    saveMoneyRequests();
+    
     renderEmployeeSalaryHistory();
     renderEmployeeDetail(selectedEmployeeForSalary);
     document.getElementById('employeeSalaryNote').value = '';
@@ -4864,6 +5056,12 @@
     if (emp.salaryHistory.length > 0) emp.salary = emp.salaryHistory[emp.salaryHistory.length - 1].amount;
     else emp.salary = 0;
     saveEmployees();
+    
+    // Remove the money deduction
+    const moneyRecord = moneyRequests.find(r => r.note && r.note.includes(month) && r.type === 'salary' && r.entityName === emp.name);
+    if (moneyRecord) moneyRequests = moneyRequests.filter(r => r.id !== moneyRecord.id);
+    saveMoneyRequests();
+    
     renderEmployeeSalaryHistory();
     renderEmployeeDetail(emp);
     alert('موچە سڕکرایەوە');
