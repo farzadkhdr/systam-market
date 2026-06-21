@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <style>
-    /* ===== STYLES (هەمان ستایلەکانی پێشوو) ===== */
+    /* ===== STYLES ===== */
     * {
       margin: 0;
       padding: 0;
@@ -1798,6 +1798,69 @@
     </div>
   </div>
 
+  <!-- ===== EXPIRY & DAMAGE VIEW ===== -->
+  <div id="expiryView" style="display: none;">
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-exclamation-triangle" style="color:#dc2626;"></i> تێکچوون و نەسەرچوون</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-expirytab="expiry">📅 کاڵا نەسەرچووەکان</div>
+        <div class="tab" data-expirytab="damage">💔 کاڵا تێکچووەکان</div>
+      </div>
+      <!-- Expiry Panel -->
+      <div class="panel active" id="expiryExpiryPanel">
+        <div class="card-glass">
+          <h3 style="margin-bottom: 1rem;"><i class="fas fa-clock" style="color:#d97706;"></i> کاڵا نەسەرچووەکان</h3>
+          <div class="filter-row">
+            <input type="text" id="expirySearch" placeholder="گەڕان بە ناو یان بارکۆد..." oninput="filterExpiryProducts()" style="flex:1;">
+            <input type="date" id="expiryDateFilter" onchange="filterExpiryProducts()" title="فلتەر بە بەروار">
+            <select id="expiryStatusFilter" onchange="filterExpiryProducts()">
+              <option value="all">هەموو</option>
+              <option value="expired">بەسەرچووە</option>
+              <option value="near_expiry">نزیکە لە بەسەرچوون</option>
+            </select>
+          </div>
+          <div id="expiryProductsList" style="max-height: 400px; overflow-y: auto;"></div>
+        </div>
+      </div>
+      <!-- Damage Panel -->
+      <div class="panel" id="expiryDamagePanel">
+        <div class="card-glass" style="max-width: 700px; margin: 0 auto;">
+          <h3 style="margin-bottom: 1rem;"><i class="fas fa-plus-circle" style="color:#dc2626;"></i> تۆمارکردنی کاڵای تێکچوو</h3>
+          <div style="margin-bottom: 1rem;">
+            <label style="font-weight: 600;">گەڕان بەدوای کاڵا:</label>
+            <div class="search-box">
+              <input type="text" id="damageProductSearch" placeholder="ناوی کاڵا یان بارکۆد..." oninput="searchDamageProduct()">
+              <button onclick="searchDamageProduct()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="damageProductSuggestions"></div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">بڕی تێکچوو:</label>
+              <input type="number" id="damageQuantity" value="1" min="1" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-weight: 600;">هۆکار:</label>
+              <input type="text" id="damageReason" placeholder="هۆکاری تێکچوون..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+          </div>
+          <button onclick="addDamagedProduct()" style="background:#dc2626; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-save"></i> تۆمارکردنی تێکچوو</button>
+        </div>
+        <div class="card-glass" style="margin-top: 1.5rem;">
+          <h4 style="margin-bottom: 1rem;"><i class="fas fa-history"></i> مێژووی کاڵا تێکچووەکان</h4>
+          <div class="filter-row">
+            <input type="text" id="damageSearch" placeholder="گەڕان بە ناوی کاڵا..." oninput="filterDamagedProducts()" style="flex:1;">
+            <input type="date" id="damageDateFilter" onchange="filterDamagedProducts()" title="فلتەر بە بەروار">
+          </div>
+          <div id="damagedProductsList" style="max-height: 300px; overflow-y: auto;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== SETTINGS VIEW ===== -->
   <div id="settingsView" style="display: none;">
     <div class="sales-container">
@@ -3248,6 +3311,8 @@
     renderPurchaseHistory();
     renderReturnHistory();
     renderPurchaseReturnHistory();
+    renderExpiryProducts();
+    renderDamagedProducts();
     renderEmployeesList();
     renderEmployeeSalaryHistory();
     renderEmployeeLeaveHistory();
@@ -3260,7 +3325,7 @@
     createParticles();
   });
 
-  // ===== MONEY REQUEST FUNCTIONS (مختصر) =====
+  // ===== MONEY REQUEST FUNCTIONS =====
   window.onMoneyTypeChange = function() { selectedMoneyEntity = null; document.getElementById('selectedEntityInfo').style.display = 'none'; document.getElementById('moneyEntitySearch').value = ''; document.getElementById('moneyEntitySuggestions').style.display = 'none'; };
 
   window.searchMoneyEntities = function() {
@@ -3430,7 +3495,7 @@
     renderAgentsList();
   };
 
-  // ===== PERSONS FUNCTIONS (مختصر) =====
+  // ===== PERSONS FUNCTIONS =====
   window.filterPersons = function() {
     const query = document.getElementById('personSearchInput')?.value.trim().toLowerCase() || '';
     const filtered = query ? customers.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query) || (c.address && c.address.toLowerCase().includes(query))) : customers;
@@ -3530,7 +3595,7 @@
     renderPersonsList();
   };
 
-  // ===== PARTNERS FUNCTIONS (مختصر) =====
+  // ===== PARTNERS FUNCTIONS =====
   window.filterPartners = function() {
     const query = document.getElementById('partnerSearchInput')?.value.trim().toLowerCase() || '';
     const filtered = query ? partners.filter(p => p.name.toLowerCase().includes(query) || p.phone.includes(query) || (p.address && p.address.toLowerCase().includes(query))) : partners;
@@ -3631,7 +3696,7 @@
     renderPartnersList();
   };
 
-  // ===== WAREHOUSE FUNCTIONS (مختصر) =====
+  // ===== WAREHOUSE FUNCTIONS =====
   window.previewProductImage = function() {
     const fileInput = document.getElementById('productImageUpload');
     const preview = document.getElementById('productImagePreview');
@@ -3795,7 +3860,7 @@
     alert(`کڕین بە سەرکەوتوویی تۆمارکرا!\nکۆی گشتی: ${total.toLocaleString()} د.ع`);
   };
 
-  // ===== PRICING FUNCTIONS (مختصر) =====
+  // ===== PRICING FUNCTIONS =====
   function renderPricingUI() { renderSelectedPricingProducts(); generateAllPrices(); }
 
   window.searchPricingProducts = function() {
@@ -3847,7 +3912,7 @@
     w.print();
   };
 
-  // ===== BARCODE FUNCTIONS (مختصر) =====
+  // ===== BARCODE FUNCTIONS =====
   function populateBarcodeSelect() {
     const select = document.getElementById('barcodeProductSelect');
     if (!select) return;
@@ -3892,7 +3957,7 @@
     }, 300);
   };
 
-  // ===== SETTINGS FUNCTIONS (مختصر) =====
+  // ===== SETTINGS FUNCTIONS =====
   function renderSettingsPanels() {
     const toggle = document.getElementById('autoBackupToggle');
     if (toggle) toggle.checked = autoBackupEnabled;
@@ -3964,6 +4029,8 @@
         renderPurchaseHistory();
         renderReturnHistory();
         renderPurchaseReturnHistory();
+        renderExpiryProducts();
+        renderDamagedProducts();
         renderEmployeesList();
         renderEmployeeSalaryHistory();
         renderEmployeeLeaveHistory();
@@ -4026,6 +4093,8 @@
       renderPurchaseHistory();
       renderReturnHistory();
       renderPurchaseReturnHistory();
+      renderExpiryProducts();
+      renderDamagedProducts();
       renderEmployeesList();
       renderEmployeeSalaryHistory();
       renderEmployeeLeaveHistory();
@@ -4092,7 +4161,7 @@
     if (invHeaderLogo) invHeaderLogo.innerHTML = `<i class="fas ${appearance.systemIcon}" style="font-size:2rem;"></i> <span>${appearance.systemName}</span>`;
   }
 
-  // ===== SALES FUNCTIONS (باقی) =====
+  // ===== SALES FUNCTIONS =====
   const productSearch = document.getElementById('productSearch');
   const productSuggestions = document.getElementById('productSuggestions');
   const cartContainer = document.getElementById('cartItems');
@@ -4221,7 +4290,7 @@
   window.printInvoice = function(invId) { const sale = saleHistory.find(s => s.id === invId); if (!sale) return; const w = window.open('', '_blank'); w.document.write(`<html dir="rtl"><head><title>فاکتوورە ${invId}</title><style>body{font-family:'Segoe UI';padding:2rem;}table{width:100%;border-collapse:collapse;}td,th{padding:8px;border-bottom:1px solid #ccc;}</style></head><body><h2>${appearance.systemName}</h2><p>${invId} | ${sale.date}</p><table><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${sale.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table><h3>کۆ: ${sale.total}</h3><p>${sale.customer}</p></body></html>`); w.document.close(); w.print(); };
   window.deleteInvoice = function(invId) { if (confirm('دڵنیایت لە سڕینەوە؟')) { saleHistory = saleHistory.filter(s => s.id !== invId); saveSaleHistory(); renderHistory(historySearchInput?.value.trim() || ''); historyDetailDiv.style.display = 'none'; updateStats(); } };
 
-  // ===== PURCHASE RETURN FUNCTIONS (مختصر) =====
+  // ===== PURCHASE RETURN FUNCTIONS =====
   window.searchPurchaseForReturn = function() {
     const query = document.getElementById('purchaseReturnSearch').value.trim().toLowerCase();
     const suggestionsDiv = document.getElementById('purchaseReturnSuggestions');
@@ -4364,7 +4433,7 @@
     }
   };
 
-  // ===== SALES RETURN FUNCTIONS (مختصر) =====
+  // ===== SALES RETURN FUNCTIONS =====
   window.searchSaleForReturn = function() {
     const query = document.getElementById('returnInvoiceSearch').value.trim().toLowerCase();
     const suggestionsDiv = document.getElementById('returnInvoiceSuggestions');
@@ -4508,7 +4577,268 @@
     }
   };
 
-  // ===== AGENTS FUNCTIONS (مختصر) =====
+  // ===== EXPIRY FUNCTIONS =====
+  function renderExpiryProducts() {
+    const container = document.getElementById('expiryProductsList');
+    if (!container) return;
+    const search = document.getElementById('expirySearch')?.value.trim().toLowerCase() || '';
+    const dateFilter = document.getElementById('expiryDateFilter')?.value || '';
+    const statusFilter = document.getElementById('expiryStatusFilter')?.value || 'all';
+    let filtered = warehouseProducts.filter(p => p.expiryDate);
+    if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search) || p.barcode.includes(search));
+    if (dateFilter) filtered = filtered.filter(p => p.expiryDate === dateFilter);
+    if (statusFilter === 'expired') filtered = filtered.filter(p => p.expiryDate && new Date(p.expiryDate) < new Date());
+    else if (statusFilter === 'near_expiry') { const nearDate = new Date(); nearDate.setDate(nearDate.getDate() + 30); filtered = filtered.filter(p => p.expiryDate && new Date(p.expiryDate) <= nearDate && new Date(p.expiryDate) >= new Date()); }
+    if (!filtered.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ کاڵایەک نەدۆزرایەوە</p>'; return; }
+    container.innerHTML = filtered.map(p => {
+      const isExpired = new Date(p.expiryDate) < new Date();
+      const isNear = !isExpired && new Date(p.expiryDate) <= new Date(new Date().setDate(new Date().getDate() + 30));
+      return `<div class="movement-card" style="border-right: 4px solid ${isExpired ? '#dc2626' : isNear ? '#f59e0b' : '#059669'};">
+        <div style="display:flex; justify-content:space-between;"><strong>${p.name}</strong><span>📅 ${p.expiryDate}</span></div>
+        <div style="font-size:0.85rem; color:#64748b;">بارکۆد: ${p.barcode} | بڕ: ${p.quantity}</div>
+        <div style="font-size:0.8rem; color:${isExpired ? '#dc2626' : isNear ? '#b45309' : '#059669'};">${isExpired ? '❌ بەسەرچووە' : isNear ? '⚠️ نزیکە لە بەسەرچوون' : '✅ باشە'}</div>
+      </div>`;
+    }).join('');
+  }
+
+  window.filterExpiryProducts = function() { renderExpiryProducts(); };
+
+  function renderDamagedProducts() {
+    const container = document.getElementById('damagedProductsList');
+    if (!container) return;
+    const search = document.getElementById('damageSearch')?.value.trim().toLowerCase() || '';
+    const dateFilter = document.getElementById('damageDateFilter')?.value || '';
+    let filtered = [...expiredDamagedProducts];
+    if (search) filtered = filtered.filter(d => d.productName.toLowerCase().includes(search));
+    if (dateFilter) filtered = filtered.filter(d => d.date.includes(dateFilter));
+    if (!filtered.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ کاڵای تێکچوو نییە</p>'; return; }
+    container.innerHTML = filtered.map(d => `
+      <div class="movement-card" style="border-right: 4px solid #dc2626;">
+        <div style="display:flex; justify-content:space-between;"><strong>${d.productName}</strong><span>${d.date}</span></div>
+        <div style="font-size:0.85rem;">بڕ: ${d.quantity} | ${d.reason || 'بێ هۆکار'}</div>
+        <div style="font-size:0.7rem; color:#64748b;">کۆد: ${d.id}</div>
+        <div><button class="btn-icon" onclick="deleteDamagedProduct('${d.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i> سڕینەوە</button></div>
+      </div>`).join('');
+  }
+
+  window.filterDamagedProducts = function() { renderDamagedProducts(); };
+
+  window.searchDamageProduct = function() {
+    const query = document.getElementById('damageProductSearch').value.trim().toLowerCase();
+    const suggestions = document.getElementById('damageProductSuggestions');
+    if (!query) { suggestions.style.display = 'none'; return; }
+    const filtered = warehouseProducts.filter(p => p.name.toLowerCase().includes(query) || p.barcode.includes(query));
+    if (filtered.length) {
+      suggestions.innerHTML = filtered.map(p => `<div class="suggestion-item" data-pid="${p.id}"><span>📦 ${p.name}</span><span style="font-size:0.8rem;">بارکۆد: ${p.barcode}</span><span style="font-size:0.8rem;">بڕ: ${p.quantity}</span></div>`).join('');
+      suggestions.style.display = 'block';
+      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const pid = parseInt(this.dataset.pid);
+          const product = warehouseProducts.find(p => p.id === pid);
+          if (product) { document.getElementById('damageProductSearch').value = product.name; document.getElementById('damageQuantity').max = product.quantity; }
+          suggestions.style.display = 'none';
+        });
+      });
+    } else { suggestions.style.display = 'none'; }
+  };
+
+  window.addDamagedProduct = function() {
+    const productName = document.getElementById('damageProductSearch').value.trim();
+    const quantity = parseInt(document.getElementById('damageQuantity').value);
+    const reason = document.getElementById('damageReason').value.trim();
+    if (!productName) { alert('تکایە کاڵایەک هەڵبژێرە'); return; }
+    if (!quantity || quantity < 1) { alert('تکایە بڕی دروست بنووسە'); return; }
+    const product = warehouseProducts.find(p => p.name === productName);
+    if (!product) { alert('کاڵا نەدۆزرایەوە'); return; }
+    if (product.quantity < quantity) { alert('بڕی کاڵا لە مخزندا کەمترە'); return; }
+    product.quantity -= quantity;
+    saveWarehouseProducts();
+    const now = new Date();
+    const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    expiredDamagedProducts.push({ id: 'D' + Math.floor(Math.random() * 9000 + 1000), date: dateStr, productName: product.name, barcode: product.barcode, quantity: quantity, reason: reason || 'تێکچوو', type: 'damage' });
+    saveExpiryDamage();
+    document.getElementById('damageProductSearch').value = '';
+    document.getElementById('damageQuantity').value = '1';
+    document.getElementById('damageReason').value = '';
+    document.getElementById('damageProductSuggestions').style.display = 'none';
+    renderDamagedProducts();
+    renderProductsGrid();
+    updateStats();
+    alert('کاڵای تێکچوو تۆمارکرا');
+  };
+
+  window.deleteDamagedProduct = function(id) {
+    if (!confirm('دڵنیایت لە سڕینەوەی ئەم تۆمارە؟')) return;
+    const record = expiredDamagedProducts.find(d => d.id === id);
+    if (record) { const product = warehouseProducts.find(p => p.name === record.productName); if (product) { product.quantity += record.quantity; saveWarehouseProducts(); } }
+    expiredDamagedProducts = expiredDamagedProducts.filter(d => d.id !== id);
+    saveExpiryDamage();
+    renderDamagedProducts();
+    renderProductsGrid();
+    updateStats();
+  };
+
+  // ===== PURCHASE FUNCTIONS =====
+  window.searchPurchaseProduct = function() {
+    const query = document.getElementById('purchaseProductSearch').value.trim().toLowerCase();
+    const suggestions = document.getElementById('purchaseProductSuggestions');
+    if (!query) { suggestions.style.display = 'none'; return; }
+    const filtered = warehouseProducts.filter(p => p.name.toLowerCase().includes(query) || p.barcode.includes(query));
+    if (filtered.length) {
+      suggestions.innerHTML = filtered.map(p => `<div class="suggestion-item" data-pid="${p.id}"><span>📦 ${p.name}</span><span style="font-size:0.8rem;">بارکۆد: ${p.barcode}</span><span style="font-size:0.8rem;">نرخی کڕین: ${p.buyPrice} د.ع</span></div>`).join('');
+      suggestions.style.display = 'block';
+      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const prod = warehouseProducts.find(p => p.id === parseInt(this.dataset.pid));
+          if (prod) { const existing = purchaseCart.find(c => c.product.id === prod.id); if (existing) existing.quantity++; else purchaseCart.push({ product: prod, quantity: 1 }); renderPurchaseCart(); }
+          suggestions.style.display = 'none';
+          document.getElementById('purchaseProductSearch').value = '';
+        });
+      });
+    } else { suggestions.style.display = 'none'; }
+  };
+
+  window.searchPurchasePartner = function() {
+    const query = document.getElementById('purchasePartnerSearch').value.trim().toLowerCase();
+    const suggestions = document.getElementById('purchasePartnerSuggestions');
+    if (!query) { suggestions.style.display = 'none'; return; }
+    const filtered = partners.filter(p => p.name.toLowerCase().includes(query) || p.phone.includes(query));
+    if (filtered.length) {
+      suggestions.innerHTML = filtered.map(p => `<div class="suggestion-item" data-pid="${p.id}"><span>🤝 ${p.name}</span><span style="font-size:0.8rem;">📱 ${p.phone}</span><span style="font-size:0.8rem;">قەرز: ${(p.debt||0).toLocaleString()}</span></div>`).join('');
+      suggestions.style.display = 'block';
+      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const pid = parseInt(this.dataset.pid);
+          selectedPurchasePartner = partners.find(p => p.id === pid);
+          if (selectedPurchasePartner) { document.getElementById('selectedPurchasePartnerBadge').innerHTML = `<span class="customer-badge">🤝 ${selectedPurchasePartner.name}</span>`; document.getElementById('purchasePartnerSearch').value = selectedPurchasePartner.name; updatePurchaseInvoicePreview(); }
+          suggestions.style.display = 'none';
+        });
+      });
+    } else { suggestions.style.display = 'none'; }
+  };
+
+  function renderPurchaseCart() {
+    const container = document.getElementById('purchaseCartItems');
+    const totalEl = document.getElementById('purchaseTotalAmount');
+    if (!container) return;
+    if (!purchaseCart.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center;">کاڵا زیاد نەکراوە</p>'; if (totalEl) totalEl.textContent = '0'; return; }
+    container.innerHTML = purchaseCart.map((item, idx) => `
+      <div class="cart-item">
+        <div class="cart-item-details"><span>📦 ${item.product.name}</span><span>${item.product.buyPrice} د.ع</span></div>
+        <div class="cart-item-actions">
+          <button class="btn-icon" onclick="updatePurchaseCartQty(${idx}, -1)"><i class="fas fa-minus-circle"></i></button>
+          <input type="number" value="${item.quantity}" min="1" onchange="setPurchaseCartQty(${idx}, this.value)">
+          <button class="btn-icon" onclick="updatePurchaseCartQty(${idx}, 1)"><i class="fas fa-plus-circle"></i></button>
+          <button class="btn-icon" onclick="removePurchaseCartItem(${idx})"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
+        </div>
+      </div>`).join('');
+    const total = purchaseCart.reduce((s, i) => s + (i.product.buyPrice * i.quantity), 0);
+    if (totalEl) totalEl.textContent = total.toLocaleString();
+  }
+
+  window.updatePurchaseCartQty = function(idx, delta) { if (purchaseCart[idx].quantity + delta < 1) return; purchaseCart[idx].quantity += delta; renderPurchaseCart(); updatePurchaseInvoicePreview(); };
+  window.setPurchaseCartQty = function(idx, val) { const q = parseInt(val); if (!isNaN(q) && q > 0) { purchaseCart[idx].quantity = q; renderPurchaseCart(); updatePurchaseInvoicePreview(); } };
+  window.removePurchaseCartItem = function(idx) { purchaseCart.splice(idx, 1); renderPurchaseCart(); updatePurchaseInvoicePreview(); };
+
+  function updatePurchaseInvoicePreview() {
+    const invNumber = document.getElementById('purchaseInvNumber');
+    const dateSpan = document.getElementById('purchaseInvoiceDate');
+    const body = document.getElementById('purchaseInvoiceBody');
+    const totalSpan = document.getElementById('purchaseInvTotal');
+    const partnerInfo = document.getElementById('purchaseInvoicePartnerInfo');
+    if (invNumber) invNumber.textContent = 'P' + (Math.floor(Math.random() * 9000) + 1000);
+    if (dateSpan) dateSpan.textContent = new Date().toLocaleString('ckb');
+    if (!purchaseCart.length) { if (body) body.innerHTML = '<tr><td colspan="4">هیچ کاڵایەک نییە<\/td></tr>'; if (totalSpan) totalSpan.textContent = '0'; }
+    else { if (body) body.innerHTML = purchaseCart.map(i => `<tr><td>${i.product.name}</td><td>${i.quantity}</td><td>${i.product.buyPrice}</td><td>${i.product.buyPrice * i.quantity}</td></tr>`).join(''); if (totalSpan) totalSpan.textContent = purchaseCart.reduce((s, i) => s + (i.product.buyPrice * i.quantity), 0).toLocaleString(); }
+    if (partnerInfo) partnerInfo.innerHTML = selectedPurchasePartner ? `🤝 شەریک: ${selectedPurchasePartner.name}` : '🤝 شەریک: هەڵنەبژێردراوە';
+  }
+
+  function renderPurchaseHistory() {
+    const container = document.getElementById('purchaseHistoryList');
+    if (!container) return;
+    const search = document.getElementById('purchaseHistorySearch')?.value.trim()?.toLowerCase() || '';
+    const dateFrom = document.getElementById('purchaseHistoryDateFrom')?.value || '';
+    const dateTo = document.getElementById('purchaseHistoryDateTo')?.value || '';
+    let filtered = [...purchaseHistory];
+    if (search) filtered = filtered.filter(p => p.id.toLowerCase().includes(search) || p.partner.toLowerCase().includes(search));
+    if (dateFrom) filtered = filtered.filter(p => p.date.includes(dateFrom));
+    if (dateTo) filtered = filtered.filter(p => p.date.includes(dateTo));
+    if (!filtered.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ کڕینێک نەدۆزرایەوە</p>'; return; }
+    container.innerHTML = filtered.map(p => `
+      <div class="history-row">
+        <div><strong>${p.id}</strong> | ${p.date}</div>
+        <div>${p.partner}</div>
+        <div>${p.total.toLocaleString()} د.ع</div>
+        <div><span style="background:${p.isCash ? '#d1fae5' : '#fef3c7'}; padding:0.2rem 0.8rem; border-radius:1rem;">${p.isCash ? 'نەقدی' : 'قەرز'}</span></div>
+        <div>
+          <button class="btn-icon" onclick="viewPurchaseInvoice('${p.id}')"><i class="fas fa-eye"></i></button>
+          <button class="btn-icon" onclick="printPurchaseInvoice('${p.id}')"><i class="fas fa-print"></i></button>
+          <button class="btn-icon" onclick="deletePurchaseInvoice('${p.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
+        </div>
+      </div>`).join('');
+  }
+
+  window.filterPurchaseHistory = function() { renderPurchaseHistory(); };
+
+  window.viewPurchaseInvoice = function(invId) {
+    const purchase = purchaseHistory.find(p => p.id === invId);
+    if (!purchase) return;
+    const detail = document.getElementById('purchaseHistoryInvoiceDetail');
+    if (!detail) return;
+    detail.style.display = 'block';
+    detail.innerHTML = `
+      <div class="invoice-logo"><i class="fas fa-truck"></i> فاکتوورە ${purchase.id}</div>
+      <div>📅 ${purchase.date}</div>
+      <div>🤝 ${purchase.partner}</div>
+      <table class="invoice-table"><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${purchase.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table>
+      <strong>کۆ: ${purchase.total.toLocaleString()} د.ع</strong>
+    `;
+  };
+
+  window.printPurchaseInvoice = function(invId) {
+    const purchase = purchaseHistory.find(p => p.id === invId);
+    if (!purchase) return;
+    const w = window.open('', '_blank');
+    w.document.write(`<html dir="rtl"><head><title>کڕین ${invId}</title><style>body{font-family:'Segoe UI';padding:2rem;}table{width:100%;border-collapse:collapse;}td,th{padding:8px;border-bottom:1px solid #ccc;}</style></head><body><h2>فاکتوورە ${invId}</h2><p>${purchase.date}</p><p>🤝 ${purchase.partner}</p><table><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${purchase.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table><h3>کۆ: ${purchase.total}</h3></body></html>`);
+    w.document.close();
+    w.print();
+  };
+
+  window.deletePurchaseInvoice = function(invId) {
+    if (!confirm(`دڵنیایت لە سڕینەوەی کڕینی ${invId}؟`)) return;
+    purchaseHistory = purchaseHistory.filter(p => p.id !== invId);
+    savePurchaseHistory();
+    renderPurchaseHistory();
+    document.getElementById('purchaseHistoryInvoiceDetail').style.display = 'none';
+    updateStats();
+  };
+
+  window.completePurchase = function() {
+    if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
+    if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
+    const total = purchaseCart.reduce((s, i) => s + (i.product.buyPrice * i.quantity), 0);
+    const invId = 'P' + (Math.floor(Math.random() * 9000) + 1000);
+    const now = new Date();
+    const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const isCash = !document.getElementById('creditPurchaseCheck')?.checked;
+    purchaseHistory.unshift({ id: invId, date: dateStr, partner: selectedPurchasePartner.name, partnerId: selectedPurchasePartner.id, total: total, isCash: isCash, items: purchaseCart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.product.buyPrice })) });
+    savePurchaseHistory();
+    purchaseCart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity += item.quantity; });
+    saveWarehouseProducts();
+    if (!isCash) { selectedPurchasePartner.debt = (selectedPurchasePartner.debt || 0) + total; savePartners(); }
+    purchaseCart = [];
+    selectedPurchasePartner = null;
+    renderPurchaseCart();
+    updatePurchaseInvoicePreview();
+    document.getElementById('selectedPurchasePartnerBadge').innerHTML = '<span class="customer-badge">🤝 شەریک هەڵنەبژێردراوە</span>';
+    document.getElementById('purchasePartnerSearch').value = '';
+    updateStats();
+    renderProductsGrid();
+    renderPurchaseHistory();
+    alert(`کڕین بە سەرکەوتوویی تۆمارکرا!\nژمارەی فاکتوورە: ${invId}\nکۆی گشتی: ${total.toLocaleString()} د.ع`);
+  };
+
+  // ===== AGENTS FUNCTIONS =====
   function renderAgentsList(list = agents) {
     const container = document.getElementById('agentsListContainer');
     if (!container) return;
@@ -5020,268 +5350,7 @@
     alert(`پێدانی کاڵا بە ${selectedGiveAgent.name} تۆمارکرا!`);
   };
 
-  // ===== EXPIRY FUNCTIONS (مختصر) =====
-  function renderExpiryProducts() {
-    const container = document.getElementById('expiryProductsList');
-    if (!container) return;
-    const search = document.getElementById('expirySearch')?.value.trim().toLowerCase() || '';
-    const dateFilter = document.getElementById('expiryDateFilter')?.value || '';
-    const statusFilter = document.getElementById('expiryStatusFilter')?.value || 'all';
-    let filtered = warehouseProducts.filter(p => p.expiryDate);
-    if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search) || p.barcode.includes(search));
-    if (dateFilter) filtered = filtered.filter(p => p.expiryDate === dateFilter);
-    if (statusFilter === 'expired') filtered = filtered.filter(p => p.expiryDate && new Date(p.expiryDate) < new Date());
-    else if (statusFilter === 'near_expiry') { const nearDate = new Date(); nearDate.setDate(nearDate.getDate() + 30); filtered = filtered.filter(p => p.expiryDate && new Date(p.expiryDate) <= nearDate && new Date(p.expiryDate) >= new Date()); }
-    if (!filtered.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ کاڵایەک نەدۆزرایەوە</p>'; return; }
-    container.innerHTML = filtered.map(p => {
-      const isExpired = new Date(p.expiryDate) < new Date();
-      const isNear = !isExpired && new Date(p.expiryDate) <= new Date(new Date().setDate(new Date().getDate() + 30));
-      return `<div class="movement-card" style="border-right: 4px solid ${isExpired ? '#dc2626' : isNear ? '#f59e0b' : '#059669'};">
-        <div style="display:flex; justify-content:space-between;"><strong>${p.name}</strong><span>📅 ${p.expiryDate}</span></div>
-        <div style="font-size:0.85rem; color:#64748b;">بارکۆد: ${p.barcode} | بڕ: ${p.quantity}</div>
-        <div style="font-size:0.8rem; color:${isExpired ? '#dc2626' : isNear ? '#b45309' : '#059669'};">${isExpired ? '❌ بەسەرچووە' : isNear ? '⚠️ نزیکە لە بەسەرچوون' : '✅ باشە'}</div>
-      </div>`;
-    }).join('');
-  }
-
-  window.filterExpiryProducts = function() { renderExpiryProducts(); };
-
-  function renderDamagedProducts() {
-    const container = document.getElementById('damagedProductsList');
-    if (!container) return;
-    const search = document.getElementById('damageSearch')?.value.trim().toLowerCase() || '';
-    const dateFilter = document.getElementById('damageDateFilter')?.value || '';
-    let filtered = [...expiredDamagedProducts];
-    if (search) filtered = filtered.filter(d => d.productName.toLowerCase().includes(search));
-    if (dateFilter) filtered = filtered.filter(d => d.date.includes(dateFilter));
-    if (!filtered.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ کاڵای تێکچوو نییە</p>'; return; }
-    container.innerHTML = filtered.map(d => `
-      <div class="movement-card" style="border-right: 4px solid #dc2626;">
-        <div style="display:flex; justify-content:space-between;"><strong>${d.productName}</strong><span>${d.date}</span></div>
-        <div style="font-size:0.85rem;">بڕ: ${d.quantity} | ${d.reason || 'بێ هۆکار'}</div>
-        <div style="font-size:0.7rem; color:#64748b;">کۆد: ${d.id}</div>
-        <div><button class="btn-icon" onclick="deleteDamagedProduct('${d.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i> سڕینەوە</button></div>
-      </div>`).join('');
-  }
-
-  window.filterDamagedProducts = function() { renderDamagedProducts(); };
-
-  window.searchDamageProduct = function() {
-    const query = document.getElementById('damageProductSearch').value.trim().toLowerCase();
-    const suggestions = document.getElementById('damageProductSuggestions');
-    if (!query) { suggestions.style.display = 'none'; return; }
-    const filtered = warehouseProducts.filter(p => p.name.toLowerCase().includes(query) || p.barcode.includes(query));
-    if (filtered.length) {
-      suggestions.innerHTML = filtered.map(p => `<div class="suggestion-item" data-pid="${p.id}"><span>📦 ${p.name}</span><span style="font-size:0.8rem;">بارکۆد: ${p.barcode}</span><span style="font-size:0.8rem;">بڕ: ${p.quantity}</span></div>`).join('');
-      suggestions.style.display = 'block';
-      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
-        item.addEventListener('click', function() {
-          const pid = parseInt(this.dataset.pid);
-          const product = warehouseProducts.find(p => p.id === pid);
-          if (product) { document.getElementById('damageProductSearch').value = product.name; document.getElementById('damageQuantity').max = product.quantity; }
-          suggestions.style.display = 'none';
-        });
-      });
-    } else { suggestions.style.display = 'none'; }
-  };
-
-  window.addDamagedProduct = function() {
-    const productName = document.getElementById('damageProductSearch').value.trim();
-    const quantity = parseInt(document.getElementById('damageQuantity').value);
-    const reason = document.getElementById('damageReason').value.trim();
-    if (!productName) { alert('تکایە کاڵایەک هەڵبژێرە'); return; }
-    if (!quantity || quantity < 1) { alert('تکایە بڕی دروست بنووسە'); return; }
-    const product = warehouseProducts.find(p => p.name === productName);
-    if (!product) { alert('کاڵا نەدۆزرایەوە'); return; }
-    if (product.quantity < quantity) { alert('بڕی کاڵا لە مخزندا کەمترە'); return; }
-    product.quantity -= quantity;
-    saveWarehouseProducts();
-    const now = new Date();
-    const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-    expiredDamagedProducts.push({ id: 'D' + Math.floor(Math.random() * 9000 + 1000), date: dateStr, productName: product.name, barcode: product.barcode, quantity: quantity, reason: reason || 'تێکچوو', type: 'damage' });
-    saveExpiryDamage();
-    document.getElementById('damageProductSearch').value = '';
-    document.getElementById('damageQuantity').value = '1';
-    document.getElementById('damageReason').value = '';
-    document.getElementById('damageProductSuggestions').style.display = 'none';
-    renderDamagedProducts();
-    renderProductsGrid();
-    updateStats();
-    alert('کاڵای تێکچوو تۆمارکرا');
-  };
-
-  window.deleteDamagedProduct = function(id) {
-    if (!confirm('دڵنیایت لە سڕینەوەی ئەم تۆمارە؟')) return;
-    const record = expiredDamagedProducts.find(d => d.id === id);
-    if (record) { const product = warehouseProducts.find(p => p.name === record.productName); if (product) { product.quantity += record.quantity; saveWarehouseProducts(); } }
-    expiredDamagedProducts = expiredDamagedProducts.filter(d => d.id !== id);
-    saveExpiryDamage();
-    renderDamagedProducts();
-    renderProductsGrid();
-    updateStats();
-  };
-
-  // ===== PURCHASE FUNCTIONS =====
-  window.searchPurchaseProduct = function() {
-    const query = document.getElementById('purchaseProductSearch').value.trim().toLowerCase();
-    const suggestions = document.getElementById('purchaseProductSuggestions');
-    if (!query) { suggestions.style.display = 'none'; return; }
-    const filtered = warehouseProducts.filter(p => p.name.toLowerCase().includes(query) || p.barcode.includes(query));
-    if (filtered.length) {
-      suggestions.innerHTML = filtered.map(p => `<div class="suggestion-item" data-pid="${p.id}"><span>📦 ${p.name}</span><span style="font-size:0.8rem;">بارکۆد: ${p.barcode}</span><span style="font-size:0.8rem;">نرخی کڕین: ${p.buyPrice} د.ع</span></div>`).join('');
-      suggestions.style.display = 'block';
-      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
-        item.addEventListener('click', function() {
-          const prod = warehouseProducts.find(p => p.id === parseInt(this.dataset.pid));
-          if (prod) { const existing = purchaseCart.find(c => c.product.id === prod.id); if (existing) existing.quantity++; else purchaseCart.push({ product: prod, quantity: 1 }); renderPurchaseCart(); }
-          suggestions.style.display = 'none';
-          document.getElementById('purchaseProductSearch').value = '';
-        });
-      });
-    } else { suggestions.style.display = 'none'; }
-  };
-
-  window.searchPurchasePartner = function() {
-    const query = document.getElementById('purchasePartnerSearch').value.trim().toLowerCase();
-    const suggestions = document.getElementById('purchasePartnerSuggestions');
-    if (!query) { suggestions.style.display = 'none'; return; }
-    const filtered = partners.filter(p => p.name.toLowerCase().includes(query) || p.phone.includes(query));
-    if (filtered.length) {
-      suggestions.innerHTML = filtered.map(p => `<div class="suggestion-item" data-pid="${p.id}"><span>🤝 ${p.name}</span><span style="font-size:0.8rem;">📱 ${p.phone}</span><span style="font-size:0.8rem;">قەرز: ${(p.debt||0).toLocaleString()}</span></div>`).join('');
-      suggestions.style.display = 'block';
-      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
-        item.addEventListener('click', function() {
-          const pid = parseInt(this.dataset.pid);
-          selectedPurchasePartner = partners.find(p => p.id === pid);
-          if (selectedPurchasePartner) { document.getElementById('selectedPurchasePartnerBadge').innerHTML = `<span class="customer-badge">🤝 ${selectedPurchasePartner.name}</span>`; document.getElementById('purchasePartnerSearch').value = selectedPurchasePartner.name; updatePurchaseInvoicePreview(); }
-          suggestions.style.display = 'none';
-        });
-      });
-    } else { suggestions.style.display = 'none'; }
-  };
-
-  function renderPurchaseCart() {
-    const container = document.getElementById('purchaseCartItems');
-    const totalEl = document.getElementById('purchaseTotalAmount');
-    if (!container) return;
-    if (!purchaseCart.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center;">کاڵا زیاد نەکراوە</p>'; if (totalEl) totalEl.textContent = '0'; return; }
-    container.innerHTML = purchaseCart.map((item, idx) => `
-      <div class="cart-item">
-        <div class="cart-item-details"><span>📦 ${item.product.name}</span><span>${item.product.buyPrice} د.ع</span></div>
-        <div class="cart-item-actions">
-          <button class="btn-icon" onclick="updatePurchaseCartQty(${idx}, -1)"><i class="fas fa-minus-circle"></i></button>
-          <input type="number" value="${item.quantity}" min="1" onchange="setPurchaseCartQty(${idx}, this.value)">
-          <button class="btn-icon" onclick="updatePurchaseCartQty(${idx}, 1)"><i class="fas fa-plus-circle"></i></button>
-          <button class="btn-icon" onclick="removePurchaseCartItem(${idx})"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
-        </div>
-      </div>`).join('');
-    const total = purchaseCart.reduce((s, i) => s + (i.product.buyPrice * i.quantity), 0);
-    if (totalEl) totalEl.textContent = total.toLocaleString();
-  }
-
-  window.updatePurchaseCartQty = function(idx, delta) { if (purchaseCart[idx].quantity + delta < 1) return; purchaseCart[idx].quantity += delta; renderPurchaseCart(); updatePurchaseInvoicePreview(); };
-  window.setPurchaseCartQty = function(idx, val) { const q = parseInt(val); if (!isNaN(q) && q > 0) { purchaseCart[idx].quantity = q; renderPurchaseCart(); updatePurchaseInvoicePreview(); } };
-  window.removePurchaseCartItem = function(idx) { purchaseCart.splice(idx, 1); renderPurchaseCart(); updatePurchaseInvoicePreview(); };
-
-  function updatePurchaseInvoicePreview() {
-    const invNumber = document.getElementById('purchaseInvNumber');
-    const dateSpan = document.getElementById('purchaseInvoiceDate');
-    const body = document.getElementById('purchaseInvoiceBody');
-    const totalSpan = document.getElementById('purchaseInvTotal');
-    const partnerInfo = document.getElementById('purchaseInvoicePartnerInfo');
-    if (invNumber) invNumber.textContent = 'P' + (Math.floor(Math.random() * 9000) + 1000);
-    if (dateSpan) dateSpan.textContent = new Date().toLocaleString('ckb');
-    if (!purchaseCart.length) { if (body) body.innerHTML = '<tr><td colspan="4">هیچ کاڵایەک نییە<\/td></tr>'; if (totalSpan) totalSpan.textContent = '0'; }
-    else { if (body) body.innerHTML = purchaseCart.map(i => `<tr><td>${i.product.name}</td><td>${i.quantity}</td><td>${i.product.buyPrice}</td><td>${i.product.buyPrice * i.quantity}</td></tr>`).join(''); if (totalSpan) totalSpan.textContent = purchaseCart.reduce((s, i) => s + (i.product.buyPrice * i.quantity), 0).toLocaleString(); }
-    if (partnerInfo) partnerInfo.innerHTML = selectedPurchasePartner ? `🤝 شەریک: ${selectedPurchasePartner.name}` : '🤝 شەریک: هەڵنەبژێردراوە';
-  }
-
-  function renderPurchaseHistory() {
-    const container = document.getElementById('purchaseHistoryList');
-    if (!container) return;
-    const search = document.getElementById('purchaseHistorySearch')?.value.trim()?.toLowerCase() || '';
-    const dateFrom = document.getElementById('purchaseHistoryDateFrom')?.value || '';
-    const dateTo = document.getElementById('purchaseHistoryDateTo')?.value || '';
-    let filtered = [...purchaseHistory];
-    if (search) filtered = filtered.filter(p => p.id.toLowerCase().includes(search) || p.partner.toLowerCase().includes(search));
-    if (dateFrom) filtered = filtered.filter(p => p.date.includes(dateFrom));
-    if (dateTo) filtered = filtered.filter(p => p.date.includes(dateTo));
-    if (!filtered.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ کڕینێک نەدۆزرایەوە</p>'; return; }
-    container.innerHTML = filtered.map(p => `
-      <div class="history-row">
-        <div><strong>${p.id}</strong> | ${p.date}</div>
-        <div>${p.partner}</div>
-        <div>${p.total.toLocaleString()} د.ع</div>
-        <div><span style="background:${p.isCash ? '#d1fae5' : '#fef3c7'}; padding:0.2rem 0.8rem; border-radius:1rem;">${p.isCash ? 'نەقدی' : 'قەرز'}</span></div>
-        <div>
-          <button class="btn-icon" onclick="viewPurchaseInvoice('${p.id}')"><i class="fas fa-eye"></i></button>
-          <button class="btn-icon" onclick="printPurchaseInvoice('${p.id}')"><i class="fas fa-print"></i></button>
-          <button class="btn-icon" onclick="deletePurchaseInvoice('${p.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
-        </div>
-      </div>`).join('');
-  }
-
-  window.filterPurchaseHistory = function() { renderPurchaseHistory(); };
-
-  window.viewPurchaseInvoice = function(invId) {
-    const purchase = purchaseHistory.find(p => p.id === invId);
-    if (!purchase) return;
-    const detail = document.getElementById('purchaseHistoryInvoiceDetail');
-    if (!detail) return;
-    detail.style.display = 'block';
-    detail.innerHTML = `
-      <div class="invoice-logo"><i class="fas fa-truck"></i> فاکتوورە ${purchase.id}</div>
-      <div>📅 ${purchase.date}</div>
-      <div>🤝 ${purchase.partner}</div>
-      <table class="invoice-table"><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${purchase.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table>
-      <strong>کۆ: ${purchase.total.toLocaleString()} د.ع</strong>
-    `;
-  };
-
-  window.printPurchaseInvoice = function(invId) {
-    const purchase = purchaseHistory.find(p => p.id === invId);
-    if (!purchase) return;
-    const w = window.open('', '_blank');
-    w.document.write(`<html dir="rtl"><head><title>کڕین ${invId}</title><style>body{font-family:'Segoe UI';padding:2rem;}table{width:100%;border-collapse:collapse;}td,th{padding:8px;border-bottom:1px solid #ccc;}</style></head><body><h2>فاکتوورە ${invId}</h2><p>${purchase.date}</p><p>🤝 ${purchase.partner}</p><table><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${purchase.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table><h3>کۆ: ${purchase.total}</h3></body></html>`);
-    w.document.close();
-    w.print();
-  };
-
-  window.deletePurchaseInvoice = function(invId) {
-    if (!confirm(`دڵنیایت لە سڕینەوەی کڕینی ${invId}؟`)) return;
-    purchaseHistory = purchaseHistory.filter(p => p.id !== invId);
-    savePurchaseHistory();
-    renderPurchaseHistory();
-    document.getElementById('purchaseHistoryInvoiceDetail').style.display = 'none';
-    updateStats();
-  };
-
-  window.completePurchase = function() {
-    if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
-    if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
-    const total = purchaseCart.reduce((s, i) => s + (i.product.buyPrice * i.quantity), 0);
-    const invId = 'P' + (Math.floor(Math.random() * 9000) + 1000);
-    const now = new Date();
-    const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-    const isCash = !document.getElementById('creditPurchaseCheck')?.checked;
-    purchaseHistory.unshift({ id: invId, date: dateStr, partner: selectedPurchasePartner.name, partnerId: selectedPurchasePartner.id, total: total, isCash: isCash, items: purchaseCart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.product.buyPrice })) });
-    savePurchaseHistory();
-    purchaseCart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity += item.quantity; });
-    saveWarehouseProducts();
-    if (!isCash) { selectedPurchasePartner.debt = (selectedPurchasePartner.debt || 0) + total; savePartners(); }
-    purchaseCart = [];
-    selectedPurchasePartner = null;
-    renderPurchaseCart();
-    updatePurchaseInvoicePreview();
-    document.getElementById('selectedPurchasePartnerBadge').innerHTML = '<span class="customer-badge">🤝 شەریک هەڵنەبژێردراوە</span>';
-    document.getElementById('purchasePartnerSearch').value = '';
-    updateStats();
-    renderProductsGrid();
-    renderPurchaseHistory();
-    alert(`کڕین بە سەرکەوتوویی تۆمارکرا!\nژمارەی فاکتوورە: ${invId}\nکۆی گشتی: ${total.toLocaleString()} د.ع`);
-  };
-
-  // ===== EMPLOYEES FUNCTIONS (مختصر) =====
+  // ===== EMPLOYEES FUNCTIONS =====
   function renderEmployeesList(list = employees) {
     const container = document.getElementById('employeesListContainer');
     if (!container) return;
