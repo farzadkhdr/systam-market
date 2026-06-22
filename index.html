@@ -1787,7 +1787,7 @@
 
   const originalLogout = window.logout;
   window.logout = function() {
-    if (!confirm('دڵنیایت لە دەرچوون لە سیستەم؟')) return;
+    if (!confirm('دڵنیایت لە دەرچون لە سیستەم؟')) return;
     localStorage.setItem('market_module_order', JSON.stringify(moduleOrder));
     localStorage.setItem('market_appearance_name', appearance.systemName);
     localStorage.setItem('market_appearance_icon', appearance.systemIcon);
@@ -1926,9 +1926,9 @@
   // ===== ACCOUNTING / TRANSFER FUNCTION =====
   function updateAccountingDisplay() {
     const today = new Date().toLocaleDateString('ckb');
-    // Today money (only regular, not transfers)
+    // Today money - all positive amounts that are not transfers and not expenses
     const todayMoney = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0 && !r.isExpense)
       .reduce((sum, r) => sum + r.amount, 0);
     // Total money (only transfers)
     const totalMoney = moneyRequests
@@ -1952,7 +1952,7 @@
     }
     const today = new Date().toLocaleDateString('ckb');
     const todayMoney = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0 && !r.isExpense)
       .reduce((sum, r) => sum + r.amount, 0);
     if (amount > todayMoney) {
       alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${todayMoney.toLocaleString()} د.ع) زیاترە!`);
@@ -2214,10 +2214,10 @@
                        returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
     const totalSpendAndExpenses = totalSpend + totalExpenses + totalGiveMoney;
     
-    // Today money (only regular, not transfers)
+    // Today money - only positive amounts that are not transfers and not expenses
     const today = new Date().toLocaleDateString('ckb');
     const todayMoneyReceived = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0 && !r.isExpense)
       .reduce((sum, r) => sum + r.amount, 0) +
       purchaseReturnHistory.filter(r => r.date && r.date.includes(today) && r.type === 'cash')
       .reduce((sum, r) => sum + r.refundAmount, 0);
@@ -2254,7 +2254,7 @@
   function updateExpenseStats() {
     const today = new Date().toLocaleDateString('ckb');
     const todayMoney = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0 && !r.isExpense)
       .reduce((sum, r) => sum + r.amount, 0);
     const todayExpense = expenseHistory.filter(e => e.date && e.date.includes(today)).reduce((sum, e) => sum + e.amount, 0);
     const remaining = todayMoney - todayExpense;
@@ -2269,7 +2269,7 @@
   function updateGiveStats() {
     const today = new Date().toLocaleDateString('ckb');
     const todayMoney = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0 && !r.isExpense)
       .reduce((sum, r) => sum + r.amount, 0);
     const todayGive = giveMoneyHistory.filter(g => g.date && g.date.includes(today)).reduce((sum, g) => sum + g.amount, 0);
     const displayEl = document.getElementById('todayMoneyGiveDisplay');
@@ -2286,7 +2286,7 @@
     if (!amount || amount <= 0) { alert('تکایە بڕی پارەی دروست بنووسە'); return; }
     const today = new Date().toLocaleDateString('ckb');
     const todayMoney = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0 && !r.isExpense)
       .reduce((sum, r) => sum + r.amount, 0);
     const todayExpense = expenseHistory.filter(e => e.date && e.date.includes(today)).reduce((sum, e) => sum + e.amount, 0);
     if (todayExpense + amount > todayMoney) {
@@ -2420,7 +2420,7 @@
     const dateStr = dateTime ? new Date(dateTime).toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : now.toLocaleString('ckb');
     const today = new Date().toLocaleDateString('ckb');
     const todayMoney = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0 && !r.isExpense)
       .reduce((sum, r) => sum + r.amount, 0);
     const todayGive = giveMoneyHistory.filter(g => g.date && g.date.includes(today)).reduce((sum, g) => sum + g.amount, 0);
     if (todayGive + amount > todayMoney) {
@@ -2768,7 +2768,7 @@
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const invId = 'W' + Math.floor(Math.random() * 9000 + 1000);
-    const record = { id: invId, date: dateStr, type: selectedMoneyEntity.type, entityId: selectedMoneyEntity.id, entityName: selectedMoneyEntity.name, entityPhone: selectedMoneyEntity.phone, amount: amount, note: note, previousDebt: selectedMoneyEntity.debt || 0, isTransfer: false };
+    const record = { id: invId, date: dateStr, type: selectedMoneyEntity.type, entityId: selectedMoneyEntity.id, entityName: selectedMoneyEntity.name, entityPhone: selectedMoneyEntity.phone, amount: amount, note: note, previousDebt: selectedMoneyEntity.debt || 0, isTransfer: false, isExpense: false };
     if (selectedMoneyEntity.type === 'person') {
       const person = customers.find(c => c.id === selectedMoneyEntity.id);
       if (person) { person.debt = Math.max(0, (person.debt || 0) - amount); if (!person.movements) person.movements = []; person.movements.push({ type: 'received', date: dateStr, amount: amount, note: note, invoiceId: invId }); saveCustomers(); }
@@ -3682,7 +3682,8 @@
         entityPhone: '-',
         amount: total,
         note: `فرۆشتن ${invId}`,
-        isTransfer: false
+        isTransfer: false,
+        isExpense: false
       });
       saveMoneyRequests();
     }
@@ -3813,7 +3814,8 @@
         entityName: 'گەڕانەوەی کڕین',
         amount: refundAmount,
         note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedPurchaseReturn.id}`,
-        isTransfer: false
+        isTransfer: false,
+        isExpense: false
       });
       saveMoneyRequests();
     } else if (returnType === 'debt' && selectedPurchaseReturnPartnerForDebt) {
@@ -4585,7 +4587,8 @@
         entityPhone: currentSaleAgent.phone,
         amount: total,
         note: `فرۆشتی مەندوب ${invId}`,
-        isTransfer: false
+        isTransfer: false,
+        isExpense: false
       });
       saveMoneyRequests();
     }
@@ -4736,7 +4739,8 @@
       amount: amount,
       note: note,
       previousDebt: selectedAgentForWassl.debt + amount,
-      isTransfer: false
+      isTransfer: false,
+      isExpense: false
     });
     
     saveMoneyRequests();
