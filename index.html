@@ -119,8 +119,9 @@
     .person-card.selected, .entity-card.selected { background:#dbeafe; border-color:#2563eb; }
     .person-detail-panel { background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); border-radius:1.5rem; padding:1.5rem; max-height:600px; overflow-y:auto; }
     .debt-indicator { display:inline-block; padding:0.3rem 1rem; border-radius:2rem; font-weight:600; font-size:0.85rem; }
-    .debt-positive { background:#fee2e2; color:#991b1b; }
-    .debt-zero { background:#d1fae5; color:#065f46; }
+    .debt-positive { background:#d1fae5; color:#065f46; }
+    .debt-negative { background:#fee2e2; color:#991b1b; }
+    .debt-zero { background:#f1f5f9; color:#475569; }
     .movement-card { background:#ffffff; border:1px solid #e2e8f0; border-radius:1rem; padding:0.8rem; margin-bottom:0.5rem; }
     .section-mini-title { font-weight:700; font-size:1.1rem; margin:1.2rem 0 0.8rem; display:flex; align-items:center; gap:0.5rem; }
     .product-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; }
@@ -2436,7 +2437,7 @@
     if (selectedGiveEntity.type === 'person') {
       const person = customers.find(c => c.id === selectedGiveEntity.id);
       if (person) {
-        person.debt = (person.debt || 0) + amount;
+        person.debt = (person.debt || 0) - amount;
         if (!person.movements) person.movements = [];
         person.movements.push({ type: 'give_money', date: dateStr, amount: amount, note: note, invoiceId: invId });
         saveCustomers();
@@ -2444,7 +2445,7 @@
     } else {
       const partner = partners.find(p => p.id === selectedGiveEntity.id);
       if (partner) {
-        partner.debt = (partner.debt || 0) + amount;
+        partner.debt = (partner.debt || 0) - amount;
         if (!partner.movements) partner.movements = [];
         partner.movements.push({ type: 'give_money', date: dateStr, amount: amount, note: note, invoiceId: invId });
         savePartners();
@@ -2524,10 +2525,10 @@
       if (moneyRecord) moneyRequests = moneyRequests.filter(r => r.id !== moneyRecord.id);
       if (record.type === 'person') {
         const person = customers.find(c => c.id === record.entityId);
-        if (person) { person.debt = Math.max(0, (person.debt || 0) - record.amount); person.movements = person.movements?.filter(m => m.invoiceId !== id) || []; saveCustomers(); }
+        if (person) { person.debt = (person.debt || 0) + record.amount; person.movements = person.movements?.filter(m => m.invoiceId !== id) || []; saveCustomers(); }
       } else {
         const partner = partners.find(p => p.id === record.entityId);
-        if (partner) { partner.debt = Math.max(0, (partner.debt || 0) - record.amount); partner.movements = partner.movements?.filter(m => m.invoiceId !== id) || []; savePartners(); }
+        if (partner) { partner.debt = (partner.debt || 0) + record.amount; partner.movements = partner.movements?.filter(m => m.invoiceId !== id) || []; savePartners(); }
       }
     }
     giveMoneyHistory = giveMoneyHistory.filter(g => g.id !== id);
@@ -2915,10 +2916,19 @@
     const container = document.getElementById('personsListContainer');
     if (!container) return;
     if (!list.length) { container.innerHTML = '<p style="text-align:center; color:#94a3b8;">هیچ کەسێک نەدۆزرایەوە</p>'; return; }
-    container.innerHTML = list.map(person => `
-      <div class="person-card ${selectedPersonId === person.id ? 'selected' : ''}" onclick="selectPerson(${person.id})">
-        <div style="display:flex; justify-content:space-between; align-items:center;"><div><strong>${person.name}</strong><div style="font-size:0.8rem; color:#64748b;">📱 ${person.phone}</div></div><span class="debt-indicator ${person.debt > 0 ? 'debt-positive' : 'debt-zero'}">${person.debt > 0 ? person.debt.toLocaleString() + ' د.ع' : '0'}</span></div>
-      </div>`).join('');
+    container.innerHTML = list.map(person => {
+      const isDebtor = person.debt > 0; // کەسەکە قەرزاری تۆیە
+      const isCreditor = person.debt < 0; // تۆ قەرزاری کەسەکەیت
+      const debtClass = isDebtor ? 'debt-positive' : isCreditor ? 'debt-negative' : 'debt-zero';
+      const icon = isDebtor ? '🟢' : isCreditor ? '🔴' : '⚪';
+      return `
+        <div class="person-card ${selectedPersonId === person.id ? 'selected' : ''}" onclick="selectPerson(${person.id})">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div><strong>${person.name}</strong><div style="font-size:0.8rem; color:#64748b;">📱 ${person.phone}</div></div>
+            <span class="debt-indicator ${debtClass}">${icon} ${person.debt > 0 ? person.debt.toLocaleString() + ' د.ع' : person.debt < 0 ? (-person.debt).toLocaleString() + ' د.ع' : '0'}</span>
+          </div>
+        </div>`;
+    }).join('');
   }
 
   window.selectPerson = function(personId) {
@@ -2934,9 +2944,17 @@
     if (!panel) return;
     const salesInvoices = window.saleHistory?.filter(s => s.customer === person.name) || [];
     const moneyInvoices = moneyRequests.filter(r => r.type === 'person' && r.entityId === person.id);
+    const isDebtor = person.debt > 0;
+    const isCreditor = person.debt < 0;
+    const debtIcon = isDebtor ? '🟢' : isCreditor ? '🔴' : '⚪';
+    const debtText = isDebtor ? 'کەسەکە قەرزاری تۆیە' : isCreditor ? 'تۆ قەرزاری کەسەکەیت' : 'هیچ قەرزێک نییە';
+    const debtColor = isDebtor ? '#d1fae5' : isCreditor ? '#fee2e2' : '#f1f5f9';
+    
     panel.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:1.5rem;"><div><h2 style="margin-bottom:0.5rem;">${person.name}</h2><div style="color:#64748b; margin-bottom:0.3rem;">📱 ${person.phone}</div>${person.address ? `<div style="color:#64748b;">📍 ${person.address}</div>` : ''}</div><div style="display:flex; gap:0.5rem;"><button class="btn-icon" onclick="editPerson(${person.id})" title="دەستکاری"><i class="fas fa-edit" style="color:#2563eb;"></i></button><button class="btn-icon" onclick="deletePerson(${person.id})" title="سڕینەوە"><i class="fas fa-trash-alt" style="color:#dc2626;"></i></button></div></div>
-      <div style="background:${person.debt > 0 ? '#fee2e2' : '#d1fae5'}; padding:1rem; border-radius:1rem; margin-bottom:1.5rem;"><strong>قەرزاری: ${person.debt.toLocaleString()} دینار</strong></div>
+      <div style="background:${debtColor}; padding:1rem; border-radius:1rem; margin-bottom:1.5rem;">
+        <strong>${debtIcon} ${debtText}: ${Math.abs(person.debt).toLocaleString()} دینار</strong>
+      </div>
       <div class="section-mini-title"><i class="fas fa-exchange-alt" style="color:#7c3aed;"></i> حرکات</div>
       <div style="margin-bottom:1rem;">
         <h4 style="cursor:pointer; color:#2563eb;" onclick="toggleSection('salesInvoices_${person.id}')">📄 فاکتوورەکانی فرۆشتن (${salesInvoices.length}) <i class="fas fa-chevron-down"></i></h4>
@@ -3015,13 +3033,19 @@
     const container = document.getElementById('partnersListContainer');
     if (!container) return;
     if (!list.length) { container.innerHTML = '<p style="text-align:center; color:#94a3b8;">هیچ شەریکێک نەدۆزرایەوە</p>'; return; }
-    container.innerHTML = list.map(partner => `
-      <div class="entity-card ${selectedPartnerId === partner.id ? 'selected' : ''}" onclick="selectPartner(${partner.id})">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div><strong>${partner.name}</strong><div style="font-size:0.8rem; color:#64748b;">📱 ${partner.phone}</div>${partner.type ? `<div style="font-size:0.8rem; color:#64748b;">🏢 ${partner.type}</div>` : ''}</div>
-          <span class="debt-indicator ${partner.debt > 0 ? 'debt-positive' : 'debt-zero'}">${partner.debt > 0 ? partner.debt.toLocaleString() + ' د.ع' : '0'}</span>
-        </div>
-      </div>`).join('');
+    container.innerHTML = list.map(partner => {
+      const isDebtor = partner.debt > 0;
+      const isCreditor = partner.debt < 0;
+      const debtClass = isDebtor ? 'debt-positive' : isCreditor ? 'debt-negative' : 'debt-zero';
+      const icon = isDebtor ? '🟢' : isCreditor ? '🔴' : '⚪';
+      return `
+        <div class="entity-card ${selectedPartnerId === partner.id ? 'selected' : ''}" onclick="selectPartner(${partner.id})">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div><strong>${partner.name}</strong><div style="font-size:0.8rem; color:#64748b;">📱 ${partner.phone}</div>${partner.type ? `<div style="font-size:0.8rem; color:#64748b;">🏢 ${partner.type}</div>` : ''}</div>
+            <span class="debt-indicator ${debtClass}">${icon} ${partner.debt > 0 ? partner.debt.toLocaleString() + ' د.ع' : partner.debt < 0 ? (-partner.debt).toLocaleString() + ' د.ع' : '0'}</span>
+          </div>
+        </div>`;
+    }).join('');
   }
 
   window.selectPartner = function(partnerId) {
@@ -3037,9 +3061,17 @@
     if (!panel) return;
     const moneyInvoices = moneyRequests.filter(r => r.type === 'partner' && r.entityId === partner.id);
     const purchaseInvoices = purchaseHistory.filter(p => p.partnerId === partner.id);
+    const isDebtor = partner.debt > 0;
+    const isCreditor = partner.debt < 0;
+    const debtIcon = isDebtor ? '🟢' : isCreditor ? '🔴' : '⚪';
+    const debtText = isDebtor ? 'شەریکەکە قەرزاری تۆیە' : isCreditor ? 'تۆ قەرزاری شەریکەکەیت' : 'هیچ قەرزێک نییە';
+    const debtColor = isDebtor ? '#d1fae5' : isCreditor ? '#fee2e2' : '#f1f5f9';
+    
     panel.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:1.5rem;"><div><h2 style="margin-bottom:0.5rem;">${partner.name}</h2><div style="color:#64748b; margin-bottom:0.3rem;">📱 ${partner.phone}</div>${partner.type ? `<div style="color:#64748b;">🏢 ${partner.type}</div>` : ''}${partner.address ? `<div style="color:#64748b;">📍 ${partner.address}</div>` : ''}</div><div style="display:flex; gap:0.5rem;"><button class="btn-icon" onclick="editPartner(${partner.id})" title="دەستکاری"><i class="fas fa-edit" style="color:#2563eb;"></i></button><button class="btn-icon" onclick="deletePartner(${partner.id})" title="سڕینەوە"><i class="fas fa-trash-alt" style="color:#dc2626;"></i></button></div></div>
-      <div style="background:${partner.debt > 0 ? '#fee2e2' : '#d1fae5'}; padding:1rem; border-radius:1rem; margin-bottom:1.5rem;"><strong>قەرزاری: ${partner.debt.toLocaleString()} دینار</strong></div>
+      <div style="background:${debtColor}; padding:1rem; border-radius:1rem; margin-bottom:1.5rem;">
+        <strong>${debtIcon} ${debtText}: ${Math.abs(partner.debt).toLocaleString()} دینار</strong>
+      </div>
       <div class="section-mini-title"><i class="fas fa-exchange-alt" style="color:#db2777;"></i> حرکات</div>
       <div style="margin-bottom:1rem;">
         <h4 style="cursor:pointer; color:#2563eb;" onclick="toggleSection('purchaseInvoices_${partner.id}')">📦 فاکتوورەکانی کڕین (${purchaseInvoices.length}) <i class="fas fa-chevron-down"></i></h4>
@@ -3595,6 +3627,8 @@
     renderProductSuggestions(filtered);
   });
 
+  // ===== گۆڕانکاری سەرەکی: بارکۆد سکانکردن =====
+  // ئەگەر کاڵا هەیە لە سەبەتە، بڕی زیاد بکە نەک کاڵای نوێ زیاد بکە
   function renderProductSuggestions(list) {
     if (!list.length) { productSuggestions.style.display = 'none'; return; }
     productSuggestions.innerHTML = list.map(p => `<div class="suggestion-item" data-id="${p.id}"><span>📦</span><span><strong>${p.name}</strong> - ${p.sellPrice} د.ع</span><span style="margin-right:auto; font-size:0.8rem;">بارکۆد: ${p.barcode}</span></div>`).join('');
@@ -3613,10 +3647,33 @@
     const q = productSearch?.value.trim();
     if (!q) return;
     const found = warehouseProducts.find(p => p.name.includes(q) || p.barcode === q);
-    if (found) { addToCart(found); productSearch.value = ''; productSuggestions.style.display = 'none'; } else alert('کاڵا نەدۆزرایەوە');
+    if (found) {
+      // گۆڕانکاری: ئەگەر کاڵا هەیە لە سەبەتە، بڕی زیاد بکە
+      const existing = cart.find(item => item.product.id === found.id);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ product: found, quantity: 1, unitPrice: found.sellPrice });
+      }
+      renderCart();
+      updateInvoicePreview();
+      productSearch.value = '';
+      productSuggestions.style.display = 'none';
+    } else {
+      alert('کاڵا نەدۆزرایەوە');
+    }
   };
 
-  function addToCart(product) { const existing = cart.find(i => i.product.id === product.id); existing ? existing.quantity++ : cart.push({ product, quantity: 1, unitPrice: product.sellPrice }); renderCart(); updateInvoicePreview(); }
+  function addToCart(product) {
+    const existing = cart.find(i => i.product.id === product.id);
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      cart.push({ product, quantity: 1, unitPrice: product.sellPrice });
+    }
+    renderCart();
+    updateInvoicePreview();
+  }
 
   window.addSampleItem = function() { if (warehouseProducts.length) addToCart(warehouseProducts[0]); };
 
@@ -3672,14 +3729,14 @@
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     saleHistory.unshift({ id: invId, date: dateStr, customer: custName, total, items: cart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.unitPrice })) });
-    if (currentCustomer && creditCheck.checked) { currentCustomer.debt = (currentCustomer.debt || 0) + total; saveCustomers(); }
-    cart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity = Math.max(0, product.quantity - item.quantity); });
-    saveWarehouseProducts();
-    saveSaleHistory();
     
-    // ===== گۆڕانکاری سەرەکی: زیادکردنی پارە بۆ moneyRequests =====
-    // فرۆشتن بە کاش (نەک قەرز)
-    if (!creditCheck.checked) {
+    // ===== گۆڕانکاری سەرەکی: قەرز و پارە =====
+    if (currentCustomer && creditCheck.checked) {
+      // فرۆشتن بە قەرز: کەسەکە قەرزاری تۆ دەبێت (زیادکردنی قەرز)
+      currentCustomer.debt = (currentCustomer.debt || 0) + total;
+      saveCustomers();
+    } else {
+      // فرۆشتن بە کاش: زیادکردنی پارە بۆ واسڵی ئەمرۆ
       moneyRequests.push({
         id: 'SALE-MONEY' + Date.now(),
         date: dateStr,
@@ -3695,6 +3752,9 @@
     }
     // ===== کۆتایی گۆڕانکاری =====
     
+    cart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity = Math.max(0, product.quantity - item.quantity); });
+    saveWarehouseProducts();
+    saveSaleHistory();
     cart = [];
     currentCustomer = null;
     creditCheck.checked = false;
@@ -4326,13 +4386,19 @@
     const container = document.getElementById('agentsListContainer');
     if (!container) return;
     if (!list.length) { container.innerHTML = '<p style="text-align:center; color:#94a3b8;">هیچ مەندوبێک نەدۆزرایەوە</p>'; return; }
-    container.innerHTML = list.map(agent => `
-      <div class="person-card ${selectedAgentId === agent.id ? 'selected' : ''}" onclick="selectAgent(${agent.id})">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div><strong>${agent.name}</strong><div style="font-size:0.8rem; color:#64748b;">📱 ${agent.phone}</div></div>
-          <span class="debt-indicator ${agent.debt > 0 ? 'debt-positive' : 'debt-zero'}">${agent.debt > 0 ? agent.debt.toLocaleString() + ' د.ع' : '0'}</span>
-        </div>
-      </div>`).join('');
+    container.innerHTML = list.map(agent => {
+      const isDebtor = agent.debt > 0;
+      const isCreditor = agent.debt < 0;
+      const debtClass = isDebtor ? 'debt-positive' : isCreditor ? 'debt-negative' : 'debt-zero';
+      const icon = isDebtor ? '🟢' : isCreditor ? '🔴' : '⚪';
+      return `
+        <div class="person-card ${selectedAgentId === agent.id ? 'selected' : ''}" onclick="selectAgent(${agent.id})">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div><strong>${agent.name}</strong><div style="font-size:0.8rem; color:#64748b;">📱 ${agent.phone}</div></div>
+            <span class="debt-indicator ${debtClass}">${icon} ${agent.debt > 0 ? agent.debt.toLocaleString() + ' د.ع' : agent.debt < 0 ? (-agent.debt).toLocaleString() + ' د.ع' : '0'}</span>
+          </div>
+        </div>`;
+    }).join('');
   }
 
   window.filterAgents = function() {
@@ -4354,14 +4420,20 @@
     if (!panel) return;
     const totalInventory = agent.inventory?.reduce((sum, i) => sum + i.quantity, 0) || 0;
     const totalSold = agent.inventory?.reduce((sum, i) => sum + (i.sold || 0), 0) || 0;
+    const isDebtor = agent.debt > 0;
+    const isCreditor = agent.debt < 0;
+    const debtIcon = isDebtor ? '🟢' : isCreditor ? '🔴' : '⚪';
+    const debtText = isDebtor ? 'مەندوبەکە قەرزاری تۆیە' : isCreditor ? 'تۆ قەرزاری مەندوبەکەیت' : 'هیچ قەرزێک نییە';
+    const debtColor = isDebtor ? '#d1fae5' : isCreditor ? '#fee2e2' : '#f1f5f9';
+    
     panel.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:1.5rem;">
         <div><h2 style="margin-bottom:0.5rem;">${agent.name}</h2><div style="color:#64748b; margin-bottom:0.3rem;">📱 ${agent.phone}</div>${agent.address ? `<div style="color:#64748b;">📍 ${agent.address}</div>` : ''}</div>
         <div style="display:flex; gap:0.5rem;"><button class="btn-icon" onclick="editAgent(${agent.id})" title="دەستکاری"><i class="fas fa-edit" style="color:#2563eb;"></i></button><button class="btn-icon" onclick="deleteAgent(${agent.id})" title="سڕینەوە"><i class="fas fa-trash-alt" style="color:#dc2626;"></i></button></div>
       </div>
-      <div style="background:#fef3c7; padding:1rem; border-radius:1rem; margin-bottom:1.5rem;">
-        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
-          <div><strong>💰 قەرزاری مەندوب: </strong>${(agent.debt || 0).toLocaleString()} د.ع</div>
+      <div style="background:${debtColor}; padding:1rem; border-radius:1rem; margin-bottom:1.5rem;">
+        <strong>${debtIcon} ${debtText}: ${Math.abs(agent.debt).toLocaleString()} د.ع</strong>
+        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; margin-top:0.5rem;">
           <div><strong>📦 کۆی جەرد: </strong>${totalInventory}</div>
           <div><strong>🛒 کۆی فرۆشراو: </strong>${totalSold}</div>
         </div>
