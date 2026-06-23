@@ -296,6 +296,7 @@
       <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h4 id="statTotalSales">0</h4><span>کۆی فرۆشتن</span></div></div>
       <div class="stat-card"><div class="stat-icon green"><i class="fas fa-truck"></i></div><div class="stat-info"><h4 id="statTotalPurchases">0</h4><span>کۆی کڕین</span></div></div>
       <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی پارەی واسڵکراو</span></div></div>
+      <!-- Combined card for total spend + expenses -->
       <div class="stat-card"><div class="stat-icon red"><i class="fas fa-coins"></i></div><div class="stat-info"><h4 id="statTotalSpendAndExpenses">0</h4><span>کۆی سەرف و مەسروفات</span></div></div>
       <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoneyReceived">0</h4><span>واسڵی ئەمرۆ</span></div></div>
       <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-boxes"></i></div><div class="stat-info"><h4 id="statTotalProducts">0</h4><span>کۆی کاڵاکان</span></div></div>
@@ -1784,7 +1785,27 @@
   updateDateTime();
   setInterval(updateDateTime, 1000);
 
-  // ===== DATA STORE =====
+  const originalLogout = window.logout;
+  window.logout = function() {
+    if (!confirm('دڵنیایت لە دەرچوون لە سیستەم؟')) return;
+    localStorage.setItem('market_module_order', JSON.stringify(moduleOrder));
+    localStorage.setItem('market_appearance_name', appearance.systemName);
+    localStorage.setItem('market_appearance_icon', appearance.systemIcon);
+    localStorage.setItem('market_appearance_bg', appearance.bgColor);
+    localStorage.removeItem('market_logged_user');
+    localStorage.removeItem('market_logged_employee');
+    sessionStorage.removeItem('market_session_permissions');
+    isLoggedIn = false;
+    showLogin();
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginError').classList.remove('show');
+    navigateTo('dashboard');
+    const dashboardStats = document.getElementById('dashboardStats');
+    if (dashboardStats) dashboardStats.style.display = 'none';
+  };
+
+  // ===== ALL MODULES =====
   const allModules = [
     { id: 'sales', icon: 'fa-cart-plus', label: 'فرۆشتن', color: '#fef3c7', text: '#b45309' },
     { id: 'purchase', icon: 'fa-truck', label: 'کڕین', color: '#dbeafe', text: '#1e40af' },
@@ -1868,6 +1889,8 @@
   let selectedReturnSale = null;
   let selectedReturnProduct = null;
   let selectedReturnCustomerForDebt = null;
+
+  // ===== MONEY SPEND DATA =====
   let expenseHistory = JSON.parse(localStorage.getItem('market_expense_history') || '[]');
   let giveMoneyHistory = JSON.parse(localStorage.getItem('market_give_money_history') || '[]');
 
@@ -1915,6 +1938,7 @@
     const accTotal = document.getElementById('accTotalMoney');
     if (accToday) accToday.textContent = todayMoney.toLocaleString();
     if (accTotal) accTotal.textContent = totalMoney.toLocaleString();
+    // Also update stats card
     const statTotalMoneyReceived = document.getElementById('statTotalMoneyReceived');
     if (statTotalMoneyReceived) statTotalMoneyReceived.textContent = totalMoney.toLocaleString();
   }
@@ -1938,6 +1962,7 @@
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       
+      // Add to total money (transfer)
       moneyRequests.push({
         id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
         date: dateStr,
@@ -1949,6 +1974,7 @@
         isTransfer: true
       });
       
+      // Subtract from today money
       moneyRequests.push({
         id: 'TR-OUT' + Date.now(),
         date: dateStr,
@@ -2171,7 +2197,7 @@
   function saveExpenseHistory() { localStorage.setItem('market_expense_history', JSON.stringify(expenseHistory)); updateExpenseStats(); updateStats(); }
   function saveGiveMoneyHistory() { localStorage.setItem('market_give_money_history', JSON.stringify(giveMoneyHistory)); updateGiveStats(); updateStats(); }
 
-  // ===== UPDATE STATS (FIXED) =====
+  // ===== UPDATE STATS =====
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
@@ -2190,23 +2216,11 @@
     
     // Today money (only regular, not transfers)
     const today = new Date().toLocaleDateString('ckb');
-    
-    // FIX: Include ALL money requests that are NOT transfers and have positive amount
-    const todayMoneyFromRequests = moneyRequests
+    const todayMoneyReceived = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
-      .reduce((sum, r) => sum + r.amount, 0);
-    
-    // Also include cash returns from purchase returns
-    const todayPurchaseReturns = purchaseReturnHistory
-      .filter(r => r.date && r.date.includes(today) && r.type === 'cash')
+      .reduce((sum, r) => sum + r.amount, 0) +
+      purchaseReturnHistory.filter(r => r.date && r.date.includes(today) && r.type === 'cash')
       .reduce((sum, r) => sum + r.refundAmount, 0);
-    
-    // Also include agent sales (cash) - from saleHistory with agent field
-    const todayAgentSales = saleHistory
-      .filter(s => s.date && s.date.includes(today) && s.agent)
-      .reduce((sum, s) => sum + s.total, 0);
-    
-    const todayMoneyReceived = todayMoneyFromRequests + todayPurchaseReturns + todayAgentSales;
     
     const totalProducts = warehouseProducts.length;
     const totalPersons = customers.length;
@@ -2282,6 +2296,7 @@
     const dateStr = dateTime ? new Date(dateTime).toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : now.toLocaleString('ckb');
     expenseHistory.unshift({ id: 'EXP' + Math.floor(Math.random() * 9000 + 1000), date: dateStr, amount: amount, category: category, note: note || category, timestamp: dateTime || now.toISOString() });
     
+    // Subtract from today money
     moneyRequests.push({
       id: 'EXP-MONEY' + Date.now(),
       date: dateStr,
@@ -2341,6 +2356,7 @@
     if (!confirm('دڵنیایت لە سڕینەوەی ئەم مەسروفاتە؟')) return;
     const record = expenseHistory.find(e => e.id === id);
     if (record) {
+      // Remove the money deduction record
       const moneyRecord = moneyRequests.find(r => r.id === 'EXP-MONEY' + record.timestamp?.replace(/[^0-9]/g, '') || '');
       if (moneyRecord) moneyRequests = moneyRequests.filter(r => r.id !== moneyRecord.id);
     }
@@ -2430,6 +2446,7 @@
     }
     giveMoneyHistory.unshift({ id: invId, date: dateStr, type: selectedGiveEntity.type, entityId: selectedGiveEntity.id, entityName: selectedGiveEntity.name, entityPhone: selectedGiveEntity.phone, amount: amount, note: note, timestamp: dateTime || now.toISOString() });
     
+    // Subtract from today money
     moneyRequests.push({
       id: 'GIVE-MONEY' + Date.now(),
       date: dateStr,
@@ -2497,6 +2514,7 @@
     if (!confirm('دڵنیایت لە سڕینەوەی ئەم پارە پێدانە؟')) return;
     const record = giveMoneyHistory.find(g => g.id === id);
     if (record) {
+      // Remove from money records
       const moneyRecord = moneyRequests.find(r => r.id === 'GIVE-MONEY' + record.timestamp?.replace(/[^0-9]/g, '') || '');
       if (moneyRecord) moneyRequests = moneyRequests.filter(r => r.id !== moneyRecord.id);
       if (record.type === 'person') {
@@ -3547,7 +3565,7 @@
     if (invHeaderLogo) invHeaderLogo.innerHTML = `<i class="fas ${appearance.systemIcon}" style="font-size:2rem;"></i> <span>${appearance.systemName}</span>`;
   }
 
-  // ===== SALES FUNCTIONS (FIXED COMPLETE SALE) =====
+  // ===== SALES FUNCTIONS =====
   const productSearch = document.getElementById('productSearch');
   const productSuggestions = document.getElementById('productSuggestions');
   const cartContainer = document.getElementById('cartItems');
@@ -3641,7 +3659,6 @@
     if (currentCustomer && creditCheck.checked) { const newDebt = cart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0); invoiceCustomerInfo.innerHTML = `👤 کڕیار: ${currentCustomer.name} | قەرزاری پێشوو: ${(currentCustomer.debt || 0).toLocaleString()} | ئێستا: ${((currentCustomer.debt || 0) + newDebt).toLocaleString()}`; } else { invoiceCustomerInfo.innerHTML = '👤 کڕیار: کاش | قەرزاری پێشوو: 0'; }
   }
 
-  // ===== FIXED COMPLETE SALE FUNCTION =====
   window.completeSale = function() {
     if (!cart.length) { alert('هیچ کاڵایەک نییە'); return; }
     const total = cart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0);
@@ -3649,23 +3666,13 @@
     const custName = (currentCustomer && creditCheck.checked) ? currentCustomer.name : 'کاش';
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-    
     saleHistory.unshift({ id: invId, date: dateStr, customer: custName, total, items: cart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.unitPrice })) });
-    
-    if (currentCustomer && creditCheck.checked) { 
-      currentCustomer.debt = (currentCustomer.debt || 0) + total; 
-      saveCustomers(); 
-    }
-    
-    cart.forEach(item => { 
-      const product = warehouseProducts.find(p => p.id === item.product.id); 
-      if (product) product.quantity = Math.max(0, product.quantity - item.quantity); 
-    });
+    if (currentCustomer && creditCheck.checked) { currentCustomer.debt = (currentCustomer.debt || 0) + total; saveCustomers(); }
+    cart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity = Math.max(0, product.quantity - item.quantity); });
     saveWarehouseProducts();
     saveSaleHistory();
     
-    // === FIX: ADD MONEY TO TODAY'S MONEY ===
-    // Only if NOT credit sale
+    // Add to today money (only if not credit)
     if (!creditCheck.checked) {
       moneyRequests.push({
         id: 'SALE-MONEY' + Date.now(),
@@ -3688,13 +3695,7 @@
     customerSearch.value = '';
     renderCart();
     updateInvoicePreview();
-    
-    // === FIX: Force update all stats ===
     updateStats();
-    updateAccountingDisplay();
-    updateExpenseStats();
-    updateGiveStats();
-    
     alert('فرۆشتن تۆمارکرا!');
   };
 
@@ -3804,6 +3805,7 @@
       if (purchaseItem) { purchaseItem.qty -= returnQty; if (purchaseItem.qty === 0) originalPurchase.items.splice(selectedPurchaseReturnProduct.originalIndex, 1); originalPurchase.total = originalPurchase.items.reduce((sum, i) => sum + (i.qty * i.price), 0); savePurchaseHistory(); }
     }
     if (returnType === 'cash') {
+      // Add refund to today money
       moneyRequests.push({
         id: 'PR' + Date.now(),
         date: new Date().toLocaleString('ckb'),
@@ -3967,6 +3969,7 @@
       selectedReturnCustomerForDebt.movements.push({ type: 'sales_return', date: new Date().toLocaleString('ckb'), amount: refundAmount, note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedReturnSale.id}`, invoiceId: 'RET' + Date.now() });
       saveCustomers();
     } else if (returnType === 'cash') {
+      // Subtract from today money (refund means money goes back to customer)
       moneyRequests.push({
         id: 'RET-MONEY' + Date.now(),
         date: new Date().toLocaleString('ckb'),
@@ -4282,6 +4285,7 @@
     saveWarehouseProducts();
     if (!isCash) { selectedPurchasePartner.debt = (selectedPurchasePartner.debt || 0) + total; savePartners(); }
     
+    // Subtract from today money if cash purchase
     if (isCash) {
       moneyRequests.push({
         id: 'PUR-MONEY' + Date.now(),
@@ -4571,6 +4575,7 @@
     saleHistory.unshift({ id: invId, date: dateStr, customer: customerName, agent: currentSaleAgent.name, total: total, items: agentSaleCart.map(i => ({ name: i.productName, qty: i.quantity, price: i.price })) });
     saveSaleHistory();
     
+    // Add to today money (only if not credit)
     if (!isCredit) {
       moneyRequests.push({
         id: 'AGENT-SALE-MONEY' + Date.now(),
@@ -4720,6 +4725,7 @@
     selectedAgentForWassl.movements.push({ type: 'wassl', date: dateStr, amount: amount, note: note, invoiceId: invId });
     saveAgents();
     
+    // Add to today money
     moneyRequests.push({
       id: invId,
       date: dateStr,
@@ -5005,6 +5011,7 @@
     selectedEmployeeForSalary.salary = amount;
     saveEmployees();
     
+    // Subtract from today money
     moneyRequests.push({
       id: 'SALARY-MONEY' + Date.now(),
       date: new Date().toLocaleString('ckb'),
@@ -5050,6 +5057,7 @@
     else emp.salary = 0;
     saveEmployees();
     
+    // Remove the money deduction
     const moneyRecord = moneyRequests.find(r => r.note && r.note.includes(month) && r.type === 'salary' && r.entityName === emp.name);
     if (moneyRecord) moneyRequests = moneyRequests.filter(r => r.id !== moneyRecord.id);
     saveMoneyRequests();
