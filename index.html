@@ -119,9 +119,9 @@
     .person-card.selected, .entity-card.selected { background:#dbeafe; border-color:#2563eb; }
     .person-detail-panel { background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); border-radius:1.5rem; padding:1.5rem; max-height:600px; overflow-y:auto; }
     .debt-indicator { display:inline-block; padding:0.3rem 1rem; border-radius:2rem; font-weight:600; font-size:0.85rem; }
-    .debt-positive { background:#d1fae5; color:#065f46; }
-    .debt-negative { background:#fee2e2; color:#991b1b; }
-    .debt-zero { background:#f1f5f9; color:#475569; }
+    .debt-positive { background:#d1fae5; color:#065f46; } /* 🟢 */
+    .debt-negative { background:#fee2e2; color:#991b1b; } /* 🔴 */
+    .debt-zero { background:#f1f5f9; color:#475569; } /* ⚪ */
     .movement-card { background:#ffffff; border:1px solid #e2e8f0; border-radius:1rem; padding:0.8rem; margin-bottom:0.5rem; }
     .section-mini-title { font-weight:700; font-size:1.1rem; margin:1.2rem 0 0.8rem; display:flex; align-items:center; gap:0.5rem; }
     .product-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; }
@@ -1927,7 +1927,6 @@
   function updateAccountingDisplay() {
     const today = new Date().toLocaleDateString('ckb');
     
-    // پارەی ئەمرۆ - هەموو زیادکردنەکان و کەمکردنەکان
     const todayCredits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
       .reduce((sum, r) => sum + r.amount, 0);
@@ -1936,7 +1935,6 @@
       .reduce((sum, r) => sum + Math.abs(r.amount), 0);
     const todayMoney = todayCredits - todayDebits;
     
-    // کۆی گشتی واسڵکراو (تەنها گواستنەوەکان)
     const totalMoney = moneyRequests
       .filter(r => r.isTransfer === true)
       .reduce((sum, r) => sum + r.amount, 0);
@@ -1971,7 +1969,6 @@
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       
-      // زیادکردن بۆ کۆی گشتی واسڵکراو
       moneyRequests.push({
         id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
         date: dateStr,
@@ -1983,7 +1980,6 @@
         isTransfer: true
       });
       
-      // کەمکردنەوە لە پارەی ئەمرۆ
       moneyRequests.push({
         id: 'TR-OUT' + Date.now(),
         date: dateStr,
@@ -2206,12 +2202,11 @@
   function saveExpenseHistory() { localStorage.setItem('market_expense_history', JSON.stringify(expenseHistory)); updateExpenseStats(); updateStats(); }
   function saveGiveMoneyHistory() { localStorage.setItem('market_give_money_history', JSON.stringify(giveMoneyHistory)); updateGiveStats(); updateStats(); }
 
-  // ===== UPDATE STATS (FIXED VERSION) =====
+  // ===== UPDATE STATS =====
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
     
-    // کۆی پارەی واسڵکراو (تەنها لە گواستنەوەکان)
     const totalMoneyReceived = moneyRequests
       .filter(r => r.isTransfer === true)
       .reduce((sum, r) => sum + r.amount, 0);
@@ -2223,15 +2218,12 @@
                        returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
     const totalSpendAndExpenses = totalSpend + totalExpenses + totalGiveMoney;
     
-    // پارەی ئەمرۆ - حسابکردن لە moneyRequests
     const today = new Date().toLocaleDateString('ckb');
     
-    // هەموو زیادکردنەکانی ئەمرۆ (جگە لە گواستنەوەکان)
     const todayCredits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
       .reduce((sum, r) => sum + r.amount, 0);
     
-    // هەموو کەمکردنەکانی ئەمرۆ
     const todayDebits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
       .reduce((sum, r) => sum + Math.abs(r.amount), 0);
@@ -2312,7 +2304,6 @@
     const dateStr = dateTime ? new Date(dateTime).toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : now.toLocaleString('ckb');
     expenseHistory.unshift({ id: 'EXP' + Math.floor(Math.random() * 9000 + 1000), date: dateStr, amount: amount, category: category, note: note || category, timestamp: dateTime || now.toISOString() });
     
-    // کەمکردنەوە لە پارەی ئەمرۆ
     moneyRequests.push({
       id: 'EXP-MONEY' + Date.now(),
       date: dateStr,
@@ -2453,7 +2444,6 @@
     }
     giveMoneyHistory.unshift({ id: invId, date: dateStr, type: selectedGiveEntity.type, entityId: selectedGiveEntity.id, entityName: selectedGiveEntity.name, entityPhone: selectedGiveEntity.phone, amount: amount, note: note, timestamp: dateTime || now.toISOString() });
     
-    // کەمکردنەوە لە پارەی ئەمرۆ
     moneyRequests.push({
       id: 'GIVE-MONEY' + Date.now(),
       date: dateStr,
@@ -2777,10 +2767,36 @@
     const record = { id: invId, date: dateStr, type: selectedMoneyEntity.type, entityId: selectedMoneyEntity.id, entityName: selectedMoneyEntity.name, entityPhone: selectedMoneyEntity.phone, amount: amount, note: note, previousDebt: selectedMoneyEntity.debt || 0, isTransfer: false };
     if (selectedMoneyEntity.type === 'person') {
       const person = customers.find(c => c.id === selectedMoneyEntity.id);
-      if (person) { person.debt = Math.max(0, (person.debt || 0) - amount); if (!person.movements) person.movements = []; person.movements.push({ type: 'received', date: dateStr, amount: amount, note: note, invoiceId: invId }); saveCustomers(); }
+      if (person) {
+        // 🟢 گۆرانکاری سەرەکی: ئەگەر قەرزەکە سفر بوو، بە شێوەی منفی دەبێت (تۆ قەرزاری کەسەکەیت)
+        if (person.debt === 0) {
+          person.debt = -amount; // 🔴 تۆ قەرزاری کەسەکەیت
+        } else {
+          person.debt = person.debt - amount;
+          // ئەگەر لە ژێر سفر کەوت، واتە تۆ قەرزاری کەسەکەیت
+          if (person.debt < 0) {
+            // تۆ قەرزاری کەسەکەیت
+          }
+        }
+        if (!person.movements) person.movements = [];
+        person.movements.push({ type: 'received', date: dateStr, amount: amount, note: note, invoiceId: invId });
+        saveCustomers();
+      }
     } else {
       const partner = partners.find(p => p.id === selectedMoneyEntity.id);
-      if (partner) { partner.debt = Math.max(0, (partner.debt || 0) - amount); if (!partner.movements) partner.movements = []; partner.movements.push({ type: 'received', date: dateStr, amount: amount, note: note, invoiceId: invId }); savePartners(); }
+      if (partner) {
+        if (partner.debt === 0) {
+          partner.debt = -amount;
+        } else {
+          partner.debt = partner.debt - amount;
+          if (partner.debt < 0) {
+            // تۆ قەرزاری شەریکەکەیت
+          }
+        }
+        if (!partner.movements) partner.movements = [];
+        partner.movements.push({ type: 'received', date: dateStr, amount: amount, note: note, invoiceId: invId });
+        savePartners();
+      }
     }
     moneyRequests.unshift(record);
     saveMoneyRequests();
@@ -2866,13 +2882,38 @@
     const amountDiff = parseInt(newAmount) - record.amount;
     if (record.type === 'person') {
       const person = customers.find(c => c.id === record.entityId);
-      if (person) { person.debt = Math.max(0, (person.debt || 0) - amountDiff); const mov = person.movements?.find(m => m.invoiceId === invId); if (mov) { mov.amount = parseInt(newAmount); mov.note = newNote; } saveCustomers(); }
+      if (person) {
+        if (person.debt === 0) {
+          person.debt = -amountDiff;
+        } else {
+          person.debt = person.debt - amountDiff;
+        }
+        const mov = person.movements?.find(m => m.invoiceId === invId);
+        if (mov) { mov.amount = parseInt(newAmount); mov.note = newNote; }
+        saveCustomers();
+      }
     } else if (record.type === 'partner') {
       const partner = partners.find(p => p.id === record.entityId);
-      if (partner) { partner.debt = Math.max(0, (partner.debt || 0) - amountDiff); const mov = partner.movements?.find(m => m.invoiceId === invId); if (mov) { mov.amount = parseInt(newAmount); mov.note = newNote; } savePartners(); }
+      if (partner) {
+        if (partner.debt === 0) {
+          partner.debt = -amountDiff;
+        } else {
+          partner.debt = partner.debt - amountDiff;
+        }
+        const mov = partner.movements?.find(m => m.invoiceId === invId);
+        if (mov) { mov.amount = parseInt(newAmount); mov.note = newNote; }
+        savePartners();
+      }
     } else if (record.type === 'agent') {
       const agent = agents.find(a => a.id === record.entityId);
-      if (agent) { agent.debt = Math.max(0, (agent.debt || 0) - amountDiff); saveAgents(); }
+      if (agent) {
+        if (agent.debt === 0) {
+          agent.debt = -amountDiff;
+        } else {
+          agent.debt = agent.debt - amountDiff;
+        }
+        saveAgents();
+      }
     }
     record.amount = parseInt(newAmount);
     record.note = newNote;
@@ -2888,13 +2929,37 @@
     if (!confirm(`دڵنیایت لە سڕینەوەی واسڵی ${invId}؟`)) return;
     if (record.type === 'person') {
       const person = customers.find(c => c.id === record.entityId);
-      if (person) { person.debt = (person.debt || 0) + record.amount; person.movements = person.movements?.filter(m => m.invoiceId !== invId) || []; saveCustomers(); }
+      if (person) {
+        // گەڕاندنەوەی قەرز بۆ دۆخی پێشوو
+        if (person.debt < 0 && person.debt + record.amount === 0) {
+          person.debt = 0;
+        } else {
+          person.debt = (person.debt || 0) + record.amount;
+        }
+        person.movements = person.movements?.filter(m => m.invoiceId !== invId) || [];
+        saveCustomers();
+      }
     } else if (record.type === 'partner') {
       const partner = partners.find(p => p.id === record.entityId);
-      if (partner) { partner.debt = (partner.debt || 0) + record.amount; partner.movements = partner.movements?.filter(m => m.invoiceId !== invId) || []; savePartners(); }
+      if (partner) {
+        if (partner.debt < 0 && partner.debt + record.amount === 0) {
+          partner.debt = 0;
+        } else {
+          partner.debt = (partner.debt || 0) + record.amount;
+        }
+        partner.movements = partner.movements?.filter(m => m.invoiceId !== invId) || [];
+        savePartners();
+      }
     } else if (record.type === 'agent') {
       const agent = agents.find(a => a.id === record.entityId);
-      if (agent) { agent.debt = (agent.debt || 0) + record.amount; saveAgents(); }
+      if (agent) {
+        if (agent.debt < 0 && agent.debt + record.amount === 0) {
+          agent.debt = 0;
+        } else {
+          agent.debt = (agent.debt || 0) + record.amount;
+        }
+        saveAgents();
+      }
     }
     moneyRequests = moneyRequests.filter(r => r.id !== invId);
     saveMoneyRequests();
@@ -2917,8 +2982,9 @@
     if (!container) return;
     if (!list.length) { container.innerHTML = '<p style="text-align:center; color:#94a3b8;">هیچ کەسێک نەدۆزرایەوە</p>'; return; }
     container.innerHTML = list.map(person => {
-      const isDebtor = person.debt > 0; // کەسەکە قەرزاری تۆیە
-      const isCreditor = person.debt < 0; // تۆ قەرزاری کەسەکەیت
+      const isDebtor = person.debt > 0;   // 🟢 کەسەکە قەرزاری تۆیە
+      const isCreditor = person.debt < 0; // 🔴 تۆ قەرزاری کەسەکەیت
+      const isZero = person.debt === 0;   // ⚪ سفر
       const debtClass = isDebtor ? 'debt-positive' : isCreditor ? 'debt-negative' : 'debt-zero';
       const icon = isDebtor ? '🟢' : isCreditor ? '🔴' : '⚪';
       return `
@@ -3034,8 +3100,9 @@
     if (!container) return;
     if (!list.length) { container.innerHTML = '<p style="text-align:center; color:#94a3b8;">هیچ شەریکێک نەدۆزرایەوە</p>'; return; }
     container.innerHTML = list.map(partner => {
-      const isDebtor = partner.debt > 0;
-      const isCreditor = partner.debt < 0;
+      const isDebtor = partner.debt > 0;   // 🟢 شەریکەکە قەرزاری تۆیە
+      const isCreditor = partner.debt < 0; // 🔴 تۆ قەرزاری شەریکەکەیت
+      const isZero = partner.debt === 0;   // ⚪ سفر
       const debtClass = isDebtor ? 'debt-positive' : isCreditor ? 'debt-negative' : 'debt-zero';
       const icon = isDebtor ? '🟢' : isCreditor ? '🔴' : '⚪';
       return `
@@ -3627,8 +3694,6 @@
     renderProductSuggestions(filtered);
   });
 
-  // ===== گۆڕانکاری سەرەکی: بارکۆد سکانکردن =====
-  // ئەگەر کاڵا هەیە لە سەبەتە، بڕی زیاد بکە نەک کاڵای نوێ زیاد بکە
   function renderProductSuggestions(list) {
     if (!list.length) { productSuggestions.style.display = 'none'; return; }
     productSuggestions.innerHTML = list.map(p => `<div class="suggestion-item" data-id="${p.id}"><span>📦</span><span><strong>${p.name}</strong> - ${p.sellPrice} د.ع</span><span style="margin-right:auto; font-size:0.8rem;">بارکۆد: ${p.barcode}</span></div>`).join('');
@@ -3648,7 +3713,6 @@
     if (!q) return;
     const found = warehouseProducts.find(p => p.name.includes(q) || p.barcode === q);
     if (found) {
-      // گۆڕانکاری: ئەگەر کاڵا هەیە لە سەبەتە، بڕی زیاد بکە
       const existing = cart.find(item => item.product.id === found.id);
       if (existing) {
         existing.quantity += 1;
@@ -3730,13 +3794,14 @@
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     saleHistory.unshift({ id: invId, date: dateStr, customer: custName, total, items: cart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.unitPrice })) });
     
-    // ===== گۆڕانکاری سەرەکی: قەرز و پارە =====
     if (currentCustomer && creditCheck.checked) {
-      // فرۆشتن بە قەرز: کەسەکە قەرزاری تۆ دەبێت (زیادکردنی قەرز)
-      currentCustomer.debt = (currentCustomer.debt || 0) + total;
+      if (currentCustomer.debt === 0) {
+        currentCustomer.debt = total;
+      } else {
+        currentCustomer.debt = (currentCustomer.debt || 0) + total;
+      }
       saveCustomers();
     } else {
-      // فرۆشتن بە کاش: زیادکردنی پارە بۆ واسڵی ئەمرۆ
       moneyRequests.push({
         id: 'SALE-MONEY' + Date.now(),
         date: dateStr,
@@ -3750,7 +3815,6 @@
       });
       saveMoneyRequests();
     }
-    // ===== کۆتایی گۆڕانکاری =====
     
     cart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity = Math.max(0, product.quantity - item.quantity); });
     saveWarehouseProducts();
@@ -3873,7 +3937,6 @@
       if (purchaseItem) { purchaseItem.qty -= returnQty; if (purchaseItem.qty === 0) originalPurchase.items.splice(selectedPurchaseReturnProduct.originalIndex, 1); originalPurchase.total = originalPurchase.items.reduce((sum, i) => sum + (i.qty * i.price), 0); savePurchaseHistory(); }
     }
     if (returnType === 'cash') {
-      // زیادکردنی پارە بۆ ئەمرۆ (گەڕانەوەی کڕین)
       moneyRequests.push({
         id: 'PR' + Date.now(),
         date: new Date().toLocaleString('ckb'),
@@ -3885,7 +3948,11 @@
       });
       saveMoneyRequests();
     } else if (returnType === 'debt' && selectedPurchaseReturnPartnerForDebt) {
-      selectedPurchaseReturnPartnerForDebt.debt = Math.max(0, (selectedPurchaseReturnPartnerForDebt.debt || 0) - refundAmount);
+      if (selectedPurchaseReturnPartnerForDebt.debt === 0) {
+        selectedPurchaseReturnPartnerForDebt.debt = -refundAmount;
+      } else {
+        selectedPurchaseReturnPartnerForDebt.debt = Math.max(0, (selectedPurchaseReturnPartnerForDebt.debt || 0) - refundAmount);
+      }
       if (!selectedPurchaseReturnPartnerForDebt.movements) selectedPurchaseReturnPartnerForDebt.movements = [];
       selectedPurchaseReturnPartnerForDebt.movements.push({ type: 'purchase_return', date: new Date().toLocaleString('ckb'), amount: refundAmount, note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedPurchaseReturn.id}`, invoiceId: 'PR' + Date.now() });
       savePartners();
@@ -3927,7 +3994,13 @@
       const record = purchaseReturnHistory.find(r => r.id === returnId);
       if (record) { const product = warehouseProducts.find(p => p.name === record.productName); if (product) { product.quantity += record.quantity; saveWarehouseProducts(); }
         if (record.type === 'cash') { const moneyRecord = moneyRequests.find(m => m.note && m.note.includes(record.originalInvoiceId) && m.amount > 0); if (moneyRecord) { moneyRequests = moneyRequests.filter(m => m.id !== moneyRecord.id); saveMoneyRequests(); } }
-        else if (record.type === 'debt') { const partner = partners.find(p => p.name === record.partner); if (partner) { partner.debt = (partner.debt || 0) + record.refundAmount; savePartners(); } }
+        else if (record.type === 'debt') { const partner = partners.find(p => p.name === record.partner); if (partner) {
+          if (partner.debt < 0 && partner.debt + record.refundAmount === 0) {
+            partner.debt = 0;
+          } else {
+            partner.debt = (partner.debt || 0) + record.refundAmount;
+          }
+          savePartners(); } }
         const purchase = purchaseHistory.find(p => p.id === record.originalInvoiceId); if (purchase) { const existingItem = purchase.items.find(i => i.name === record.productName); if (existingItem) existingItem.qty += record.quantity; else purchase.items.push({ name: record.productName, qty: record.quantity, price: record.price }); purchase.total = purchase.items.reduce((sum, i) => sum + (i.qty * i.price), 0); savePurchaseHistory(); }
       }
       purchaseReturnHistory = purchaseReturnHistory.filter(r => r.id !== returnId);
@@ -4032,12 +4105,15 @@
       if (saleItem) { saleItem.qty -= returnQty; if (saleItem.qty === 0) originalSale.items.splice(selectedReturnProduct.originalIndex, 1); originalSale.total = originalSale.items.reduce((sum, i) => sum + (i.qty * i.price), 0); saveSaleHistory(); }
     }
     if (returnType === 'debt' && selectedReturnCustomerForDebt) {
-      selectedReturnCustomerForDebt.debt = Math.max(0, (selectedReturnCustomerForDebt.debt || 0) - refundAmount);
+      if (selectedReturnCustomerForDebt.debt === 0) {
+        selectedReturnCustomerForDebt.debt = -refundAmount;
+      } else {
+        selectedReturnCustomerForDebt.debt = Math.max(0, (selectedReturnCustomerForDebt.debt || 0) - refundAmount);
+      }
       if (!selectedReturnCustomerForDebt.movements) selectedReturnCustomerForDebt.movements = [];
       selectedReturnCustomerForDebt.movements.push({ type: 'sales_return', date: new Date().toLocaleString('ckb'), amount: refundAmount, note: `گەڕانەوەی کاڵا لە فاکتوورە ${selectedReturnSale.id}`, invoiceId: 'RET' + Date.now() });
       saveCustomers();
     } else if (returnType === 'cash') {
-      // کەمکردنەوە لە پارەی ئەمرۆ (گەڕانەوەی فرۆشتن)
       moneyRequests.push({
         id: 'RET-MONEY' + Date.now(),
         date: new Date().toLocaleString('ckb'),
@@ -4088,7 +4164,13 @@
       if (record) {
         const product = warehouseProducts.find(p => p.name === record.productName);
         if (product) { product.quantity = Math.max(0, product.quantity - record.quantity); saveWarehouseProducts(); }
-        if (record.type === 'debt') { const customer = customers.find(c => c.name === record.customer); if (customer) { customer.debt = (customer.debt || 0) + record.refundAmount; saveCustomers(); } }
+        if (record.type === 'debt') { const customer = customers.find(c => c.name === record.customer); if (customer) {
+          if (customer.debt < 0 && customer.debt + record.refundAmount === 0) {
+            customer.debt = 0;
+          } else {
+            customer.debt = (customer.debt || 0) + record.refundAmount;
+          }
+          saveCustomers(); } }
         if (record.type === 'cash') {
           const moneyRecord = moneyRequests.find(m => m.note && m.note.includes(record.originalInvoiceId) && m.amount < 0);
           if (moneyRecord) { moneyRequests = moneyRequests.filter(m => m.id !== moneyRecord.id); saveMoneyRequests(); }
@@ -4351,9 +4433,15 @@
     savePurchaseHistory();
     purchaseCart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity += item.quantity; });
     saveWarehouseProducts();
-    if (!isCash) { selectedPurchasePartner.debt = (selectedPurchasePartner.debt || 0) + total; savePartners(); }
+    if (!isCash) {
+      if (selectedPurchasePartner.debt === 0) {
+        selectedPurchasePartner.debt = total;
+      } else {
+        selectedPurchasePartner.debt = (selectedPurchasePartner.debt || 0) + total;
+      }
+      savePartners();
+    }
     
-    // کەمکردنەوە لە پارەی ئەمرۆ (ئەگەر کڕین بە کاش بێت)
     if (isCash) {
       moneyRequests.push({
         id: 'PUR-MONEY' + Date.now(),
@@ -4389,6 +4477,7 @@
     container.innerHTML = list.map(agent => {
       const isDebtor = agent.debt > 0;
       const isCreditor = agent.debt < 0;
+      const isZero = agent.debt === 0;
       const debtClass = isDebtor ? 'debt-positive' : isCreditor ? 'debt-negative' : 'debt-zero';
       const icon = isDebtor ? '🟢' : isCreditor ? '🔴' : '⚪';
       return `
@@ -4651,11 +4740,16 @@
     saveAgents();
     const isCredit = document.getElementById('agentSaleCreditCheck')?.checked;
     let customerName = 'کاش';
-    if (isCredit && agentSaleCustomer) { customerName = agentSaleCustomer.name; agentSaleCustomer.debt = (agentSaleCustomer.debt || 0) + total; saveCustomers(); }
+    if (isCredit && agentSaleCustomer) { customerName = agentSaleCustomer.name; 
+      if (agentSaleCustomer.debt === 0) {
+        agentSaleCustomer.debt = total;
+      } else {
+        agentSaleCustomer.debt = (agentSaleCustomer.debt || 0) + total;
+      }
+      saveCustomers(); }
     saleHistory.unshift({ id: invId, date: dateStr, customer: customerName, agent: currentSaleAgent.name, total: total, items: agentSaleCart.map(i => ({ name: i.productName, qty: i.quantity, price: i.price })) });
     saveSaleHistory();
     
-    // زیادکردنی پارە بۆ ئەمرۆ (ئەگەر قەرز نەبێت)
     if (!isCredit) {
       moneyRequests.push({
         id: 'AGENT-SALE-MONEY' + Date.now(),
@@ -4800,7 +4894,11 @@
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     const invId = 'AW' + Math.floor(Math.random() * 9000 + 1000);
-    selectedAgentForWassl.debt = Math.max(0, (selectedAgentForWassl.debt || 0) - amount);
+    if (selectedAgentForWassl.debt === 0) {
+      selectedAgentForWassl.debt = -amount;
+    } else {
+      selectedAgentForWassl.debt = Math.max(0, (selectedAgentForWassl.debt || 0) - amount);
+    }
     if (!selectedAgentForWassl.movements) selectedAgentForWassl.movements = [];
     selectedAgentForWassl.movements.push({ type: 'wassl', date: dateStr, amount: amount, note: note, invoiceId: invId });
     saveAgents();
@@ -5090,7 +5188,6 @@
     selectedEmployeeForSalary.salary = amount;
     saveEmployees();
     
-    // کەمکردنەوە لە پارەی ئەمرۆ
     moneyRequests.push({
       id: 'SALARY-MONEY' + Date.now(),
       date: new Date().toLocaleString('ckb'),
