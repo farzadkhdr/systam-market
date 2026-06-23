@@ -1047,7 +1047,8 @@
             <input type="datetime-local" id="moneyGiveDateTime" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
           </div>
           <button onclick="submitMoneyGive()" style="background:#7c3aed; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;">
-            <i class="fas fa-save"></i> تۆمارکردنی پارە پێدان          </button>
+            <i class="fas fa-save"></i> تۆمارکردنی پارە پێدان
+          </button>
         </div>
         <div class="card-glass" style="margin-top:1.5rem;">
           <h4 style="margin-bottom:1rem;"><i class="fas fa-history"></i> مێژووی پارە پێدان</h4>
@@ -1921,25 +1922,21 @@
 
   let employeePermissions = JSON.parse(localStorage.getItem('market_employee_permissions') || '{}');
 
-  // ===== ACCOUNTING / TRANSFER FUNCTION (FIXED) =====
+  // ===== ACCOUNTING / TRANSFER FUNCTION =====
   function updateAccountingDisplay() {
     const today = new Date().toLocaleDateString('ckb');
-    
     // Today money (only regular, not transfers)
     const todayMoney = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
       .reduce((sum, r) => sum + r.amount, 0);
-    
     // Total money (only transfers)
     const totalMoney = moneyRequests
       .filter(r => r.isTransfer === true)
       .reduce((sum, r) => sum + r.amount, 0);
-    
     const accToday = document.getElementById('accTodayMoney');
     const accTotal = document.getElementById('accTotalMoney');
     if (accToday) accToday.textContent = todayMoney.toLocaleString();
     if (accTotal) accTotal.textContent = totalMoney.toLocaleString();
-    
     // Also update stats card
     const statTotalMoneyReceived = document.getElementById('statTotalMoneyReceived');
     if (statTotalMoneyReceived) statTotalMoneyReceived.textContent = totalMoney.toLocaleString();
@@ -1952,17 +1949,14 @@
       alert('تکایە بڕی پارەی دروست بنووسە (ژمارەیەک لە 1 زیاتر)');
       return;
     }
-    
     const today = new Date().toLocaleDateString('ckb');
     const todayMoney = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
       .reduce((sum, r) => sum + r.amount, 0);
-    
     if (amount > todayMoney) {
       alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${todayMoney.toLocaleString()} د.ع) زیاترە!`);
       return;
     }
-    
     if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ کۆی واسڵکراو؟`)) {
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
@@ -2219,45 +2213,45 @@
                        returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
     const totalSpendAndExpenses = totalSpend + totalExpenses + totalGiveMoney;
     
-    // TODAY MONEY
+    // TODAY MONEY - حسابکردنی هەموو داهات و خەرجیەکانی ئەمرۆ
     const today = new Date().toLocaleDateString('ckb');
     
-    // 1. Today wassl (excluding transfers)
+    // 1. هەموو واسڵەکانی ئەمرۆ (جگە لە گواستنەوەکان)
     const todayWassl = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
       .reduce((sum, r) => sum + r.amount, 0);
     
-    // 2. Today cash sales
+    // 2. فرۆشتنە نەقدییەکانی ئەمرۆ (ئەوانەی بە کاش فرۆشراون)
     const todayCashSales = saleHistory
       .filter(s => s.date && s.date.includes(today) && s.customer === 'کاش')
       .reduce((sum, s) => sum + s.total, 0);
     
-    // 3. Sales returns (subtract)
+    // 3. گەڕانەوەی پارە لە فرۆشتن (کەم دەکاتەوە)
     const todaySalesReturns = returnHistory
       .filter(r => r.date && r.date.includes(today) && r.type === 'cash')
       .reduce((sum, r) => sum + r.refundAmount, 0);
     
-    // 4. Today cash purchases (subtract)
+    // 4. کڕینە نەقدییەکانی ئەمرۆ (کەم دەکاتەوە)
     const todayCashPurchases = purchaseHistory
       .filter(p => p.date && p.date.includes(today) && p.isCash === true)
       .reduce((sum, p) => sum + p.total, 0);
     
-    // 5. Purchase returns (add)
+    // 5. گەڕانەوەی کڕین (زیاد دەکاتەوە)
     const todayPurchaseReturns = purchaseReturnHistory
       .filter(r => r.date && r.date.includes(today) && r.type === 'cash')
       .reduce((sum, r) => sum + r.refundAmount, 0);
     
-    // 6. Expenses (subtract)
+    // 6. مەسروفاتەکانی ئەمرۆ (کەم دەکاتەوە)
     const todayExpenses = expenseHistory
       .filter(e => e.date && e.date.includes(today))
       .reduce((sum, e) => sum + e.amount, 0);
     
-    // 7. Give money (subtract)
+    // 7. پارە پێدانەکانی ئەمرۆ (کەم دەکاتەوە)
     const todayGiveMoney = giveMoneyHistory
       .filter(g => g.date && g.date.includes(today))
       .reduce((sum, g) => sum + g.amount, 0);
     
-    // 8. Employee salaries (subtract)
+    // 8. موچەی کارمەندەکان (کەم دەکاتەوە)
     const todaySalaries = employees
       .reduce((sum, emp) => {
         const todaySalaries = (emp.salaryHistory || [])
@@ -2266,7 +2260,7 @@
         return sum + todaySalaries;
       }, 0);
     
-    // Today money = all additions - all subtractions
+    // کۆی واسڵی ئەمرۆ = هەموو زیادکردنەکان - هەموو کەمکردنەکان
     const todayMoneyReceived = todayWassl + todayCashSales + todayPurchaseReturns - todaySalesReturns - todayCashPurchases - todayExpenses - todayGiveMoney - todaySalaries;
     
     const totalProducts = warehouseProducts.length;
