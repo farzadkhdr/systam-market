@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <style>
-    /* هەموو ستایلەکان وەک خۆی ماون - هیچ گۆڕانکارییەکی ستایل نەکراوە */
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Arial', sans-serif; }
     :root {
       --bg-start: #e9eefa;
@@ -240,6 +239,84 @@
     }
     .accounting-balance .today-amount { color: #059669; }
     .accounting-balance .total-amount { color: #2563eb; }
+
+    /* ستایل بۆ تەقاریر */
+    .report-container {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      margin-top: 1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      direction: rtl;
+    }
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .report-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .report-subtitle {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    .report-table th {
+      background: #f1f5f9;
+      padding: 0.8rem;
+      text-align: right;
+      font-weight: 700;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .report-table td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .report-table tr:hover {
+      background: #f8fafc;
+    }
+    .report-total {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .report-print-btn {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .report-print-btn:hover {
+      background: #1e293b;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      .report-container { box-shadow: none; padding: 1rem; }
+      .report-table th { background: #e2e8f0 !important; }
+    }
   </style>
 </head>
 <body>
@@ -1643,6 +1720,46 @@
     </div>
   </div>
 
+  <!-- ===== REPORT VIEW ===== -->
+  <div id="reportView" style="display: none;">
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> گەڕانەوە</button>
+        <div class="page-title"><i class="fas fa-file-alt" style="color:#7c3aed;"></i> تەقاریر</div>
+      </div>
+      
+      <!-- Person Report -->
+      <div class="card-glass" style="margin-bottom: 1.5rem;">
+        <h3 style="margin-bottom:1rem;"><i class="fas fa-user"></i> تەقریری کەس</h3>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+          <div style="flex:1; min-width:200px;">
+            <input type="text" id="personReportSearch" placeholder="ناوی کەسەکە بنووسە..." 
+                   style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
+          </div>
+          <button onclick="generatePersonReport()" style="background:#7c3aed; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:600;">
+            <i class="fas fa-search"></i> گەڕان
+          </button>
+        </div>
+        <div id="personReportResult" class="report-container" style="display:none;"></div>
+      </div>
+
+      <!-- Partner Report -->
+      <div class="card-glass">
+        <h3 style="margin-bottom:1rem;"><i class="fas fa-handshake"></i> تەقریری شەریک</h3>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+          <div style="flex:1; min-width:200px;">
+            <input type="text" id="partnerReportSearch" placeholder="ناوی شەریکەکە بنووسە..." 
+                   style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
+          </div>
+          <button onclick="generatePartnerReport()" style="background:#db2777; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:600;">
+            <i class="fas fa-search"></i> گەڕان
+          </button>
+        </div>
+        <div id="partnerReportResult" class="report-container" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -1829,7 +1946,7 @@
     { id: 'purchase_return', icon: 'fa-undo-alt', label: 'گەڕانەوەی کڕین', color: '#fce7f3', text: '#9d174d' },
     { id: 'sales_return', icon: 'fa-redo', label: 'گەڕانەوەی فرۆشتن', color: '#d1fae5', text: '#065f46' },
     { id: 'dashboard', icon: 'fa-tachometer-alt', label: 'داشبۆرد', color: '#e0e7ff', text: '#3730a3' },
-    { id: 'reports', icon: 'fa-chart-bar', label: 'راپۆرت', color: '#fef9c3', text: '#854d0e' },
+    { id: 'reports', icon: 'fa-file-alt', label: 'تەقاریر', color: '#f3e8ff', text: '#6b21a8' },
     { id: 'accounting', icon: 'fa-calculator', label: 'حیساباتکردن', color: '#ede9fe', text: '#5b21b6' },
     { id: 'warehouse', icon: 'fa-warehouse', label: 'مخزن', color: '#fee2e2', text: '#991b1b' },
     { id: 'expiry', icon: 'fa-exclamation-triangle', label: 'بەسەرچوون و تێکچوون', color: '#ccfbf1', text: '#115e59' },
@@ -2444,28 +2561,19 @@
     } else { suggestions.style.display = 'none'; }
   };
 
-  // ===== فەنکشنی نوێ بۆ ژماردنی تەوازنی قەرز دوای پارە پێدان =====
   function calculateDebtAfterGive(currentDebt, amount) {
-    // حاڵەت 1: debt = 0 (بێ قەرز) → debt > 0 (کەسەکە قەرزاری من دەبێت)
     if (currentDebt === 0) {
-      return amount; // debt = +amount
-    }
-    // حاڵەت 2: debt > 0 (کەسەکە قەرزاری منە) → debt > 0 (زیاتر قەرزدار دەبێت)
-    else if (currentDebt > 0) {
-      return currentDebt + amount; // debt زیاد دەکات
-    }
-    // حاڵەت 3: debt < 0 (من قەرزاری کەسەکەم) و بڕی پارە کەمتر یان یەکسانە بە قەرز
-    else if (currentDebt < 0 && amount <= Math.abs(currentDebt)) {
-      return currentDebt + amount; // debt نزیک دەبێتەوە بۆ 0 (هێشتا نەرێنی)
-    }
-    // حاڵەت 4: debt < 0 (من قەرزاری کەسەکەم) و بڕی پارە زیاترە لە قەرز
-    else if (currentDebt < 0 && amount > Math.abs(currentDebt)) {
-      return amount - Math.abs(currentDebt); // debt دەبێتە ئەرێنی (کەسەکە قەرزاری من دەبێت)
+      return amount;
+    } else if (currentDebt > 0) {
+      return currentDebt + amount;
+    } else if (currentDebt < 0 && amount <= Math.abs(currentDebt)) {
+      return currentDebt + amount;
+    } else if (currentDebt < 0 && amount > Math.abs(currentDebt)) {
+      return amount - Math.abs(currentDebt);
     }
     return currentDebt;
   }
 
-  // ===== گۆڕینی فەنکشنی submitMoneyGive =====
   window.submitMoneyGive = function() {
     if (!selectedGiveEntity) { alert('تکایە کەس یان شەریک هەڵبژێرە'); return; }
     const amount = parseInt(document.getElementById('moneyGiveAmount').value);
@@ -2476,7 +2584,6 @@
     const dateStr = dateTime ? new Date(dateTime).toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : now.toLocaleString('ckb');
     const invId = 'GIVE' + Math.floor(Math.random() * 9000 + 1000);
     
-    // بەکارهێنانی فەنکشنی نوێ بۆ ژماردنی بەهای نوێی قەرز
     if (selectedGiveEntity.type === 'person') {
       const person = customers.find(c => c.id === selectedGiveEntity.id);
       if (person) {
@@ -2515,7 +2622,6 @@
       }
     }
     
-    // تۆمارکردنی مێژوو بە زانیاری قەرز
     giveMoneyHistory.unshift({ 
       id: invId, 
       date: dateStr, 
@@ -2530,7 +2636,6 @@
       newDebt: (selectedGiveEntity.debt || 0) + amount
     });
     
-    // کەمکردنەوە لە پارەی ئەمرۆ
     moneyRequests.push({
       id: 'GIVE-MONEY' + Date.now(),
       date: dateStr,
@@ -2560,7 +2665,6 @@
     alert(`پارە پێدان بە سەرکەوتوویی تۆمارکرا!\nبڕ: ${amount.toLocaleString()} د.ع`);
   };
 
-  // ===== گۆڕینی فەنکشنی renderGiveHistory =====
   function renderGiveHistory(filterText = '', typeFilter = 'all', dateFrom = '', dateTo = '') {
     const container = document.getElementById('giveHistoryList');
     if (!container) return;
@@ -2576,7 +2680,6 @@
         <strong>کۆی پارە پێدان: ${total.toLocaleString()} د.ع</strong>
       </div>
       ${filtered.map(g => {
-        // دیاریکردنی جۆری گۆڕانکاری قەرز
         let debtChangeType = '';
         let debtChangeColor = '';
         const oldDebt = g.oldDebt || 0;
@@ -2759,6 +2862,8 @@
     else if (moduleId === 'take_agent') { navigateTo('agents'); setTimeout(() => { document.querySelectorAll('[data-agenttab]').forEach(t => t.classList.remove('active')); document.querySelector('[data-agenttab="wassl"]')?.classList.add('active'); document.querySelectorAll('#agentsView .panel').forEach(p => p.classList.remove('active')); document.getElementById('agentsWasslPanel').classList.add('active'); }, 100); }
     else if (moduleId === 'employees') navigateTo('employees');
     else if (moduleId === 'security') navigateTo('security');
+    else if (moduleId === 'reports') navigateTo('reports');
+    else if (moduleId === 'person_report' || moduleId === 'partner_report') { navigateTo('reports'); }
     else alert('ئەم بەشە ئێستا تەنیا هەندێک بەش کارایە');
   };
 
@@ -2770,9 +2875,9 @@
   };
 
   window.navigateTo = function(view) {
-    const views = ['dashboardView', 'salesView', 'settingsView', 'personsView', 'partnersView', 'warehouseView', 'pricingView', 'barcodeView', 'moneyRequestView', 'purchaseView', 'agentsView', 'expiryView', 'giveAgentView', 'employeesView', 'securityView', 'moneySpendView', 'accountingView'];
+    const views = ['dashboardView', 'salesView', 'settingsView', 'personsView', 'partnersView', 'warehouseView', 'pricingView', 'barcodeView', 'moneyRequestView', 'purchaseView', 'agentsView', 'expiryView', 'giveAgentView', 'employeesView', 'securityView', 'moneySpendView', 'accountingView', 'reportView'];
     views.forEach(v => { const el = document.getElementById(v); if (el) el.style.display = 'none'; });
-    const viewMap = { 'dashboard': 'dashboardView', 'sales': 'salesView', 'settings': 'settingsView', 'persons': 'personsView', 'partners': 'partnersView', 'warehouse': 'warehouseView', 'pricing': 'pricingView', 'barcode': 'barcodeView', 'moneyRequest': 'moneyRequestView', 'purchase': 'purchaseView', 'agents': 'agentsView', 'expiry': 'expiryView', 'giveAgent': 'giveAgentView', 'employees': 'employeesView', 'security': 'securityView', 'moneySpend': 'moneySpendView', 'accounting': 'accountingView' };
+    const viewMap = { 'dashboard': 'dashboardView', 'sales': 'salesView', 'settings': 'settingsView', 'persons': 'personsView', 'partners': 'partnersView', 'warehouse': 'warehouseView', 'pricing': 'pricingView', 'barcode': 'barcodeView', 'moneyRequest': 'moneyRequestView', 'purchase': 'purchaseView', 'agents': 'agentsView', 'expiry': 'expiryView', 'giveAgent': 'giveAgentView', 'employees': 'employeesView', 'security': 'securityView', 'moneySpend': 'moneySpendView', 'accounting': 'accountingView', 'reports': 'reportView' };
     const targetId = viewMap[view];
     if (targetId) { const el = document.getElementById(targetId); if (el) el.style.display = 'block'; }
     const dashboardStats = document.getElementById('dashboardStats');
@@ -2795,9 +2900,10 @@
     else if (view === 'employees') { renderEmployeesList(); renderEmployeeSalaryHistory(); renderEmployeeLeaveHistory(); document.getElementById('employeeDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کارمەندێک هەڵبژێرە بۆ بینینی زانیاری</p>'; }
     else if (view === 'security') { updateAdminDisplay(); }
     else if (view === 'accounting') { updateAccountingDisplay(); }
+    else if (view === 'reports') { /* nothing special */ }
   };
 
-  // ===== FIXED: SEARCH SUGGESTIONS FOR ALL INPUTS =====
+  // ===== SETUP SUGGESTION SEARCH =====
   function setupSuggestionSearch(inputId, suggestionsId, dataSource, getLabel, onSelect) {
     const input = document.getElementById(inputId);
     const suggestions = document.getElementById(suggestionsId);
@@ -2806,7 +2912,6 @@
     let timer;
     let selectedIndex = -1;
 
-    // Remove any existing event listeners by cloning
     const newInput = input.cloneNode(true);
     input.parentNode.replaceChild(newInput, input);
     const newSuggestions = suggestions.cloneNode(true);
@@ -2867,7 +2972,6 @@
       }, 300);
     });
 
-    // Keyboard navigation
     finalInput.addEventListener('keydown', function(e) {
       const items = finalSuggestions.querySelectorAll('.suggestion-item');
       if (!items.length) return;
@@ -2895,7 +2999,6 @@
       });
     }
 
-    // Click outside to close
     document.addEventListener('click', function(e) {
       if (!finalInput.contains(e.target) && !finalSuggestions.contains(e.target)) {
         finalSuggestions.style.display = 'none';
@@ -2905,9 +3008,8 @@
     return { input: finalInput, suggestions: finalSuggestions };
   }
 
-  // Setup all search suggestions after DOM is ready
+  // ===== SETUP ALL SEARCH SUGGESTIONS =====
   document.addEventListener('DOMContentLoaded', function() {
-    // Product search in Sales
     setupSuggestionSearch('productSearch', 'productSuggestions', warehouseProducts,
       p => p.name + ' ' + p.barcode,
       (product) => {
@@ -2919,7 +3021,6 @@
       }
     );
 
-    // Product search in Purchase
     setupSuggestionSearch('purchaseProductSearch', 'purchaseProductSuggestions', warehouseProducts,
       p => p.name + ' ' + p.barcode,
       (product) => {
@@ -2931,7 +3032,6 @@
       }
     );
 
-    // Partner search in Purchase
     setupSuggestionSearch('purchasePartnerSearch', 'purchasePartnerSuggestions', partners,
       p => p.name + ' ' + p.phone,
       (partner) => {
@@ -2942,7 +3042,6 @@
       }
     );
 
-    // Product search in Warehouse Purchase
     setupSuggestionSearch('warePurchaseSearch', 'warePurchaseSuggestions', warehouseProducts,
       p => p.name + ' ' + p.barcode,
       (product) => {
@@ -2953,7 +3052,6 @@
       }
     );
 
-    // Product search in Damage
     setupSuggestionSearch('damageProductSearch', 'damageProductSuggestions', warehouseProducts,
       p => p.name + ' ' + p.barcode,
       (product) => {
@@ -2963,7 +3061,6 @@
       }
     );
 
-    // Product search in Agent Sale - with dynamic data source
     setupSuggestionSearch('agentProductSearch', 'agentProductSuggestions',
       () => {
         if (!currentSaleAgent) return [];
@@ -2980,7 +3077,6 @@
       }
     );
 
-    // Product search in Give Agent
     setupSuggestionSearch('giveProductSearch', 'giveProductSuggestions', warehouseProducts,
       p => p.name + ' ' + p.barcode,
       (product) => {
@@ -3564,8 +3660,6 @@
   };
 
   window.searchWarehouseProducts = function() {
-    // Now handled by the generic setupSuggestionSearch
-    // This function is kept for compatibility with onclick
     const input = document.getElementById('warePurchaseSearch');
     if (input) input.dispatchEvent(new Event('input'));
   };
@@ -3925,8 +4019,6 @@
   const historySearchInput = document.getElementById('historySearchInput');
   const historyDetailDiv = document.getElementById('historyInvoiceDetail');
 
-  // Sales product search is now handled by setupSuggestionSearch
-  // Keep the old function for compatibility
   window.searchProduct = function() {
     const input = document.getElementById('productSearch');
     if (input) input.dispatchEvent(new Event('input'));
@@ -3999,11 +4091,9 @@
     saleHistory.unshift({ id: invId, date: dateStr, customer: custName, total, items: cart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.unitPrice })) });
     
     if (currentCustomer && creditCheck.checked) {
-      // فرۆشتن بە قەرز: قەرزی کەس زیاد دەکات
       currentCustomer.debt = (currentCustomer.debt || 0) + total;
       saveCustomers();
     } else {
-      // فرۆشتن بە کاش: پارە زیاد دەکات بۆ واسڵی ئەمرۆ
       moneyRequests.push({
         id: 'SALE-MONEY' + Date.now(),
         date: dateStr,
@@ -4455,13 +4545,11 @@
   };
 
   // ===== PURCHASE FUNCTIONS =====
-  // Purchase product search is now handled by setupSuggestionSearch
   window.searchPurchaseProduct = function() {
     const input = document.getElementById('purchaseProductSearch');
     if (input) input.dispatchEvent(new Event('input'));
   };
 
-  // Purchase partner search is now handled by setupSuggestionSearch
   window.searchPurchasePartner = function() {
     const input = document.getElementById('purchasePartnerSearch');
     if (input) input.dispatchEvent(new Event('input'));
@@ -4563,7 +4651,7 @@
     updateStats();
   };
 
-  // ===== فەنکشنی completePurchase با گۆڕانکارییەکانی ژماردنی قەرزی شەریک =====
+  // ===== completePurchase =====
   window.completePurchase = function() {
     if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
     if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
@@ -4580,31 +4668,21 @@
     saveWarehouseProducts();
     
     if (!isCash) {
-      // ===== گۆڕانی ژماردنی قەرزی شەریک لە کاتی کڕیندا =====
       const currentDebt = selectedPurchasePartner.debt || 0;
       let newDebt = currentDebt;
       
-      // حاڵەتی یەکەم: debt = 0 (بێ قەرز) → من کاڵا دەکڕم → debt < 0 (من قەرزاری شەریکەم)
       if (currentDebt === 0) {
         newDebt = -total;
-      }
-      // حاڵەتی دووەم: debt > 0 (شەریکە قەرزاری منە) و کڕین بە بڕی کەمتر یان یەکسانە بە قەرز
-      else if (currentDebt > 0 && total <= currentDebt) {
+      } else if (currentDebt > 0 && total <= currentDebt) {
         newDebt = currentDebt - total;
-      }
-      // حاڵەتی سێیەم: debt > 0 (شەریکە قەرزاری منە) و کڕین بە بڕی زیاترە لە قەرز
-      else if (currentDebt > 0 && total > currentDebt) {
+      } else if (currentDebt > 0 && total > currentDebt) {
         newDebt = -(total - currentDebt);
-      }
-      // حاڵەتی چوارەم: debt < 0 (من قەرزاری شەریکەم) → زیاتر قەرزدار دەبم
-      else if (currentDebt < 0) {
+      } else if (currentDebt < 0) {
         newDebt = currentDebt - total;
       }
       
-      // پاشەکەوتکردنی بەهای نوێی قەرز
       selectedPurchasePartner.debt = newDebt;
       
-      // تۆمارکردنی حرکات
       if (!selectedPurchasePartner.movements) selectedPurchasePartner.movements = [];
       selectedPurchasePartner.movements.push({
         type: 'purchase',
@@ -4618,7 +4696,6 @@
       
       savePartners();
     } else {
-      // کڕین بە کاش: تۆمارکردنی وەک خەرجی
       moneyRequests.push({
         id: 'PUR-MONEY' + Date.now(),
         date: dateStr,
@@ -4841,7 +4918,6 @@
   window.toggleAgentSaleCredit = function() {};
 
   window.searchAgentProduct = function() {
-    // Now handled by setupSuggestionSearch with dynamic data source
     const input = document.getElementById('agentProductSearch');
     if (input) input.dispatchEvent(new Event('input'));
   };
@@ -4947,7 +5023,6 @@
   }
 
   window.searchAgentReturnProduct = function() {
-    // This is now handled by setupSuggestionSearch
     const input = document.getElementById('agentReturnProductSearch');
     if (input) input.dispatchEvent(new Event('input'));
   };
@@ -5427,6 +5502,261 @@
     renderEmployeeLeaveHistory();
     renderEmployeeDetail(emp);
     alert('مۆڵەت سڕکرایەوە');
+  };
+
+  // ===== REPORT FUNCTIONS =====
+  window.generatePersonReport = function() {
+    const searchQuery = document.getElementById('personReportSearch').value.trim();
+    if (!searchQuery) {
+      alert('تکایە ناوی کەسەکە بنووسە!');
+      return;
+    }
+    
+    const person = customers.find(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    if (!person) {
+      alert('هیچ کەسێک بەم ناوە نەدۆزرایەوە!');
+      return;
+    }
+
+    const salesInvoices = saleHistory.filter(s => s.customer === person.name);
+    const moneyInvoices = moneyRequests.filter(r => r.type === 'person' && r.entityId === person.id);
+    const returnRecords = returnHistory.filter(r => r.customer === person.name);
+    
+    const container = document.getElementById('personReportResult');
+    container.style.display = 'block';
+    
+    let reportHTML = `
+      <div class="report-header no-print">
+        <div>
+          <div class="report-title">📄 تەقریری کەس</div>
+          <div class="report-subtitle">${person.name} | 📱 ${person.phone} | ${person.address || ''}</div>
+        </div>
+        <button class="report-print-btn" onclick="window.print()">
+          <i class="fas fa-print"></i> پرێنت
+        </button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
+        <div style="background:#dbeafe; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem;">${salesInvoices.length}</div>
+          <div style="color:#64748b; font-size:0.9rem;">فاکتووری فرۆشتن</div>
+        </div>
+        <div style="background:#d1fae5; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem;">${moneyInvoices.length}</div>
+          <div style="color:#64748b; font-size:0.9rem;">واسڵی پارە</div>
+        </div>
+        <div style="background:#fef3c7; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem;">${returnRecords.length}</div>
+          <div style="color:#64748b; font-size:0.9rem;">گەڕانەوەی فرۆشتن</div>
+        </div>
+      </div>
+      <div style="background:#f8fafc; border-radius:1rem; padding:1rem; margin-bottom:1.5rem;">
+        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+          <div><strong>💰 قەرزی کەسەکە:</strong> <span style="color:${person.debt > 0 ? '#059669' : '#dc2626'}; font-weight:800;">${person.debt > 0 ? person.debt.toLocaleString() + ' د.ع (قەرزاری تۆیە)' : person.debt < 0 ? (-person.debt).toLocaleString() + ' د.ع (تۆ قەرزاری کەسەکەیت)' : '0 د.ع (بێ قەرز)'}</span></div>
+          <div><strong>📊 کۆی فرۆشتن:</strong> ${salesInvoices.reduce((sum, s) => sum + s.total, 0).toLocaleString()} د.ع</div>
+          <div><strong>📊 کۆی گەڕانەوە:</strong> ${returnRecords.reduce((sum, r) => sum + r.refundAmount, 0).toLocaleString()} د.ع</div>
+        </div>
+      </div>
+    `;
+
+    if (salesInvoices.length) {
+      reportHTML += `
+        <h4 style="margin:1rem 0 0.5rem;">📄 فاکتوورەکانی فرۆشتن</h4>
+        <table class="report-table">
+          <thead><tr><th>ژمارە</th><th>بەروار</th><th>کاڵاکان</th><th>کۆی گشتی</th></tr></thead>
+          <tbody>
+            ${salesInvoices.map(inv => `
+              <tr>
+                <td><strong>${inv.id}</strong></td>
+                <td>${inv.date}</td>
+                <td>${inv.items.map(i => `${i.name} (${i.qty})`).join('، ')}</td>
+                <td style="font-weight:700; color:#059669;">${inv.total.toLocaleString()} د.ع</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    if (moneyInvoices.length) {
+      reportHTML += `
+        <h4 style="margin:1.5rem 0 0.5rem;">💰 واسڵەکانی پارە</h4>
+        <table class="report-table">
+          <thead><tr><th>ژمارە</th><th>بەروار</th><th>بڕ</th><th>تێبینی</th></tr></thead>
+          <tbody>
+            ${moneyInvoices.map(m => `
+              <tr>
+                <td><strong>${m.id}</strong></td>
+                <td>${m.date}</td>
+                <td style="font-weight:700; color:${m.amount >= 0 ? '#059669' : '#dc2626'};">${m.amount > 0 ? '+' : ''}${m.amount.toLocaleString()} د.ع</td>
+                <td>${m.note || '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    if (returnRecords.length) {
+      reportHTML += `
+        <h4 style="margin:1.5rem 0 0.5rem;">↩️ گەڕانەوەکانی فرۆشتن</h4>
+        <table class="report-table">
+          <thead><tr><th>ژمارە</th><th>بەروار</th><th>کاڵا</th><th>بڕ</th><th>بەهای گەڕاوە</th></tr></thead>
+          <tbody>
+            ${returnRecords.map(r => `
+              <tr>
+                <td><strong>${r.id}</strong></td>
+                <td>${r.date}</td>
+                <td>${r.productName}</td>
+                <td>${r.quantity}</td>
+                <td style="font-weight:700; color:#dc2626;">${r.refundAmount.toLocaleString()} د.ع</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    const totalSales = salesInvoices.reduce((sum, s) => sum + s.total, 0);
+    const totalReturns = returnRecords.reduce((sum, r) => sum + r.refundAmount, 0);
+    const totalMoney = moneyInvoices.reduce((sum, m) => sum + m.amount, 0);
+    
+    reportHTML += `
+      <div class="report-total">
+        <div>📊 کۆی گشتی فرۆشتن: <span style="color:#059669;">${totalSales.toLocaleString()} د.ع</span></div>
+        <div>📊 کۆی گشتی گەڕانەوە: <span style="color:#dc2626;">${totalReturns.toLocaleString()} د.ع</span></div>
+        <div>💰 کۆی گشتی واسڵ: <span style="color:#2563eb;">${totalMoney.toLocaleString()} د.ع</span></div>
+        <div style="font-size:1.2rem;">📊 هاوسەنگی کۆتایی: <span style="color:#7c3aed; font-weight:800;">${(totalSales - totalReturns + totalMoney + person.debt).toLocaleString()} د.ع</span></div>
+      </div>
+    `;
+
+    container.innerHTML = reportHTML;
+  };
+
+  window.generatePartnerReport = function() {
+    const searchQuery = document.getElementById('partnerReportSearch').value.trim();
+    if (!searchQuery) {
+      alert('تکایە ناوی شەریکەکە بنووسە!');
+      return;
+    }
+    
+    const partner = partners.find(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    if (!partner) {
+      alert('هیچ شەریکێک بەم ناوە نەدۆزرایەوە!');
+      return;
+    }
+
+    const purchaseInvoices = purchaseHistory.filter(p => p.partnerId === partner.id);
+    const moneyInvoices = moneyRequests.filter(r => r.type === 'partner' && r.entityId === partner.id);
+    const returnRecords = purchaseReturnHistory.filter(r => r.partner === partner.name);
+    
+    const container = document.getElementById('partnerReportResult');
+    container.style.display = 'block';
+    
+    let reportHTML = `
+      <div class="report-header no-print">
+        <div>
+          <div class="report-title">📄 تەقریری شەریک</div>
+          <div class="report-subtitle">${partner.name} | 📱 ${partner.phone} | ${partner.type || ''} | ${partner.address || ''}</div>
+        </div>
+        <button class="report-print-btn" onclick="window.print()">
+          <i class="fas fa-print"></i> پرێنت
+        </button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
+        <div style="background:#dbeafe; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem;">${purchaseInvoices.length}</div>
+          <div style="color:#64748b; font-size:0.9rem;">فاکتووری کڕین</div>
+        </div>
+        <div style="background:#d1fae5; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem;">${moneyInvoices.length}</div>
+          <div style="color:#64748b; font-size:0.9rem;">واسڵی پارە</div>
+        </div>
+        <div style="background:#fef3c7; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem;">${returnRecords.length}</div>
+          <div style="color:#64748b; font-size:0.9rem;">گەڕانەوەی کڕین</div>
+        </div>
+      </div>
+      <div style="background:#f8fafc; border-radius:1rem; padding:1rem; margin-bottom:1.5rem;">
+        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+          <div><strong>💰 قەرزی شەریک:</strong> <span style="color:${partner.debt > 0 ? '#059669' : '#dc2626'}; font-weight:800;">${partner.debt > 0 ? partner.debt.toLocaleString() + ' د.ع (قەرزاری تۆیە)' : partner.debt < 0 ? (-partner.debt).toLocaleString() + ' د.ع (تۆ قەرزاری شەریکەکەیت)' : '0 د.ع (بێ قەرز)'}</span></div>
+          <div><strong>📊 کۆی کڕین:</strong> ${purchaseInvoices.reduce((sum, p) => sum + p.total, 0).toLocaleString()} د.ع</div>
+        </div>
+      </div>
+    `;
+
+    if (purchaseInvoices.length) {
+      reportHTML += `
+        <h4 style="margin:1rem 0 0.5rem;">📦 فاکتوورەکانی کڕین</h4>
+        <table class="report-table">
+          <thead><tr><th>ژمارە</th><th>بەروار</th><th>کاڵاکان</th><th>جۆر</th><th>کۆی گشتی</th></tr></thead>
+          <tbody>
+            ${purchaseInvoices.map(inv => `
+              <tr>
+                <td><strong>${inv.id}</strong></td>
+                <td>${inv.date}</td>
+                <td>${inv.items.map(i => `${i.name} (${i.qty})`).join('، ')}</td>
+                <td><span style="background:${inv.isCash ? '#d1fae5' : '#fef3c7'}; padding:0.2rem 0.8rem; border-radius:1rem;">${inv.isCash ? 'نەقدی' : 'قەرز'}</span></td>
+                <td style="font-weight:700; color:#dc2626;">${inv.total.toLocaleString()} د.ع</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    if (moneyInvoices.length) {
+      reportHTML += `
+        <h4 style="margin:1.5rem 0 0.5rem;">💰 واسڵەکانی پارە</h4>
+        <table class="report-table">
+          <thead><tr><th>ژمارە</th><th>بەروار</th><th>بڕ</th><th>تێبینی</th></tr></thead>
+          <tbody>
+            ${moneyInvoices.map(m => `
+              <tr>
+                <td><strong>${m.id}</strong></td>
+                <td>${m.date}</td>
+                <td style="font-weight:700; color:${m.amount >= 0 ? '#059669' : '#dc2626'};">${m.amount > 0 ? '+' : ''}${m.amount.toLocaleString()} د.ع</td>
+                <td>${m.note || '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    if (returnRecords.length) {
+      reportHTML += `
+        <h4 style="margin:1.5rem 0 0.5rem;">↩️ گەڕانەوەکانی کڕین</h4>
+        <table class="report-table">
+          <thead><tr><th>ژمارە</th><th>بەروار</th><th>کاڵا</th><th>بڕ</th><th>بەهای گەڕاوە</th></tr></thead>
+          <tbody>
+            ${returnRecords.map(r => `
+              <tr>
+                <td><strong>${r.id}</strong></td>
+                <td>${r.date}</td>
+                <td>${r.productName}</td>
+                <td>${r.quantity}</td>
+                <td style="font-weight:700; color:#dc2626;">${r.refundAmount.toLocaleString()} د.ع</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    const totalPurchases = purchaseInvoices.reduce((sum, p) => sum + p.total, 0);
+    const totalMoney = moneyInvoices.reduce((sum, m) => sum + m.amount, 0);
+    const totalReturns = returnRecords.reduce((sum, r) => sum + r.refundAmount, 0);
+    
+    reportHTML += `
+      <div class="report-total">
+        <div>📊 کۆی گشتی کڕین: <span style="color:#dc2626;">${totalPurchases.toLocaleString()} د.ع</span></div>
+        <div>💰 کۆی گشتی واسڵ: <span style="color:#2563eb;">${totalMoney.toLocaleString()} د.ع</span></div>
+        <div>📊 کۆی گشتی گەڕانەوەی کڕین: <span style="color:#059669;">${totalReturns.toLocaleString()} د.ع</span></div>
+        <div style="font-size:1.2rem;">📊 هاوسەنگی کۆتایی: <span style="color:#7c3aed; font-weight:800;">${(totalPurchases - totalMoney - totalReturns + partner.debt).toLocaleString()} د.ع</span></div>
+      </div>
+    `;
+
+    container.innerHTML = reportHTML;
   };
 
   // ===== TAB EVENT LISTENERS =====
