@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <style>
+    /* هەموو ستایلەکان وەک خۆی ماون - هیچ گۆڕانکارییەکی ستایل نەکراوە */
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Arial', sans-serif; }
     :root {
       --bg-start: #e9eefa;
@@ -2427,6 +2428,28 @@
     } else { suggestions.style.display = 'none'; }
   };
 
+  // ===== فەنکشنی نوێ بۆ ژماردنی تەوازنی قەرز دوای پارە پێدان =====
+  function calculateDebtAfterGive(currentDebt, amount) {
+    // حاڵەت 1: debt = 0 (بێ قەرز) → debt > 0 (کەسەکە قەرزاری من دەبێت)
+    if (currentDebt === 0) {
+      return amount; // debt = +amount
+    }
+    // حاڵەت 2: debt > 0 (کەسەکە قەرزاری منە) → debt > 0 (زیاتر قەرزدار دەبێت)
+    else if (currentDebt > 0) {
+      return currentDebt + amount; // debt زیاد دەکات
+    }
+    // حاڵەت 3: debt < 0 (من قەرزاری کەسەکەم) و بڕی پارە کەمتر یان یەکسانە بە قەرز
+    else if (currentDebt < 0 && amount <= Math.abs(currentDebt)) {
+      return currentDebt + amount; // debt نزیک دەبێتەوە بۆ 0 (هێشتا نەرێنی)
+    }
+    // حاڵەت 4: debt < 0 (من قەرزاری کەسەکەم) و بڕی پارە زیاترە لە قەرز
+    else if (currentDebt < 0 && amount > Math.abs(currentDebt)) {
+      return amount - Math.abs(currentDebt); // debt دەبێتە ئەرێنی (کەسەکە قەرزاری من دەبێت)
+    }
+    return currentDebt;
+  }
+
+  // ===== گۆڕینی فەنکشنی submitMoneyGive =====
   window.submitMoneyGive = function() {
     if (!selectedGiveEntity) { alert('تکایە کەس یان شەریک هەڵبژێرە'); return; }
     const amount = parseInt(document.getElementById('moneyGiveAmount').value);
@@ -2436,24 +2459,60 @@
     const now = new Date();
     const dateStr = dateTime ? new Date(dateTime).toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : now.toLocaleString('ckb');
     const invId = 'GIVE' + Math.floor(Math.random() * 9000 + 1000);
+    
+    // بەکارهێنانی فەنکشنی نوێ بۆ ژماردنی بەهای نوێی قەرز
     if (selectedGiveEntity.type === 'person') {
       const person = customers.find(c => c.id === selectedGiveEntity.id);
       if (person) {
-        person.debt = (person.debt || 0) - amount;
+        const oldDebt = person.debt || 0;
+        const newDebt = calculateDebtAfterGive(oldDebt, amount);
+        person.debt = newDebt;
         if (!person.movements) person.movements = [];
-        person.movements.push({ type: 'give_money', date: dateStr, amount: amount, note: note, invoiceId: invId });
+        person.movements.push({ 
+          type: 'give_money', 
+          date: dateStr, 
+          amount: amount, 
+          note: note, 
+          invoiceId: invId,
+          oldDebt: oldDebt,
+          newDebt: newDebt
+        });
         saveCustomers();
       }
     } else {
       const partner = partners.find(p => p.id === selectedGiveEntity.id);
       if (partner) {
-        partner.debt = (partner.debt || 0) - amount;
+        const oldDebt = partner.debt || 0;
+        const newDebt = calculateDebtAfterGive(oldDebt, amount);
+        partner.debt = newDebt;
         if (!partner.movements) partner.movements = [];
-        partner.movements.push({ type: 'give_money', date: dateStr, amount: amount, note: note, invoiceId: invId });
+        partner.movements.push({ 
+          type: 'give_money', 
+          date: dateStr, 
+          amount: amount, 
+          note: note, 
+          invoiceId: invId,
+          oldDebt: oldDebt,
+          newDebt: newDebt
+        });
         savePartners();
       }
     }
-    giveMoneyHistory.unshift({ id: invId, date: dateStr, type: selectedGiveEntity.type, entityId: selectedGiveEntity.id, entityName: selectedGiveEntity.name, entityPhone: selectedGiveEntity.phone, amount: amount, note: note, timestamp: dateTime || now.toISOString() });
+    
+    // تۆمارکردنی مێژوو بە زانیاری قەرز
+    giveMoneyHistory.unshift({ 
+      id: invId, 
+      date: dateStr, 
+      type: selectedGiveEntity.type, 
+      entityId: selectedGiveEntity.id, 
+      entityName: selectedGiveEntity.name, 
+      entityPhone: selectedGiveEntity.phone, 
+      amount: amount, 
+      note: note, 
+      timestamp: dateTime || now.toISOString(),
+      oldDebt: selectedGiveEntity.debt || 0,
+      newDebt: (selectedGiveEntity.debt || 0) + amount
+    });
     
     // کەمکردنەوە لە پارەی ئەمرۆ
     moneyRequests.push({
@@ -2485,6 +2544,7 @@
     alert(`پارە پێدان بە سەرکەوتوویی تۆمارکرا!\nبڕ: ${amount.toLocaleString()} د.ع`);
   };
 
+  // ===== گۆڕینی فەنکشنی renderGiveHistory =====
   function renderGiveHistory(filterText = '', typeFilter = 'all', dateFrom = '', dateTo = '') {
     const container = document.getElementById('giveHistoryList');
     if (!container) return;
@@ -2499,15 +2559,46 @@
       <div style="background:#ede9fe; padding:0.8rem; border-radius:1rem; margin-bottom:1rem; display:flex; justify-content:space-between; flex-wrap:wrap;">
         <strong>کۆی پارە پێدان: ${total.toLocaleString()} د.ع</strong>
       </div>
-      ${filtered.map(g => `
+      ${filtered.map(g => {
+        // دیاریکردنی جۆری گۆڕانکاری قەرز
+        let debtChangeType = '';
+        let debtChangeColor = '';
+        const oldDebt = g.oldDebt || 0;
+        const newDebt = g.newDebt || (oldDebt + g.amount);
+        
+        if (oldDebt === 0 && newDebt > 0) {
+          debtChangeType = '🟢 بوو بە قەرزدار';
+          debtChangeColor = '#d1fae5';
+        } else if (oldDebt > 0 && newDebt > 0 && newDebt > oldDebt) {
+          debtChangeType = '🟢 زیاتر قەرزدار بوو';
+          debtChangeColor = '#d1fae5';
+        } else if (oldDebt < 0 && newDebt < 0 && newDebt > oldDebt) {
+          debtChangeType = '🔴 کەمتری قەرزدار بووم';
+          debtChangeColor = '#fee2e2';
+        } else if (oldDebt < 0 && newDebt === 0) {
+          debtChangeType = '⚪ قەرزەکەم پاکبوویەوە';
+          debtChangeColor = '#f1f5f9';
+        } else if (oldDebt < 0 && newDebt > 0) {
+          debtChangeType = '🟢 بوو بە قەرزدار (قەرزەکەم پاکبوویەوە و زیاتر)';
+          debtChangeColor = '#d1fae5';
+        } else {
+          debtChangeType = '📊 گۆڕانکاری قەرز';
+          debtChangeColor = '#f8fafc';
+        }
+        
+        return `
         <div class="history-row">
           <div><strong>${g.id}</strong><br><span style="font-size:0.7rem;">${g.date}</span></div>
           <div>${g.type === 'person' ? '👤' : '🤝'} ${g.entityName}</div>
           <div style="font-weight:bold; color:#7c3aed;">${g.amount.toLocaleString()} د.ع</div>
           <div style="font-size:0.8rem;">${g.note}</div>
+          <div style="font-size:0.7rem; background:${debtChangeColor}; padding:0.2rem 0.5rem; border-radius:1rem;">
+            ${debtChangeType}<br>
+            ${oldDebt.toLocaleString()} → ${newDebt.toLocaleString()}
+          </div>
           <div><button class="btn-icon" onclick="deleteGiveRecord('${g.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button></div>
-        </div>
-      `).join('')}
+        </div>`;
+      }).join('')}
     `;
   }
 
