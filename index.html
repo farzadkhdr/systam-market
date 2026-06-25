@@ -36,7 +36,8 @@
     .system-container.visible { opacity: 1; pointer-events: all; }
     .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.2rem; flex-wrap: wrap; gap: 1rem; }
     .logo-area { display: flex; align-items: center; gap: 0.7rem; }
-    .logo-icon { background: linear-gradient(135deg,#1e293b,#0f172a); color:white; width:48px; height:48px; border-radius:1.5rem; display:flex; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 12px 20px -10px rgba(15,23,42,0.5); }
+    .logo-icon { background: linear-gradient(135deg,#1e293b,#0f172a); color:white; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 12px 20px -10px rgba(15,23,42,0.5); overflow:hidden; }
+    .logo-icon img { width:48px; height:48px; border-radius:50%; object-fit:cover; }
     .logo-text { font-size:1.9rem; font-weight:800; background:linear-gradient(to left,#0f172a,#334155); -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:-0.3px; }
     .header-actions { display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap; }
     .date-badge { background:rgba(255,255,255,0.8); backdrop-filter:blur(5px); padding:0.6rem 1.5rem; border-radius:3rem; font-weight:600; color:#1e293b; box-shadow:0 5px 12px rgba(0,0,0,0.05); border:1px solid white; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem; }
@@ -100,6 +101,7 @@
     .customer-badge { background:#dbeafe; padding:0.3rem 1.2rem; border-radius:2rem; font-weight:600; font-size:0.85rem; display:inline-flex; align-items:center; gap:0.4rem; }
     .invoice-preview { background:#fffbf5; border:2px dashed #cbd5e1; border-radius:2rem; padding:1.4rem; margin-top:1.2rem; }
     .invoice-logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:1.4rem; color:var(--text-primary); }
+    .invoice-logo img { width:40px; height:40px; border-radius:50%; object-fit:cover; }
     .invoice-table { width:100%; border-collapse:collapse; margin:1rem 0; }
     .invoice-table th, .invoice-table td { padding:0.5rem; text-align:right; border-bottom:1px solid #e2e8f0; }
     .history-search { display:flex; gap:0.8rem; margin-bottom:1.5rem; flex-wrap:wrap; }
@@ -181,7 +183,103 @@
     @keyframes floatParticle { 0% { transform:translateY(100vh) scale(0); opacity:0; } 10% { opacity:1; } 90% { opacity:1; } 100% { transform:translateY(-10vh) scale(1); opacity:0; } }
     .custom-toast { position:fixed; bottom:30px; right:30px; background:rgba(16,185,129,0.95); color:white; padding:1rem 2rem; border-radius:1.5rem; font-weight:600; font-size:1rem; box-shadow:0 20px 40px rgba(0,0,0,0.3); z-index:10000; transform:translateY(20px); opacity:0; transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); max-width:90%; }
     .custom-toast.show { transform:translateY(0); opacity:1; }
-    @media print { body { background:white; } .system-container { box-shadow:none; backdrop-filter:none; background:white; padding:0; } .back-header, .tabs, .new-sale-layout .card-glass:first-child, .history-search, .btn-icon, .back-btn, .no-print { display:none !important; } .invoice-preview { border:none; } .barcode-print-section { display:block; } .barcode-print-card { break-inside:avoid; margin-bottom:1rem; } .login-overlay { display:none !important; } }
+
+    /* ===== LOGO STYLES ===== */
+    .logo-upload-container {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+    .logo-preview-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid #e2e8f0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      flex-shrink: 0;
+    }
+    .logo-preview-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .logo-preview-circle i {
+      font-size: 2.5rem;
+      color: #94a3b8;
+    }
+    .logo-upload-btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .logo-upload-btn:hover {
+      background: #1d4ed8;
+    }
+    .logo-remove-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .logo-remove-btn:hover {
+      background: #dc2626;
+    }
+
+    /* لۆگۆ لە پرێنتدا */
+    .logo-print {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .logo-print img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .logo-print i {
+      font-size: 2rem;
+      color: #0f172a;
+    }
+    @media print {
+      body { background:white; }
+      .system-container { box-shadow:none; backdrop-filter:none; background:white; padding:0; }
+      .back-header, .tabs, .new-sale-layout .card-glass:first-child, .history-search, .btn-icon, .back-btn, .no-print { display:none !important; }
+      .invoice-preview { border:none; }
+      .barcode-print-section { display:block; }
+      .barcode-print-card { break-inside:avoid; margin-bottom:1rem; }
+      .login-overlay { display:none !important; }
+      .logo-print {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.8rem !important;
+      }
+      .logo-print img {
+        width: 50px !important;
+        height: 50px !important;
+        border-radius: 50% !important;
+        object-fit: cover !important;
+      }
+      .logo-print i {
+        font-size: 2rem !important;
+      }
+    }
+
     @media (max-width:700px) { .system-container { padding:1.2rem; } .module-section { grid-template-columns:repeat(3,1fr); } .login-box { padding:2rem 1.5rem; border-radius:2rem; } .login-logo-icon { width:60px; height:60px; font-size:2rem; } .login-logo h1 { font-size:1.5rem; } }
 
     .accounting-transfer-box {
@@ -240,7 +338,6 @@
     .accounting-balance .today-amount { color: #059669; }
     .accounting-balance .total-amount { color: #2563eb; }
 
-    /* ستایل بۆ تەقاریر */
     .report-container {
       background: white;
       border-radius: 1.5rem;
@@ -257,87 +354,22 @@
       padding-bottom: 1rem;
       margin-bottom: 1.5rem;
     }
-    .report-title {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #0f172a;
-    }
-    .report-subtitle {
-      color: #64748b;
-      font-size: 0.9rem;
-    }
-    .report-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-    }
-    .report-table th {
-      background: #f1f5f9;
-      padding: 0.8rem;
-      text-align: right;
-      font-weight: 700;
-      border-bottom: 2px solid #e2e8f0;
-    }
-    .report-table td {
-      padding: 0.8rem;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .report-table tr:hover {
-      background: #f8fafc;
-    }
-    .report-total {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 700;
-      font-size: 1.1rem;
-      padding: 1rem;
-      background: #f8fafc;
-      border-radius: 1rem;
-      margin-top: 1rem;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .report-print-btn {
-      background: #0f172a;
-      color: white;
-      border: none;
-      padding: 0.6rem 1.5rem;
-      border-radius: 2rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .report-print-btn:hover {
-      background: #1e293b;
-    }
-    .report-section-tab {
-      background: rgba(255,255,255,0.7);
-      padding: 0.5rem 1.2rem;
-      border-radius: 2rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid #e2e8f0;
-      transition: 0.2s;
-    }
-    .report-section-tab.active {
-      background: #0f172a;
-      color: white;
-      border-color: #0f172a;
-    }
-    .report-section-tab:hover:not(.active) {
-      background: #f1f5f9;
-    }
-    .adjustment-history-item {
-      background: #f8fafc;
-      border-right: 4px solid #7c3aed;
-      padding: 0.8rem;
-      border-radius: 0.8rem;
-      margin-bottom: 0.5rem;
-    }
-    .adjustment-history-item.positive { border-right-color: #059669; }
-    .adjustment-history-item.negative { border-right-color: #dc2626; }
+    .report-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; }
+    .report-subtitle { color: #64748b; font-size: 0.9rem; }
+    .report-table { width:100%; border-collapse:collapse; margin:1rem 0; }
+    .report-table th { background:#f1f5f9; padding:0.8rem; text-align:right; font-weight:700; border-bottom:2px solid #e2e8f0; }
+    .report-table td { padding:0.8rem; border-bottom:1px solid #f1f5f9; }
+    .report-table tr:hover { background:#f8fafc; }
+    .report-total { display:flex; justify-content:space-between; font-weight:700; font-size:1.1rem; padding:1rem; background:#f8fafc; border-radius:1rem; margin-top:1rem; flex-wrap:wrap; gap:0.5rem; }
+    .report-print-btn { background:#0f172a; color:white; border:none; padding:0.6rem 1.5rem; border-radius:2rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:0.5rem; }
+    .report-print-btn:hover { background:#1e293b; }
+    .report-section-tab { background:rgba(255,255,255,0.7); padding:0.5rem 1.2rem; border-radius:2rem; font-weight:600; cursor:pointer; border:1px solid #e2e8f0; transition:0.2s; }
+    .report-section-tab.active { background:#0f172a; color:white; border-color:#0f172a; }
+    .report-section-tab:hover:not(.active) { background:#f1f5f9; }
+    .adjustment-history-item { background:#f8fafc; border-right:4px solid #7c3aed; padding:0.8rem; border-radius:0.8rem; margin-bottom:0.5rem; }
+    .adjustment-history-item.positive { border-right-color:#059669; }
+    .adjustment-history-item.negative { border-right-color:#dc2626; }
+
     @media print {
       .no-print { display: none !important; }
       .report-container { box-shadow: none; padding: 1rem; }
@@ -436,8 +468,6 @@
       </div>
       <div class="card-glass" style="max-width:700px; margin:0 auto;">
         <h3 style="margin-bottom:1.5rem;"><i class="fas fa-exchange-alt"></i> گواستنەوەی پارە لە واسڵی ئەمرۆ بۆ کۆی واسڵکراو</h3>
-
-        <!-- Transfer box -->
         <div class="accounting-transfer-box">
           <h3><i class="fas fa-arrow-right"></i> گواستنەوەی پارە</h3>
           <div class="input-group">
@@ -448,7 +478,6 @@
             <i class="fas fa-info-circle"></i> پارە لە واسڵی ئەمرۆ دەبڕدرێت و بۆ کۆی واسڵکراو زیاد دەکرێت.
           </div>
         </div>
-
         <div style="background:#f8fafc; border-radius:1.5rem; padding:1.5rem; margin-bottom:1.5rem; border:2px solid #e2e8f0;">
           <h3 style="margin-bottom:1rem;"><i class="fas fa-balance-scale"></i> کۆی پارە</h3>
           <div class="accounting-balance">
@@ -456,7 +485,6 @@
             <span class="total-amount">💰 کۆی واسڵکراو: <strong id="accTotalMoney">0</strong> د.ع</span>
           </div>
         </div>
-
         <div style="background:#fef9c3; border-radius:1.5rem; padding:1rem; border:1px solid #fde68a;">
           <p style="font-size:0.9rem; color:#854d0e;">
             <i class="fas fa-lightbulb"></i> <strong>تێبینی:</strong> ئەگەر پارەی واسڵی ئەمرۆت زۆرە و دەتەوێت بەشێکی بگوازیتەوە بۆ کۆی گشتی، بڕەکە بنووسە و کلیکی گواستنەوە بکە.
@@ -792,7 +820,6 @@
         </div>
       </div>
       <div class="panel" id="personsAdjustPanel">
-        <!-- بەشی متابق کردن -->
         <div class="card-glass" style="max-width:700px; margin-left:auto; margin-right:auto;">
           <h3 style="margin-bottom:1rem;"><i class="fas fa-balance-scale" style="color:#7c3aed;"></i> متابق کردن (تەعدیلی قەرز)</h3>
           <div style="margin-bottom:1rem;">
@@ -1320,6 +1347,30 @@
       <div id="settingsAppearancePanel" class="panel card-glass">
         <h3 style="margin-bottom:1rem;"><i class="fas fa-paint-roller"></i> دیزاینی سیستەم</h3>
         <div style="margin-bottom:1.2rem;"><label>ناوی سیستەم (لەسەر فاکتوورەش دەردەکەوێت):</label><input type="text" id="systemNameInput" placeholder="مارکێت" style="width:100%;padding:0.6rem;border-radius:2rem;border:1px solid #cbd5e1;margin-top:0.3rem;"></div>
+
+        <!-- ===== LOGO UPLOAD SECTION ===== -->
+        <div style="margin-bottom:1.2rem;">
+          <label style="font-weight:600; display:block; margin-bottom:0.5rem;">🖼️ لۆگۆی سیستەم (شێوەی خڕ):</label>
+          <div class="logo-upload-container">
+            <div class="logo-preview-circle" id="logoPreviewCircle">
+              <i class="fas fa-store-alt" id="logoPlaceholderIcon"></i>
+              <img id="logoPreviewImage" style="display:none;" alt="لۆگۆ">
+            </div>
+            <div>
+              <input type="file" id="logoFileInput" accept="image/*" style="display:none;" onchange="handleLogoUpload(event)">
+              <button class="logo-upload-btn" onclick="document.getElementById('logoFileInput').click()">
+                <i class="fas fa-upload"></i> هەڵبژاردنی وێنە
+              </button>
+              <button class="logo-remove-btn" onclick="removeLogo()" style="margin-right:0.5rem;">
+                <i class="fas fa-trash"></i> سڕینەوە
+              </button>
+            </div>
+          </div>
+          <div style="font-size:0.8rem; color:#64748b; margin-top:0.3rem;">
+            <i class="fas fa-info-circle"></i> وێنە بە شێوەی خڕ دەردەکەوێت، قەبارەی پێشنیارکراو: 200×200 پکسل
+          </div>
+        </div>
+
         <div style="margin-bottom:1.2rem;"><label>وێنەی سیستەم (ئایکۆن فۆنت):</label><select id="systemIconSelect" style="width:100%;padding:0.6rem;border-radius:2rem;border:1px solid #cbd5e1;margin-top:0.3rem;"><option value="fa-store-alt">🏪 فرۆشگا</option><option value="fa-shopping-basket">🛒 سەبەتە</option><option value="fa-crown">👑 تاج</option><option value="fa-rocket">🚀 ڕۆکێت</option><option value="fa-building">🏢 بینا</option></select></div>
         <div style="margin-bottom:1rem;"><label>ڕەنگی باکگراوند:</label><input type="color" id="bgColorPicker" style="display:block;width:60px;height:40px;margin-top:0.3rem;"></div>
         <div><label style="font-weight:600;">🎨 پێشنیاری ڕەنگی جوان:</label><div class="theme-palette" id="themePalette"></div></div>
@@ -1808,21 +1859,18 @@
         <div class="page-title"><i class="fas fa-file-alt" style="color:#7c3aed;"></i> تەقاریر</div>
       </div>
       
-      <!-- Report Sections Tabs -->
       <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:1.5rem;">
         <div class="report-section-tab active" data-reporttab="products" onclick="switchReportTab('products')">📦 تەقریری کاڵا</div>
         <div class="report-section-tab" data-reporttab="persons" onclick="switchReportTab('persons')">👤 تەقریری کەس/شەریک</div>
         <div class="report-section-tab" data-reporttab="invoices" onclick="switchReportTab('invoices')">📄 گەڕان بەدوای فاکتوورە</div>
       </div>
 
-      <!-- Products Report -->
       <div id="reportProductsPanel" class="panel active">
         <div class="card-glass">
           <h3 style="margin-bottom:1rem;"><i class="fas fa-box"></i> تەقریری کاڵا</h3>
           <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom:1.5rem;">
             <div style="flex:1; min-width:200px;">
-              <input type="text" id="productReportSearch" placeholder="ناوی کاڵا یان بارکۆد بنووسە..." 
-                     style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
+              <input type="text" id="productReportSearch" placeholder="ناوی کاڵا یان بارکۆد بنووسە..." style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
             </div>
             <button onclick="generateProductReport()" style="background:#b45309; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:600;">
               <i class="fas fa-search"></i> گەڕان
@@ -1832,7 +1880,6 @@
         </div>
       </div>
 
-      <!-- Persons/Partners Report -->
       <div id="reportPersonsPanel" class="panel">
         <div class="card-glass">
           <h3 style="margin-bottom:1rem;"><i class="fas fa-users"></i> تەقریری کەس یان شەریک</h3>
@@ -1844,8 +1891,7 @@
               </select>
             </div>
             <div style="flex:1; min-width:200px;">
-              <input type="text" id="personReportSearch" placeholder="ناوی کەس یان شەریک بنووسە..." 
-                     style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
+              <input type="text" id="personReportSearch" placeholder="ناوی کەس یان شەریک بنووسە..." style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
             </div>
             <button onclick="generatePersonReport()" style="background:#7c3aed; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:600;">
               <i class="fas fa-search"></i> گەڕان
@@ -1855,14 +1901,12 @@
         </div>
       </div>
 
-      <!-- Invoice Search -->
       <div id="reportInvoicesPanel" class="panel">
         <div class="card-glass">
           <h3 style="margin-bottom:1rem;"><i class="fas fa-file-invoice"></i> گەڕان بەدوای فاکتوورەکان</h3>
           <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center; margin-bottom:1.5rem;">
             <div style="flex:1; min-width:200px;">
-              <input type="text" id="invoiceSearchInput" placeholder="ژمارەی فاکتوورە، ناوی کاڵا، یان ناوی کڕیار/شەریک..." 
-                     style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
+              <input type="text" id="invoiceSearchInput" placeholder="ژمارەی فاکتوورە، ناوی کاڵا، یان ناوی کڕیار/شەریک..." style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
             </div>
             <select id="invoiceSearchType" style="padding:0.7rem 1rem; border-radius:2rem; border:1px solid #cbd5e1;">
               <option value="all">📋 هەموو</option>
@@ -1894,6 +1938,83 @@
   function isAdmin() {
     const loggedUser = JSON.parse(localStorage.getItem('market_logged_user') || '{}');
     return loggedUser.role === 'admin';
+  }
+
+  // ===== LOGO FUNCTIONS =====
+  let systemLogo = localStorage.getItem('market_system_logo') || '';
+
+  function renderLogoPreview() {
+    const circle = document.getElementById('logoPreviewCircle');
+    const img = document.getElementById('logoPreviewImage');
+    const icon = document.getElementById('logoPlaceholderIcon');
+    if (!circle) return;
+    if (systemLogo) {
+      img.src = systemLogo;
+      img.style.display = 'block';
+      icon.style.display = 'none';
+    } else {
+      img.style.display = 'none';
+      icon.style.display = 'block';
+    }
+  }
+
+  window.handleLogoUpload = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('تکایە فایلێکی وێنە هەڵبژێرە (jpg, png, gif)');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      alert('قەبارەی وێنە دەبێت لە 2 مێگابایت کەمتر بێت');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      systemLogo = e.target.result;
+      localStorage.setItem('market_system_logo', systemLogo);
+      renderLogoPreview();
+      applyLogoToPrint();
+      showToast('✅ لۆگۆ بە سەرکەوتوویی ئەپلۆدکرا!', 'success');
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  };
+
+  window.removeLogo = function() {
+    if (!systemLogo) return;
+    if (!confirm('دڵنیایت لە سڕینەوەی لۆگۆ؟')) return;
+    systemLogo = '';
+    localStorage.removeItem('market_system_logo');
+    renderLogoPreview();
+    applyLogoToPrint();
+    showToast('لۆگۆ سڕکرایەوە', 'success');
+  };
+
+  function applyLogoToPrint() {
+    const printLogos = document.querySelectorAll('.logo-print');
+    printLogos.forEach(el => {
+      const img = el.querySelector('img');
+      const icon = el.querySelector('i');
+      if (systemLogo) {
+        if (img) {
+          img.src = systemLogo;
+          img.style.display = 'block';
+        }
+        if (icon) icon.style.display = 'none';
+      } else {
+        if (img) img.style.display = 'none';
+        if (icon) icon.style.display = 'block';
+      }
+    });
+    const logoIcon = document.getElementById('topLogoIcon');
+    if (logoIcon) {
+      if (systemLogo) {
+        logoIcon.innerHTML = `<img src="${systemLogo}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">`;
+      } else {
+        logoIcon.innerHTML = `<i class="fas ${appearance.systemIcon}"></i>`;
+      }
+    }
   }
 
   // ===== LOGIN SYSTEM =====
@@ -2139,7 +2260,6 @@
   let selectedReturnProduct = null;
   let selectedReturnCustomerForDebt = null;
 
-  // ===== MONEY SPEND DATA =====
   let expenseHistory = JSON.parse(localStorage.getItem('market_expense_history') || '[]');
   let giveMoneyHistory = JSON.parse(localStorage.getItem('market_give_money_history') || '[]');
 
@@ -2175,8 +2295,6 @@
   // ===== ACCOUNTING / TRANSFER FUNCTION =====
   function updateAccountingDisplay() {
     const today = new Date().toLocaleDateString('ckb');
-    
-    // پارەی ئەمرۆ - هەموو زیادکردنەکان و کەمکردنەکان
     const todayCredits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
       .reduce((sum, r) => sum + r.amount, 0);
@@ -2184,12 +2302,9 @@
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
       .reduce((sum, r) => sum + Math.abs(r.amount), 0);
     const todayMoney = todayCredits - todayDebits;
-    
-    // کۆی گشتی واسڵکراو (تەنها گواستنەوەکان)
     const totalMoney = moneyRequests
       .filter(r => r.isTransfer === true)
       .reduce((sum, r) => sum + r.amount, 0);
-    
     const accToday = document.getElementById('accTodayMoney');
     const accTotal = document.getElementById('accTotalMoney');
     if (accToday) accToday.textContent = Math.max(0, todayMoney).toLocaleString();
@@ -2211,7 +2326,6 @@
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
       .reduce((sum, r) => sum + Math.abs(r.amount), 0);
     const todayMoney = todayCredits - todayDebits;
-    
     if (amount > todayMoney) {
       alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${Math.max(0, todayMoney).toLocaleString()} د.ع) زیاترە!`);
       return;
@@ -2219,8 +2333,6 @@
     if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ کۆی واسڵکراو؟`)) {
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-      
-      // زیادکردن بۆ کۆی گشتی واسڵکراو
       moneyRequests.push({
         id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
         date: dateStr,
@@ -2231,8 +2343,6 @@
         note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
         isTransfer: true
       });
-      
-      // کەمکردنەوە لە پارەی ئەمرۆ
       moneyRequests.push({
         id: 'TR-OUT' + Date.now(),
         date: dateStr,
@@ -2244,7 +2354,6 @@
         isTransfer: false,
         isExpense: true
       });
-      
       localStorage.setItem('market_money_requests', JSON.stringify(moneyRequests));
       updateAccountingDisplay();
       updateStats();
@@ -2444,7 +2553,6 @@
   // ===== REPORT FUNCTIONS =====
   let adjustmentHistory = JSON.parse(localStorage.getItem('market_adjustment_history') || '[]');
 
-  // Report tab switching
   window.switchReportTab = function(tab) {
     document.querySelectorAll('.report-section-tab').forEach(t => t.classList.remove('active'));
     document.querySelector(`[data-reporttab="${tab}"]`).classList.add('active');
@@ -2460,7 +2568,6 @@
       alert('تکایە ناوی کاڵا یان بارکۆد بنووسە!');
       return;
     }
-    
     const product = warehouseProducts.find(p => 
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
       p.barcode.includes(searchQuery)
@@ -2469,8 +2576,6 @@
       alert('هیچ کاڵایەک بەم ناوە نەدۆزرایەوە!');
       return;
     }
-
-    // Calculate total sales and purchases for this product
     let totalSold = 0;
     let totalSoldAmount = 0;
     let totalPurchased = 0;
@@ -2607,7 +2712,7 @@
     container.innerHTML = reportHTML;
   };
 
-  // ===== PERSON/PARTNER REPORT (Enhanced) =====
+  // ===== PERSON/PARTNER REPORT =====
   window.generatePersonReport = function() {
     const searchQuery = document.getElementById('personReportSearch').value.trim();
     const type = document.getElementById('personReportType').value;
@@ -2615,7 +2720,6 @@
       alert('تکایە ناوی کەس یان شەریک بنووسە!');
       return;
     }
-    
     let entity;
     let sales = [];
     let purchases = [];
@@ -2677,7 +2781,6 @@
       </div>
     `;
 
-    // Show sales/purchases with product details
     if (type === 'person' && sales.length) {
       reportHTML += `
         <h4 style="margin:1rem 0 0.5rem;">🛒 فاکتوورەکانی فرۆشتن</h4>
@@ -2755,7 +2858,6 @@
       `;
     }
 
-    // Show returns if any
     if (returnRecords.length) {
       reportHTML += `
         <h4 style="margin:1.5rem 0 0.5rem;">↩️ گەڕانەوەکان</h4>
@@ -2795,7 +2897,6 @@
     }
 
     let results = [];
-    let title = '';
 
     if (type === 'all' || type === 'sale') {
       const sales = saleHistory.filter(s => 
@@ -2931,12 +3032,14 @@
       body{font-family:'Segoe UI';padding:2rem;max-width:800px;margin:0 auto;}
       table{width:100%;border-collapse:collapse;margin:1rem 0;}
       td,th{padding:8px;border-bottom:1px solid #ccc;text-align:right;}
-      .header{display:flex;justify-content:space-between;border-bottom:2px solid #000;padding-bottom:1rem;margin-bottom:1.5rem;}
+      .header{display:flex;align-items:center;gap:1rem;border-bottom:2px solid #000;padding-bottom:1rem;margin-bottom:1.5rem;}
+      .logo-img{width:50px;height:50px;border-radius:50%;object-fit:cover;}
       .footer{margin-top:2rem;border-top:1px solid #ccc;padding-top:1rem;text-align:center;}
     </style></head><body>
       <div class="header">
+        ${systemLogo ? `<img src="${systemLogo}" class="logo-img">` : `<i class="fas ${appearance.systemIcon}" style="font-size:2rem;"></i>`}
         <div><h2>${appearance.systemName}</h2><div>${type === 'sale' ? 'فاکتووری فرۆشتن' : 'فاکتووری کڕین'}</div></div>
-        <div><strong>ژمارە:</strong> ${invoice.id}<br><strong>بەروار:</strong> ${invoice.date}</div>
+        <div style="margin-right:auto;"><strong>ژمارە:</strong> ${invoice.id}<br><strong>بەروار:</strong> ${invoice.date}</div>
       </div>
       <div><strong>${type === 'sale' ? 'کڕیار' : 'شەریک'}:</strong> ${type === 'sale' ? invoice.customer : invoice.partner}</div>
       <table>
@@ -2968,7 +3071,6 @@
     
     if (!invoice) return;
 
-    // Show a simple dialog to edit items
     let itemsHTML = invoice.items.map((item, idx) => `
       <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
         <span style="font-weight:600; min-width:120px;">${item.name}</span>
@@ -2978,7 +3080,6 @@
       </div>
     `).join('');
 
-    // Create overlay dialog
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position: fixed; top:0; left:0; width:100%; height:100%;
@@ -3015,16 +3116,13 @@
   window.removeInvoiceItem = function(invId, type, idx) {
     if (!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە لە فاکتوورە؟')) return;
     let invoice;
-    let historyArray;
     let saveFunction;
     
     if (type === 'sale') {
       invoice = saleHistory.find(s => s.id === invId);
-      historyArray = saleHistory;
       saveFunction = saveSaleHistory;
     } else {
       invoice = purchaseHistory.find(p => p.id === invId);
-      historyArray = purchaseHistory;
       saveFunction = savePurchaseHistory;
     }
     
@@ -3095,7 +3193,6 @@
     const inputs = itemsContainer.querySelectorAll('input');
     const items = [];
     
-    // Group inputs by index
     const qtyInputs = [];
     const priceInputs = [];
     inputs.forEach(input => {
@@ -3149,39 +3246,26 @@
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
-    
-    // کۆی پارەی واسڵکراو (تەنها لە گواستنەوەکان)
     const totalMoneyReceived = moneyRequests
       .filter(r => r.isTransfer === true)
       .reduce((sum, r) => sum + r.amount, 0);
-    
     const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
     const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
     const totalSpend = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
                        employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
                        returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
     const totalSpendAndExpenses = totalSpend + totalExpenses + totalGiveMoney;
-    
-    // پارەی ئەمرۆ - حسابکردن لە moneyRequests
     const today = new Date().toLocaleDateString('ckb');
-    
-    // هەموو زیادکردنەکانی ئەمرۆ (جگە لە گواستنەوەکان)
     const todayCredits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
       .reduce((sum, r) => sum + r.amount, 0);
-    
-    // هەموو کەمکردنەکانی ئەمرۆ
     const todayDebits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
       .reduce((sum, r) => sum + Math.abs(r.amount), 0);
-    
     const todayMoneyReceived = todayCredits - todayDebits;
-    
     const totalProducts = warehouseProducts.length;
     const totalPersons = customers.length;
-    // قەرزاری من بۆ شەریک: ئەگەر debt نەرێنی بێت (واتە من قەرزاری شەریکم)
     const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -p.debt), 0);
-    // قەرزاری کەسەکان بۆ من: ئەگەر debt ئەرێنی بێت (واتە کەسەکە قەرزاری منە)
     const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, c.debt), 0);
 
     const statTotalSalesEl = document.getElementById('statTotalSales');
@@ -3252,8 +3336,6 @@
     const now = new Date();
     const dateStr = dateTime ? new Date(dateTime).toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : now.toLocaleString('ckb');
     expenseHistory.unshift({ id: 'EXP' + Math.floor(Math.random() * 9000 + 1000), date: dateStr, amount: amount, category: category, note: note || category, timestamp: dateTime || now.toISOString() });
-    
-    // کەمکردنەوە لە پارەی ئەمرۆ
     moneyRequests.push({
       id: 'EXP-MONEY' + Date.now(),
       date: dateStr,
@@ -3265,7 +3347,6 @@
       isTransfer: false,
       isExpense: true
     });
-    
     saveExpenseHistory();
     saveMoneyRequests();
     document.getElementById('expenseAmount').value = '';
@@ -3910,6 +3991,8 @@
     } else { showLogin(); }
     updateStats();
     applyAppearanceToDOM();
+    renderLogoPreview();
+    applyLogoToPrint();
     renderDashboardModules();
     renderCart();
     updateInvoicePreview();
@@ -4050,7 +4133,7 @@
     if (!detail) return;
     detail.style.display = 'block';
     detail.innerHTML = `
-      <div class="invoice-logo"><i class="fas fa-money-check-alt"></i> واسڵی پارە</div>
+      <div class="invoice-logo">${systemLogo ? `<img src="${systemLogo}">` : `<i class="fas ${appearance.systemIcon}"></i>`} ${appearance.systemName}</div>
       <div style="margin:1rem 0;"><strong>کۆدی واسڵ:</strong> ${record.id} | ${record.date}</div>
       <div style="background:#f8fafc; border-radius:1rem; padding:1rem;">
         <p><strong>ناو:</strong> ${record.entityName}</p>
@@ -4067,7 +4150,25 @@
     const record = moneyRequests.find(r => r.id === invId);
     if (!record) return;
     const w = window.open('', '_blank');
-    w.document.write(`<html dir="rtl"><head><title>واسڵ ${invId}</title><style>body{font-family:'Segoe UI';padding:2rem;}.card{border:2px solid #000;border-radius:1rem;padding:1.5rem;}</style></head><body><div class="card"><h2>واسڵی پارە</h2><p>کۆد: ${invId} | ${record.date}</p><p>ناو: ${record.entityName}</p><p>جۆر: ${record.type === 'person' ? 'کەس' : record.type === 'partner' ? 'شەریک' : 'مەندوب'}</p><p>بڕ: ${record.amount.toLocaleString()} د.ع</p>${record.note ? `<p>تێبینی: ${record.note}</p>` : ''}${record.isTransfer ? '<p>🔄 گواستنەوە</p>' : ''}</div></body></html>`);
+    w.document.write(`<html dir="rtl"><head><title>واسڵ ${invId}</title><style>
+      body{font-family:'Segoe UI';padding:2rem;}.card{border:2px solid #000;border-radius:1rem;padding:1.5rem;}
+      .header{display:flex;align-items:center;gap:1rem;border-bottom:2px solid #000;padding-bottom:1rem;margin-bottom:1.5rem;}
+      .logo-img{width:50px;height:50px;border-radius:50%;object-fit:cover;}
+    </style></head><body>
+      <div class="header">
+        ${systemLogo ? `<img src="${systemLogo}" class="logo-img">` : `<i class="fas ${appearance.systemIcon}" style="font-size:2rem;"></i>`}
+        <div><h2>${appearance.systemName}</h2></div>
+      </div>
+      <div class="card">
+        <h2>واسڵی پارە</h2>
+        <p>کۆد: ${invId} | ${record.date}</p>
+        <p>ناو: ${record.entityName}</p>
+        <p>جۆر: ${record.type === 'person' ? 'کەس' : record.type === 'partner' ? 'شەریک' : 'مەندوب'}</p>
+        <p>بڕ: ${record.amount.toLocaleString()} د.ع</p>
+        ${record.note ? `<p>تێبینی: ${record.note}</p>` : ''}
+        ${record.isTransfer ? '<p>🔄 گواستنەوە</p>' : ''}
+      </div>
+    </body></html>`);
     w.document.close();
     w.print();
   };
@@ -4165,8 +4266,6 @@
     const debtIcon = isDebtor ? '🟢' : isCreditor ? '🔴' : '⚪';
     const debtText = isDebtor ? 'کەسەکە قەرزاری تۆیە' : isCreditor ? 'تۆ قەرزاری کەسەکەیت' : 'هیچ قەرزێک نییە';
     const debtColor = isDebtor ? '#d1fae5' : isCreditor ? '#fee2e2' : '#f1f5f9';
-    
-    // Get adjustment records for this person
     const adjustments = adjustmentHistory.filter(a => a.type === 'person' && a.entityId === person.id);
     
     panel.innerHTML = `
@@ -4306,8 +4405,6 @@
     const debtIcon = isDebtor ? '🟢' : isCreditor ? '🔴' : '⚪';
     const debtText = isDebtor ? 'شەریکەکە قەرزاری تۆیە' : isCreditor ? 'تۆ قەرزاری شەریکەکەیت' : 'هیچ قەرزێک نییە';
     const debtColor = isDebtor ? '#d1fae5' : isCreditor ? '#fee2e2' : '#f1f5f9';
-    
-    // Get adjustment records for this partner
     const adjustments = adjustmentHistory.filter(a => a.type === 'partner' && a.entityId === partner.id);
     
     panel.innerHTML = `
@@ -4459,10 +4556,8 @@
     let newDebt = oldDebt;
 
     if (operation === 'positive') {
-      // زیادکردن (موجەب) - قەرز زیاتر دەبێت
       newDebt = oldDebt + amount;
     } else {
-      // کەمکردن (سالب) - قەرز کەمتر دەبێت
       newDebt = oldDebt - amount;
     }
 
@@ -4502,7 +4597,6 @@
       }
     }
 
-    // تۆمارکردنی گۆڕان لە مێژووی متابق کردن
     adjustmentHistory.push({
       id: invId,
       date: dateStr,
@@ -4517,7 +4611,6 @@
     });
     saveAdjustmentHistory();
 
-    // تۆمارکردنی گۆڕان لە مێژووی پارە
     const moneyAmount = operation === 'positive' ? amount : -amount;
     moneyRequests.push({
       id: invId,
@@ -4532,7 +4625,6 @@
     });
     saveMoneyRequests();
 
-    // پاککردنەوەی فۆڕم
     document.getElementById('adjustAmount').value = '';
     document.getElementById('adjustNote').value = '';
     document.getElementById('adjustEntitySearch').value = '';
@@ -4540,7 +4632,6 @@
     document.getElementById('adjustEntitySuggestions').style.display = 'none';
     selectedAdjustEntity = null;
 
-    // نوێکردنەوەی لیستەکان
     renderPersonsList();
     renderPartnersList();
     renderMoneyHistory();
@@ -4548,7 +4639,7 @@
     updateStats();
 
     const opText = operation === 'positive' ? 'زیادکرا' : 'کەمکرا';
-    alert(`قەرزی ${selectedAdjustEntity ? selectedAdjustEntity.name : ''} بە سەرکەوتوویی گۆڕدرا!\n${opText}: ${amount.toLocaleString()} د.ع\nقەرزی پێشوو: ${oldDebt.toLocaleString()}\nقەرزی ئێستا: ${newDebt.toLocaleString()} د.ع`);
+    alert(`قەرز بە سەرکەوتوویی گۆڕدرا!\n${opText}: ${amount.toLocaleString()} د.ع\nقەرزی پێشوو: ${oldDebt.toLocaleString()}\nقەرزی ئێستا: ${newDebt.toLocaleString()} د.ع`);
   };
 
   function renderAdjustmentHistory() {
@@ -4558,7 +4649,6 @@
       container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ گۆڕانکارییەکی متابق کردن تۆمار نەکراوە</p>';
       return;
     }
-    // نمایش 20 دوایین گۆڕان
     const latest = adjustmentHistory.slice(0, 20);
     container.innerHTML = latest.map(a => `
       <div class="adjustment-history-item ${a.operation === 'positive' ? 'positive' : 'negative'}">
@@ -4773,7 +4863,20 @@
     const qty = parseInt(document.getElementById('priceQuantity')?.value) || 1;
     const products = selectedPricingProducts.length ? selectedPricingProducts : warehouseProducts;
     const w = window.open('', '_blank');
-    w.document.write(`<html dir="rtl"><head><title>نرخەکان</title><style>body{font-family:'Segoe UI';padding:1rem;}.price-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(150px,1fr));gap:1rem;}.price-card{border:1px solid #ccc;border-radius:1rem;padding:1rem;text-align:center;page-break-inside:avoid;}@media print{body{padding:0;}}</style></head><body><h2>نرخەکانی ${appearance.systemName}</h2><div class="price-grid">${products.map(p => `<div class="price-card"><strong>${p.name}</strong><div style="font-size:1.5rem;font-weight:800;">${p.sellPrice.toLocaleString()} د.ع</div>${qty > 1 ? `<div>${qty} دانە: ${(p.sellPrice * qty).toLocaleString()} د.ع</div>` : ''}<div style="font-size:0.8rem;">${p.barcode}</div></div>`).join('')}</div></body></html>`);
+    w.document.write(`<html dir="rtl"><head><title>نرخەکان</title><style>
+      body{font-family:'Segoe UI';padding:1rem;}.price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;}
+      .price-card{border:1px solid #ccc;border-radius:1rem;padding:1rem;text-align:center;page-break-inside:avoid;}
+      .header{display:flex;align-items:center;gap:1rem;border-bottom:2px solid #000;padding-bottom:1rem;margin-bottom:1.5rem;}
+      .logo-img{width:50px;height:50px;border-radius:50%;object-fit:cover;}
+    </style></head><body>
+      <div class="header">
+        ${systemLogo ? `<img src="${systemLogo}" class="logo-img">` : `<i class="fas ${appearance.systemIcon}" style="font-size:2rem;"></i>`}
+        <div><h2>${appearance.systemName}</h2></div>
+      </div>
+      <div class="price-grid">
+        ${products.map(p => `<div class="price-card"><strong>${p.name}</strong><div style="font-size:1.5rem;font-weight:800;">${p.sellPrice.toLocaleString()} د.ع</div>${qty > 1 ? `<div>${qty} دانە: ${(p.sellPrice * qty).toLocaleString()} د.ع</div>` : ''}<div style="font-size:0.8rem;">${p.barcode}</div></div>`).join('')}
+      </div>
+    </body></html>`);
     w.document.close();
     w.print();
   };
@@ -4993,6 +5096,7 @@
     if (iconSelect) iconSelect.value = appearance.systemIcon;
     if (colorPicker) colorPicker.value = appearance.bgColor;
     renderThemePalette();
+    renderLogoPreview();
   }
 
   function renderThemePalette() {
@@ -5024,11 +5128,24 @@
     const topLogoText = document.getElementById('topLogoText');
     const topLogoIcon = document.getElementById('topLogoIcon');
     if (topLogoText) topLogoText.textContent = appearance.systemName;
-    if (topLogoIcon) topLogoIcon.innerHTML = `<i class="fas ${appearance.systemIcon}"></i>`;
+    if (topLogoIcon) {
+      if (systemLogo) {
+        topLogoIcon.innerHTML = `<img src="${systemLogo}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">`;
+      } else {
+        topLogoIcon.innerHTML = `<i class="fas ${appearance.systemIcon}"></i>`;
+      }
+    }
     const invSysName = document.getElementById('invoiceSystemName');
     const invHeaderLogo = document.getElementById('invoiceHeaderLogo');
     if (invSysName) invSysName.textContent = appearance.systemName;
-    if (invHeaderLogo) invHeaderLogo.innerHTML = `<i class="fas ${appearance.systemIcon}" style="font-size:2rem;"></i> <span>${appearance.systemName}</span>`;
+    if (invHeaderLogo) {
+      if (systemLogo) {
+        invHeaderLogo.innerHTML = `<img src="${systemLogo}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;"> <span>${appearance.systemName}</span>`;
+      } else {
+        invHeaderLogo.innerHTML = `<i class="fas ${appearance.systemIcon}" style="font-size:2rem;"></i> <span>${appearance.systemName}</span>`;
+      }
+    }
+    applyLogoToPrint();
   }
 
   // ===== SALES FUNCTIONS =====
@@ -5156,13 +5273,369 @@
   function renderHistory(filter = '') {
     if (!historyList) return;
     const filtered = saleHistory.filter(s => !filter || s.id.includes(filter) || s.customer.includes(filter));
-    historyList.innerHTML = filtered.length ? filtered.map(s => `<div class="history-row"><div><strong>${s.id}</strong> | ${s.date}</div><div>${s.customer}</div><div>${s.total.toLocaleString()} د.ع</div><div><button class="btn-icon" onclick="window.viewInvoice('${s.id}')"><i class="fas fa-eye"></i></button><button class="btn-icon" onclick="window.printInvoice('${s.id}')"><i class="fas fa-print"></i></button><button class="btn-icon" onclick="window.deleteInvoice('${s.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button></div></div>`).join('') : '<p style="text-align:center;color:#94a3b8;">هیچ فاکتوورەیەک نەدۆزرایەوە</p>';
+    historyList.innerHTML = filtered.length ? filtered.map(s => `
+      <div class="history-row">
+        <div><strong>${s.id}</strong> | ${s.date}</div>
+        <div>${s.customer}</div>
+        <div>${s.total.toLocaleString()} د.ع</div>
+        <div>
+          <button class="btn-icon" onclick="window.viewInvoice('${s.id}')"><i class="fas fa-eye"></i></button>
+          <button class="btn-icon" onclick="window.printInvoice('${s.id}')"><i class="fas fa-print"></i></button>
+          <button class="btn-icon" onclick="window.editSaleInvoice('${s.id}')"><i class="fas fa-edit" style="color:#2563eb;"></i></button>
+          <button class="btn-icon" onclick="window.deleteInvoice('${s.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
+        </div>
+      </div>`).join('') : '<p style="text-align:center;color:#94a3b8;">هیچ فاکتوورەیەک نەدۆزرایەوە</p>';
   }
 
   window.filterHistory = () => renderHistory(historySearchInput?.value.trim() || '');
-  window.viewInvoice = function(invId) { const sale = saleHistory.find(s => s.id === invId); if (!sale || !historyDetailDiv) return; historyDetailDiv.style.display = 'block'; historyDetailDiv.innerHTML = `<div class="invoice-logo"><i class="fas ${appearance.systemIcon}"></i> ${appearance.systemName}</div><div>🧾 ${sale.id} | ${sale.date}</div><table class="invoice-table"><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${sale.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table><strong>کۆ: ${sale.total.toLocaleString()}</strong><div>👤 ${sale.customer}</div>`; };
-  window.printInvoice = function(invId) { const sale = saleHistory.find(s => s.id === invId); if (!sale) return; const w = window.open('', '_blank'); w.document.write(`<html dir="rtl"><head><title>فاکتوورە ${invId}</title><style>body{font-family:'Segoe UI';padding:2rem;}table{width:100%;border-collapse:collapse;}td,th{padding:8px;border-bottom:1px solid #ccc;}</style></head><body><h2>${appearance.systemName}</h2><p>${invId} | ${sale.date}</p><table><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${sale.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table><h3>کۆ: ${sale.total}</h3><p>${sale.customer}</p></body></html>`); w.document.close(); w.print(); };
+
+  window.viewInvoice = function(invId) {
+    const sale = saleHistory.find(s => s.id === invId);
+    if (!sale || !historyDetailDiv) return;
+    historyDetailDiv.style.display = 'block';
+    historyDetailDiv.innerHTML = `
+      <div class="invoice-logo">${systemLogo ? `<img src="${systemLogo}">` : `<i class="fas ${appearance.systemIcon}"></i>`} ${appearance.systemName}</div>
+      <div>🧾 ${sale.id} | ${sale.date}</div>
+      <table class="invoice-table"><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${sale.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table>
+      <strong>کۆ: ${sale.total.toLocaleString()}</strong><div>👤 ${sale.customer}</div>`;
+  };
+
+  window.printInvoice = function(invId) {
+    const sale = saleHistory.find(s => s.id === invId);
+    if (!sale) return;
+    const w = window.open('', '_blank');
+    w.document.write(`<html dir="rtl"><head><title>فاکتوورە ${invId}</title><style>
+      body{font-family:'Segoe UI';padding:2rem;max-width:800px;margin:0 auto;}
+      .header{display:flex;align-items:center;gap:1rem;border-bottom:2px solid #000;padding-bottom:1rem;margin-bottom:1.5rem;}
+      .logo-img{width:50px;height:50px;border-radius:50%;object-fit:cover;}
+      table{width:100%;border-collapse:collapse;}td,th{padding:8px;border-bottom:1px solid #ccc;text-align:right;}
+    </style></head><body>
+      <div class="header">
+        ${systemLogo ? `<img src="${systemLogo}" class="logo-img">` : `<i class="fas ${appearance.systemIcon}" style="font-size:2rem;"></i>`}
+        <div><h2>${appearance.systemName}</h2></div>
+        <div style="margin-right:auto;"><strong>ژمارە:</strong> ${invId}<br><strong>بەروار:</strong> ${sale.date}</div>
+      </div>
+      <div><strong>کڕیار:</strong> ${sale.customer}</div>
+      <table><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${sale.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table>
+      <h3>کۆی گشتی: ${sale.total.toLocaleString()} د.ع</h3>
+    </body></html>`);
+    w.document.close();
+    w.print();
+  };
+
   window.deleteInvoice = function(invId) { if (confirm('دڵنیایت لە سڕینەوە؟')) { saleHistory = saleHistory.filter(s => s.id !== invId); saveSaleHistory(); renderHistory(historySearchInput?.value.trim() || ''); historyDetailDiv.style.display = 'none'; updateStats(); } };
+
+  // ===== EDIT SALE INVOICE =====
+  window.editSaleInvoice = function(invId) {
+    const invoice = saleHistory.find(s => s.id === invId);
+    if (!invoice) { alert('فاکتوورە نەدۆزرایەوە'); return; }
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.5); z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+    `;
+    let itemsHTML = invoice.items.map((item, idx) => `
+      <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+        <input type="text" id="edit_s_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <input type="number" id="edit_s_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <input type="number" id="edit_s_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <button onclick="removeSaleItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+      </div>
+    `).join('');
+    overlay.innerHTML = `
+      <div style="background:white; border-radius:2rem; padding:2rem; max-width:650px; width:90%; max-height:80vh; overflow-y:auto;">
+        <h3 style="margin-bottom:1rem;">✏️ گۆڕانکاری لە فاکتوورە ${invId}</h3>
+        <div style="margin-bottom:1rem;">
+          <label style="font-weight:600;">کڕیار:</label>
+          <input type="text" id="editSCustomerName" value="${invoice.customer}" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label style="font-weight:600;">بەروار:</label>
+          <input type="text" id="editSInvoiceDate" value="${invoice.date}" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <button onclick="addItemToSaleEdit('${invId}')" style="background:#2563eb; color:white; border:none; padding:0.5rem 1rem; border-radius:1rem; cursor:pointer;">➕ زیادکردنی کاڵا</button>
+        </div>
+        <div id="editSaleItemsContainer">
+          ${itemsHTML}
+        </div>
+        <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+          <button onclick="saveSaleInvoiceChanges('${invId}')" style="background:#059669; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
+            <i class="fas fa-save"></i> پاشەکەوتکردن
+          </button>
+          <button onclick="this.closest('div[style]').remove()" style="background:#64748b; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
+            <i class="fas fa-times"></i> داخستن
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  };
+
+  window.removeSaleItemFromEdit = function(invId, idx) {
+    if (!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە؟')) return;
+    const invoice = saleHistory.find(s => s.id === invId);
+    if (!invoice) return;
+    invoice.items.splice(idx, 1);
+    if (invoice.items.length === 0) {
+      saleHistory = saleHistory.filter(s => s.id !== invId);
+      saveSaleHistory();
+      renderHistory();
+      updateStats();
+      document.querySelector('#editSaleItemsContainer')?.closest('div[style]')?.remove();
+      return;
+    }
+    invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
+    saveSaleHistory();
+    renderHistory();
+    updateStats();
+    const container = document.querySelector('#editSaleItemsContainer');
+    if (container) {
+      container.innerHTML = invoice.items.map((item, idx) => `
+        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+          <input type="text" id="edit_s_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_s_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_s_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <button onclick="removeSaleItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+    showToast('کاڵا سڕکرایەوە', 'success');
+  };
+
+  window.addItemToSaleEdit = function(invId) {
+    const name = prompt('ناوی کاڵا:');
+    if (!name) return;
+    const qty = parseInt(prompt('بڕ:'));
+    if (!qty || qty < 1) { alert('تکایە بڕی دروست بنووسە'); return; }
+    const price = parseInt(prompt('نرخ:'));
+    if (!price || price < 0) { alert('تکایە نرخی دروست بنووسە'); return; }
+    const invoice = saleHistory.find(s => s.id === invId);
+    if (!invoice) return;
+    invoice.items.push({ name, qty, price });
+    invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
+    saveSaleHistory();
+    renderHistory();
+    updateStats();
+    const container = document.querySelector('#editSaleItemsContainer');
+    if (container) {
+      container.innerHTML = invoice.items.map((item, idx) => `
+        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+          <input type="text" id="edit_s_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_s_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_s_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <button onclick="removeSaleItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+    showToast('کاڵا زیادکرا', 'success');
+  };
+
+  window.saveSaleInvoiceChanges = function(invId) {
+    const invoice = saleHistory.find(s => s.id === invId);
+    if (!invoice) return;
+    const newCustomer = document.getElementById('editSCustomerName')?.value.trim();
+    if (newCustomer) invoice.customer = newCustomer;
+    const newDate = document.getElementById('editSInvoiceDate')?.value.trim();
+    if (newDate) invoice.date = newDate;
+    let total = 0;
+    const items = [];
+    const container = document.querySelector('#editSaleItemsContainer');
+    if (container) {
+      const inputs = container.querySelectorAll('input');
+      const qtyMap = {};
+      const priceMap = {};
+      const nameMap = {};
+      inputs.forEach(input => {
+        const id = input.id;
+        if (id.startsWith('edit_s_qty_')) {
+          const idx = parseInt(id.replace('edit_s_qty_', ''));
+          qtyMap[idx] = parseInt(input.value) || 0;
+        } else if (id.startsWith('edit_s_price_')) {
+          const idx = parseInt(id.replace('edit_s_price_', ''));
+          priceMap[idx] = parseInt(input.value) || 0;
+        } else if (id.startsWith('edit_s_name_')) {
+          const idx = parseInt(id.replace('edit_s_name_', ''));
+          nameMap[idx] = input.value.trim();
+        }
+      });
+      for (let i = 0; i < invoice.items.length; i++) {
+        const name = nameMap[i] || invoice.items[i].name;
+        const qty = qtyMap[i] !== undefined ? qtyMap[i] : invoice.items[i].qty;
+        const price = priceMap[i] !== undefined ? priceMap[i] : invoice.items[i].price;
+        if (qty > 0 && price >= 0) {
+          items.push({ name, qty, price });
+          total += qty * price;
+        }
+      }
+      if (items.length > 0) {
+        invoice.items = items;
+        invoice.total = total;
+      }
+    }
+    saveSaleHistory();
+    renderHistory();
+    updateStats();
+    document.querySelector('#editSaleItemsContainer')?.closest('div[style]')?.remove();
+    showToast(`✅ فاکتوورە ${invId} بە سەرکەوتوویی گۆڕدرا!`, 'success');
+  };
+
+  // ===== EDIT PURCHASE INVOICE =====
+  window.editPurchaseInvoice = function(invId) {
+    const invoice = purchaseHistory.find(p => p.id === invId);
+    if (!invoice) { alert('فاکتوورە نەدۆزرایەوە'); return; }
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.5); z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+    `;
+    let itemsHTML = invoice.items.map((item, idx) => `
+      <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+        <input type="text" id="edit_p_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <input type="number" id="edit_p_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <input type="number" id="edit_p_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <button onclick="removePurchaseItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+      </div>
+    `).join('');
+    overlay.innerHTML = `
+      <div style="background:white; border-radius:2rem; padding:2rem; max-width:650px; width:90%; max-height:80vh; overflow-y:auto;">
+        <h3 style="margin-bottom:1rem;">✏️ گۆڕانکاری لە فاکتوورە ${invId}</h3>
+        <div style="margin-bottom:1rem;">
+          <label style="font-weight:600;">شەریک:</label>
+          <input type="text" id="editPPartnerName" value="${invoice.partner}" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label style="font-weight:600;">بەروار:</label>
+          <input type="text" id="editPInvoiceDate" value="${invoice.date}" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <button onclick="addItemToPurchaseEdit('${invId}')" style="background:#2563eb; color:white; border:none; padding:0.5rem 1rem; border-radius:1rem; cursor:pointer;">➕ زیادکردنی کاڵا</button>
+        </div>
+        <div id="editPurchaseItemsContainer">
+          ${itemsHTML}
+        </div>
+        <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+          <button onclick="savePurchaseInvoiceChanges('${invId}')" style="background:#059669; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
+            <i class="fas fa-save"></i> پاشەکەوتکردن
+          </button>
+          <button onclick="this.closest('div[style]').remove()" style="background:#64748b; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
+            <i class="fas fa-times"></i> داخستن
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  };
+
+  window.removePurchaseItemFromEdit = function(invId, idx) {
+    if (!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە؟')) return;
+    const invoice = purchaseHistory.find(p => p.id === invId);
+    if (!invoice) return;
+    invoice.items.splice(idx, 1);
+    if (invoice.items.length === 0) {
+      purchaseHistory = purchaseHistory.filter(p => p.id !== invId);
+      savePurchaseHistory();
+      renderPurchaseHistory();
+      updateStats();
+      document.querySelector('#editPurchaseItemsContainer')?.closest('div[style]')?.remove();
+      return;
+    }
+    invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
+    savePurchaseHistory();
+    renderPurchaseHistory();
+    updateStats();
+    const container = document.querySelector('#editPurchaseItemsContainer');
+    if (container) {
+      container.innerHTML = invoice.items.map((item, idx) => `
+        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+          <input type="text" id="edit_p_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_p_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_p_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <button onclick="removePurchaseItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+    showToast('کاڵا سڕکرایەوە', 'success');
+  };
+
+  window.addItemToPurchaseEdit = function(invId) {
+    const name = prompt('ناوی کاڵا:');
+    if (!name) return;
+    const qty = parseInt(prompt('بڕ:'));
+    if (!qty || qty < 1) { alert('تکایە بڕی دروست بنووسە'); return; }
+    const price = parseInt(prompt('نرخ:'));
+    if (!price || price < 0) { alert('تکایە نرخی دروست بنووسە'); return; }
+    const invoice = purchaseHistory.find(p => p.id === invId);
+    if (!invoice) return;
+    invoice.items.push({ name, qty, price });
+    invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
+    savePurchaseHistory();
+    renderPurchaseHistory();
+    updateStats();
+    const container = document.querySelector('#editPurchaseItemsContainer');
+    if (container) {
+      container.innerHTML = invoice.items.map((item, idx) => `
+        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+          <input type="text" id="edit_p_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_p_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_p_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <button onclick="removePurchaseItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+    showToast('کاڵا زیادکرا', 'success');
+  };
+
+  window.savePurchaseInvoiceChanges = function(invId) {
+    const invoice = purchaseHistory.find(p => p.id === invId);
+    if (!invoice) return;
+    const newPartner = document.getElementById('editPPartnerName')?.value.trim();
+    if (newPartner) invoice.partner = newPartner;
+    const newDate = document.getElementById('editPInvoiceDate')?.value.trim();
+    if (newDate) invoice.date = newDate;
+    let total = 0;
+    const items = [];
+    const container = document.querySelector('#editPurchaseItemsContainer');
+    if (container) {
+      const inputs = container.querySelectorAll('input');
+      const qtyMap = {};
+      const priceMap = {};
+      const nameMap = {};
+      inputs.forEach(input => {
+        const id = input.id;
+        if (id.startsWith('edit_p_qty_')) {
+          const idx = parseInt(id.replace('edit_p_qty_', ''));
+          qtyMap[idx] = parseInt(input.value) || 0;
+        } else if (id.startsWith('edit_p_price_')) {
+          const idx = parseInt(id.replace('edit_p_price_', ''));
+          priceMap[idx] = parseInt(input.value) || 0;
+        } else if (id.startsWith('edit_p_name_')) {
+          const idx = parseInt(id.replace('edit_p_name_', ''));
+          nameMap[idx] = input.value.trim();
+        }
+      });
+      for (let i = 0; i < invoice.items.length; i++) {
+        const name = nameMap[i] || invoice.items[i].name;
+        const qty = qtyMap[i] !== undefined ? qtyMap[i] : invoice.items[i].qty;
+        const price = priceMap[i] !== undefined ? priceMap[i] : invoice.items[i].price;
+        if (qty > 0 && price >= 0) {
+          items.push({ name, qty, price });
+          total += qty * price;
+        }
+      }
+      if (items.length > 0) {
+        invoice.items = items;
+        invoice.total = total;
+      }
+    }
+    savePurchaseHistory();
+    renderPurchaseHistory();
+    updateStats();
+    document.querySelector('#editPurchaseItemsContainer')?.closest('div[style]')?.remove();
+    showToast(`✅ فاکتوورە ${invId} بە سەرکەوتوویی گۆڕدرا!`, 'success');
+  };
 
   // ===== PURCHASE RETURN FUNCTIONS =====
   window.searchPurchaseForReturn = function() {
@@ -5641,6 +6114,7 @@
         <div>
           <button class="btn-icon" onclick="viewPurchaseInvoice('${p.id}')"><i class="fas fa-eye"></i></button>
           <button class="btn-icon" onclick="printPurchaseInvoice('${p.id}')"><i class="fas fa-print"></i></button>
+          <button class="btn-icon" onclick="editPurchaseInvoice('${p.id}')"><i class="fas fa-edit" style="color:#2563eb;"></i></button>
           <button class="btn-icon" onclick="deletePurchaseInvoice('${p.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
         </div>
       </div>`).join('');
@@ -5655,7 +6129,7 @@
     if (!detail) return;
     detail.style.display = 'block';
     detail.innerHTML = `
-      <div class="invoice-logo"><i class="fas fa-truck"></i> فاکتوورە ${purchase.id}</div>
+      <div class="invoice-logo">${systemLogo ? `<img src="${systemLogo}">` : `<i class="fas ${appearance.systemIcon}"></i>`} ${appearance.systemName}</div>
       <div>📅 ${purchase.date}</div>
       <div>🤝 ${purchase.partner}</div>
       <table class="invoice-table"><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${purchase.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table>
@@ -5667,7 +6141,21 @@
     const purchase = purchaseHistory.find(p => p.id === invId);
     if (!purchase) return;
     const w = window.open('', '_blank');
-    w.document.write(`<html dir="rtl"><head><title>کڕین ${invId}</title><style>body{font-family:'Segoe UI';padding:2rem;}table{width:100%;border-collapse:collapse;}td,th{padding:8px;border-bottom:1px solid #ccc;}</style></head><body><h2>فاکتوورە ${invId}</h2><p>${purchase.date}</p><p>🤝 ${purchase.partner}</p><table><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${purchase.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table><h3>کۆ: ${purchase.total}</h3></body></html>`);
+    w.document.write(`<html dir="rtl"><head><title>کڕین ${invId}</title><style>
+      body{font-family:'Segoe UI';padding:2rem;max-width:800px;margin:0 auto;}
+      .header{display:flex;align-items:center;gap:1rem;border-bottom:2px solid #000;padding-bottom:1rem;margin-bottom:1.5rem;}
+      .logo-img{width:50px;height:50px;border-radius:50%;object-fit:cover;}
+      table{width:100%;border-collapse:collapse;}td,th{padding:8px;border-bottom:1px solid #ccc;text-align:right;}
+    </style></head><body>
+      <div class="header">
+        ${systemLogo ? `<img src="${systemLogo}" class="logo-img">` : `<i class="fas ${appearance.systemIcon}" style="font-size:2rem;"></i>`}
+        <div><h2>${appearance.systemName}</h2></div>
+        <div style="margin-right:auto;"><strong>ژمارە:</strong> ${invId}<br><strong>بەروار:</strong> ${purchase.date}</div>
+      </div>
+      <div><strong>شەریک:</strong> ${purchase.partner}</div>
+      <table><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th></tr>${purchase.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td></tr>`).join('')}</table>
+      <h3>کۆ: ${purchase.total.toLocaleString()} د.ع</h3>
+    </body></html>`);
     w.document.close();
     w.print();
   };
@@ -5700,7 +6188,6 @@
     if (!isCash) {
       const currentDebt = selectedPurchasePartner.debt || 0;
       let newDebt = currentDebt;
-      
       if (currentDebt === 0) {
         newDebt = -total;
       } else if (currentDebt > 0 && total <= currentDebt) {
@@ -5710,9 +6197,7 @@
       } else if (currentDebt < 0) {
         newDebt = currentDebt - total;
       }
-      
       selectedPurchasePartner.debt = newDebt;
-      
       if (!selectedPurchasePartner.movements) selectedPurchasePartner.movements = [];
       selectedPurchasePartner.movements.push({
         type: 'purchase',
@@ -5723,7 +6208,6 @@
         oldDebt: currentDebt,
         newDebt: newDebt
       });
-      
       savePartners();
     } else {
       moneyRequests.push({
@@ -6537,7 +7021,6 @@
   // ===== TAB EVENT LISTENERS =====
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('tab')) {
-      // Purchase tabs
       if (e.target.dataset.purchasetab) {
         document.querySelectorAll('[data-purchasetab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -6547,7 +7030,6 @@
         if (e.target.dataset.purchasetab === 'history') renderPurchaseHistory();
         if (e.target.dataset.purchasetab === 'return') renderPurchaseReturnHistory();
       }
-      // Money tabs
       if (e.target.dataset.moneytab) {
         document.querySelectorAll('[data-moneytab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -6555,7 +7037,6 @@
         document.getElementById('moneyHistoryPanel').classList.toggle('active', e.target.dataset.moneytab === 'history');
         if (e.target.dataset.moneytab === 'history') renderMoneyHistory();
       }
-      // Money Spend tabs
       if (e.target.dataset.spendtab) {
         document.querySelectorAll('[data-spendtab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -6564,7 +7045,6 @@
         if (e.target.dataset.spendtab === 'expense') { renderExpenseHistory(); updateExpenseStats(); }
         if (e.target.dataset.spendtab === 'give') { renderGiveHistory(); updateGiveStats(); }
       }
-      // Partner tabs
       if (e.target.dataset.partnertab) {
         document.querySelectorAll('[data-partnertab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -6572,7 +7052,6 @@
         document.getElementById('partnersAddPanel').classList.toggle('active', e.target.dataset.partnertab === 'add');
         if (e.target.dataset.partnertab === 'list') renderPartnersList();
       }
-      // Persons tabs
       if (e.target.dataset.ptab) {
         document.querySelectorAll('[data-ptab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -6583,7 +7062,6 @@
         if (tab === 'list') renderPersonsList();
         if (tab === 'adjust') { selectedAdjustEntity = null; document.getElementById('selectedAdjustEntityInfo').style.display = 'none'; document.getElementById('adjustEntitySearch').value = ''; document.getElementById('adjustEntitySuggestions').style.display = 'none'; renderAdjustmentHistory(); }
       }
-      // Sales tabs
       if (e.target.dataset.tab) {
         document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -6593,7 +7071,6 @@
         if (e.target.dataset.tab === 'history') renderHistory();
         if (e.target.dataset.tab === 'return') renderReturnHistory();
       }
-      // Warehouse tabs
       if (e.target.dataset.waretab) {
         document.querySelectorAll('[data-waretab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -6603,7 +7080,6 @@
         if (e.target.dataset.waretab === 'list') renderProductsGrid();
         if (e.target.dataset.waretab === 'purchase') renderWarePurchaseCart();
       }
-      // Agent tabs
       if (e.target.dataset.agenttab) {
         document.querySelectorAll('[data-agenttab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -6620,7 +7096,6 @@
         if (tab === 'return') { selectedAgentForReturn = null; agentReturnCart = []; document.getElementById('selectedAgentReturnBadge').innerHTML = ''; document.getElementById('agentReturnSearch').value = ''; document.getElementById('agentReturnProductSearch').value = ''; document.getElementById('agentReturnInventoryList').innerHTML = '<p style="color:#94a3b8; text-align:center;">تکایە مەندوبێک هەڵبژێرە</p>'; renderAgentReturnCart(); }
         if (tab === 'wassl') { selectedAgentForWassl = null; document.getElementById('selectedAgentWasslInfo').style.display = 'none'; }
       }
-      // Expiry tabs
       if (e.target.dataset.expirytab) {
         document.querySelectorAll('[data-expirytab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -6629,7 +7104,6 @@
         if (e.target.dataset.expirytab === 'expiry') renderExpiryProducts();
         if (e.target.dataset.expirytab === 'damage') renderDamagedProducts();
       }
-      // Employee tabs
       if (e.target.dataset.emptab) {
         document.querySelectorAll('[data-emptab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -6643,7 +7117,6 @@
         if (tab === 'leave') renderEmployeeLeaveHistory();
       }
     }
-    // Settings tabs
     if (e.target.classList.contains('settings-tab')) {
       document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
       e.target.classList.add('active');
