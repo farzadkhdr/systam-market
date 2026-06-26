@@ -375,22 +375,6 @@
       .report-container { box-shadow: none; padding: 1rem; }
       .report-table th { background: #e2e8f0 !important; }
     }
-
-    /* ===== گۆڕانکاری نوێ بۆ گەڕان بەدوای کاڵا لە گۆڕانکاری فاکتوورە ===== */
-    .edit-product-search-container {
-      background: #f8fafc;
-      border-radius: 1rem;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border: 1px solid #e2e8f0;
-    }
-    .edit-product-search-container .search-box {
-      margin-bottom: 0.5rem;
-    }
-    .edit-product-search-container .suggestions {
-      position: relative;
-      max-height: 150px;
-    }
   </style>
 </head>
 <body>
@@ -3069,7 +3053,7 @@
     w.print();
   };
 
-  // ===== EDIT INVOICE ITEM (گۆڕانکاری سەرەکی بۆ گەڕان بەدوای کاڵا) =====
+  // ===== EDIT INVOICE ITEM =====
   window.editInvoiceItem = function(invId, type) {
     let invoice;
     let historyArray;
@@ -3099,43 +3083,28 @@
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position: fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,0.6); z-index:9999;
+      background:rgba(0,0,0,0.5); z-index:9999;
       display:flex; align-items:center; justify-content:center;
     `;
     overlay.innerHTML = `
-      <div style="background:white; border-radius:2rem; padding:2rem; max-width:700px; width:95%; max-height:85vh; overflow-y:auto;">
+      <div style="background:white; border-radius:2rem; padding:2rem; max-width:600px; width:90%; max-height:80vh; overflow-y:auto;">
         <h3 style="margin-bottom:1rem;">✏️ دەستکاری فاکتوورە ${invId}</h3>
-        
-        <!-- بەشی گەڕان بەدوای کاڵا -->
-        <div class="edit-product-search-container">
-          <label style="font-weight:600; display:block; margin-bottom:0.5rem;">🔍 گەڕان بەدوای کاڵا (ناو یان بارکۆد):</label>
-          <div class="search-box" style="position:relative;">
-            <input type="text" id="editProductSearch" placeholder="ناوی کاڵا یان بارکۆد..." oninput="searchProductForEdit('${invId}', '${type}')">
-            <span class="clear-btn" id="editProductSearchClear" onclick="clearSearch('editProductSearch', 'editProductSuggestions')" style="display:none;">✕</span>
-            <button onclick="searchProductForEdit('${invId}', '${type}')"><i class="fas fa-search"></i></button>
-          </div>
-          <div class="suggestions" id="editProductSuggestions" style="position:relative; max-height:150px;"></div>
-        </div>
-
         <div style="margin-bottom:1rem;">
           <div><strong>${type === 'sale' ? 'کڕیار' : 'شەریک'}:</strong> ${type === 'sale' ? invoice.customer : invoice.partner}</div>
           <div><strong>بەروار:</strong> ${invoice.date}</div>
         </div>
         <div style="margin-bottom:1rem;">
-          <button onclick="addItemToInvoice('${invId}', '${type}')" style="background:#2563eb; color:white; border:none; padding:0.5rem 1rem; border-radius:1rem; cursor:pointer;">➕ زیادکردنی کاڵا بە دەستی</button>
+          <button onclick="addItemToInvoice('${invId}', '${type}')" style="background:#2563eb; color:white; border:none; padding:0.5rem 1rem; border-radius:1rem; cursor:pointer;">➕ زیادکردنی کاڵا</button>
         </div>
         <div id="editItemsContainer">
           ${itemsHTML}
         </div>
-        <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <div style="margin-top:1rem; display:flex; gap:0.5rem;">
           <button onclick="saveInvoiceChanges('${invId}', '${type}')" style="background:#059669; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
             <i class="fas fa-save"></i> پاشەکەوتکردن
           </button>
           <button onclick="this.closest('div[style]').remove()" style="background:#64748b; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
             <i class="fas fa-times"></i> داخستن
-          </button>
-          <button onclick="this.closest('div[style]').remove(); renderHistory(); renderPurchaseHistory();" style="background:#ef4444; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
-            <i class="fas fa-undo"></i> گەڕانەوە
           </button>
         </div>
         <div id="editMessage" style="margin-top:1rem; display:none; padding:0.5rem; border-radius:0.5rem;"></div>
@@ -3143,76 +3112,6 @@
     `;
     document.body.appendChild(overlay);
   };
-
-  // ===== فانکشنی گەڕان بەدوای کاڵا بۆ گۆڕانکاری =====
-  window.searchProductForEdit = function(invId, type) {
-    const query = document.getElementById('editProductSearch')?.value.trim().toLowerCase() || '';
-    const suggestions = document.getElementById('editProductSuggestions');
-    const clearBtn = document.getElementById('editProductSearchClear');
-    
-    if (!query) { 
-      suggestions.style.display = 'none';
-      if (clearBtn) clearBtn.style.display = 'none';
-      return; 
-    }
-    if (clearBtn) clearBtn.style.display = 'block';
-    
-    const filtered = warehouseProducts.filter(p => 
-      p.name.toLowerCase().includes(query) || 
-      p.barcode.includes(query)
-    );
-    
-    if (filtered.length) {
-      suggestions.innerHTML = filtered.map(p => `
-        <div class="suggestion-item" data-pid="${p.id}" style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <span>📦 <strong>${p.name}</strong></span>
-            <span style="font-size:0.75rem; color:#64748b; margin-right:0.5rem;">${p.barcode}</span>
-          </div>
-          <span style="font-size:0.8rem; color:#059669; font-weight:600;">${p.sellPrice.toLocaleString()} د.ع</span>
-        </div>
-      `).join('');
-      suggestions.style.display = 'block';
-      
-      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
-        item.addEventListener('click', function() {
-          const pid = parseInt(this.dataset.pid);
-          const product = warehouseProducts.find(p => p.id === pid);
-          if (product) {
-            // زیادکردنی کاڵا بۆ فاکتوورە
-            let invoice;
-            if (type === 'sale') {
-              invoice = saleHistory.find(s => s.id === invId);
-            } else {
-              invoice = purchaseHistory.find(p => p.id === invId);
-            }
-            if (invoice) {
-              const existingItem = invoice.items.find(i => i.name === product.name);
-              if (existingItem) {
-                existingItem.qty += 1;
-              } else {
-                invoice.items.push({ name: product.name, qty: 1, price: type === 'sale' ? product.sellPrice : product.buyPrice });
-              }
-              invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
-              if (type === 'sale') saveSaleHistory(); else savePurchaseHistory();
-              // نوێکردنەوەی دیالۆگ
-              document.querySelector('#editItemsContainer')?.closest('div[style]')?.remove();
-              editInvoiceItem(invId, type);
-              showToast('✅ کاڵا زیادکرا', 'success');
-            }
-          }
-          suggestions.style.display = 'none';
-          document.getElementById('editProductSearch').value = '';
-          if (clearBtn) clearBtn.style.display = 'none';
-        });
-      });
-    } else { 
-      suggestions.style.display = 'none';
-    }
-  };
-
-  // ===== زیادکردنی گەڕانەوە بۆ پەڕەی فاکتوورەکان =====
-  // دوگمەی گەڕانەوە لە ناوەوەی editInvoiceItem زیادکرا
 
   window.removeInvoiceItem = function(invId, type, idx) {
     if (!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە لە فاکتوورە؟')) return;
@@ -3322,6 +3221,7 @@
     invoice.total = total;
     saveFunction();
     
+    // ===== گۆڕانکاری: چوارچێوە داخرێت و مێژوو نوێ بکرێتەوە =====
     const overlay = document.querySelector('div[style*="position: fixed"]');
     if (overlay) overlay.remove();
     
@@ -5447,14 +5347,318 @@
 
   // ===== EDIT SALE INVOICE =====
   window.editSaleInvoice = function(invId) {
-    // ئەم فانکشنە بە editInvoiceItem جێگیرکراوە
-    editInvoiceItem(invId, 'sale');
+    const invoice = saleHistory.find(s => s.id === invId);
+    if (!invoice) { alert('فاکتوورە نەدۆزرایەوە'); return; }
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.5); z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+    `;
+    let itemsHTML = invoice.items.map((item, idx) => `
+      <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+        <input type="text" id="edit_s_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <input type="number" id="edit_s_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <input type="number" id="edit_s_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <button onclick="removeSaleItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+      </div>
+    `).join('');
+    overlay.innerHTML = `
+      <div style="background:white; border-radius:2rem; padding:2rem; max-width:650px; width:90%; max-height:80vh; overflow-y:auto;">
+        <h3 style="margin-bottom:1rem;">✏️ گۆڕانکاری لە فاکتوورە ${invId}</h3>
+        <div style="margin-bottom:1rem;">
+          <label style="font-weight:600;">کڕیار:</label>
+          <input type="text" id="editSCustomerName" value="${invoice.customer}" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label style="font-weight:600;">بەروار:</label>
+          <input type="text" id="editSInvoiceDate" value="${invoice.date}" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <button onclick="addItemToSaleEdit('${invId}')" style="background:#2563eb; color:white; border:none; padding:0.5rem 1rem; border-radius:1rem; cursor:pointer;">➕ زیادکردنی کاڵا</button>
+        </div>
+        <div id="editSaleItemsContainer">
+          ${itemsHTML}
+        </div>
+        <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+          <button onclick="saveSaleInvoiceChanges('${invId}')" style="background:#059669; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
+            <i class="fas fa-save"></i> پاشەکەوتکردن
+          </button>
+          <button onclick="this.closest('div[style]').remove()" style="background:#64748b; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
+            <i class="fas fa-times"></i> داخستن
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  };
+
+  window.removeSaleItemFromEdit = function(invId, idx) {
+    if (!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە؟')) return;
+    const invoice = saleHistory.find(s => s.id === invId);
+    if (!invoice) return;
+    invoice.items.splice(idx, 1);
+    if (invoice.items.length === 0) {
+      saleHistory = saleHistory.filter(s => s.id !== invId);
+      saveSaleHistory();
+      renderHistory();
+      updateStats();
+      document.querySelector('#editSaleItemsContainer')?.closest('div[style]')?.remove();
+      return;
+    }
+    invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
+    saveSaleHistory();
+    renderHistory();
+    updateStats();
+    const container = document.querySelector('#editSaleItemsContainer');
+    if (container) {
+      container.innerHTML = invoice.items.map((item, idx) => `
+        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+          <input type="text" id="edit_s_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_s_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_s_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <button onclick="removeSaleItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+    showToast('کاڵا سڕکرایەوە', 'success');
+  };
+
+  window.addItemToSaleEdit = function(invId) {
+    const name = prompt('ناوی کاڵا:');
+    if (!name) return;
+    const qty = parseInt(prompt('بڕ:'));
+    if (!qty || qty < 1) { alert('تکایە بڕی دروست بنووسە'); return; }
+    const price = parseInt(prompt('نرخ:'));
+    if (!price || price < 0) { alert('تکایە نرخی دروست بنووسە'); return; }
+    const invoice = saleHistory.find(s => s.id === invId);
+    if (!invoice) return;
+    invoice.items.push({ name, qty, price });
+    invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
+    saveSaleHistory();
+    renderHistory();
+    updateStats();
+    const container = document.querySelector('#editSaleItemsContainer');
+    if (container) {
+      container.innerHTML = invoice.items.map((item, idx) => `
+        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+          <input type="text" id="edit_s_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_s_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_s_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <button onclick="removeSaleItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+    showToast('کاڵا زیادکرا', 'success');
+  };
+
+  window.saveSaleInvoiceChanges = function(invId) {
+    const invoice = saleHistory.find(s => s.id === invId);
+    if (!invoice) return;
+    const newCustomer = document.getElementById('editSCustomerName')?.value.trim();
+    if (newCustomer) invoice.customer = newCustomer;
+    const newDate = document.getElementById('editSInvoiceDate')?.value.trim();
+    if (newDate) invoice.date = newDate;
+    let total = 0;
+    const items = [];
+    const container = document.querySelector('#editSaleItemsContainer');
+    if (container) {
+      const inputs = container.querySelectorAll('input');
+      const qtyMap = {};
+      const priceMap = {};
+      const nameMap = {};
+      inputs.forEach(input => {
+        const id = input.id;
+        if (id.startsWith('edit_s_qty_')) {
+          const idx = parseInt(id.replace('edit_s_qty_', ''));
+          qtyMap[idx] = parseInt(input.value) || 0;
+        } else if (id.startsWith('edit_s_price_')) {
+          const idx = parseInt(id.replace('edit_s_price_', ''));
+          priceMap[idx] = parseInt(input.value) || 0;
+        } else if (id.startsWith('edit_s_name_')) {
+          const idx = parseInt(id.replace('edit_s_name_', ''));
+          nameMap[idx] = input.value.trim();
+        }
+      });
+      for (let i = 0; i < invoice.items.length; i++) {
+        const name = nameMap[i] || invoice.items[i].name;
+        const qty = qtyMap[i] !== undefined ? qtyMap[i] : invoice.items[i].qty;
+        const price = priceMap[i] !== undefined ? priceMap[i] : invoice.items[i].price;
+        if (qty > 0 && price >= 0) {
+          items.push({ name, qty, price });
+          total += qty * price;
+        }
+      }
+      if (items.length > 0) {
+        invoice.items = items;
+        invoice.total = total;
+      }
+    }
+    saveSaleHistory();
+    // ===== گۆڕانکاری: چوارچێوە داخرێت و مێژوو نوێ بکرێتەوە =====
+    const overlay = document.querySelector('div[style*="position: fixed"]');
+    if (overlay) overlay.remove();
+    renderHistory();
+    updateStats();
+    showToast(`✅ فاکتوورە ${invId} بە سەرکەوتوویی گۆڕدرا!`, 'success');
   };
 
   // ===== EDIT PURCHASE INVOICE =====
   window.editPurchaseInvoice = function(invId) {
-    // ئەم فانکشنە بە editInvoiceItem جێگیرکراوە
-    editInvoiceItem(invId, 'purchase');
+    const invoice = purchaseHistory.find(p => p.id === invId);
+    if (!invoice) { alert('فاکتوورە نەدۆزرایەوە'); return; }
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.5); z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+    `;
+    let itemsHTML = invoice.items.map((item, idx) => `
+      <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+        <input type="text" id="edit_p_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <input type="number" id="edit_p_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <input type="number" id="edit_p_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+        <button onclick="removePurchaseItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+      </div>
+    `).join('');
+    overlay.innerHTML = `
+      <div style="background:white; border-radius:2rem; padding:2rem; max-width:650px; width:90%; max-height:80vh; overflow-y:auto;">
+        <h3 style="margin-bottom:1rem;">✏️ گۆڕانکاری لە فاکتوورە ${invId}</h3>
+        <div style="margin-bottom:1rem;">
+          <label style="font-weight:600;">شەریک:</label>
+          <input type="text" id="editPPartnerName" value="${invoice.partner}" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label style="font-weight:600;">بەروار:</label>
+          <input type="text" id="editPInvoiceDate" value="${invoice.date}" style="width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <button onclick="addItemToPurchaseEdit('${invId}')" style="background:#2563eb; color:white; border:none; padding:0.5rem 1rem; border-radius:1rem; cursor:pointer;">➕ زیادکردنی کاڵا</button>
+        </div>
+        <div id="editPurchaseItemsContainer">
+          ${itemsHTML}
+        </div>
+        <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+          <button onclick="savePurchaseInvoiceChanges('${invId}')" style="background:#059669; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
+            <i class="fas fa-save"></i> پاشەکەوتکردن
+          </button>
+          <button onclick="this.closest('div[style]').remove()" style="background:#64748b; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
+            <i class="fas fa-times"></i> داخستن
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  };
+
+  window.removePurchaseItemFromEdit = function(invId, idx) {
+    if (!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە؟')) return;
+    const invoice = purchaseHistory.find(p => p.id === invId);
+    if (!invoice) return;
+    invoice.items.splice(idx, 1);
+    if (invoice.items.length === 0) {
+      purchaseHistory = purchaseHistory.filter(p => p.id !== invId);
+      savePurchaseHistory();
+      renderPurchaseHistory();
+      updateStats();
+      document.querySelector('#editPurchaseItemsContainer')?.closest('div[style]')?.remove();
+      return;
+    }
+    invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
+    savePurchaseHistory();
+    renderPurchaseHistory();
+    updateStats();
+    const container = document.querySelector('#editPurchaseItemsContainer');
+    if (container) {
+      container.innerHTML = invoice.items.map((item, idx) => `
+        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+          <input type="text" id="edit_p_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_p_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_p_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <button onclick="removePurchaseItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+    showToast('کاڵا سڕکرایەوە', 'success');
+  };
+
+  window.addItemToPurchaseEdit = function(invId) {
+    const name = prompt('ناوی کاڵا:');
+    if (!name) return;
+    const qty = parseInt(prompt('بڕ:'));
+    if (!qty || qty < 1) { alert('تکایە بڕی دروست بنووسە'); return; }
+    const price = parseInt(prompt('نرخ:'));
+    if (!price || price < 0) { alert('تکایە نرخی دروست بنووسە'); return; }
+    const invoice = purchaseHistory.find(p => p.id === invId);
+    if (!invoice) return;
+    invoice.items.push({ name, qty, price });
+    invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
+    savePurchaseHistory();
+    renderPurchaseHistory();
+    updateStats();
+    const container = document.querySelector('#editPurchaseItemsContainer');
+    if (container) {
+      container.innerHTML = invoice.items.map((item, idx) => `
+        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem; background:#f8fafc; padding:0.5rem; border-radius:0.8rem;">
+          <input type="text" id="edit_p_name_${idx}" value="${item.name}" style="flex:1; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_p_qty_${idx}" value="${item.qty}" min="0" style="width:60px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <input type="number" id="edit_p_price_${idx}" value="${item.price}" min="0" style="width:80px; padding:0.3rem; border-radius:0.5rem; border:1px solid #cbd5e1;">
+          <button onclick="removePurchaseItemFromEdit('${invId}', ${idx})" style="background:#dc2626; color:white; border:none; border-radius:0.5rem; padding:0.2rem 0.8rem; cursor:pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+    showToast('کاڵا زیادکرا', 'success');
+  };
+
+  window.savePurchaseInvoiceChanges = function(invId) {
+    const invoice = purchaseHistory.find(p => p.id === invId);
+    if (!invoice) return;
+    const newPartner = document.getElementById('editPPartnerName')?.value.trim();
+    if (newPartner) invoice.partner = newPartner;
+    const newDate = document.getElementById('editPInvoiceDate')?.value.trim();
+    if (newDate) invoice.date = newDate;
+    let total = 0;
+    const items = [];
+    const container = document.querySelector('#editPurchaseItemsContainer');
+    if (container) {
+      const inputs = container.querySelectorAll('input');
+      const qtyMap = {};
+      const priceMap = {};
+      const nameMap = {};
+      inputs.forEach(input => {
+        const id = input.id;
+        if (id.startsWith('edit_p_qty_')) {
+          const idx = parseInt(id.replace('edit_p_qty_', ''));
+          qtyMap[idx] = parseInt(input.value) || 0;
+        } else if (id.startsWith('edit_p_price_')) {
+          const idx = parseInt(id.replace('edit_p_price_', ''));
+          priceMap[idx] = parseInt(input.value) || 0;
+        } else if (id.startsWith('edit_p_name_')) {
+          const idx = parseInt(id.replace('edit_p_name_', ''));
+          nameMap[idx] = input.value.trim();
+        }
+      });
+      for (let i = 0; i < invoice.items.length; i++) {
+        const name = nameMap[i] || invoice.items[i].name;
+        const qty = qtyMap[i] !== undefined ? qtyMap[i] : invoice.items[i].qty;
+        const price = priceMap[i] !== undefined ? priceMap[i] : invoice.items[i].price;
+        if (qty > 0 && price >= 0) {
+          items.push({ name, qty, price });
+          total += qty * price;
+        }
+      }
+      if (items.length > 0) {
+        invoice.items = items;
+        invoice.total = total;
+      }
+    }
+    savePurchaseHistory();
+    // ===== گۆڕانکاری: چوارچێوە داخرێت و مێژوو نوێ بکرێتەوە =====
+    const overlay = document.querySelector('div[style*="position: fixed"]');
+    if (overlay) overlay.remove();
+    renderPurchaseHistory();
+    updateStats();
+    showToast(`✅ فاکتوورە ${invId} بە سەرکەوتوویی گۆڕدرا!`, 'success');
   };
 
   // ===== PURCHASE RETURN FUNCTIONS =====
