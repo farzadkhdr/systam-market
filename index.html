@@ -3220,7 +3220,11 @@
 
     invoice.total = total;
     saveFunction();
-    document.querySelector('#editItemsContainer')?.closest('div[style]')?.remove();
+    
+    // ===== گۆڕانکاری: چوارچێوە داخرێت و مێژوو نوێ بکرێتەوە =====
+    const overlay = document.querySelector('div[style*="position: fixed"]');
+    if (overlay) overlay.remove();
+    
     updateStats();
     renderHistory();
     renderPurchaseHistory();
@@ -3725,6 +3729,7 @@
     }
   }
 
+  // ===== moduleClick =====
   window.moduleClick = function(moduleId) {
     if (!hasPermission(moduleId) && !isAdmin()) { alert('تۆ مۆڵەتی بەکارهێنانی ئەم بەشەت نییە!'); return; }
     if (moduleId === 'sales') navigateTo('sales');
@@ -3742,8 +3747,23 @@
     else if (moduleId === 'agents') navigateTo('agents');
     else if (moduleId === 'give_agent') navigateTo('giveAgent');
     else if (moduleId === 'accounting') navigateTo('accounting');
-    else if (moduleId === 'purchase_return') { navigateTo('purchase'); setTimeout(() => { document.querySelectorAll('[data-purchasetab]').forEach(t => t.classList.remove('active')); document.querySelector('[data-purchasetab="return"]')?.classList.add('active'); document.querySelectorAll('#purchaseView .panel').forEach(p => p.classList.remove('active')); document.getElementById('purchaseReturnPanel').classList.add('active'); }, 100); }
-    else if (moduleId === 'sales_return') { navigateTo('sales'); setTimeout(() => { document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('active')); document.querySelector('[data-tab="return"]')?.classList.add('active'); document.querySelectorAll('#salesView .panel').forEach(p => p.classList.remove('active')); document.getElementById('returnPanel').classList.add('active'); }, 100); }
+    else if (moduleId === 'purchase_return') { navigateTo('purchase'); setTimeout(() => { 
+      document.querySelectorAll('[data-purchasetab]').forEach(t => t.classList.remove('active')); 
+      document.querySelector('[data-purchasetab="return"]')?.classList.add('active'); 
+      document.querySelectorAll('#purchaseView .panel').forEach(p => p.classList.remove('active')); 
+      document.getElementById('purchaseReturnPanel').classList.add('active'); 
+    }, 50); }
+    else if (moduleId === 'sales_return') { 
+      navigateTo('sales'); 
+      setTimeout(() => { 
+        document.querySelectorAll('#salesView .tab[data-tab]').forEach(t => t.classList.remove('active')); 
+        const returnTab = document.querySelector('#salesView .tab[data-tab="return"]');
+        if (returnTab) returnTab.classList.add('active');
+        document.querySelectorAll('#salesView .panel').forEach(p => p.classList.remove('active')); 
+        document.getElementById('returnPanel').classList.add('active');
+        renderReturnHistory();
+      }, 50); 
+    }
     else if (moduleId === 'employees') navigateTo('employees');
     else if (moduleId === 'security') navigateTo('security');
     else if (moduleId === 'reports') navigateTo('reports');
@@ -5475,9 +5495,11 @@
       }
     }
     saveSaleHistory();
+    // ===== گۆڕانکاری: چوارچێوە داخرێت و مێژوو نوێ بکرێتەوە =====
+    const overlay = document.querySelector('div[style*="position: fixed"]');
+    if (overlay) overlay.remove();
     renderHistory();
     updateStats();
-    document.querySelector('#editSaleItemsContainer')?.closest('div[style]')?.remove();
     showToast(`✅ فاکتوورە ${invId} بە سەرکەوتوویی گۆڕدرا!`, 'success');
   };
 
@@ -5631,9 +5653,11 @@
       }
     }
     savePurchaseHistory();
+    // ===== گۆڕانکاری: چوارچێوە داخرێت و مێژوو نوێ بکرێتەوە =====
+    const overlay = document.querySelector('div[style*="position: fixed"]');
+    if (overlay) overlay.remove();
     renderPurchaseHistory();
     updateStats();
-    document.querySelector('#editPurchaseItemsContainer')?.closest('div[style]')?.remove();
     showToast(`✅ فاکتوورە ${invId} بە سەرکەوتوویی گۆڕدرا!`, 'success');
   };
 
