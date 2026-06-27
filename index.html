@@ -7,70 +7,1283 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <style>
-    /* ... هەموو ستایلەکان وەک خۆی ... */
-    /* بۆ کورتکردنەوە، ستایلەکان لێرە نەنوسراونەتەوە */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Arial', sans-serif; }
+    :root {
+      --bg-start: #e9eefa;
+      --bg-end: #f8f9fe;
+      --card-bg: rgba(255,255,255,0.75);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --shadow: 0 30px 55px rgba(0,20,40,0.2);
+      --border: 1px solid rgba(255,255,255,0.5);
+      --module-bg: linear-gradient(135deg,rgba(255,255,255,0.9) 0%,rgba(255,255,255,0.7) 100%);
+      --stat-bg: rgba(255,255,255,0.7);
+      --icon-bg-fallback: #f1f5f9;
+    }
+    body {
+      background: linear-gradient(145deg, var(--bg-end) 0%, var(--bg-start) 100%);
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh; padding: 2rem 1rem; transition: background 0.3s;
+    }
+    .system-container {
+      width: 1400px; max-width: 100%;
+      background: var(--card-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-radius: 3.5rem; box-shadow: var(--shadow), inset 0 1px 1px rgba(255,255,255,0.7);
+      padding: 1.8rem 2rem 2.2rem; border: var(--border);
+      transition: background 0.3s, box-shadow 0.3s, opacity 0.5s;
+    }
+    .system-container.hidden { opacity: 0.3; pointer-events: none; }
+    .system-container.visible { opacity: 1; pointer-events: all; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.2rem; flex-wrap: wrap; gap: 1rem; }
+    .logo-area { display: flex; align-items: center; gap: 0.7rem; }
+    .logo-icon { background: linear-gradient(135deg,#1e293b,#0f172a); color:white; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 12px 20px -10px rgba(15,23,42,0.5); overflow:hidden; }
+    .logo-icon img { width:48px; height:48px; border-radius:50%; object-fit:cover; }
+    .logo-text { font-size:1.9rem; font-weight:800; background:linear-gradient(to left,#0f172a,#334155); -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:-0.3px; }
+    .header-actions { display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap; }
+    .date-badge { background:rgba(255,255,255,0.8); backdrop-filter:blur(5px); padding:0.6rem 1.5rem; border-radius:3rem; font-weight:600; color:#1e293b; box-shadow:0 5px 12px rgba(0,0,0,0.05); border:1px solid white; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem; }
+    .logout-btn { background:#dc2626; color:white; border:none; border-radius:2rem; padding:0.5rem 1.2rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:0.5rem; transition:0.2s; box-shadow:0 8px 16px rgba(220,38,38,0.3); }
+    .logout-btn:hover { background:#b91c1c; transform:scale(1.05); }
+    #dashboardStats { display: none; }
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:1.2rem; margin-bottom:2.5rem; }
+    .stat-card { background:var(--stat-bg); backdrop-filter:blur(12px); border-radius:2rem; padding:1.3rem 1rem; display:flex; align-items:center; gap:0.8rem; box-shadow:0 15px 25px -12px rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.8); transition:transform 0.2s; }
+    .stat-card:hover { transform:translateY(-3px); }
+    .stat-icon { color:white; width:50px; height:50px; border-radius:1.5rem; display:flex; align-items:center; justify-content:center; font-size:1.6rem; }
+    .stat-icon.blue { background:linear-gradient(135deg,#2563eb,#1d4ed8); }
+    .stat-icon.green { background:linear-gradient(135deg,#059669,#047857); }
+    .stat-icon.orange { background:linear-gradient(135deg,#b45309,#92400e); }
+    .stat-icon.purple { background:linear-gradient(135deg,#7c3aed,#6d28d9); }
+    .stat-icon.pink { background:linear-gradient(135deg,#db2777,#be185d); }
+    .stat-icon.teal { background:linear-gradient(135deg,#0d9488,#0f766e); }
+    .stat-icon.indigo { background:linear-gradient(135deg,#6366f1,#4f46e5); }
+    .stat-icon.red { background:linear-gradient(135deg,#ef4444,#dc2626); }
+    .stat-icon.cyan { background:linear-gradient(135deg,#06b6d4,#0891b2); }
+    .stat-icon.yellow { background:linear-gradient(135deg,#f59e0b,#d97706); }
+    .stat-icon.amber { background:linear-gradient(135deg,#d97706,#b45309); }
+    .stat-icon.violet { background:linear-gradient(135deg,#7c3aed,#6d28d9); }
+    .stat-info h4 { font-size:1.4rem; font-weight:700; color:var(--text-primary); }
+    .stat-info span { font-size:0.8rem; color:var(--text-secondary); font-weight:500; }
+    .module-section { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:0.8rem; margin:1.8rem 0 1rem; }
+    .module-card { background:var(--module-bg); backdrop-filter:blur(8px); border-radius:2rem; padding:1rem 0.4rem; display:flex; flex-direction:column; align-items:center; text-align:center; gap:0.4rem; box-shadow:0 10px 20px -10px rgba(0,0,0,0.12); border:1px solid rgba(255,255,255,0.9); transition:all 0.25s; cursor:pointer; color:var(--text-primary); text-decoration:none; user-select:none; }
+    .module-card i { font-size:1.8rem; background:var(--icon-bg-fallback); padding:0.6rem; border-radius:1.5rem; color:#1e293b; box-shadow:0 4px 8px rgba(0,0,0,0.05); width:50px; height:50px; display:flex; align-items:center; justify-content:center; }
+    .module-card span { font-weight:600; font-size:0.8rem; line-height:1.3; }
+    .module-card:hover { transform:scale(1.04); background:white; box-shadow:0 20px 28px -10px rgba(0,0,0,0.2); border-color:#cbd5e1; }
+    .module-card.disabled { opacity:0.5; pointer-events:none; filter:grayscale(1); }
+    .module-card.dragging { opacity:0.4; transform:scale(0.95); }
+    .divider { margin:2rem 0 1rem; height:2px; background:linear-gradient(to left,transparent,#94a3b8,transparent); opacity:0.5; }
+    .section-title { font-weight:700; font-size:1.3rem; color:var(--text-primary); margin-bottom:0.8rem; display:flex; align-items:center; gap:0.5rem; }
+    .footer-note { text-align:center; margin-top:2rem; color:var(--text-secondary); font-weight:500; font-size:0.85rem; background:rgba(255,255,255,0.5); border-radius:2rem; padding:0.6rem; backdrop-filter:blur(4px); }
+    .sales-container, .persons-container, .module-view-container { width:100%; }
+    .back-header { display:flex; align-items:center; gap:1rem; margin-bottom:1.8rem; flex-wrap:wrap; }
+    .back-btn { background:white; border:none; border-radius:2.5rem; padding:0.6rem 1.5rem; font-weight:600; color:#1e293b; box-shadow:0 8px 18px rgba(0,0,0,0.08); display:flex; align-items:center; gap:0.5rem; cursor:pointer; transition:0.2s; background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); }
+    .back-btn:hover { background:white; box-shadow:0 12px 22px rgba(0,0,0,0.15); }
+    .page-title { font-size:1.9rem; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:0.5rem; }
+    .tabs { display:flex; gap:0.7rem; margin-bottom:1.8rem; flex-wrap:wrap; }
+    .tab { background:rgba(255,255,255,0.7); backdrop-filter:blur(8px); padding:0.7rem 1.8rem; border-radius:2.5rem; font-weight:700; color:#334155; cursor:pointer; border:1px solid transparent; transition:0.2s; box-shadow:0 5px 12px rgba(0,0,0,0.04); }
+    .tab.active { background:#0f172a; color:white; box-shadow:0 14px 22px rgba(15,23,42,0.4); border-color:#0f172a; }
+    .panel { display:none; }
+    .panel.active { display:block; }
+    .new-sale-layout { display:grid; grid-template-columns:1fr 1.2fr; gap:1.8rem; margin-top:0.3rem; }
+    @media (max-width:850px) { .new-sale-layout { grid-template-columns:1fr; } }
+    .card-glass { background:rgba(255,255,255,0.7); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-radius:2rem; padding:1.4rem; box-shadow:0 18px 30px -10px rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.8); }
+    .search-box { display:flex; align-items:center; background:white; border-radius:3rem; padding:0.3rem 0.3rem 0.3rem 1.3rem; box-shadow:0 8px 18px rgba(0,0,0,0.06); margin-bottom:1.2rem; border:1px solid #e2e8f0; position:relative; }
+    .search-box input { flex:1; border:none; padding:0.7rem 0; font-size:0.95rem; background:transparent; outline:none; }
+    .search-box button { background:#0f172a; color:white; border:none; border-radius:3rem; padding:0.65rem 1.3rem; font-weight:600; cursor:pointer; }
+    .search-box .clear-btn { position:absolute; left:70px; top:50%; transform:translateY(-50%); cursor:pointer; color:#94a3b8; font-size:1rem; padding:0.3rem; display:none; }
+    .search-box .clear-btn.visible { display:block; }
+    .suggestions { background:white; border-radius:1.5rem; margin-top:0.4rem; box-shadow:0 12px 25px rgba(0,0,0,0.1); max-height:180px; overflow-y:auto; display:none; border:1px solid #e2e8f0; position:absolute; z-index:100; width:100%; }
+    .suggestion-item { display:flex; align-items:center; gap:0.8rem; padding:0.7rem 1rem; cursor:pointer; border-bottom:1px solid #f1f5f9; }
+    .suggestion-item:hover { background:#f8fafc; }
+    .suggestion-item.active { background:#dbeafe; }
+    .cart-item { display:flex; justify-content:space-between; align-items:center; background:#f9fafb; border-radius:1.5rem; padding:0.7rem 1rem; margin-bottom:0.6rem; border:1px solid #edf2f7; }
+    .cart-item-details { display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap; }
+    .cart-item-actions { display:flex; gap:0.3rem; align-items:center; }
+    .cart-item-actions input { width:60px; padding:0.3rem; border-radius:1rem; border:1px solid #cbd5e1; text-align:center; }
+    .customer-badge { background:#dbeafe; padding:0.3rem 1.2rem; border-radius:2rem; font-weight:600; font-size:0.85rem; display:inline-flex; align-items:center; gap:0.4rem; }
+    .invoice-preview { background:#fffbf5; border:2px dashed #cbd5e1; border-radius:2rem; padding:1.4rem; margin-top:1.2rem; }
+    .invoice-logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:1.4rem; color:var(--text-primary); }
+    .invoice-logo img { width:40px; height:40px; border-radius:50%; object-fit:cover; }
+    .invoice-table { width:100%; border-collapse:collapse; margin:1rem 0; }
+    .invoice-table th, .invoice-table td { padding:0.5rem; text-align:right; border-bottom:1px solid #e2e8f0; }
+    .history-search { display:flex; gap:0.8rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+    .history-list { background:white; border-radius:1.8rem; padding:0.8rem; max-height:350px; overflow-y:auto; }
+    .history-row { display:flex; justify-content:space-between; align-items:center; padding:0.8rem; border-bottom:1px solid #f1f5f9; flex-wrap:wrap; gap:0.5rem; }
+    .btn-icon { background:none; border:none; color:#475569; font-size:1.2rem; cursor:pointer; margin:0 0.2rem; }
+    .btn-icon:hover { color:#0f172a; }
+    .settings-tabs { display:flex; gap:0.6rem; margin-bottom:2rem; }
+    .settings-tab { background:rgba(255,255,255,0.6); padding:0.6rem 1.5rem; border-radius:2rem; font-weight:600; cursor:pointer; border:1px solid #e2e8f0; }
+    .settings-tab.active { background:#0f172a; color:white; }
+    .theme-palette { display:flex; flex-wrap:wrap; gap:0.8rem; margin-top:1rem; }
+    .theme-dot { width:45px; height:45px; border-radius:1.2rem; cursor:pointer; border:3px solid transparent; transition:0.2s; }
+    .theme-dot.active { border-color:#2563eb; box-shadow:0 0 0 4px rgba(37,99,235,0.3); }
+    .backup-row { display:flex; justify-content:space-between; background:#f8fafc; border-radius:1.5rem; padding:0.8rem 1.2rem; margin-bottom:0.6rem; }
+    .persons-layout { display:grid; grid-template-columns:300px 1fr; gap:1.5rem; }
+    @media (max-width:768px) { .persons-layout { grid-template-columns:1fr; } }
+    .persons-list { background:white; border-radius:1.5rem; padding:1rem; max-height:600px; overflow-y:auto; }
+    .person-card, .entity-card { background:#f8fafc; border-radius:1rem; padding:0.8rem; margin-bottom:0.5rem; cursor:pointer; transition:0.2s; border:2px solid transparent; }
+    .person-card:hover, .entity-card:hover { background:#e0e7ff; border-color:#93c5fd; }
+    .person-card.selected, .entity-card.selected { background:#dbeafe; border-color:#2563eb; }
+    .person-detail-panel { background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); border-radius:1.5rem; padding:1.5rem; max-height:600px; overflow-y:auto; }
+    .debt-indicator { display:inline-block; padding:0.3rem 1rem; border-radius:2rem; font-weight:600; font-size:0.85rem; }
+    .debt-positive { background:#d1fae5; color:#065f46; }
+    .debt-negative { background:#fee2e2; color:#991b1b; }
+    .debt-zero { background:#f1f5f9; color:#475569; }
+    .movement-card { background:#ffffff; border:1px solid #e2e8f0; border-radius:1rem; padding:0.8rem; margin-bottom:0.5rem; }
+    .section-mini-title { font-weight:700; font-size:1.1rem; margin:1.2rem 0 0.8rem; display:flex; align-items:center; gap:0.5rem; }
+    .product-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; }
+    .product-card { background:white; border-radius:1.5rem; padding:1rem; border:1px solid #e2e8f0; cursor:pointer; transition:0.2s; text-align:center; }
+    .product-card:hover { box-shadow:0 10px 25px rgba(0,0,0,0.1); }
+    .product-card img { width:80px; height:80px; object-fit:cover; border-radius:1rem; margin-bottom:0.5rem; }
+    .product-card .barcode-preview { margin:0.5rem 0; }
+    .price-tag { background:#fef3c7; padding:0.5rem 1rem; border-radius:2rem; display:inline-flex; align-items:center; gap:0.5rem; margin:0.3rem; }
+    .barcode-print-section { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:1rem; }
+    .barcode-print-card { background:white; border-radius:1rem; padding:1rem; text-align:center; border:1px solid #e2e8f0; page-break-inside:avoid; }
+    .barcode-print-card svg { max-width:100%; }
+    .money-request-layout { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+    @media (max-width:768px) { .money-request-layout { grid-template-columns:1fr; } }
+    .filter-row { display:flex; gap:0.8rem; flex-wrap:wrap; align-items:center; margin-bottom:1rem; }
+    .filter-row input, .filter-row select { padding:0.5rem 1rem; border-radius:2rem; border:1px solid #cbd5e1; }
+    .perm-checkbox { width:18px; height:18px; cursor:pointer; accent-color:#7c3aed; }
+    .perm-item { display:flex; align-items:center; gap:0.5rem; padding:0.5rem; border-radius:0.8rem; transition:background 0.2s; }
+    .perm-item:hover { background:#e2e8f0; }
+    .perm-item .perm-label { font-size:0.85rem; cursor:pointer; display:flex; align-items:center; gap:0.3rem; }
+    .login-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); display:flex; justify-content:center; align-items:center; z-index:9999; opacity:0; pointer-events:none; transition:opacity 0.8s ease; }
+    .login-overlay.active { opacity:1; pointer-events:all; }
+    .login-box { background:rgba(255,255,255,0.05); backdrop-filter:blur(25px); -webkit-backdrop-filter:blur(25px); border-radius:3rem; padding:3rem 3.5rem; max-width:440px; width:90%; border:1px solid rgba(255,255,255,0.12); box-shadow:0 50px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1); transform:scale(0.9) translateY(30px); transition:transform 0.6s cubic-bezier(0.34,1.56,0.64,1), opacity 0.6s ease; opacity:0; }
+    .login-overlay.active .login-box { transform:scale(1) translateY(0); opacity:1; }
+    .login-logo { text-align:center; margin-bottom:2.5rem; }
+    .login-logo-icon { width:75px; height:75px; background:linear-gradient(135deg,#6366f1,#8b5cf6); border-radius:2rem; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; font-size:2.5rem; color:white; box-shadow:0 20px 40px rgba(99,102,241,0.4); animation:floatIcon 3s ease-in-out infinite; }
+    @keyframes floatIcon { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
+    .login-logo h1 { color:white; font-size:1.8rem; font-weight:800; letter-spacing:-0.5px; margin:0; }
+    .login-logo h1 span { background:linear-gradient(to right,#a78bfa,#818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .login-logo p { color:rgba(255,255,255,0.5); font-size:0.85rem; margin-top:0.3rem; font-weight:500; }
+    .login-error { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#fca5a5; border-radius:1.2rem; padding:0.8rem 1.2rem; font-size:0.9rem; text-align:center; margin-bottom:1.5rem; display:none; backdrop-filter:blur(5px); }
+    .login-error.show { display:block; animation:shake 0.5s ease; }
+    @keyframes shake { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-8px); } 75% { transform:translateX(8px); } }
+    .login-input-group { margin-bottom:1.5rem; position:relative; }
+    .login-input-group label { display:block; color:rgba(255,255,255,0.6); font-size:0.8rem; font-weight:600; margin-bottom:0.4rem; letter-spacing:0.5px; text-transform:uppercase; }
+    .login-input-group .input-wrapper { display:flex; align-items:center; background:rgba(255,255,255,0.06); border-radius:1.5rem; border:2px solid rgba(255,255,255,0.08); transition:all 0.3s ease; overflow:hidden; }
+    .login-input-group .input-wrapper:focus-within { border-color:#818cf8; background:rgba(255,255,255,0.1); box-shadow:0 0 0 4px rgba(99,102,241,0.15); }
+    .login-input-group .input-wrapper i { color:rgba(255,255,255,0.3); padding:0 0 0 1.2rem; font-size:1.1rem; transition:color 0.3s; }
+    .login-input-group .input-wrapper:focus-within i { color:#a78bfa; }
+    .login-input-group input { width:100%; padding:1rem 1.2rem; background:transparent; border:none; color:white; font-size:1rem; outline:none; font-weight:500; }
+    .login-input-group input::placeholder { color:rgba(255,255,255,0.25); }
+    .login-btn { width:100%; padding:1rem; background:linear-gradient(135deg,#6366f1,#8b5cf6); border:none; border-radius:1.5rem; color:white; font-size:1.1rem; font-weight:700; cursor:pointer; transition:all 0.3s ease; position:relative; overflow:hidden; margin-top:0.5rem; }
+    .login-btn:hover { transform:translateY(-2px); box-shadow:0 20px 40px rgba(99,102,241,0.35); }
+    .login-btn:active { transform:scale(0.98); }
+    .login-btn .btn-shine { position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle,rgba(255,255,255,0.15) 0%,transparent 60%); opacity:0; transition:opacity 0.5s; }
+    .login-btn:hover .btn-shine { opacity:1; }
+    .login-btn.loading { pointer-events:none; opacity:0.7; }
+    .login-btn.loading .btn-text { visibility:hidden; }
+    .login-btn.loading::after { content:''; position:absolute; width:24px; height:24px; border:3px solid rgba(255,255,255,0.2); border-top-color:white; border-radius:50%; animation:spin 0.8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .login-footer { text-align:center; margin-top:2rem; color:rgba(255,255,255,0.25); font-size:0.75rem; font-weight:500; }
+    .login-footer span { color:rgba(255,255,255,0.4); }
+    .login-particles { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9998; overflow:hidden; }
+    .particle { position:absolute; width:4px; height:4px; background:rgba(99,102,241,0.3); border-radius:50%; animation:floatParticle linear infinite; }
+    @keyframes floatParticle { 0% { transform:translateY(100vh) scale(0); opacity:0; } 10% { opacity:1; } 90% { opacity:1; } 100% { transform:translateY(-10vh) scale(1); opacity:0; } }
+    .custom-toast { position:fixed; bottom:30px; right:30px; background:rgba(16,185,129,0.95); color:white; padding:1rem 2rem; border-radius:1.5rem; font-weight:600; font-size:1rem; box-shadow:0 20px 40px rgba(0,0,0,0.3); z-index:10000; transform:translateY(20px); opacity:0; transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); max-width:90%; }
+    .custom-toast.show { transform:translateY(0); opacity:1; }
+
+    /* ===== LOGO STYLES ===== */
+    .logo-upload-container {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+    .logo-preview-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid #e2e8f0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      flex-shrink: 0;
+    }
+    .logo-preview-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .logo-preview-circle i {
+      font-size: 2.5rem;
+      color: #94a3b8;
+    }
+    .logo-upload-btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .logo-upload-btn:hover {
+      background: #1d4ed8;
+    }
+    .logo-remove-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .logo-remove-btn:hover {
+      background: #dc2626;
+    }
+
+    /* لۆگۆ لە پرێنتدا */
+    .logo-print {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .logo-print img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .logo-print i {
+      font-size: 2rem;
+      color: #0f172a;
+    }
+    @media print {
+      body { background:white; }
+      .system-container { box-shadow:none; backdrop-filter:none; background:white; padding:0; }
+      .back-header, .tabs, .new-sale-layout .card-glass:first-child, .history-search, .btn-icon, .back-btn, .no-print { display:none !important; }
+      .invoice-preview { border:none; }
+      .barcode-print-section { display:block; }
+      .barcode-print-card { break-inside:avoid; margin-bottom:1rem; }
+      .login-overlay { display:none !important; }
+      .logo-print {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.8rem !important;
+      }
+      .logo-print img {
+        width: 50px !important;
+        height: 50px !important;
+        border-radius: 50% !important;
+        object-fit: cover !important;
+      }
+      .logo-print i {
+        font-size: 2rem !important;
+      }
+    }
+
+    @media (max-width:700px) { .system-container { padding:1.2rem; } .module-section { grid-template-columns:repeat(3,1fr); } .login-box { padding:2rem 1.5rem; border-radius:2rem; } .login-logo-icon { width:60px; height:60px; font-size:2rem; } .login-logo h1 { font-size:1.5rem; } }
+
+    .accounting-transfer-box {
+      background: #f8fafc;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 2px solid #e2e8f0;
+    }
+    .accounting-transfer-box h3 {
+      color: #1e293b;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    .accounting-transfer-box .input-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .accounting-transfer-box .input-group input {
+      flex: 1;
+      min-width: 150px;
+      padding: 0.7rem 1rem;
+      border-radius: 2rem;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+    }
+    .accounting-transfer-box .input-group button {
+      background: #7c3aed;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.8rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .accounting-transfer-box .input-group button:hover {
+      background: #6d28d9;
+      transform: scale(1.02);
+    }
+    .accounting-balance {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+      font-weight: 600;
+    }
+    .accounting-balance span {
+      background: white;
+      padding: 0.4rem 1.2rem;
+      border-radius: 2rem;
+      border: 1px solid #e2e8f0;
+    }
+    .accounting-balance .today-amount { color: #059669; }
+    .accounting-balance .total-amount { color: #2563eb; }
+
+    .report-container {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      margin-top: 1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      direction: rtl;
+    }
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .report-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; }
+    .report-subtitle { color: #64748b; font-size: 0.9rem; }
+    .report-table { width:100%; border-collapse:collapse; margin:1rem 0; }
+    .report-table th { background:#f1f5f9; padding:0.8rem; text-align:right; font-weight:700; border-bottom:2px solid #e2e8f0; }
+    .report-table td { padding:0.8rem; border-bottom:1px solid #f1f5f9; }
+    .report-table tr:hover { background:#f8fafc; }
+    .report-total { display:flex; justify-content:space-between; font-weight:700; font-size:1.1rem; padding:1rem; background:#f8fafc; border-radius:1rem; margin-top:1rem; flex-wrap:wrap; gap:0.5rem; }
+    .report-print-btn { background:#0f172a; color:white; border:none; padding:0.6rem 1.5rem; border-radius:2rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:0.5rem; }
+    .report-print-btn:hover { background:#1e293b; }
+    .report-section-tab { background:rgba(255,255,255,0.7); padding:0.5rem 1.2rem; border-radius:2rem; font-weight:600; cursor:pointer; border:1px solid #e2e8f0; transition:0.2s; }
+    .report-section-tab.active { background:#0f172a; color:white; border-color:#0f172a; }
+    .report-section-tab:hover:not(.active) { background:#f1f5f9; }
+    .adjustment-history-item { background:#f8fafc; border-right:4px solid #7c3aed; padding:0.8rem; border-radius:0.8rem; margin-bottom:0.5rem; }
+    .adjustment-history-item.positive { border-right-color:#059669; }
+    .adjustment-history-item.negative { border-right-color:#dc2626; }
+
+    @media print {
+      .no-print { display: none !important; }
+      .report-container { box-shadow: none; padding: 1rem; }
+      .report-table th { background: #e2e8f0 !important; }
+    }
+
+    /* ===== گۆڕانکاری نوێ بۆ گەڕان بەدوای کاڵا لە گۆڕانکاری فاکتوورە ===== */
+    .edit-product-search-container {
+      background: #f8fafc;
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #e2e8f0;
+    }
+    .edit-product-search-container .search-box {
+      margin-bottom: 0.5rem;
+    }
+    .edit-product-search-container .suggestions {
+      position: relative;
+      max-height: 150px;
+    }
+    
+    /* ===== ئاگاداری هەڵبژاردنی کاڵا بۆ تێکچوون ===== */
+    .selected-product-info {
+      background:#dbeafe;
+      padding:0.5rem 1rem;
+      border-radius:1rem;
+      margin:0.5rem 0;
+      font-size:0.9rem;
+      border:1px solid #93c5fd;
+    }
   </style>
 </head>
 <body>
 
 <!-- ===== LOGIN OVERLAY ===== -->
-<!-- ... هەمان کۆدی چوونە ژوورەوە ... -->
+<div class="login-particles" id="loginParticles"></div>
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon"><i class="fas fa-store-alt"></i></div>
+      <h1>مارکێت <span>ERP</span></h1>
+      <p>سیستەمی بەڕێوەبردنی فرۆشگا</p>
+    </div>
+    <div class="login-error" id="loginError">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="loginErrorMessage">ناوی بەکارهێنەر یان پاسوورد هەڵەیە!</span>
+    </div>
+    <div class="login-input-group">
+      <label><i class="fas fa-user"></i> ناوی بەکارهێنەر</label>
+      <div class="input-wrapper">
+        <i class="fas fa-user"></i>
+        <input type="text" id="loginUsername" placeholder="ناوی بەکارهێنەرتان بنووسە..." autocomplete="username">
+      </div>
+    </div>
+    <div class="login-input-group">
+      <label><i class="fas fa-lock"></i> پاسوورد</label>
+      <div class="input-wrapper">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="loginPassword" placeholder="پاسوورد بنووسە..." autocomplete="current-password">
+      </div>
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="handleLogin()">
+      <span class="btn-shine"></span>
+      <span class="btn-text"><i class="fas fa-sign-in-alt"></i> چوونە ژوورەوە</span>
+    </button>
+    <div class="login-footer">
+      <span>© 2026 مارکێت ERP • هەموو مافەکان پارێزراوە</span>
+    </div>
+  </div>
+</div>
 
 <div class="system-container hidden" id="mainApp">
 
   <!-- ===== DASHBOARD VIEW ===== -->
   <div id="dashboardView">
-    <!-- ... هەمان کۆدی داشبۆرد ... -->
+    <div class="header">
+      <div class="logo-area">
+        <div class="logo-icon" id="topLogoIcon"><i class="fas fa-store-alt"></i></div>
+        <div class="logo-text" id="topLogoText">مارکێت</div>
+      </div>
+      <div class="header-actions">
+        <div class="date-badge"><i class="far fa-calendar-alt"></i> <span id="currentDate"></span></div>
+        <div class="date-badge"><i class="far fa-clock"></i> <span id="currentTime"></span></div>
+        <div class="date-badge"><i class="fas fa-user-circle"></i> <span id="userRoleDisplay">بەڕێوەبەر</span></div>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> لۆگ ئاوت</button>
+      </div>
+    </div>
+    <div id="dashboardStats" class="stats-grid">
+      <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h4 id="statTotalSales">0</h4><span>کۆی فرۆشتن</span></div></div>
+      <div class="stat-card"><div class="stat-icon green"><i class="fas fa-truck"></i></div><div class="stat-info"><h4 id="statTotalPurchases">0</h4><span>کۆی کڕین</span></div></div>
+      <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی پارەی واسڵکراو</span></div></div>
+      <div class="stat-card"><div class="stat-icon red"><i class="fas fa-coins"></i></div><div class="stat-info"><h4 id="statTotalSpendAndExpenses">0</h4><span>کۆی سەرف و مەسروفات</span></div></div>
+      <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoneyReceived">0</h4><span>واسڵی ئەمرۆ</span></div></div>
+      <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-boxes"></i></div><div class="stat-info"><h4 id="statTotalProducts">0</h4><span>کۆی کاڵاکان</span></div></div>
+      <div class="stat-card"><div class="stat-icon indigo"><i class="fas fa-users"></i></div><div class="stat-info"><h4 id="statTotalPersons">0</h4><span>کۆی کەسەکان</span></div></div>
+      <div class="stat-card"><div class="stat-icon pink"><i class="fas fa-hand-holding-heart"></i></div><div class="stat-info"><h4 id="statMyDebtToPartners">0</h4><span>قەرزاری من بۆ شەریک</span></div></div>
+      <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-handshake"></i></div><div class="stat-info"><h4 id="statPersonsDebtToMe">0</h4><span>قەرزاری کەسەکان بۆ من</span></div></div>
+    </div>
+    <div style="margin-top:0.5rem; display:flex; justify-content:space-between; align-items:center;">
+      <div class="section-title"><i class="fas fa-th-large" style="color:#2563eb;"></i> هەموو بەشەکان</div>
+      <span style="font-size:0.8rem; background:#e2e8f0; padding:0.2rem 1rem; border-radius:1rem;">ئاگاداری: بەشەکان بە درەگ دەگوازرێنەوە</span>
+    </div>
+    <div class="module-section" id="allModulesContainer"></div>
+    <div class="divider"></div>
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center;">
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+        <span style="background:#e2e8f0; padding:0.3rem 1.2rem; border-radius:2rem; font-weight:600; font-size:0.8rem;"><i class="fas fa-check-circle" style="color:#059669;"></i> بەشە چالاکەکان</span>
+        <span style="background:#dbeafe; padding:0.3rem 1.2rem; border-radius:2rem; font-weight:600; font-size:0.8rem;"><i class="fas fa-sync-alt"></i> نوێکاری</span>
+      </div>
+      <div style="font-weight:600; color:#1e293b;"><i class="far fa-clock"></i> دوایین چالاکی: ئەمڕۆ</div>
+    </div>
+    <div class="footer-note">⚡ هەموو مافەکان پارێزراوە - سیستەمی مارکێت</div>
   </div>
 
   <!-- ===== ACCOUNTING VIEW ===== -->
   <div id="accountingView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-calculator" style="color:#5b21b6;"></i> حیبساتکردن</div>
+      </div>
+      <div class="card-glass" style="max-width:700px; margin:0 auto;">
+        <h3 style="margin-bottom:1.5rem;"><i class="fas fa-exchange-alt"></i> گواستنەوەی پارە لە واسڵی ئەمرۆ بۆ کۆی واسڵکراو</h3>
+        <div class="accounting-transfer-box">
+          <h3><i class="fas fa-arrow-right"></i> گواستنەوەی پارە</h3>
+          <div class="input-group">
+            <input type="number" id="transferAmount" placeholder="بڕی پارە بۆ گواستنەوە..." min="1">
+            <button onclick="transferMoney()"><i class="fas fa-exchange-alt"></i> گواستنەوە</button>
+          </div>
+          <div style="margin-top: 0.8rem; font-size: 0.85rem; color: #64748b;">
+            <i class="fas fa-info-circle"></i> پارە لە واسڵی ئەمرۆ دەبڕدرێت و بۆ کۆی واسڵکراو زیاد دەکرێت.
+          </div>
+        </div>
+        <div style="background:#f8fafc; border-radius:1.5rem; padding:1.5rem; margin-bottom:1.5rem; border:2px solid #e2e8f0;">
+          <h3 style="margin-bottom:1rem;"><i class="fas fa-balance-scale"></i> کۆی پارە</h3>
+          <div class="accounting-balance">
+            <span class="today-amount">💰 واسڵی ئەمرۆ: <strong id="accTodayMoney">0</strong> د.ع</span>
+            <span class="total-amount">💰 کۆی واسڵکراو: <strong id="accTotalMoney">0</strong> د.ع</span>
+          </div>
+        </div>
+        <div style="background:#fef9c3; border-radius:1.5rem; padding:1rem; border:1px solid #fde68a;">
+          <p style="font-size:0.9rem; color:#854d0e;">
+            <i class="fas fa-lightbulb"></i> <strong>تێبینی:</strong> ئەگەر پارەی واسڵی ئەمرۆت زۆرە و دەتەوێت بەشێکی بگوازیتەوە بۆ کۆی گشتی، بڕەکە بنووسە و کلیکی گواستنەوە بکە.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== SALES VIEW ===== -->
   <div id="salesView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="sales-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-cart-plus" style="color:#2563eb;"></i> فرۆشتن</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-tab="newSale">➕ فرۆشتنی نوێ</div>
+        <div class="tab" data-tab="history">📋 مێژووی فرۆشتن</div>
+        <div class="tab" data-tab="return">↩️ گەڕانەوەی فرۆشتن</div>
+      </div>
+      <div class="panel active" id="newSalePanel">
+        <div class="new-sale-layout">
+          <div class="card-glass">
+            <label style="font-weight:700; margin-bottom:0.5rem; display:block;"><i class="fas fa-search"></i> گەڕان بەدوای کاڵا</label>
+            <div class="search-box" style="position:relative;">
+              <input type="text" id="productSearch" placeholder="ناوی کاڵا یان بارکۆد...">
+              <span class="clear-btn" id="productSearchClear" onclick="clearSearch('productSearch', 'productSuggestions')">✕</span>
+              <button onclick="searchProduct()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="productSuggestions"></div>
+            <div style="margin:1rem 0; display:flex; gap:0.5rem; align-items:center;">
+              <span style="font-weight:600;">🛒 سەبەتە</span>
+              <span class="customer-badge" id="selectedCustomerBadge">👤 کاش</span>
+            </div>
+            <div id="cartItems" style="max-height:220px; overflow-y:auto;">
+              <p style="color:#94a3b8; text-align:center;">کاڵا زیاد نەکراوە</p>
+            </div>
+            <button onclick="addSampleItem()" style="background:#e2e8f0; border:none; border-radius:2rem; padding:0.5rem 1.2rem; margin-top:0.5rem;"><i class="fas fa-plus"></i> زیادکردنی نموونە</button>
+            <div style="margin-top:1rem; font-weight:bold;">کۆی گشتی: <span id="totalAmount">0</span> دینار</div>
+            <div style="margin-top:0.5rem;">
+              <label><input type="checkbox" id="creditSaleCheck" onchange="toggleCredit()"> فرۆشتن بە قەرز</label>
+            </div>
+            <div id="creditCustomerSection" style="display:none; margin-top:0.5rem;">
+              <input type="text" id="customerSearch" placeholder="ناوی کەس بۆ قەرز..." style="width:100%; padding:0.6rem; border-radius:2rem; border:1px solid #cbd5e1;">
+              <div class="suggestions" id="customerSuggestions"></div>
+            </div>
+            <button onclick="completeSale()" style="background:#0f172a; color:white; border:none; border-radius:2.5rem; padding:0.8rem 2rem; margin-top:1rem; width:100%; font-weight:bold;"><i class="fas fa-check-circle"></i> تەواوکردنی فرۆشتن</button>
+          </div>
+          <div class="card-glass invoice-preview" id="invoicePreview">
+            <div class="invoice-logo" id="invoiceHeaderLogo"><i class="fas fa-store-alt" style="font-size:2rem;"></i> <span id="invoiceSystemName">مارکێت</span></div>
+            <div style="display:flex; justify-content:space-between; margin-top:0.5rem;">
+              <span>📅 <span id="invoiceDate"></span></span>
+              <span>🧾 فاکتوورە #<span id="invNumber">1045</span></span>
+            </div>
+            <table class="invoice-table">
+              <thead><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th><th>کۆ</th></tr></thead>
+              <tbody id="invoiceBody"><tr><td colspan="4">هیچ کاڵایەک نییە</td></tr></tbody>
+            </table>
+            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+              <span>کۆی گشتی:</span> <span id="invTotal">0</span>
+            </div>
+            <div id="invoiceCustomerInfo" style="margin-top:0.5rem; background:#fef9c3; padding:0.4rem; border-radius:1rem;">👤 کڕیار: کاش | قەرزاری پێشوو: 0</div>
+            <div style="margin-top:0.8rem; display:flex; gap:0.5rem;">
+              <button onclick="window.print()" style="background:#2563eb; color:white; border:none; border-radius:2rem; padding:0.5rem 1.5rem;"><i class="fas fa-print"></i> پرێنت</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="historyPanel">
+        <div class="card-glass">
+          <div class="history-search">
+            <input type="text" id="historySearchInput" placeholder="گەڕان بە کۆدی فاکتوورە یان ناوی کەس" style="flex:1; padding:0.7rem; border-radius:2.5rem; border:1px solid #cbd5e1;">
+            <button onclick="filterHistory()" style="background:#0f172a; color:white; border:none; border-radius:2.5rem; padding:0.7rem 1.5rem;"><i class="fas fa-search"></i></button>
+          </div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+        <div id="historyInvoiceDetail" style="margin-top:1rem; display:none;" class="card-glass invoice-preview"></div>
+      </div>
+      <div class="panel" id="returnPanel">
+        <div class="card-glass">
+          <h3 style="margin-bottom:1rem;"><i class="fas fa-undo-alt"></i> گەڕانەوەی کاڵا لە فرۆشتن</h3>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">🔍 گەڕان بەدوای فاکتووری فرۆشتن (ژمارە، ناوی کڕیار، یان ناوی کاڵا):</label>
+            <div class="search-box" style="margin-top:0.3rem;">
+              <input type="text" id="returnInvoiceSearch" placeholder="ژمارەی فاکتوورە، ناوی کڕیار، یان ناوی کاڵا...">
+              <button onclick="searchSaleForReturn()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="returnInvoiceSuggestions"></div>
+          </div>
+          <div id="selectedSaleForReturn" style="display:none; background:#f8fafc; border-radius:1rem; padding:1rem; margin-bottom:1rem;">
+            <div style="display:flex; justify-content:space-between;">
+              <strong id="returnInvoiceId"></strong>
+              <span id="returnInvoiceDate"></span>
+            </div>
+            <div>کڕیار: <span id="returnCustomerName"></span></div>
+            <div>کۆی فاکتوورە: <span id="returnInvoiceTotal"></span> د.ع</div>
+            <div style="margin-top:0.5rem;"><strong>کاڵاکان:</strong></div>
+            <div id="returnInvoiceItemsList" style="margin-right:1rem; font-size:0.9rem;"></div>
+          </div>
+          <div id="returnProductSelection" style="display:none;">
+            <div style="margin:1rem 0;">
+              <label style="font-weight:600;">📦 هەڵبژاردنی کاڵا بۆ گەڕانەوە:</label>
+              <select id="returnProductSelect" class="customer-badge" style="width:100%; margin-top:0.3rem;" onchange="updateReturnProductInfo()">
+                <option value="">-- کاڵایەک هەڵبژێرە --</option>
+              </select>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div>
+                <label style="font-weight:600;">نرخی فرۆشتن:</label>
+                <input type="number" id="returnPrice" readonly style="width:100%; padding:0.5rem; border-radius:1rem; background:#f1f5f9;">
+              </div>
+              <div>
+                <label style="font-weight:600;">بڕی فرۆشراو:</label>
+                <input type="number" id="returnMaxQty" readonly style="width:100%; padding:0.5rem; border-radius:1rem; background:#f1f5f9;">
+              </div>
+            </div>
+            <div style="margin-top:1rem;">
+              <label style="font-weight:600;">بڕی گەڕانەوە:</label>
+              <input type="number" id="returnQuantity" value="1" min="1" style="width:100%; padding:0.5rem; border-radius:1rem;">
+            </div>
+            <div style="margin:1rem 0;">
+              <label style="font-weight:600;">جۆری گەڕانەوە:</label>
+              <select id="returnType" class="customer-badge" style="width:100%; margin-top:0.3rem;" onchange="toggleReturnCustomerSearch()">
+                <option value="cash">کەمکردنەوەی پارە (نەقدی)</option>
+                <option value="debt">کەمکردنەوەی قەرزی کەس</option>
+              </select>
+            </div>
+            <div id="returnCustomerSearchDiv" style="display:none; margin-bottom:1rem;">
+              <label style="font-weight:600;">👤 گەڕان بەدوای کەس بۆ کەمکردنەوەی قەرز:</label>
+              <div class="search-box" style="margin-top:0.3rem;">
+                <input type="text" id="returnCustomerSearch" placeholder="ناوی کەسەکە...">
+                <button onclick="searchReturnCustomer()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="returnCustomerSuggestions"></div>
+              <div id="selectedReturnCustomerBadge" style="margin-top:0.5rem;"></div>
+            </div>
+            <button onclick="submitSalesReturn()" style="background:#dc2626; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%; margin-top:0.5rem;">
+              <i class="fas fa-undo-alt"></i> تۆمارکردنی گەڕانەوە
+            </button>
+          </div>
+        </div>
+        <div id="returnHistoryList" class="card-glass" style="margin-top:1.5rem;">
+          <h4><i class="fas fa-history"></i> مێژووی گەڕانەوەکانی فرۆشتن</h4>
+          <div id="returnHistoryContainer" style="max-height:300px; overflow-y:auto;"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== PURCHASE VIEW ===== -->
   <div id="purchaseView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-truck" style="color:#1e40af;"></i> کڕین</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-purchasetab="newPurchase">➕ کڕینی نوێ</div>
+        <div class="tab" data-purchasetab="history">📋 مێژووی کڕین</div>
+        <div class="tab" data-purchasetab="return">↩️ گەڕانەوەی کڕین</div>
+      </div>
+      <div class="panel active" id="newPurchasePanel">
+        <div class="new-sale-layout">
+          <div class="card-glass">
+            <label style="font-weight:700; margin-bottom:0.5rem; display:block;"><i class="fas fa-search"></i> گەڕان بەدوای کاڵا</label>
+            <div class="search-box" style="position:relative;">
+              <input type="text" id="purchaseProductSearch" placeholder="ناوی کاڵا یان بارکۆد...">
+              <span class="clear-btn" id="purchaseSearchClear" onclick="clearSearch('purchaseProductSearch', 'purchaseProductSuggestions')">✕</span>
+              <button onclick="searchPurchaseProduct()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="purchaseProductSuggestions"></div>
+            <div style="margin:1rem 0;">
+              <label style="font-weight:700; display:block; margin-bottom:0.5rem;"><i class="fas fa-handshake"></i> هەڵبژاردنی شەریک</label>
+              <div class="search-box" style="margin-bottom:0.5rem;">
+                <input type="text" id="purchasePartnerSearch" placeholder="ناوی شەریک...">
+                <button onclick="searchPurchasePartner()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="purchasePartnerSuggestions"></div>
+              <div id="selectedPurchasePartnerBadge" style="margin-top:0.5rem;"><span class="customer-badge">🤝 شەریک هەڵنەبژێردراوە</span></div>
+            </div>
+            <div style="margin:1rem 0; display:flex; gap:0.5rem; align-items:center;">
+              <span style="font-weight:600;">🛒 سەبەتەی کڕین</span>
+            </div>
+            <div id="purchaseCartItems" style="max-height:220px; overflow-y:auto;">
+              <p style="color:#94a3b8; text-align:center;">کاڵا زیاد نەکراوە</p>
+            </div>
+            <div style="margin-top:1rem; font-weight:bold;">کۆی گشتی: <span id="purchaseTotalAmount">0</span> دینار</div>
+            <div style="margin-top:0.5rem;">
+              <label><input type="checkbox" id="creditPurchaseCheck" onchange="updatePurchaseInvoicePreview()"> کڕین بە قەرز</label>
+            </div>
+            <button onclick="completePurchase()" style="background:#1e40af; color:white; border:none; border-radius:2.5rem; padding:0.8rem 2rem; margin-top:1rem; width:100%; font-weight:bold;"><i class="fas fa-check-circle"></i> تەواوکردنی کڕین</button>
+          </div>
+          <div class="card-glass invoice-preview" id="purchaseInvoicePreview">
+            <div class="invoice-logo"><i class="fas fa-truck" style="font-size:2rem;"></i> <span>کڕین</span></div>
+            <div style="display:flex; justify-content:space-between; margin-top:0.5rem;">
+              <span>📅 <span id="purchaseInvoiceDate"></span></span>
+              <span>🧾 فاکتوورە #<span id="purchaseInvNumber">1001</span></span>
+            </div>
+            <table class="invoice-table">
+              <thead><tr><th>کاڵا</th><th>بڕ</th><th>نرخ</th><th>کۆ</th></tr></thead>
+              <tbody id="purchaseInvoiceBody"><tr><td colspan="4">هیچ کاڵایەک نییە</td></tr></tbody>
+            </table>
+            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+              <span>کۆی گشتی:</span> <span id="purchaseInvTotal">0</span>
+            </div>
+            <div id="purchaseInvoicePartnerInfo" style="margin-top:0.5rem; background:#fef9c3; padding:0.4rem; border-radius:1rem;">🤝 شەریک: هەڵنەبژێردراوە</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="purchaseHistoryPanel">
+        <div class="card-glass">
+          <div class="filter-row">
+            <input type="text" id="purchaseHistorySearch" placeholder="گەڕان بە کۆدی فاکتوورە یان ناوی شەریک" style="flex:1;" oninput="filterPurchaseHistory()">
+            <input type="date" id="purchaseHistoryDateFrom" onchange="filterPurchaseHistory()" title="لە بەروار">
+            <input type="date" id="purchaseHistoryDateTo" onchange="filterPurchaseHistory()" title="تا بەروار">
+          </div>
+          <div class="history-list" id="purchaseHistoryList"></div>
+        </div>
+        <div id="purchaseHistoryInvoiceDetail" style="margin-top:1rem; display:none;" class="card-glass invoice-preview"></div>
+      </div>
+      <div class="panel" id="purchaseReturnPanel">
+        <div class="card-glass">
+          <h3 style="margin-bottom:1rem;"><i class="fas fa-undo-alt"></i> گەڕانەوەی کاڵا لە کڕین</h3>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">🔍 گەڕان بەدوای فاکتووری کڕین (ژمارە، ناوی شەریک، یان ناوی کاڵا):</label>
+            <div class="search-box" style="margin-top:0.3rem;">
+              <input type="text" id="purchaseReturnSearch" placeholder="ژمارەی فاکتوورە، ناوی شەریک، یان ناوی کاڵا...">
+              <button onclick="searchPurchaseForReturn()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="purchaseReturnSuggestions"></div>
+          </div>
+          <div id="selectedPurchaseForReturn" style="display:none; background:#f8fafc; border-radius:1rem; padding:1rem; margin-bottom:1rem;">
+            <div style="display:flex; justify-content:space-between;">
+              <strong id="purchaseReturnInvoiceId"></strong>
+              <span id="purchaseReturnInvoiceDate"></span>
+            </div>
+            <div>شەریک: <span id="purchaseReturnPartnerName"></span></div>
+            <div>کۆی فاکتوورە: <span id="purchaseReturnInvoiceTotal"></span> د.ع</div>
+            <div style="margin-top:0.5rem;"><strong>کاڵاکان:</strong></div>
+            <div id="purchaseReturnItemsList" style="margin-right:1rem; font-size:0.9rem;"></div>
+          </div>
+          <div id="purchaseReturnProductSelection" style="display:none;">
+            <div style="margin:1rem 0;">
+              <label style="font-weight:600;">📦 هەڵبژاردنی کاڵا بۆ گەڕانەوە:</label>
+              <select id="purchaseReturnProductSelect" class="customer-badge" style="width:100%; margin-top:0.3rem;" onchange="updatePurchaseReturnProductInfo()">
+                <option value="">-- کاڵایەک هەڵبژێرە --</option>
+              </select>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div>
+                <label style="font-weight:600;">نرخی کڕین:</label>
+                <input type="number" id="purchaseReturnPrice" readonly style="width:100%; padding:0.5rem; border-radius:1rem; background:#f1f5f9;">
+              </div>
+              <div>
+                <label style="font-weight:600;">بڕی کڕدراو:</label>
+                <input type="number" id="purchaseReturnMaxQty" readonly style="width:100%; padding:0.5rem; border-radius:1rem; background:#f1f5f9;">
+              </div>
+            </div>
+            <div style="margin-top:1rem;">
+              <label style="font-weight:600;">بڕی گەڕانەوە:</label>
+              <input type="number" id="purchaseReturnQuantity" value="1" min="1" style="width:100%; padding:0.5rem; border-radius:1rem;">
+            </div>
+            <div style="margin:1rem 0;">
+              <label style="font-weight:600;">جۆری گەڕانەوە:</label>
+              <select id="purchaseReturnType" class="customer-badge" style="width:100%; margin-top:0.3rem;" onchange="togglePurchaseReturnPartnerSearch()">
+                <option value="cash">وەرگرتنەوەی پارە (نەقدی)</option>
+                <option value="debt">کەمکردنەوەی قەرزی شەریک</option>
+              </select>
+            </div>
+            <div id="purchaseReturnPartnerSearchDiv" style="display:none; margin-bottom:1rem;">
+              <label style="font-weight:600;">🤝 گەڕان بەدوای شەریک بۆ کەمکردنەوەی قەرز:</label>
+              <div class="search-box" style="margin-top:0.3rem;">
+                <input type="text" id="purchaseReturnPartnerSearch" placeholder="ناوی شەریکەکە...">
+                <button onclick="searchPurchaseReturnPartner()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="purchaseReturnPartnerSuggestions"></div>
+              <div id="selectedPurchaseReturnPartnerBadge" style="margin-top:0.5rem;"></div>
+            </div>
+            <button onclick="submitPurchaseReturn()" style="background:#dc2626; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%; margin-top:0.5rem;">
+              <i class="fas fa-undo-alt"></i> تۆمارکردنی گەڕانەوەی کڕین
+            </button>
+          </div>
+        </div>
+        <div id="purchaseReturnHistoryList" class="card-glass" style="margin-top:1.5rem;">
+          <h4><i class="fas fa-history"></i> مێژووی گەڕانەوەکانی کڕین</h4>
+          <div id="purchaseReturnHistoryContainer" style="max-height:300px; overflow-y:auto;"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== PERSONS VIEW ===== -->
   <div id="personsView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="persons-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-users" style="color:#7c3aed;"></i> کەسەکان</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-ptab="list">📋 لیستی کەسەکان</div>
+        <div class="tab" data-ptab="add">➕ زیادکردنی کەس</div>
+        <div class="tab" data-ptab="adjust">⚖️ متابق کردن (تەعدیلی قەرز)</div>
+      </div>
+      <div class="panel active" id="personsListPanel">
+        <div class="card-glass" style="margin-bottom:1rem;">
+          <div class="search-box">
+            <input type="text" id="personSearchInput" placeholder="گەڕان بە ناو یان ژمارە مۆبایل..." oninput="filterPersons()">
+            <button onclick="filterPersons()"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+        <div class="persons-layout">
+          <div class="persons-list" id="personsListContainer"></div>
+          <div class="person-detail-panel" id="personDetailPanel"><p style="color:#94a3b8; text-align:center;">کەسێک هەڵبژێرە بۆ بینینی زانیاری</p></div>
+        </div>
+      </div>
+      <div class="panel" id="personsAddPanel">
+        <div class="card-glass" style="max-width:600px; margin:0 auto;">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-user-plus"></i> زیادکردنی کەسی نوێ</h3>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ناوی تەواو:</label>
+            <input type="text" id="newPersonName" placeholder="ناوی کەسەکە..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ژمارە مۆبایل:</label>
+            <input type="tel" id="newPersonPhone" placeholder="07xx xxx xxxx" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ناونیشان:</label>
+            <textarea id="newPersonAddress" placeholder="ناونیشانی کەسەکە..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem; resize:vertical;" rows="3"></textarea>
+          </div>
+          <button onclick="addNewPerson()" style="background:#7c3aed; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-save"></i> پاشەکەوتکردن</button>
+        </div>
+      </div>
+      <div class="panel" id="personsAdjustPanel">
+        <div class="card-glass" style="max-width:700px; margin-left:auto; margin-right:auto;">
+          <h3 style="margin-bottom:1rem;"><i class="fas fa-balance-scale" style="color:#7c3aed;"></i> متابق کردن (تەعدیلی قەرز)</h3>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">جۆر:</label>
+            <select id="adjustType" onchange="toggleAdjustEntitySearch()" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              <option value="person">👤 کەس</option>
+              <option value="partner">🤝 شەریک</option>
+            </select>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">گەڕان بەدوای ناو:</label>
+            <div class="search-box" style="position:relative;">
+              <input type="text" id="adjustEntitySearch" placeholder="ناوی کەس یان شەریک بنووسە..." oninput="searchAdjustEntity()">
+              <span class="clear-btn" id="adjustSearchClear" onclick="clearSearch('adjustEntitySearch', 'adjustEntitySuggestions')">✕</span>
+              <button onclick="searchAdjustEntity()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="adjustEntitySuggestions"></div>
+          </div>
+          <div id="selectedAdjustEntityInfo" style="display:none; background:#fef9c3; padding:1rem; border-radius:1.5rem; margin-bottom:1rem;">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+              <div><strong id="adjustEntityName"></strong></div>
+              <div>📱 <span id="adjustEntityPhone"></span></div>
+              <div>💰 قەرز: <span id="adjustEntityCurrentDebt"></span> د.ع</div>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">جۆری گۆڕان:</label>
+              <select id="adjustOperation" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+                <option value="positive">➕ زیادکردن (موجەب)</option>
+                <option value="negative">➖ کەمکردن (سالب)</option>
+              </select>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">بڕی گۆڕان:</label>
+              <input type="number" id="adjustAmount" placeholder="بڕی پارە..." min="1" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">تێبینی:</label>
+            <textarea id="adjustNote" placeholder="هۆکاری گۆڕان..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;" rows="2"></textarea>
+          </div>
+          <button onclick="submitAdjustment()" style="background:#7c3aed; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;">
+            <i class="fas fa-save"></i> تۆمارکردنی گۆڕان
+          </button>
+          <div style="margin-top:2rem; border-top:2px solid #e2e8f0; padding-top:1.5rem;">
+            <h4 style="margin-bottom:1rem;"><i class="fas fa-history"></i> مێژووی متابق کردن</h4>
+            <div id="adjustmentHistoryList" style="max-height:200px; overflow-y:auto;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== PARTNERS VIEW ===== -->
   <div id="partnersView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-handshake" style="color:#db2777;"></i> شەریکەکان</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-partnertab="list">📋 لیستی شەریکەکان</div>
+        <div class="tab" data-partnertab="add">➕ زیادکردنی شەریک</div>
+      </div>
+      <div class="panel active" id="partnersListPanel">
+        <div class="card-glass" style="margin-bottom:1rem;">
+          <div class="search-box">
+            <input type="text" id="partnerSearchInput" placeholder="گەڕان بە ناو یان ژمارە مۆبایل..." oninput="filterPartners()">
+            <button onclick="filterPartners()"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+        <div class="persons-layout">
+          <div class="persons-list" id="partnersListContainer"></div>
+          <div class="person-detail-panel" id="partnerDetailPanel"><p style="color:#94a3b8; text-align:center;">شەریکێک هەڵبژێرە بۆ بینینی زانیاری</p></div>
+        </div>
+      </div>
+      <div class="panel" id="partnersAddPanel">
+        <div class="card-glass" style="max-width:600px; margin:0 auto;">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-handshake"></i> زیادکردنی شەریکی نوێ</h3>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ناوی تەواو:</label>
+            <input type="text" id="newPartnerName" placeholder="ناوی شەریک..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ژمارە مۆبایل:</label>
+            <input type="tel" id="newPartnerPhone" placeholder="07xx xxx xxxx" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ناونیشان:</label>
+            <textarea id="newPartnerAddress" placeholder="ناونیشانی شەریک..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem; resize:vertical;" rows="3"></textarea>
+          </div>
+          <button onclick="addNewPartner()" style="background:#db2777; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-save"></i> پاشەکەوتکردن</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== WAREHOUSE VIEW ===== -->
   <div id="warehouseView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-boxes" style="color:#b45309;"></i> مخزن</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-waretab="add">➕ زیادکردنی کاڵا</div>
+        <div class="tab" data-waretab="list">📋 لیستی کاڵاکان</div>
+        <div class="tab" data-waretab="purchase">🛒 کڕینەوە لە مخزن</div>
+      </div>
+      <div class="panel active" id="wareAddPanel">
+        <div class="card-glass" style="max-width:700px; margin:0 auto;">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-plus-circle"></i> زیادکردنی کاڵای نوێ</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">ناوی کاڵا:</label>
+              <input type="text" id="newProductName" placeholder="ناوی کاڵاکە..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">بارکۆد:</label>
+              <div style="display:flex; gap:0.5rem; margin-top:0.3rem;">
+                <input type="text" id="newProductBarcode" placeholder="بارکۆدی کاڵا" style="flex:1; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1;">
+                <button onclick="generateCustomBarcode()" title="بارکۆدی خۆکار" style="background:#2563eb;color:white;border:none;border-radius:1.5rem;padding:0.7rem 1rem;cursor:pointer;"><i class="fas fa-barcode"></i> دروستکردن</button>
+              </div>
+            </div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">بەرواری بەسەرچوون:</label>
+            <input type="date" id="newProductExpiry" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">وێنەی کاڵا:</label>
+            <input type="file" id="productImageUpload" accept="image/*" onchange="previewProductImage()" style="width:100%; padding:0.5rem; margin-top:0.3rem;">
+            <img id="productImagePreview" style="width:100px;height:100px;object-fit:cover;border-radius:1rem;margin-top:0.5rem;display:none;border:2px dashed #cbd5e1;">
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">بڕی کاڵا:</label>
+              <input type="number" id="newProductQuantity" value="0" min="0" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">یەکە:</label>
+              <select id="newProductUnit" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+                <option value="عدد">عدد (دانە)</option>
+                <option value="کیلۆ">کیلۆ</option>
+                <option value="لیتر">لیتر</option>
+                <option value="مەتر">مەتر</option>
+                <option value="کارتۆن">کارتۆن</option>
+              </select>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">بڕی یەکەی دووەم:</label>
+              <input type="number" id="newProductSecondQty" value="0" min="0" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">نرخی کڕین:</label>
+              <input type="number" id="newProductBuyPrice" value="0" min="0" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">نرخی فرۆشتن:</label>
+              <input type="number" id="newProductSellPrice" value="0" min="0" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+          </div>
+          <button onclick="addNewProduct()" style="background:#b45309; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%; margin-top:1rem;"><i class="fas fa-save"></i> پاشەکەوتکردنی کاڵا</button>
+        </div>
+      </div>
+      <div class="panel" id="wareListPanel">
+        <div class="card-glass" style="margin-bottom:1rem;">
+          <div class="search-box">
+            <input type="text" id="productListSearch" placeholder="گەڕان بە ناوی کاڵا یان بارکۆد..." oninput="filterProducts()">
+            <button onclick="filterProducts()"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+        <div class="product-grid" id="productsGrid"></div>
+      </div>
+      <div class="panel" id="warePurchasePanel">
+        <div class="card-glass">
+          <h3 style="margin-bottom:1rem;"><i class="fas fa-shopping-basket"></i> کڕینەوە لە مخزن</h3>
+          <div class="search-box" style="position:relative;">
+            <input type="text" id="warePurchaseSearch" placeholder="گەڕان بەدوای کاڵا..." oninput="searchWarehouseProducts()">
+            <span class="clear-btn" id="warePurchaseSearchClear" onclick="clearSearch('warePurchaseSearch', 'warePurchaseSuggestions')">✕</span>
+            <button onclick="searchWarehouseProducts()"><i class="fas fa-search"></i></button>
+          </div>
+          <div class="suggestions" id="warePurchaseSuggestions"></div>
+          <div id="warePurchaseCart" style="margin-top:1rem;"><p style="color:#94a3b8;">کاڵا زیاد نەکراوە</p></div>
+          <div style="margin-top:1rem; font-weight:bold;">کۆی گشتی: <span id="warePurchaseTotal">0</span> دینار</div>
+          <button onclick="completeWarehousePurchase()" style="background:#059669; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%; margin-top:1rem;"><i class="fas fa-check-circle"></i> تەواوکردنی کڕین</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== PRICING VIEW ===== -->
   <div id="pricingView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-tags" style="color:#059669;"></i> دروستکردنی نرخ</div>
+      </div>
+      <div class="card-glass">
+        <h3 style="margin-bottom:1rem;"><i class="fas fa-tag"></i> نرخەکانی کاڵاکان</h3>
+        <div style="margin-bottom:1.5rem;">
+          <label style="font-weight:600;">بڕی نرخ (ژمارە):</label>
+          <input type="number" id="priceQuantity" value="1" min="1" style="width:150px; padding:0.5rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-right:1rem;">
+          <button onclick="generateAllPrices()" style="background:#059669; color:white; border:none; padding:0.5rem 1.5rem; border-radius:1.5rem; font-weight:bold;"><i class="fas fa-sync-alt"></i> دروستکردنی نرخەکان</button>
+        </div>
+        <div id="pricingContainer" style="display:flex; flex-wrap:wrap; gap:0.8rem; margin-bottom:1.5rem;"><p style="color:#94a3b8;">کاڵا هەڵبژێرە بۆ دروستکردنی نرخ</p></div>
+        <div class="search-box" style="margin-bottom:1rem;">
+          <input type="text" id="pricingProductSearch" placeholder="گەڕان بەدوای کاڵا بۆ نرخ..." oninput="searchPricingProducts()">
+          <button onclick="searchPricingProducts()"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="suggestions" id="pricingProductSuggestions"></div>
+        <div id="pricingSelectedProducts" style="margin-top:1rem; display:flex; flex-wrap:wrap; gap:0.5rem;"></div>
+        <button onclick="printPrices()" style="background:#2563eb; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; margin-top:1rem;"><i class="fas fa-print"></i> پرێنتی نرخەکان</button>
+      </div>
+    </div>
   </div>
 
   <!-- ===== BARCODE VIEW ===== -->
   <div id="barcodeView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-barcode" style="color:#6b21a8;"></i> پرێنتکردنی بارکۆد</div>
+      </div>
+      <div class="card-glass">
+        <h3 style="margin-bottom:1rem;"><i class="fas fa-barcode"></i> بارکۆدەکان</h3>
+        <div style="margin-bottom:1.5rem;">
+          <label style="font-weight:600;">هەڵبژاردنی کاڵا:</label>
+          <select id="barcodeProductSelect" onchange="addBarcodeProduct()" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            <option value="">-- کاڵا هەڵبژێرە --</option>
+          </select>
+        </div>
+        <div style="margin-bottom:1rem; display:flex; gap:0.5rem;">
+          <button onclick="addAllBarcodeProducts()" style="background:#7c3aed; color:white; border:none; padding:0.6rem 1.5rem; border-radius:2rem; cursor:pointer;"><i class="fas fa-plus-square"></i> هەموو کاڵاکان</button>
+          <button onclick="clearBarcodeProducts()" style="background:#ef4444; color:white; border:none; padding:0.6rem 1.5rem; border-radius:2rem; cursor:pointer;"><i class="fas fa-trash"></i> پاککردنەوە</button>
+        </div>
+        <div id="barcodeProductsList" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.5rem;"></div>
+        <div style="margin-bottom:1rem;">
+          <label style="font-weight:600;">ژمارەی دانە بۆ هەر بارکۆد:</label>
+          <input type="number" id="barcodeCopies" value="1" min="1" max="20" style="width:100px; padding:0.5rem; border-radius:1rem; border:1px solid #cbd5e1; margin-right:1rem;">
+        </div>
+        <button onclick="printBarcodes()" style="background:#6b21a8; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold;"><i class="fas fa-print"></i> پرێنتی بارکۆدەکان</button>
+        <div class="barcode-print-section" id="barcodePrintArea" style="margin-top:1.5rem;"></div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== MONEY REQUEST VIEW ===== -->
   <div id="moneyRequestView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-money-check-alt" style="color:#854d0e;"></i> واسڵکردنی پارە</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-moneytab="new">➕ واسڵی نوێ</div>
+        <div class="tab" data-moneytab="history">📋 مێژووی واسڵەکان</div>
+      </div>
+      <div class="panel active" id="moneyNewPanel">
+        <div class="card-glass" style="max-width:700px; margin:0 auto;">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-hand-holding-usd"></i> واسڵکردنی پارەی نوێ</h3>
+          <div style="margin-bottom:1.5rem;">
+            <label style="font-weight:600;">جۆر:</label>
+            <select id="moneyRequestType" onchange="onMoneyTypeChange()" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              <option value="person">👤 کەس</option>
+              <option value="partner">🤝 شەریک</option>
+            </select>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">گەڕان بەدوای ناو:</label>
+            <input type="text" id="moneyEntitySearch" placeholder="ناوی کەس یان شەریک بنووسە..." oninput="searchMoneyEntities()" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            <div class="suggestions" id="moneyEntitySuggestions"></div>
+          </div>
+          <div id="selectedEntityInfo" style="margin-bottom:1rem; display:none;">
+            <div style="background:#fef9c3; padding:1rem; border-radius:1.5rem;">
+              <strong>👤 ناو: <span id="moneyEntityName"></span></strong><br>
+              📱 مۆبایل: <span id="moneyEntityPhone"></span><br>
+              💰 قەرزاری: <span id="moneyEntityDebt"></span> دینار
+            </div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">بڕی پارە:</label>
+            <input type="number" id="moneyAmount" placeholder="بڕی پارەی واسڵکراو" min="1" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">تێبینی:</label>
+            <textarea id="moneyNote" placeholder="تێبینی..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;" rows="2"></textarea>
+          </div>
+          <button onclick="submitMoneyRequest()" style="background:#854d0e; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-save"></i> تۆمارکردنی واسڵ</button>
+        </div>
+      </div>
+      <div class="panel" id="moneyHistoryPanel">
+        <div class="card-glass">
+          <div class="filter-row">
+            <input type="text" id="moneyHistorySearch" placeholder="گەڕان بە کۆدی فاکتوورە یان ناو..." oninput="filterMoneyHistory()" style="flex:1;">
+            <select id="moneyHistoryTypeFilter" onchange="filterMoneyHistory()">
+              <option value="all">👥 هەموو</option>
+              <option value="person">👤 کەس</option>
+              <option value="partner">🤝 شەریک</option>
+            </select>
+            <input type="date" id="moneyHistoryDateFrom" onchange="filterMoneyHistory()" title="لە بەروار">
+            <input type="date" id="moneyHistoryDateTo" onchange="filterMoneyHistory()" title="تا بەروار">
+          </div>
+          <div class="history-list" id="moneyHistoryList" style="max-height:400px; overflow-y:auto;"></div>
+        </div>
+        <div id="moneyInvoiceDetail" style="margin-top:1rem; display:none;" class="card-glass invoice-preview"></div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== MONEY SPEND VIEW ===== -->
   <div id="moneySpendView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-coins" style="color:#854d0e;"></i> سەرفکردنی پارە</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-spendtab="expense">💸 مەسروفات</div>
+        <div class="tab" data-spendtab="give">🤝 پارە پێدان</div>
+      </div>
+
+      <!-- Expense Panel -->
+      <div class="panel active" id="moneyExpensePanel">
+        <div class="card-glass" style="max-width:700px; margin:0 auto;">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-money-bill-wave"></i> تۆمارکردنی مەسروفات (خەرجی)</h3>
+          <div style="background:#fef9c3; padding:1rem; border-radius:1.5rem; margin-bottom:1.5rem;">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+              <div><strong>💰 واسڵی ئەمرۆ:</strong> <span id="todayMoneyDisplay" style="color:#059669; font-weight:800;">0</span> د.ع</div>
+              <div><strong>📊 کۆی مەسروفاتی ئەمرۆ:</strong> <span id="todayExpenseDisplay" style="color:#dc2626; font-weight:800;">0</span> د.ع</div>
+              <div><strong>📈 ماوە لە واسڵی ئەمرۆ:</strong> <span id="todayRemainingDisplay" style="color:#2563eb; font-weight:800;">0</span> د.ع</div>
+            </div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">بڕی پارەی سەرفکراو:</label>
+            <input type="number" id="expenseAmount" placeholder="بڕی پارە..." min="1" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">هۆکاری سەرفکردن:</label>
+            <select id="expenseCategory" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              <option value="کرێ">🏠 کرێ</option>
+              <option value="موچەی کارمەند">👤 موچەی کارمەند</option>
+              <option value="کاڵا">🛒 کڕینی کاڵا</option>
+              <option value="گواستنەوە">🚚 گواستنەوە</option>
+              <option value="کارەبا">⚡ کارەبا</option>
+              <option value="ئاو">💧 ئاو</option>
+              <option value="ئینتەرنێت">🌐 ئینتەرنێت</option>
+              <option value="ترمیم">🔧 ترمیم</option>
+              <option value="دیکە">📌 دیکە</option>
+            </select>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">تێبینی:</label>
+            <textarea id="expenseNote" placeholder="تێبینی لەسەر خەرجی..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem; resize:vertical;" rows="2"></textarea>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">بەروار و کات:</label>
+            <input type="datetime-local" id="expenseDateTime" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <button onclick="submitExpense()" style="background:#dc2626; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;">
+            <i class="fas fa-check-circle"></i> تۆمارکردنی مەسروفات
+          </button>
+        </div>
+        <div class="card-glass" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:1rem;"><i class="fas fa-history"></i> مێژووی مەسروفاتەکان</h4>
+          <div class="filter-row" style="margin-bottom:1rem;">
+            <input type="text" id="expenseHistorySearch" placeholder="گەڕان بە هۆکار یان تێبینی..." oninput="filterExpenseHistory()" style="flex:1;">
+            <input type="date" id="expenseHistoryDateFrom" onchange="filterExpenseHistory()" title="لە بەروار">
+            <input type="date" id="expenseHistoryDateTo" onchange="filterExpenseHistory()" title="تا بەروار">
+          </div>
+          <div class="history-list" id="expenseHistoryList" style="max-height:350px; overflow-y:auto;"></div>
+        </div>
+      </div>
+
+      <!-- Give Money Panel -->
+      <div class="panel" id="moneyGivePanel">
+        <div class="card-glass" style="max-width:700px; margin:0 auto;">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-hand-holding-heart"></i> پێدانی پارە بە کەس یان شەریک</h3>
+          <div style="background:#dbeafe; padding:1rem; border-radius:1.5rem; margin-bottom:1.5rem;">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+              <div><strong>💰 واسڵی ئەمرۆ:</strong> <span id="todayMoneyGiveDisplay" style="color:#059669; font-weight:800;">0</span> د.ع</div>
+              <div><strong>📊 کۆی پێدانی ئەمرۆ:</strong> <span id="todayGiveDisplay" style="color:#7c3aed; font-weight:800;">0</span> د.ع</div>
+            </div>
+          </div>
+          <div style="margin-bottom:1.5rem;">
+            <label style="font-weight:600;">جۆر:</label>
+            <select id="moneyGiveType" onchange="onGiveTypeChange()" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              <option value="person">👤 کەس</option>
+              <option value="partner">🤝 شەریک</option>
+            </select>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">گەڕان بەدوای ناو:</label>
+            <input type="text" id="moneyGiveSearch" placeholder="ناوی کەس یان شەریک بنووسە..." oninput="searchGiveEntities()" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            <div class="suggestions" id="moneyGiveSuggestions"></div>
+          </div>
+          <div id="selectedGiveEntityInfo" style="margin-bottom:1rem; display:none;">
+            <div style="background:#fef9c3; padding:1rem; border-radius:1.5rem;">
+              <strong>👤 ناو: <span id="moneyGiveEntityName"></span></strong><br>
+              📱 مۆبایل: <span id="moneyGiveEntityPhone"></span><br>
+              💰 قەرزاری: <span id="moneyGiveEntityDebt"></span> دینار
+            </div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">بڕی پارە:</label>
+            <input type="number" id="moneyGiveAmount" placeholder="بڕی پارەی پێدراو" min="1" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">تێبینی:</label>
+            <textarea id="moneyGiveNote" placeholder="تێبینی..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;" rows="2"></textarea>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">بەروار و کات:</label>
+            <input type="datetime-local" id="moneyGiveDateTime" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <button onclick="submitMoneyGive()" style="background:#7c3aed; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;">
+            <i class="fas fa-save"></i> تۆمارکردنی پارە پێدان
+          </button>
+        </div>
+        <div class="card-glass" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:1rem;"><i class="fas fa-history"></i> مێژووی پارە پێدان</h4>
+          <div class="filter-row" style="margin-bottom:1rem;">
+            <input type="text" id="giveHistorySearch" placeholder="گەڕان بە ناو یان تێبینی..." oninput="filterGiveHistory()" style="flex:1;">
+            <select id="giveHistoryTypeFilter" onchange="filterGiveHistory()">
+              <option value="all">👥 هەموو</option>
+              <option value="person">👤 کەس</option>
+              <option value="partner">🤝 شەریک</option>
+            </select>
+            <input type="date" id="giveHistoryDateFrom" onchange="filterGiveHistory()" title="لە بەروار">
+            <input type="date" id="giveHistoryDateTo" onchange="filterGiveHistory()" title="تا بەروار">
+          </div>
+          <div class="history-list" id="giveHistoryList" style="max-height:350px; overflow-y:auto;"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== EXPIRY & DAMAGE VIEW ===== -->
@@ -110,6 +1323,7 @@
               <button onclick="searchDamageProduct()"><i class="fas fa-search"></i></button>
             </div>
             <div class="suggestions" id="damageProductSuggestions"></div>
+            <div id="selectedDamageProductInfo" class="selected-product-info" style="display:none;"></div>
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
             <div style="margin-bottom:1rem;">
@@ -137,27 +1351,531 @@
 
   <!-- ===== SETTINGS VIEW ===== -->
   <div id="settingsView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="sales-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-cogs" style="color:#7c3aed;"></i> ڕێکخستن</div>
+      </div>
+      <div class="settings-tabs">
+        <div class="settings-tab active" data-stab="backup">💾 باکەپ</div>
+        <div class="settings-tab" data-stab="appearance">🎨 دیزاینی سیستەم</div>
+        <div class="settings-tab" data-stab="layout">🔄 ڕێکخستنی بەشەکان</div>
+      </div>
+      <div id="settingsBackupPanel" class="panel active card-glass">
+        <h3 style="margin-bottom:1rem;"><i class="fas fa-cloud-upload-alt"></i> بەڕێوەبردنی باکەپ</h3>
+        <button onclick="createBackup()" style="background:#0f172a;color:white;border:none;padding:0.8rem 2rem;border-radius:2rem;font-weight:bold;margin-bottom:1rem;"><i class="fas fa-save"></i> دروستکردنی باکەپ</button>
+        <button onclick="downloadBackup()" style="background:#059669;color:white;border:none;padding:0.8rem 2rem;border-radius:2rem;font-weight:bold;margin-bottom:1rem;margin-right:0.5rem;"><i class="fas fa-download"></i> دانلۆدی باکەپ</button>
+        <button onclick="restoreFromFile()" style="background:#b45309;color:white;border:none;padding:0.8rem 2rem;border-radius:2rem;font-weight:bold;margin-bottom:1rem;margin-right:0.5rem;"><i class="fas fa-upload"></i> گەڕاندنەوە لە فایل</button>
+        <input type="file" id="backupFileInput" accept=".json" style="display:none;" onchange="handleBackupFile(event)">
+        <div style="margin:1.2rem 0;"><label><input type="checkbox" id="autoBackupToggle" onchange="toggleAutoBackup()"> چالاککردنی باکەپی خۆکارانە کاتێک لە سیستەم دەردەچم</label></div>
+        <h4 style="margin:1rem 0 0.5rem;">📜 مێژووی باکەپەکان</h4>
+        <div id="backupHistoryList" style="max-height:200px; overflow-y:auto;"></div>
+      </div>
+      <div id="settingsAppearancePanel" class="panel card-glass">
+        <h3 style="margin-bottom:1rem;"><i class="fas fa-paint-roller"></i> دیزاینی سیستەم</h3>
+        <div style="margin-bottom:1.2rem;"><label>ناوی سیستەم (لەسەر فاکتوورەش دەردەکەوێت):</label><input type="text" id="systemNameInput" placeholder="مارکێت" style="width:100%;padding:0.6rem;border-radius:2rem;border:1px solid #cbd5e1;margin-top:0.3rem;"></div>
+
+        <!-- ===== LOGO UPLOAD SECTION ===== -->
+        <div style="margin-bottom:1.2rem;">
+          <label style="font-weight:600; display:block; margin-bottom:0.5rem;">🖼️ لۆگۆی سیستەم (شێوەی خڕ):</label>
+          <div class="logo-upload-container">
+            <div class="logo-preview-circle" id="logoPreviewCircle">
+              <i class="fas fa-store-alt" id="logoPlaceholderIcon"></i>
+              <img id="logoPreviewImage" style="display:none;" alt="لۆگۆ">
+            </div>
+            <div>
+              <input type="file" id="logoFileInput" accept="image/*" style="display:none;" onchange="handleLogoUpload(event)">
+              <button class="logo-upload-btn" onclick="document.getElementById('logoFileInput').click()">
+                <i class="fas fa-upload"></i> هەڵبژاردنی وێنە
+              </button>
+              <button class="logo-remove-btn" onclick="removeLogo()" style="margin-right:0.5rem;">
+                <i class="fas fa-trash"></i> سڕینەوە
+              </button>
+            </div>
+          </div>
+          <div style="font-size:0.8rem; color:#64748b; margin-top:0.3rem;">
+            <i class="fas fa-info-circle"></i> وێنە بە شێوەی خڕ دەردەکەوێت، قەبارەی پێشنیارکراو: 200×200 پکسل
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.2rem;"><label>وێنەی سیستەم (ئایکۆن فۆنت):</label><select id="systemIconSelect" style="width:100%;padding:0.6rem;border-radius:2rem;border:1px solid #cbd5e1;margin-top:0.3rem;"><option value="fa-store-alt">🏪 فرۆشگا</option><option value="fa-shopping-basket">🛒 سەبەتە</option><option value="fa-crown">👑 تاج</option><option value="fa-rocket">🚀 ڕۆکێت</option><option value="fa-building">🏢 بینا</option></select></div>
+        <div style="margin-bottom:1rem;"><label>ڕەنگی باکگراوند:</label><input type="color" id="bgColorPicker" style="display:block;width:60px;height:40px;margin-top:0.3rem;"></div>
+        <div><label style="font-weight:600;">🎨 پێشنیاری ڕەنگی جوان:</label><div class="theme-palette" id="themePalette"></div></div>
+        <button onclick="applyAppearance()" style="background:#2563eb;color:white;border:none;padding:0.7rem 2rem;border-radius:2rem;margin-top:1.5rem;font-weight:bold;"><i class="fas fa-check"></i> پاشەکەوتکردنی دیزاین</button>
+      </div>
+      <div id="settingsLayoutPanel" class="panel card-glass">
+        <h3 style="margin-bottom:0.5rem;"><i class="fas fa-grip-horizontal"></i> ڕێکخستنی شوێنی بەشەکان</h3>
+        <p style="margin-bottom:1.2rem; color:#475569;">بەشەکان بە درەگ کردن ئاڵوگۆڕ بکە. پاشان لە داشبۆرد پاشەکەوت دەکرێت.</p>
+        <div class="module-section" id="layoutDragContainer"></div>
+        <button onclick="syncLayoutFromSettings()" style="background:#0f172a;color:white;border:none;padding:0.7rem 2rem;border-radius:2rem;margin-top:1rem;font-weight:bold;"><i class="fas fa-sync-alt"></i> نوێکردنەوەی ڕێکخستن</button>
+      </div>
+    </div>
   </div>
 
   <!-- ===== AGENTS VIEW ===== -->
   <div id="agentsView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-user-tie" style="color:#b45309;"></i> مەندوبەکان</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-agenttab="list">📋 لیستی مەندوبەکان</div>
+        <div class="tab" data-agenttab="add">➕ زیادکردنی مەندوب</div>
+        <div class="tab" data-agenttab="inventory">📦 جەردی مەندوب</div>
+        <div class="tab" data-agenttab="sale">🛒 فرۆشتنی مەندوب</div>
+        <div class="tab" data-agenttab="return">↩️ گەڕانەوەی کاڵا</div>
+        <div class="tab" data-agenttab="wassl">💰 واسڵی مەندوب</div>
+      </div>
+      <div class="panel active" id="agentsListPanel">
+        <div class="card-glass" style="margin-bottom:1rem;">
+          <div class="search-box">
+            <input type="text" id="agentSearchInput" placeholder="گەڕان بە ناوی مەندوب..." oninput="filterAgents()">
+            <button onclick="filterAgents()"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+        <div class="persons-layout">
+          <div class="persons-list" id="agentsListContainer"></div>
+          <div class="person-detail-panel" id="agentDetailPanel"><p style="color:#94a3b8; text-align:center;">مەندوبێک هەڵبژێرە بۆ بینینی زانیاری</p></div>
+        </div>
+      </div>
+      <div class="panel" id="agentsAddPanel">
+        <div class="card-glass" style="max-width:600px; margin:0 auto;">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-user-plus"></i> زیادکردنی مەندوبی نوێ</h3>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ناوی مەندوب:</label>
+            <input type="text" id="newAgentName" placeholder="ناوی مەندوب..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ژمارە مۆبایل:</label>
+            <input type="tel" id="newAgentPhone" placeholder="07xx xxx xxxx" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ناونیشان:</label>
+            <textarea id="newAgentAddress" placeholder="ناونیشانی مەندوب..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem; resize:vertical;" rows="3"></textarea>
+          </div>
+          <button onclick="addNewAgent()" style="background:#b45309; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-save"></i> پاشەکەوتکردن</button>
+        </div>
+      </div>
+      <div class="panel" id="agentsInventoryPanel">
+        <div class="card-glass" style="margin-bottom:1rem;">
+          <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+            <div style="flex:1; min-width:250px;">
+              <label style="font-weight:600;">هەڵبژاردنی مەندوب:</label>
+              <div class="search-box" style="margin-bottom:0.5rem;">
+                <input type="text" id="agentInventorySearch" placeholder="ناوی مەندوب..." oninput="searchAgentForInventory()">
+                <button onclick="searchAgentForInventory()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="agentInventorySuggestions"></div>
+              <div id="selectedAgentInventoryBadge" style="margin-top:0.5rem;"></div>
+            </div>
+          </div>
+          <div id="agentInventoryContent"><p style="color:#94a3b8; text-align:center;">تکایە مەندوبێک هەڵبژێرە بۆ بینینی جەرد</p></div>
+        </div>
+      </div>
+      <div class="panel" id="agentsSalePanel">
+        <div class="card-glass">
+          <h3 style="margin-bottom:1rem;"><i class="fas fa-cart-plus"></i> تۆمارکردنی فرۆشتنی مەندوب</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <div>
+              <label style="font-weight:600;">هەڵبژاردنی مەندوب:</label>
+              <div class="search-box">
+                <input type="text" id="agentSaleSearch" placeholder="ناوی مەندوب..." oninput="searchAgentForSale()">
+                <button onclick="searchAgentForSale()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="agentSaleSuggestions"></div>
+              <div id="selectedAgentSaleBadge" style="margin-top:0.5rem;"></div>
+            </div>
+            <div>
+              <label style="font-weight:600;">کڕیار:</label>
+              <div class="search-box">
+                <input type="text" id="agentSaleCustomerSearch" placeholder="ناوی کەس بۆ قەرز..." oninput="searchCustomerForAgentSale()">
+                <button onclick="searchCustomerForAgentSale()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="agentSaleCustomerSuggestions"></div>
+              <div style="margin-top:0.5rem;">
+                <label><input type="checkbox" id="agentSaleCreditCheck" onchange="toggleAgentSaleCredit()"> فرۆشتن بە قەرز</label>
+              </div>
+            </div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">🔍 گەڕان بەدوای کاڵا لە جەردی مەندوب:</label>
+            <div class="search-box" style="position:relative;">
+              <input type="text" id="agentProductSearch" placeholder="ناوی کاڵا بنووسە بۆ گەڕان..." oninput="searchAgentProduct()">
+              <span class="clear-btn" id="agentProductSearchClear" onclick="clearSearch('agentProductSearch', 'agentProductSuggestions')">✕</span>
+              <button onclick="searchAgentProduct()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="agentProductSuggestions"></div>
+          </div>
+          <div style="margin:1rem 0;"><span style="font-weight:600;">🛒 سەبەتەی فرۆشتن</span></div>
+          <div id="agentSaleCartItems" style="max-height:220px; overflow-y:auto;"><p style="color:#94a3b8; text-align:center;">کاڵا زیاد نەکراوە</p></div>
+          <div style="margin-top:1rem; font-weight:bold;">کۆی گشتی: <span id="agentSaleTotal">0</span> دینار</div>
+          <button onclick="completeAgentSale()" style="background:#b45309; color:white; border:none; border-radius:2.5rem; padding:0.8rem 2rem; margin-top:1rem; width:100%; font-weight:bold;"><i class="fas fa-check-circle"></i> تەواوکردنی فرۆشتن</button>
+        </div>
+      </div>
+      <div class="panel" id="agentsReturnPanel">
+        <div class="card-glass">
+          <h3 style="margin-bottom:1rem;"><i class="fas fa-undo-alt"></i> گەڕانەوەی کاڵای مەندوب</h3>
+          <div style="margin-bottom:1.5rem;">
+            <label style="font-weight:600;">هەڵبژاردنی مەندوب:</label>
+            <div class="search-box">
+              <input type="text" id="agentReturnSearch" placeholder="ناوی مەندوب..." oninput="searchAgentForReturn()">
+              <button onclick="searchAgentForReturn()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="agentReturnSuggestions"></div>
+            <div id="selectedAgentReturnBadge" style="margin-top:0.5rem;"></div>
+          </div>
+          <div style="margin-bottom:1rem;" id="agentReturnProductSection">
+            <label style="font-weight:600;">🔍 گەڕان بەدوای کاڵا بۆ گەڕانەوە:</label>
+            <div class="search-box" style="position:relative;">
+              <input type="text" id="agentReturnProductSearch" placeholder="ناوی کاڵا بنووسە..." oninput="searchAgentReturnProduct()">
+              <span class="clear-btn" id="agentReturnProductSearchClear" onclick="clearSearch('agentReturnProductSearch', 'agentReturnProductSuggestions')">✕</span>
+              <button onclick="searchAgentReturnProduct()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="agentReturnProductSuggestions"></div>
+          </div>
+          <div style="margin:1rem 0;"><span style="font-weight:600;">📋 ئەو کاڵایانەی لای مەندوب ماونەتەوە (نەقس):</span></div>
+          <div id="agentReturnInventoryList" style="max-height:300px; overflow-y:auto; margin-bottom:1rem;"><p style="color:#94a3b8; text-align:center;">تکایە مەندوبێک هەڵبژێرە</p></div>
+          <div style="margin:1rem 0;"><span style="font-weight:600;">🔄 کاڵاکانی گەڕانەوە:</span></div>
+          <div id="agentReturnCartItems" style="max-height:220px; overflow-y:auto;"><p style="color:#94a3b8; text-align:center;">کاڵا زیاد نەکراوە</p></div>
+          <div style="margin-top:1rem;">
+            <label style="font-weight:600;">تێبینی:</label>
+            <textarea id="agentReturnNote" placeholder="تێبینی لەسەر گەڕانەوە..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;" rows="2"></textarea>
+          </div>
+          <button onclick="completeAgentReturn()" style="background:#dc2626; color:white; border:none; border-radius:2.5rem; padding:0.8rem 2rem; margin-top:1rem; width:100%; font-weight:bold;"><i class="fas fa-undo-alt"></i> تەواوکردنی گەڕانەوە</button>
+        </div>
+      </div>
+      <div class="panel" id="agentsWasslPanel">
+        <div class="card-glass" style="max-width:700px; margin:0 auto;">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-hand-holding-usd"></i> داخڵکردنی واسڵی مەندوب</h3>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">هەڵبژاردنی مەندوب:</label>
+            <div class="search-box">
+              <input type="text" id="agentWasslSearch" placeholder="ناوی مەندوب..." oninput="searchAgentForWassl()">
+              <button onclick="searchAgentForWassl()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="agentWasslSuggestions"></div>
+            <div id="selectedAgentWasslInfo" style="margin-top:0.5rem; display:none;">
+              <div style="background:#fef9c3; padding:1rem; border-radius:1.5rem;">
+                <strong>👔 مەندوب: <span id="agentWasslName"></span></strong><br>
+                📱 مۆبایل: <span id="agentWasslPhone"></span><br>
+                💰 قەرزاری مەندوب: <span id="agentWasslDebt"></span> دینار
+              </div>
+            </div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">بڕی پارە:</label>
+            <input type="number" id="agentWasslAmount" placeholder="بڕی پارەی واسڵکراو" min="1" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">تێبینی:</label>
+            <textarea id="agentWasslNote" placeholder="تێبینی..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;" rows="2"></textarea>
+          </div>
+          <button onclick="submitAgentWassl()" style="background:#b45309; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-save"></i> تۆمارکردنی واسڵ</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== GIVE AGENT VIEW ===== -->
   <div id="giveAgentView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('agents')"><i class="fas fa-arrow-right"></i> گەڕانەوە بۆ مەندوبەکان</button>
+        <div class="page-title"><i class="fas fa-box-open" style="color:#7c3aed;"></i> پێدانی کاڵاکان بە مەندوبەکان</div>
+      </div>
+      <div class="card-glass" style="max-width:900px; margin:0 auto;">
+        <h3 style="margin-bottom:1.5rem;"><i class="fas fa-hand-holding-box"></i> دابەشکردنی کاڵا بۆ مەندوب</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+          <div>
+            <label style="font-weight:600; display:block; margin-bottom:0.5rem;">🗣️ هەڵبژاردنی مەندوب:</label>
+            <div class="search-box" style="margin-bottom:0.5rem;">
+              <input type="text" id="giveAgentSearch" placeholder="ناوی مەندوب..." oninput="searchGiveAgent()">
+              <button onclick="searchGiveAgent()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="giveAgentSuggestions"></div>
+            <div id="selectedGiveAgentBadge" style="margin-top:0.5rem;"></div>
+          </div>
+          <div>
+            <label style="font-weight:600; display:block; margin-bottom:0.5rem;">📦 گەڕان بەدوای کاڵا لە مخزن:</label>
+            <div class="search-box" style="position:relative;">
+              <input type="text" id="giveProductSearch" placeholder="ناوی کاڵا یان بارکۆد..." oninput="searchGiveProduct()">
+              <span class="clear-btn" id="giveProductSearchClear" onclick="clearSearch('giveProductSearch', 'giveProductSuggestions')">✕</span>
+              <button onclick="searchGiveProduct()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="giveProductSuggestions"></div>
+          </div>
+        </div>
+        <div style="margin:1.5rem 0;">
+          <span style="font-weight:600; font-size:1.1rem;">🛒 سەبەتەی پێدان</span>
+        </div>
+        <div id="giveAgentCartItems" style="max-height:300px; overflow-y:auto; margin-bottom:1rem;">
+          <p style="color:#94a3b8; text-align:center;">کاڵا زیاد نەکراوە</p>
+        </div>
+        <div style="margin-top:1rem; font-weight:bold; font-size:1.1rem;">
+          کۆی کاڵاکان: <span id="giveAgentTotalItems">0</span> دانە
+        </div>
+        <div style="margin-top:1rem;">
+          <label style="font-weight:600;">تێبینی:</label>
+          <textarea id="giveAgentNote" placeholder="تێبینی لەسەر پێدانەکە..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem; resize:vertical;" rows="2"></textarea>
+        </div>
+        <button onclick="completeGiveAgent()" style="background:#7c3aed; color:white; border:none; border-radius:2.5rem; padding:0.8rem 2rem; margin-top:1rem; width:100%; font-weight:bold;">
+          <i class="fas fa-check-circle"></i> پێدانی کاڵاکان
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- ===== EMPLOYEES VIEW ===== -->
   <div id="employeesView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-id-badge" style="color:#2563eb;"></i> کارمەندەکان</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-emptab="list">📋 لیستی کارمەندەکان</div>
+        <div class="tab" data-emptab="add">➕ زیادکردنی کارمەند</div>
+        <div class="tab" data-emptab="salary">💰 داهاتی کارمەند</div>
+        <div class="tab" data-emptab="leave">📅 مۆڵەتی کارمەند</div>
+      </div>
+      <div class="panel active" id="employeesListPanel">
+        <div class="card-glass" style="margin-bottom:1rem;">
+          <div class="search-box">
+            <input type="text" id="employeeSearchInput" placeholder="گەڕان بە ناوی کارمەند..." oninput="filterEmployees()">
+            <button onclick="filterEmployees()"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+        <div class="persons-layout">
+          <div class="persons-list" id="employeesListContainer"></div>
+          <div class="person-detail-panel" id="employeeDetailPanel"><p style="color:#94a3b8; text-align:center;">کارمەندێک هەڵبژێرە بۆ بینینی زانیاری</p></div>
+        </div>
+      </div>
+      <div class="panel" id="employeesAddPanel">
+        <div class="card-glass" style="max-width:600px; margin:0 auto;">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-user-plus"></i> زیادکردنی کارمەندی نوێ</h3>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ناوی تەواو:</label>
+            <input type="text" id="newEmployeeName" placeholder="ناوی کارمەند..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ژمارە مۆبایل:</label>
+            <input type="tel" id="newEmployeePhone" placeholder="07xx xxx xxxx" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ویزەیر نەم (ناوی بەکارهێنەر):</label>
+            <input type="text" id="newEmployeeUsername" placeholder="ناوی بەکارهێنەری تایبەت..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">پاسوورد:</label>
+            <input type="password" id="newEmployeePassword" placeholder="پاسوورد..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">ناونیشان:</label>
+            <textarea id="newEmployeeAddress" placeholder="ناونیشانی کارمەند..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem; resize:vertical;" rows="3"></textarea>
+          </div>
+          <button onclick="addNewEmployee()" style="background:#2563eb; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-save"></i> پاشەکەوتکردن</button>
+        </div>
+      </div>
+      <div class="panel" id="employeesSalaryPanel">
+        <div class="card-glass">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-money-bill-wave"></i> پێدانی موچە بە کارمەند</h3>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">گەڕان بەدوای کارمەند:</label>
+            <div class="search-box" style="margin-bottom:0.5rem;">
+              <input type="text" id="employeeSalarySearch" placeholder="ناوی کارمەند..." oninput="searchEmployeeForSalary()">
+              <button onclick="searchEmployeeForSalary()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="employeeSalarySuggestions"></div>
+            <div id="selectedEmployeeSalaryInfo" style="margin-top:0.5rem; display:none;">
+              <div style="background:#fef9c3; padding:1rem; border-radius:1.5rem;">
+                <strong>👤 ناو: <span id="employeeSalaryName"></span></strong><br>
+                📱 مۆبایل: <span id="employeeSalaryPhone"></span><br>
+                💰 موچە: <span id="employeeSalaryAmount"></span> دینار
+              </div>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <div>
+              <label style="font-weight:600;">بڕی موچە:</label>
+              <input type="number" id="employeeSalaryAmountInput" placeholder="بڕی موچە" min="1" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div>
+              <label style="font-weight:600;">مانگ:</label>
+              <input type="month" id="employeeSalaryMonth" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">تێبینی:</label>
+            <textarea id="employeeSalaryNote" placeholder="تێبینی..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;" rows="2"></textarea>
+          </div>
+          <button onclick="submitEmployeeSalary()" style="background:#059669; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-check-circle"></i> پێدانی موچە</button>
+          <div id="employeeSalaryHistory" style="margin-top:2rem;">
+            <h4 style="margin-bottom:0.5rem;">📋 مێژووی موچەکان</h4>
+            <div class="history-list" id="employeeSalaryList" style="max-height:250px; overflow-y:auto;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="employeesLeavePanel">
+        <div class="card-glass">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-calendar-alt"></i> مۆڵەتی کارمەند</h3>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">گەڕان بەدوای کارمەند:</label>
+            <div class="search-box" style="margin-bottom:0.5rem;">
+              <input type="text" id="employeeLeaveSearch" placeholder="ناوی کارمەند..." oninput="searchEmployeeForLeave()">
+              <button onclick="searchEmployeeForLeave()"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="suggestions" id="employeeLeaveSuggestions"></div>
+            <div id="selectedEmployeeLeaveInfo" style="margin-top:0.5rem; display:none;">
+              <div style="background:#fef9c3; padding:1rem; border-radius:1.5rem;">
+                <strong>👤 ناو: <span id="employeeLeaveName"></span></strong><br>
+                📱 مۆبایل: <span id="employeeLeavePhone"></span>
+              </div>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <div>
+              <label style="font-weight:600;">بەرواری دەستپێک:</label>
+              <input type="date" id="employeeLeaveStart" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div>
+              <label style="font-weight:600;">بەرواری کۆتایی:</label>
+              <input type="date" id="employeeLeaveEnd" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-weight:600;">هۆکاری مۆڵەت:</label>
+            <textarea id="employeeLeaveReason" placeholder="هۆکاری مۆڵەت..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;" rows="2"></textarea>
+          </div>
+          <button onclick="submitEmployeeLeave()" style="background:#7c3aed; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-save"></i> تۆمارکردنی مۆڵەت</button>
+          <div id="employeeLeaveHistory" style="margin-top:2rem;">
+            <h4 style="margin-bottom:0.5rem;">📋 مێژووی مۆڵەتەکان</h4>
+            <div class="history-list" id="employeeLeaveList" style="max-height:250px; overflow-y:auto;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== SECURITY VIEW ===== -->
   <div id="securityView" style="display: none;">
-    <!-- ... هەمان کۆد ... -->
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-shield-alt" style="color:#7c3aed;"></i> پاراستن و سکویریتی</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-securitytab="admin">👤 بەڕێوەبەر</div>
+        <div class="tab" data-securitytab="employees">👥 کارمەندەکان</div>
+      </div>
+      <div class="panel active" id="securityAdminPanel">
+        <div class="card-glass" style="max-width:800px; margin:0 auto;">
+          <div style="background:#f8fafc; border-radius:1.5rem; padding:1.5rem; margin-bottom:1.5rem;">
+            <h3 style="margin-bottom:1rem;"><i class="fas fa-key" style="color:#2563eb;"></i> گۆڕینی پاسووردی بەڕێوەبەر</h3>
+            <div style="margin-bottom:0.8rem;">
+              <label style="font-weight:600;">پاسووردی کۆن:</label>
+              <input type="password" id="adminCurrentPassword" placeholder="پاسووردی ئێستا" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom:0.8rem;">
+              <label style="font-weight:600;">پاسووردی نوێ:</label>
+              <input type="password" id="adminNewPassword" placeholder="پاسووردی نوێ" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom:0.8rem;">
+              <label style="font-weight:600;">پشتڕاستکردنەوەی پاسووردی نوێ:</label>
+              <input type="password" id="adminConfirmPassword" placeholder="دووبارە پاسووردی نوێ بنووسە" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <button onclick="changeAdminPassword()" style="background:#2563eb; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:bold;"><i class="fas fa-save"></i> گۆڕینی پاسوورد</button>
+            <div style="margin-top:1.5rem; padding-top:1.5rem; border-top:2px dashed #e2e8f0;">
+              <h4 style="margin-bottom:0.8rem; color:#dc2626;"><i class="fas fa-exclamation-triangle"></i> پاسووردت لەبیر چووە؟</h4>
+              <p style="font-size:0.85rem; color:#64748b; margin-bottom:0.8rem;">ئەگەر پاسووردی بەڕێوەبەرت لەبیر چووە، پاسووردی پرۆگرامێر بنووسە بۆ دروستکردنەوەی پاسووردی نوێ.</p>
+              <div style="margin-bottom:0.8rem;">
+                <label style="font-weight:600;">پاسووردی پرۆگرامێر:</label>
+                <input type="password" id="programmerPassword" placeholder="پاسووردی پرۆگرامێر" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <div style="margin-bottom:0.8rem;">
+                <label style="font-weight:600;">پاسووردی نوێ بۆ بەڕێوەبەر:</label>
+                <input type="password" id="adminResetNewPassword" placeholder="پاسووردی نوێ" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <button onclick="resetAdminPassword()" style="background:#dc2626; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:bold;"><i class="fas fa-undo"></i> دروستکردنەوەی پاسوورد</button>
+            </div>
+          </div>
+          <div style="background:#f8fafc; border-radius:1.5rem; padding:1.5rem; margin-bottom:1.5rem;">
+            <h3 style="margin-bottom:1rem;"><i class="fas fa-user-edit" style="color:#7c3aed;"></i> گۆڕینی ویزەر نەیمی بەڕێوەبەر</h3>
+            <div style="margin-bottom:0.8rem;">
+              <label style="font-weight:600;">ویزەر نەیمی نوێ:</label>
+              <input type="text" id="adminNewUsername" placeholder="ناوی بەکارهێنەری نوێ" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom:0.8rem;">
+              <label style="font-weight:600;">پاسووردی بەڕێوەبەر:</label>
+              <input type="password" id="adminUsernamePassword" placeholder="پاسووردی ئێستا" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <button onclick="changeAdminUsername()" style="background:#7c3aed; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:bold;"><i class="fas fa-save"></i> گۆڕینی ویزەر نەیم</button>
+          </div>
+          <div style="background:#dbeafe; border-radius:1.5rem; padding:1rem;">
+            <p><strong>👤 ویزەر نەیمی ئێستا:</strong> <span id="currentAdminUsernameDisplay">farzad</span></p>
+            <p><strong>🔒 پاسووردی ئێستا:</strong> <span id="currentAdminPasswordDisplay">••••••••</span></p>
+            <p style="font-size:0.8rem; color:#64748b; margin-top:0.5rem;">📌 پاسووردی پرۆگرامێر: ••••••••</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="securityEmployeesPanel">
+        <div class="card-glass" style="max-width:900px; margin:0 auto;">
+          <div style="background:#f8fafc; border-radius:1.5rem; padding:1.5rem; margin-bottom:1.5rem;">
+            <h3 style="margin-bottom:1rem;"><i class="fas fa-user-lock" style="color:#7c3aed;"></i> مۆڵەتی بەکارهێنانی کارمەندەکان</h3>
+            <p style="font-size:0.85rem; color:#64748b; margin-bottom:1rem;">کارمەندێک هەڵبژێرە و مۆڵەتی بەکارهێنانی هەر بەشێک دیاری بکە.</p>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">گەڕان بەدوای کارمەند:</label>
+              <div class="search-box" style="margin-bottom:0.5rem;">
+                <input type="text" id="securityEmployeeSearch" placeholder="ناوی کارمەند..." oninput="searchSecurityEmployee()">
+                <button onclick="searchSecurityEmployee()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="securityEmployeeSuggestions"></div>
+              <div id="selectedSecurityEmployeeBadge" style="margin-top:0.5rem;"></div>
+            </div>
+            <div id="securityEmployeePermissionsContent" style="display:none;">
+              <div style="background:#fef9c3; padding:1rem; border-radius:1.5rem; margin-bottom:1rem;">
+                <strong>👤 کارمەند: <span id="securityEmployeeName"></span></strong>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:0.5rem; margin-bottom:1rem;">
+                <div id="securityPermissionsCheckboxes"></div>
+              </div>
+              <button onclick="saveEmployeePermissions()" style="background:#7c3aed; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:bold;"><i class="fas fa-save"></i> پاشەکەوتکردنی مۆڵەتەکان</button>
+            </div>
+          </div>
+          <div style="background:#f8fafc; border-radius:1.5rem; padding:1.5rem;">
+            <h3 style="margin-bottom:1rem;"><i class="fas fa-key" style="color:#059669;"></i> گۆڕینی پاسووردی کارمەند</h3>
+            <p style="font-size:0.85rem; color:#64748b; margin-bottom:1rem;">پێویستی بە پاسووردی بەڕێوەبەر هەیە بۆ گۆڕینی پاسووردی کارمەند.</p>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">گەڕان بەدوای کارمەند:</label>
+              <div class="search-box" style="margin-bottom:0.5rem;">
+                <input type="text" id="employeePasswordSearch" placeholder="ناوی کارمەند..." oninput="searchEmployeeForPassword()">
+                <button onclick="searchEmployeeForPassword()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="employeePasswordSuggestions"></div>
+              <div id="selectedEmployeePasswordBadge" style="margin-top:0.5rem;"></div>
+            </div>
+            <div id="employeePasswordChangeContent" style="display:none;">
+              <div style="background:#fef9c3; padding:1rem; border-radius:1.5rem; margin-bottom:1rem;">
+                <strong>👤 کارمەند: <span id="employeePasswordName"></span></strong>
+              </div>
+              <div style="margin-bottom:0.8rem;">
+                <label style="font-weight:600;">پاسووردی بەڕێوەبەر:</label>
+                <input type="password" id="adminPasswordForEmployee" placeholder="پاسووردی بەڕێوەبەر" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <div style="margin-bottom:0.8rem;">
+                <label style="font-weight:600;">پاسووردی نوێ بۆ کارمەند:</label>
+                <input type="password" id="employeeNewPassword" placeholder="پاسووردی نوێ" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <div style="margin-bottom:0.8rem;">
+                <label style="font-weight:600;">پشتڕاستکردنەوەی پاسووردی نوێ:</label>
+                <input type="password" id="employeeConfirmPassword" placeholder="دووبارە پاسووردی نوێ بنووسە" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <button onclick="changeEmployeePassword()" style="background:#059669; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:bold;"><i class="fas fa-save"></i> گۆڕینی پاسووردی کارمەند</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== REPORT VIEW ===== -->
@@ -179,8 +1897,8 @@
           <h3 style="margin-bottom:1rem;"><i class="fas fa-box"></i> تەقریری کاڵا</h3>
           <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom:1.5rem;">
             <div style="flex:1; min-width:200px; position:relative;">
-              <input type="text" id="productReportSearch" placeholder="ناوی کاڵا یان بارکۆد بنووسە..." oninput="setupReportSuggestion('productReportSearch', 'productReportSuggestions', 'products')" style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
-              <div class="suggestions" id="productReportSuggestions" style="position:absolute; width:100%; z-index:100;"></div>
+              <input type="text" id="productReportSearch" placeholder="ناوی کاڵا یان بارکۆد بنووسە..." style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
+              <datalist id="productReportDatalist"></datalist>
             </div>
             <button onclick="generateProductReport()" style="background:#b45309; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:600;">
               <i class="fas fa-search"></i> گەڕان
@@ -195,14 +1913,14 @@
           <h3 style="margin-bottom:1rem;"><i class="fas fa-users"></i> تەقریری کەس یان شەریک</h3>
           <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center; margin-bottom:1.5rem;">
             <div style="flex:1; min-width:200px;">
-              <select id="personReportType" style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;" onchange="document.getElementById('personReportSearch').value=''; document.getElementById('personReportSuggestions').innerHTML=''; document.getElementById('personReportSuggestions').style.display='none';">
+              <select id="personReportType" style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
                 <option value="person">👤 کەس</option>
                 <option value="partner">🤝 شەریک</option>
               </select>
             </div>
             <div style="flex:1; min-width:200px; position:relative;">
-              <input type="text" id="personReportSearch" placeholder="ناوی کەس یان شەریک بنووسە..." oninput="setupReportSuggestion('personReportSearch', 'personReportSuggestions', 'persons')" style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
-              <div class="suggestions" id="personReportSuggestions" style="position:absolute; width:100%; z-index:100;"></div>
+              <input type="text" id="personReportSearch" placeholder="ناوی کەس یان شەریک بنووسە..." style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
+              <datalist id="personReportDatalist"></datalist>
             </div>
             <button onclick="generatePersonReport()" style="background:#7c3aed; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:600;">
               <i class="fas fa-search"></i> گەڕان
@@ -237,16 +1955,6 @@
 </div>
 
 <script>
-// ===== گۆڕانکارییە سەرەکییەکان =====
-
-// 1. چارەسەرکردنی کێشەی گەڕانی کاڵای تێکچوو
-// فانکشنی searchDamageProduct زیادکرا بۆ پشتگیری کردنی کلیک لەسەر پێشنیارەکان
-
-// 2. زیادکردنی فانکشنی setupReportSuggestion بۆ پێشنیاری گەڕان لە تەقاریر
-// ئەم فانکشنە پێشنیاری ناوەکان دەکات لە کاتی نووسین
-
-// 3. باشترکردنی UI/UX بۆ پێشنیارەکان
-
 (function() {
   // ===== PERMISSION SYSTEM =====
   function hasPermission(moduleId) {
@@ -497,7 +2205,13 @@
   // ===== HELPERS =====
   window.clearSearch = function(inputId, suggestionsId) {
     document.getElementById(inputId).value = '';
-    document.getElementById(suggestionsId).style.display = 'none';
+    const suggestions = document.getElementById(suggestionsId);
+    if (suggestions) suggestions.style.display = 'none';
+    // پاککردنی ئاگاداری کاڵای تێکچوو
+    if (inputId === 'damageProductSearch') {
+      const infoDiv = document.getElementById('selectedDamageProductInfo');
+      if (infoDiv) infoDiv.style.display = 'none';
+    }
   };
 
   // ===== ALL MODULES =====
@@ -882,133 +2596,46 @@
     document.getElementById('reportInvoicesPanel').classList.toggle('active', tab === 'invoices');
   };
 
-  // ====== فانکشنی پێشنیاری گەڕان لە تەقاریر ======
-  window.setupReportSuggestion = function(inputId, suggestionsId, type) {
-    const input = document.getElementById(inputId);
-    const suggestions = document.getElementById(suggestionsId);
-    if (!input || !suggestions) return;
-
-    const query = input.value.trim().toLowerCase();
-    if (!query) {
-      suggestions.style.display = 'none';
-      suggestions.innerHTML = '';
-      return;
-    }
-
-    let data = [];
-    if (type === 'products') {
-      data = warehouseProducts.filter(p => 
-        p.name.toLowerCase().includes(query) || 
-        p.barcode.includes(query)
-      );
-      if (data.length) {
-        suggestions.innerHTML = data.map(p => `
-          <div class="suggestion-item" data-name="${p.name}" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; cursor:pointer; border-bottom:1px solid #f1f5f9;">
-            <div>
-              <strong>📦 ${p.name}</strong>
-              <span style="font-size:0.75rem; color:#64748b; margin-right:0.5rem;">${p.barcode}</span>
-            </div>
-            <span style="font-size:0.8rem; color:#059669; font-weight:600;">${p.quantity} ${p.unit}</span>
-          </div>
-        `).join('');
-        suggestions.style.display = 'block';
-        
-        suggestions.querySelectorAll('.suggestion-item').forEach(item => {
-          item.addEventListener('click', function() {
-            const name = this.dataset.name;
-            input.value = name;
-            suggestions.style.display = 'none';
-            suggestions.innerHTML = '';
-            if (type === 'products') {
-              generateProductReport();
-            }
-          });
-        });
-      } else {
-        suggestions.style.display = 'none';
-        suggestions.innerHTML = '';
-      }
-    } else if (type === 'persons') {
-      const personType = document.getElementById('personReportType')?.value || 'person';
-      if (personType === 'person') {
-        data = customers.filter(c => 
-          c.name.toLowerCase().includes(query) || 
-          c.phone.includes(query)
-        );
-        if (data.length) {
-          suggestions.innerHTML = data.map(c => `
-            <div class="suggestion-item" data-name="${c.name}" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; cursor:pointer; border-bottom:1px solid #f1f5f9;">
-              <div>
-                <strong>👤 ${c.name}</strong>
-                <span style="font-size:0.75rem; color:#64748b; margin-right:0.5rem;">📱 ${c.phone}</span>
-              </div>
-              <span style="font-size:0.8rem; color:${c.debt > 0 ? '#059669' : '#dc2626'}; font-weight:600;">قەرز: ${(c.debt || 0).toLocaleString()}</span>
-            </div>
-          `).join('');
-          suggestions.style.display = 'block';
-          
-          suggestions.querySelectorAll('.suggestion-item').forEach(item => {
-            item.addEventListener('click', function() {
-              const name = this.dataset.name;
-              input.value = name;
-              suggestions.style.display = 'none';
-              suggestions.innerHTML = '';
-              generatePersonReport();
-            });
-          });
-        } else {
-          suggestions.style.display = 'none';
-          suggestions.innerHTML = '';
-        }
-      } else {
-        data = partners.filter(p => 
-          p.name.toLowerCase().includes(query) || 
-          p.phone.includes(query)
-        );
-        if (data.length) {
-          suggestions.innerHTML = data.map(p => `
-            <div class="suggestion-item" data-name="${p.name}" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; cursor:pointer; border-bottom:1px solid #f1f5f9;">
-              <div>
-                <strong>🤝 ${p.name}</strong>
-                <span style="font-size:0.75rem; color:#64748b; margin-right:0.5rem;">📱 ${p.phone}</span>
-              </div>
-              <span style="font-size:0.8rem; color:${p.debt > 0 ? '#059669' : '#dc2626'}; font-weight:600;">قەرز: ${(p.debt || 0).toLocaleString()}</span>
-            </div>
-          `).join('');
-          suggestions.style.display = 'block';
-          
-          suggestions.querySelectorAll('.suggestion-item').forEach(item => {
-            item.addEventListener('click', function() {
-              const name = this.dataset.name;
-              input.value = name;
-              suggestions.style.display = 'none';
-              suggestions.innerHTML = '';
-              generatePersonReport();
-            });
-          });
-        } else {
-          suggestions.style.display = 'none';
-          suggestions.innerHTML = '';
-        }
-      }
-    }
-  };
-
-  // ===== PRODUCT REPORT =====
+  // ===== PRODUCT REPORT WITH IMPROVED SEARCH =====
   window.generateProductReport = function() {
-    const searchQuery = document.getElementById('productReportSearch').value.trim();
-    if (!searchQuery) {
+    const input = document.getElementById('productReportSearch');
+    const query = input.value.trim();
+    if (!query) {
       alert('تکایە ناوی کاڵا یان بارکۆد بنووسە!');
       return;
     }
-    const product = warehouseProducts.find(p => 
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      p.barcode.includes(searchQuery)
+    
+    // هەوڵبدە بە ناوی تەواو
+    let product = warehouseProducts.find(p => 
+      p.name.toLowerCase() === query.toLowerCase() ||
+      p.barcode.includes(query)
     );
+    
+    // ئەگەر نەدۆزرایەوە، بە بەشێکی ناو بگەڕێ
     if (!product) {
-      alert('هیچ کاڵایەک بەم ناوە نەدۆزرایەوە!');
+      const matches = warehouseProducts.filter(p => 
+        p.name.toLowerCase().includes(query.toLowerCase())
+      );
+      if (matches.length === 1) {
+        product = matches[0];
+      } else if (matches.length > 1) {
+        // پێشنیاری بەکارهێنەر بکە
+        const names = matches.map((p, i) => `${i+1}. ${p.name}`).join('\n');
+        const choice = prompt(`چەند کاڵایەک دۆزرایەوە. ژمارەی کاڵای دیاریکراو بنووسە:\n${names}`, '1');
+        if (choice) {
+          const idx = parseInt(choice) - 1;
+          if (idx >= 0 && idx < matches.length) {
+            product = matches[idx];
+          }
+        }
+      }
+    }
+    
+    if (!product) {
+      alert(`هیچ کاڵایەک بە ناوی "${query}" نەدۆزرایەوە!`);
       return;
     }
+    
     let totalSold = 0;
     let totalSoldAmount = 0;
     let totalPurchased = 0;
@@ -1143,11 +2770,15 @@
     `;
 
     container.innerHTML = reportHTML;
+    // پاککردنەوەی خانەی گەڕان
+    input.value = '';
+    input.blur();
   };
 
-  // ===== PERSON/PARTNER REPORT =====
+  // ===== PERSON/PARTNER REPORT WITH IMPROVED SEARCH =====
   window.generatePersonReport = function() {
-    const searchQuery = document.getElementById('personReportSearch').value.trim();
+    const input = document.getElementById('personReportSearch');
+    const searchQuery = input.value.trim();
     const type = document.getElementById('personReportType').value;
     if (!searchQuery) {
       alert('تکایە ناوی کەس یان شەریک بنووسە!');
@@ -1161,15 +2792,33 @@
     let entityName = '';
 
     if (type === 'person') {
-      entity = customers.find(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
-      if (!entity) { alert('هیچ کەسێک بەم ناوە نەدۆزرایەوە!'); return; }
+      entity = customers.find(c => c.name.toLowerCase() === searchQuery.toLowerCase());
+      if (!entity) {
+        const matches = customers.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
+        if (matches.length === 1) entity = matches[0];
+        else if (matches.length > 1) {
+          const names = matches.map((c, i) => `${i+1}. ${c.name}`).join('\n');
+          const choice = prompt(`چەند کەسێک دۆزرایەوە. ژمارەی کەسی دیاریکراو بنووسە:\n${names}`, '1');
+          if (choice) { const idx = parseInt(choice) - 1; if (idx >= 0 && idx < matches.length) entity = matches[idx]; }
+        }
+      }
+      if (!entity) { alert(`هیچ کەسێک بە ناوی "${searchQuery}" نەدۆزرایەوە!`); return; }
       sales = saleHistory.filter(s => s.customer === entity.name);
       moneyRecords = moneyRequests.filter(r => r.type === 'person' && r.entityId === entity.id);
       returnRecords = returnHistory.filter(r => r.customer === entity.name);
       entityName = 'کەس';
     } else {
-      entity = partners.find(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
-      if (!entity) { alert('هیچ شەریکێک بەم ناوە نەدۆزرایەوە!'); return; }
+      entity = partners.find(p => p.name.toLowerCase() === searchQuery.toLowerCase());
+      if (!entity) {
+        const matches = partners.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+        if (matches.length === 1) entity = matches[0];
+        else if (matches.length > 1) {
+          const names = matches.map((p, i) => `${i+1}. ${p.name}`).join('\n');
+          const choice = prompt(`چەند شەریکێک دۆزرایەوە. ژمارەی شەریکی دیاریکراو بنووسە:\n${names}`, '1');
+          if (choice) { const idx = parseInt(choice) - 1; if (idx >= 0 && idx < matches.length) entity = matches[idx]; }
+        }
+      }
+      if (!entity) { alert(`هیچ شەریکێک بە ناوی "${searchQuery}" نەدۆزرایەوە!`); return; }
       purchases = purchaseHistory.filter(p => p.partnerId === entity.id);
       moneyRecords = moneyRequests.filter(r => r.type === 'partner' && r.entityId === entity.id);
       returnRecords = purchaseReturnHistory.filter(r => r.partner === entity.name);
@@ -1318,6 +2967,9 @@
     }
 
     container.innerHTML = reportHTML;
+    // پاککردنەوەی خانەی گەڕان
+    input.value = '';
+    input.blur();
   };
 
   // ===== INVOICE SEARCH =====
@@ -1397,6 +3049,9 @@
     `;
 
     container.innerHTML = reportHTML;
+    // پاککردنەوەی خانەی گەڕان
+    document.getElementById('invoiceSearchInput').value = '';
+    document.getElementById('invoiceSearchInput').blur();
   };
 
   // ===== VIEW INVOICE DETAIL =====
@@ -1486,7 +3141,7 @@
     w.print();
   };
 
-  // ===== EDIT INVOICE ITEM (گۆڕانکاری سەرەکی بۆ گەڕان بەدوای کاڵا) =====
+  // ===== EDIT INVOICE ITEM =====
   window.editInvoiceItem = function(invId, type) {
     let invoice;
     let historyArray;
@@ -1565,7 +3220,6 @@
     document.body.appendChild(overlay);
   };
 
-  // ===== فانکشنی گەڕان بەدوای کاڵا بۆ گۆڕانکاری =====
   window.searchProductForEdit = function(invId, type) {
     const query = document.getElementById('editProductSearch')?.value.trim().toLowerCase() || '';
     const suggestions = document.getElementById('editProductSuggestions');
@@ -1631,7 +3285,6 @@
     }
   };
 
-  // ===== closeEditOverlay =====
   window.closeEditOverlay = function() {
     const overlay = document.getElementById('editOverlay');
     if (overlay) {
@@ -1639,7 +3292,6 @@
     }
   };
 
-  // ===== saveAndCloseEdit =====
   window.saveAndCloseEdit = function(invId, type) {
     let invoice;
     let saveFunction;
@@ -1696,7 +3348,6 @@
     showToast('فاکتوورە بە سەرکەوتوویی نوێکرایەوە', 'success');
   };
 
-  // ===== cancelAndRefresh =====
   window.cancelAndRefresh = function(type) {
     if (!confirm('دڵنیایت لە گەڕانەوە بەبێ پاشەکەوتکردنی گۆڕانکارییەکان؟')) return;
     
@@ -1711,7 +3362,6 @@
     showToast('گۆڕانکارییەکان هەڵوەشایەوە', 'info');
   };
 
-  // ===== removeInvoiceItem =====
   window.removeInvoiceItem = function(invId, type, idx) {
     if (!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە لە فاکتوورە؟')) return;
     let invoice;
@@ -1760,7 +3410,6 @@
     showToast('کاڵا سڕکرایەوە', 'success');
   };
 
-  // ===== addItemToInvoice =====
   window.addItemToInvoice = function(invId, type) {
     const productName = prompt('ناوی کاڵا بنووسە:');
     if (!productName) return;
@@ -2293,7 +3942,6 @@
     }
   }
 
-  // ===== moduleClick =====
   window.moduleClick = function(moduleId) {
     if (!hasPermission(moduleId) && !isAdmin()) { alert('تۆ مۆڵەتی بەکارهێنانی ئەم بەشەت نییە!'); return; }
     if (moduleId === 'sales') navigateTo('sales');
@@ -2469,6 +4117,13 @@
     document.addEventListener('click', function(e) {
       if (!finalInput.contains(e.target) && !finalSuggestions.contains(e.target)) {
         finalSuggestions.style.display = 'none';
+        // پاککردنی ئاگاداری کاڵای تێکچوو کاتێک دەرەوە کلیک دەکەن
+        if (inputId === 'damageProductSearch') {
+          const infoDiv = document.getElementById('selectedDamageProductInfo');
+          if (infoDiv && !infoDiv.contains(e.target)) {
+            // نەشاردرێتەوە تا کاڵا هەڵنەبژێردرێت
+          }
+        }
       }
     });
 
@@ -2477,6 +4132,29 @@
 
   // ===== SETUP ALL SEARCH SUGGESTIONS =====
   document.addEventListener('DOMContentLoaded', function() {
+    // Setup for damageProductSearch with improved display
+    setupSuggestionSearch('damageProductSearch', 'damageProductSuggestions', warehouseProducts,
+      p => p.name + ' ' + p.barcode,
+      (product) => {
+        document.getElementById('damageProductSearch').value = product.name;
+        document.getElementById('damageQuantity').max = product.quantity;
+        document.getElementById('damageProductSuggestions').style.display = 'none';
+        
+        // نمایش زانیاری کاڵا
+        const infoDiv = document.getElementById('selectedDamageProductInfo');
+        if (infoDiv) {
+          infoDiv.style.display = 'block';
+          infoDiv.innerHTML = `
+            <strong>📦 ${product.name}</strong> | 
+            بارکۆد: ${product.barcode} | 
+            بڕی ماوە: <strong>${product.quantity}</strong> ${product.unit} | 
+            نرخ: ${product.sellPrice.toLocaleString()} د.ع
+          `;
+        }
+        showToast(`✅ کاڵای ${product.name} هەڵبژێردرا (بڕی ماوە: ${product.quantity})`, 'success');
+      }
+    );
+
     setupSuggestionSearch('productSearch', 'productSuggestions', warehouseProducts,
       p => p.name + ' ' + p.barcode,
       (product) => {
@@ -2519,18 +4197,6 @@
       }
     );
 
-    // ===== گۆڕانکاری سەرەکی بۆ گەڕانی کاڵای تێکچوو =====
-    setupSuggestionSearch('damageProductSearch', 'damageProductSuggestions', warehouseProducts,
-      p => p.name + ' ' + p.barcode,
-      (product) => {
-        document.getElementById('damageProductSearch').value = product.name;
-        document.getElementById('damageQuantity').max = product.quantity;
-        document.getElementById('damageProductSuggestions').style.display = 'none';
-        // نمایش دەریکەوتنی کاڵا بۆ زیادکردنی تێکچوون
-        showToast(`کاڵای ${product.name} هەڵبژێردرا! بڕی تێکچوون بنووسە.`, 'success');
-      }
-    );
-
     setupSuggestionSearch('agentProductSearch', 'agentProductSuggestions',
       () => {
         if (!currentSaleAgent) return [];
@@ -2559,6 +4225,68 @@
         } else alert('بڕی کاڵا تەواوە');
       }
     );
+
+    // ===== SETUP REPORT SEARCH DATALISTS =====
+    // Product Report Datalist
+    const productReportInput = document.getElementById('productReportSearch');
+    if (productReportInput) {
+      const productDatalist = document.createElement('datalist');
+      productDatalist.id = 'productReportDatalist';
+      productReportInput.setAttribute('list', 'productReportDatalist');
+      document.body.appendChild(productDatalist);
+
+      productReportInput.addEventListener('input', function() {
+        const query = this.value.trim().toLowerCase();
+        const datalist = document.getElementById('productReportDatalist');
+        datalist.innerHTML = '';
+        if (query) {
+          const filtered = warehouseProducts.filter(p => 
+            p.name.toLowerCase().includes(query) || 
+            p.barcode.includes(query)
+          );
+          filtered.slice(0, 15).forEach(p => {
+            const option = document.createElement('option');
+            option.value = p.name;
+            option.dataset.id = p.id;
+            datalist.appendChild(option);
+          });
+        }
+      });
+    }
+
+    // Person Report Datalist
+    const personReportInput = document.getElementById('personReportSearch');
+    if (personReportInput) {
+      const personDatalist = document.createElement('datalist');
+      personDatalist.id = 'personReportDatalist';
+      personReportInput.setAttribute('list', 'personReportDatalist');
+      document.body.appendChild(personDatalist);
+
+      personReportInput.addEventListener('input', function() {
+        const query = this.value.trim().toLowerCase();
+        const datalist = document.getElementById('personReportDatalist');
+        const type = document.getElementById('personReportType').value;
+        datalist.innerHTML = '';
+        if (query) {
+          let list = type === 'person' ? customers : partners;
+          const filtered = list.filter(e => 
+            e.name.toLowerCase().includes(query) || 
+            e.phone.includes(query)
+          );
+          filtered.slice(0, 15).forEach(e => {
+            const option = document.createElement('option');
+            option.value = e.name;
+            option.dataset.id = e.id;
+            datalist.appendChild(option);
+          });
+        }
+      });
+
+      document.getElementById('personReportType').addEventListener('change', function() {
+        document.getElementById('personReportDatalist').innerHTML = '';
+        document.getElementById('personReportSearch').value = '';
+      });
+    }
   });
 
   // ===== DOMContentLoaded =====
@@ -3639,7 +5367,7 @@
       if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
       if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backup.data.purchaseReturnHistory; savePurchaseReturnHistory(); }
       if (backup.data.employees) { employees = backup.data.employees; saveEmployees(); }
-      if (backup.data.expenseHistory) { expenseHistory = backupData.expenseHistory; saveExpenseHistory(); }
+      if (backup.data.expenseHistory) { expenseHistory = backup.data.expenseHistory; saveExpenseHistory(); }
       if (backup.data.giveMoneyHistory) { giveMoneyHistory = backup.data.giveMoneyHistory; saveGiveMoneyHistory(); }
       if (backup.data.adjustmentHistory) { adjustmentHistory = backup.data.adjustmentHistory; saveAdjustmentHistory(); }
       renderDashboardModules();
@@ -4286,35 +6014,87 @@
     if (input) input.dispatchEvent(new Event('input'));
   };
 
+  // ===== ADD DAMAGED PRODUCT (IMPROVED) =====
   window.addDamagedProduct = function() {
     const productName = document.getElementById('damageProductSearch').value.trim();
     const quantity = parseInt(document.getElementById('damageQuantity').value);
     const reason = document.getElementById('damageReason').value.trim();
-    if (!productName) { alert('تکایە کاڵایەک هەڵبژێرە'); return; }
-    if (!quantity || quantity < 1) { alert('تکایە بڕی دروست بنووسە'); return; }
-    const product = warehouseProducts.find(p => p.name === productName);
-    if (!product) { alert('کاڵا نەدۆزرایەوە'); return; }
-    if (product.quantity < quantity) { alert('بڕی کاڵا لە مخزندا کەمترە'); return; }
+    
+    if (!productName) { 
+      alert('تکایە کاڵایەک هەڵبژێرە'); 
+      return; 
+    }
+    if (!quantity || quantity < 1) { 
+      alert('تکایە بڕی دروست بنووسە'); 
+      return; 
+    }
+    
+    // گەڕان بە ناوی تەواو یان بەشێکی ناو
+    let product = warehouseProducts.find(p => 
+      p.name.toLowerCase() === productName.toLowerCase() || 
+      p.name.toLowerCase().includes(productName.toLowerCase())
+    );
+    
+    // ئەگەر نەدۆزرایەوە، هەوڵبدە بە بارکۆد
+    if (!product) {
+      product = warehouseProducts.find(p => 
+        p.barcode === productName || 
+        p.barcode.includes(productName)
+      );
+    }
+    
+    if (!product) { 
+      alert(`کاڵای "${productName}" نەدۆزرایەوە! تکایە ناوێکی ڕاست بنووسە.`); 
+      return; 
+    }
+    if (product.quantity < quantity) { 
+      alert(`بڕی کاڵا لە مخزندا کەمترە! بڕی ماوە: ${product.quantity}`); 
+      return; 
+    }
+    
+    // کەمکردنەوەی بڕی کاڵا لە مخزن
     product.quantity -= quantity;
     saveWarehouseProducts();
+    
+    // تۆمارکردنی کاڵای تێکچوو
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-    expiredDamagedProducts.push({ id: 'D' + Math.floor(Math.random() * 9000 + 1000), date: dateStr, productName: product.name, barcode: product.barcode, quantity: quantity, reason: reason || 'تێکچوون', type: 'damage' });
+    const id = 'D' + Math.floor(Math.random() * 9000 + 1000);
+    expiredDamagedProducts.push({ 
+      id: id, 
+      date: dateStr, 
+      productName: product.name, 
+      barcode: product.barcode, 
+      quantity: quantity, 
+      reason: reason || 'تێکچوون', 
+      type: 'damage' 
+    });
     saveExpiryDamage();
+    
+    // پاککردنەوەی خانەکان
     document.getElementById('damageProductSearch').value = '';
     document.getElementById('damageQuantity').value = '1';
     document.getElementById('damageReason').value = '';
     document.getElementById('damageProductSuggestions').style.display = 'none';
+    const infoDiv = document.getElementById('selectedDamageProductInfo');
+    if (infoDiv) infoDiv.style.display = 'none';
+    
     renderDamagedProducts();
     renderProductsGrid();
     updateStats();
-    alert('کاڵای تێکچوو تۆمارکرا');
+    alert(`کاڵای تێکچوو تۆمارکرا!\nکاڵا: ${product.name}\nبڕ: ${quantity}\nهۆکار: ${reason || 'تێکچوون'}`);
   };
 
   window.deleteDamagedProduct = function(id) {
     if (!confirm('دڵنیایت لە سڕینەوەی ئەم تۆمارە؟')) return;
     const record = expiredDamagedProducts.find(d => d.id === id);
-    if (record) { const product = warehouseProducts.find(p => p.name === record.productName); if (product) { product.quantity += record.quantity; saveWarehouseProducts(); } }
+    if (record) { 
+      const product = warehouseProducts.find(p => p.name === record.productName); 
+      if (product) { 
+        product.quantity += record.quantity; 
+        saveWarehouseProducts(); 
+      } 
+    }
     expiredDamagedProducts = expiredDamagedProducts.filter(d => d.id !== id);
     saveExpiryDamage();
     renderDamagedProducts();
