@@ -401,6 +401,17 @@
       font-size:0.9rem;
       border:1px solid #93c5fd;
     }
+
+    /* ===== پێشاندانی بڕی ماوەی کاڵا بۆ تێکچوون ===== */
+    .damage-qty-info {
+      font-size:0.8rem;
+      color:#64748b;
+      margin-top:0.2rem;
+      padding:0.2rem 0.5rem;
+      background:#f1f5f9;
+      border-radius:0.5rem;
+      display:inline-block;
+    }
   </style>
 </head>
 <body>
@@ -1312,31 +1323,50 @@
           <div id="expiryProductsList" style="max-height:400px; overflow-y:auto;"></div>
         </div>
       </div>
+      
+      <!-- ===== DAMAGE PANEL (FIXED) ===== -->
       <div class="panel" id="expiryDamagePanel">
         <div class="card-glass" style="max-width:700px; margin:0 auto;">
           <h3 style="margin-bottom:1rem;"><i class="fas fa-plus-circle" style="color:#dc2626;"></i> تۆمارکردنی کاڵای تێکچوو</h3>
+          
+          <!-- گەڕان بەدوای کاڵا -->
           <div style="margin-bottom:1rem;">
-            <label style="font-weight:600;">گەڕان بەدوای کاڵا:</label>
+            <label style="font-weight:600;">🔍 گەڕان بەدوای کاڵا (ناو یان بارکۆد):</label>
             <div class="search-box" style="position:relative;">
-              <input type="text" id="damageProductSearch" placeholder="ناوی کاڵا یان بارکۆد..." oninput="searchDamageProduct()">
+              <input type="text" id="damageProductSearch" placeholder="ناوی کاڵا یان بارکۆد بنووسە..." 
+                     oninput="searchDamageProduct()" autocomplete="off">
               <span class="clear-btn" id="damageSearchClear" onclick="clearSearch('damageProductSearch', 'damageProductSuggestions')">✕</span>
               <button onclick="searchDamageProduct()"><i class="fas fa-search"></i></button>
             </div>
-            <div class="suggestions" id="damageProductSuggestions"></div>
-            <div id="selectedDamageProductInfo" class="selected-product-info" style="display:none;"></div>
+            <div class="suggestions" id="damageProductSuggestions" style="position:relative; max-height:200px; overflow-y:auto;"></div>
+            
+            <!-- پیشاندانی زانیاری کاڵای هەڵبژێردراو -->
+            <div id="selectedDamageProductInfo" class="selected-product-info" style="display:none; margin-top:0.5rem;"></div>
           </div>
+
+          <!-- بڕ و هۆکار -->
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
             <div style="margin-bottom:1rem;">
-              <label style="font-weight:600;">بڕی تێکچوو:</label>
-              <input type="number" id="damageQuantity" value="1" min="1" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              <label style="font-weight:600;">📊 بڕی تێکچوو:</label>
+              <input type="number" id="damageQuantity" value="1" min="1" 
+                     style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              <div class="damage-qty-info" id="damageMaxQtyDisplay">بڕی ماوە لە مخزن: -</div>
             </div>
             <div style="margin-bottom:1rem;">
-              <label style="font-weight:600;">هۆکار:</label>
-              <input type="text" id="damageReason" placeholder="هۆکاری تێکچوون..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              <label style="font-weight:600;">📝 هۆکار:</label>
+              <input type="text" id="damageReason" placeholder="هۆکاری تێکچوون..." 
+                     style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
             </div>
           </div>
-          <button onclick="addDamagedProduct()" style="background:#dc2626; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;"><i class="fas fa-save"></i> تۆمارکردنی تێکچوو</button>
+
+          <!-- دوگمەی تۆمارکردن -->
+          <button onclick="addDamagedProduct()" 
+                  style="background:#dc2626; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;">
+            <i class="fas fa-save"></i> تۆمارکردنی کاڵای تێکچوو
+          </button>
         </div>
+
+        <!-- مێژووی کاڵا تێکچووەکان -->
         <div class="card-glass" style="margin-top:1.5rem;">
           <h4 style="margin-bottom:1rem;"><i class="fas fa-history"></i> مێژووی کاڵا تێکچووەکان</h4>
           <div class="filter-row">
@@ -2211,6 +2241,8 @@
     if (inputId === 'damageProductSearch') {
       const infoDiv = document.getElementById('selectedDamageProductInfo');
       if (infoDiv) infoDiv.style.display = 'none';
+      const qtyDisplay = document.getElementById('damageMaxQtyDisplay');
+      if (qtyDisplay) qtyDisplay.textContent = 'بڕی ماوە لە مخزن: -';
     }
   };
 
@@ -2605,13 +2637,11 @@
       return;
     }
     
-    // هەوڵبدە بە ناوی تەواو
     let product = warehouseProducts.find(p => 
       p.name.toLowerCase() === query.toLowerCase() ||
       p.barcode.includes(query)
     );
     
-    // ئەگەر نەدۆزرایەوە، بە بەشێکی ناو بگەڕێ
     if (!product) {
       const matches = warehouseProducts.filter(p => 
         p.name.toLowerCase().includes(query.toLowerCase())
@@ -2619,7 +2649,6 @@
       if (matches.length === 1) {
         product = matches[0];
       } else if (matches.length > 1) {
-        // پێشنیاری بەکارهێنەر بکە
         const names = matches.map((p, i) => `${i+1}. ${p.name}`).join('\n');
         const choice = prompt(`چەند کاڵایەک دۆزرایەوە. ژمارەی کاڵای دیاریکراو بنووسە:\n${names}`, '1');
         if (choice) {
@@ -2770,7 +2799,6 @@
     `;
 
     container.innerHTML = reportHTML;
-    // پاککردنەوەی خانەی گەڕان
     input.value = '';
     input.blur();
   };
@@ -2890,7 +2918,7 @@
 
     if (type === 'partner' && purchases.length) {
       reportHTML += `
-        <h4 style="margin:1rem 0 0.5rem;">🚚 فاکتوورەکانی کڕین</h4>
+        <h4 style="margin:1.5rem 0 0.5rem;">🚚 فاکتوورەکانی کڕین</h4>
         <table class="report-table">
           <thead><tr><th>ژمارە</th><th>بەروار</th><th>کاڵاکان</th><th>جۆر</th><th>کۆی گشتی</th></tr></thead>
           <tbody>
@@ -2967,7 +2995,6 @@
     }
 
     container.innerHTML = reportHTML;
-    // پاککردنەوەی خانەی گەڕان
     input.value = '';
     input.blur();
   };
@@ -3049,7 +3076,6 @@
     `;
 
     container.innerHTML = reportHTML;
-    // پاککردنەوەی خانەی گەڕان
     document.getElementById('invoiceSearchInput').value = '';
     document.getElementById('invoiceSearchInput').blur();
   };
@@ -4130,168 +4156,242 @@
     return { input: finalInput, suggestions: finalSuggestions };
   }
 
-  // ===== SETUP ALL SEARCH SUGGESTIONS =====
-  document.addEventListener('DOMContentLoaded', function() {
-    // Setup for damageProductSearch with improved display
-    setupSuggestionSearch('damageProductSearch', 'damageProductSuggestions', warehouseProducts,
-      p => p.name + ' ' + p.barcode,
-      (product) => {
-        document.getElementById('damageProductSearch').value = product.name;
-        document.getElementById('damageQuantity').max = product.quantity;
-        document.getElementById('damageProductSuggestions').style.display = 'none';
-        
-        // نمایش زانیاری کاڵا
-        const infoDiv = document.getElementById('selectedDamageProductInfo');
-        if (infoDiv) {
-          infoDiv.style.display = 'block';
-          infoDiv.innerHTML = `
-            <strong>📦 ${product.name}</strong> | 
-            بارکۆد: ${product.barcode} | 
-            بڕی ماوە: <strong>${product.quantity}</strong> ${product.unit} | 
-            نرخ: ${product.sellPrice.toLocaleString()} د.ع
-          `;
-        }
-        showToast(`✅ کاڵای ${product.name} هەڵبژێردرا (بڕی ماوە: ${product.quantity})`, 'success');
-      }
-    );
-
-    setupSuggestionSearch('productSearch', 'productSuggestions', warehouseProducts,
-      p => p.name + ' ' + p.barcode,
-      (product) => {
-        const existing = cart.find(c => c.product.id === product.id);
-        if (existing) existing.quantity++;
-        else cart.push({ product, quantity: 1, unitPrice: product.sellPrice });
-        renderCart();
-        updateInvoicePreview();
-      }
-    );
-
-    setupSuggestionSearch('purchaseProductSearch', 'purchaseProductSuggestions', warehouseProducts,
-      p => p.name + ' ' + p.barcode,
-      (product) => {
-        const existing = purchaseCart.find(c => c.product.id === product.id);
-        if (existing) existing.quantity++;
-        else purchaseCart.push({ product, quantity: 1 });
-        renderPurchaseCart();
-        updatePurchaseInvoicePreview();
-      }
-    );
-
-    setupSuggestionSearch('purchasePartnerSearch', 'purchasePartnerSuggestions', partners,
-      p => p.name + ' ' + p.phone,
-      (partner) => {
-        selectedPurchasePartner = partner;
-        document.getElementById('selectedPurchasePartnerBadge').innerHTML = `<span class="customer-badge">🤝 ${partner.name}</span>`;
-        document.getElementById('purchasePartnerSearch').value = partner.name;
-        updatePurchaseInvoicePreview();
-      }
-    );
-
-    setupSuggestionSearch('warePurchaseSearch', 'warePurchaseSuggestions', warehouseProducts,
-      p => p.name + ' ' + p.barcode,
-      (product) => {
-        const existing = warePurchaseCart.find(c => c.product.id === product.id);
-        if (existing) existing.quantity++;
-        else warePurchaseCart.push({ product, quantity: 1 });
-        renderWarePurchaseCart();
-      }
-    );
-
-    setupSuggestionSearch('agentProductSearch', 'agentProductSuggestions',
-      () => {
-        if (!currentSaleAgent) return [];
-        return currentSaleAgent.inventory || [];
-      },
-      (item) => item.productName,
-      (item) => {
-        const available = item.quantity - (item.sold || 0);
-        if (available <= 0) { alert('ئەم کاڵایە لە جەرددا نییە'); return; }
-        const existing = agentSaleCart.find(c => c.productName === item.productName);
-        if (existing) { if (existing.quantity < available) existing.quantity++; else alert('بڕی زیاتر لە جەرددا نییە'); }
-        else agentSaleCart.push({ productName: item.productName, barcode: item.barcode, price: item.price, quantity: 1, maxQty: available });
-        renderAgentSaleCart();
-      }
-    );
-
-    setupSuggestionSearch('giveProductSearch', 'giveProductSuggestions', warehouseProducts,
-      p => p.name + ' ' + p.barcode,
-      (product) => {
-        if (!selectedGiveAgent) { alert('تکایە مەندوبێک هەڵبژێرە'); return; }
-        if (product.quantity > 0) {
-          const existing = giveAgentCart.find(c => c.productId === product.id);
-          if (existing) { if (existing.quantity < product.quantity) existing.quantity++; else alert('بڕی زیاتر لە مخزندا نییە'); }
-          else giveAgentCart.push({ productId: product.id, productName: product.name, barcode: product.barcode, price: product.sellPrice, quantity: 1, maxQty: product.quantity });
-          renderGiveAgentCart();
-        } else alert('بڕی کاڵا تەواوە');
-      }
-    );
-
-    // ===== SETUP REPORT SEARCH DATALISTS =====
-    // Product Report Datalist
-    const productReportInput = document.getElementById('productReportSearch');
-    if (productReportInput) {
-      const productDatalist = document.createElement('datalist');
-      productDatalist.id = 'productReportDatalist';
-      productReportInput.setAttribute('list', 'productReportDatalist');
-      document.body.appendChild(productDatalist);
-
-      productReportInput.addEventListener('input', function() {
-        const query = this.value.trim().toLowerCase();
-        const datalist = document.getElementById('productReportDatalist');
-        datalist.innerHTML = '';
-        if (query) {
-          const filtered = warehouseProducts.filter(p => 
-            p.name.toLowerCase().includes(query) || 
-            p.barcode.includes(query)
-          );
-          filtered.slice(0, 15).forEach(p => {
-            const option = document.createElement('option');
-            option.value = p.name;
-            option.dataset.id = p.id;
-            datalist.appendChild(option);
-          });
-        }
-      });
+  // ===== SEARCH DAMAGE PRODUCT (IMPROVED) =====
+  window.searchDamageProduct = function() {
+    const input = document.getElementById('damageProductSearch');
+    const query = input.value.trim().toLowerCase();
+    const suggestions = document.getElementById('damageProductSuggestions');
+    const clearBtn = document.getElementById('damageSearchClear');
+    
+    if (!query) {
+      suggestions.style.display = 'none';
+      if (clearBtn) clearBtn.style.display = 'none';
+      // پاککردنی زانیاری کاڵا
+      const infoDiv = document.getElementById('selectedDamageProductInfo');
+      if (infoDiv) infoDiv.style.display = 'none';
+      const qtyDisplay = document.getElementById('damageMaxQtyDisplay');
+      if (qtyDisplay) qtyDisplay.textContent = 'بڕی ماوە لە مخزن: -';
+      return;
     }
-
-    // Person Report Datalist
-    const personReportInput = document.getElementById('personReportSearch');
-    if (personReportInput) {
-      const personDatalist = document.createElement('datalist');
-      personDatalist.id = 'personReportDatalist';
-      personReportInput.setAttribute('list', 'personReportDatalist');
-      document.body.appendChild(personDatalist);
-
-      personReportInput.addEventListener('input', function() {
-        const query = this.value.trim().toLowerCase();
-        const datalist = document.getElementById('personReportDatalist');
-        const type = document.getElementById('personReportType').value;
-        datalist.innerHTML = '';
-        if (query) {
-          let list = type === 'person' ? customers : partners;
-          const filtered = list.filter(e => 
-            e.name.toLowerCase().includes(query) || 
-            e.phone.includes(query)
-          );
-          filtered.slice(0, 15).forEach(e => {
-            const option = document.createElement('option');
-            option.value = e.name;
-            option.dataset.id = e.id;
-            datalist.appendChild(option);
-          });
-        }
+    if (clearBtn) clearBtn.style.display = 'block';
+    
+    const filtered = warehouseProducts.filter(p => 
+      p.name.toLowerCase().includes(query) || 
+      p.barcode.includes(query)
+    );
+    
+    if (filtered.length) {
+      suggestions.innerHTML = filtered.map(p => `
+        <div class="suggestion-item" data-pid="${p.id}" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; cursor:pointer; border-bottom:1px solid #f1f5f9;">
+          <div>
+            <span>📦 <strong>${p.name}</strong></span>
+            <span style="font-size:0.75rem; color:#64748b; margin-right:0.5rem;">${p.barcode}</span>
+          </div>
+          <div style="font-size:0.8rem; color:#059669; font-weight:600;">
+            بڕی ماوە: ${p.quantity} ${p.unit} | ${p.sellPrice.toLocaleString()} د.ع
+          </div>
+        </div>
+      `).join('');
+      suggestions.style.display = 'block';
+      
+      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const pid = parseInt(this.dataset.pid);
+          const product = warehouseProducts.find(p => p.id === pid);
+          if (product) {
+            // دانانی ناوی کاڵا لە خانەکە
+            document.getElementById('damageProductSearch').value = product.name;
+            
+            // پیشاندانی زانیاری کاڵا
+            const infoDiv = document.getElementById('selectedDamageProductInfo');
+            if (infoDiv) {
+              infoDiv.style.display = 'block';
+              infoDiv.innerHTML = `
+                <div style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:space-between;">
+                  <div><strong>📦 ${product.name}</strong></div>
+                  <div>بارکۆد: <code>${product.barcode}</code></div>
+                  <div>📊 بڕی ماوە: <strong style="color:#059669;">${product.quantity}</strong> ${product.unit}</div>
+                  <div>💰 نرخ: ${product.sellPrice.toLocaleString()} د.ع</div>
+                </div>
+                <div style="font-size:0.8rem; color:#64748b; margin-top:0.3rem;">
+                  نرخی کڕین: ${product.buyPrice.toLocaleString()} د.ع | بەرواری بەسەرچوون: ${product.expiryDate || 'نییە'}
+                </div>
+              `;
+            }
+            
+            // دانانی ماکسیمەم بڕی کاڵا
+            document.getElementById('damageQuantity').max = product.quantity;
+            const qtyDisplay = document.getElementById('damageMaxQtyDisplay');
+            if (qtyDisplay) qtyDisplay.textContent = `بڕی ماوە لە مخزن: ${product.quantity} ${product.unit}`;
+            document.getElementById('damageQuantity').value = 1;
+            
+            // داخستنی پێشنیارەکان
+            suggestions.style.display = 'none';
+            if (clearBtn) clearBtn.style.display = 'none';
+          }
+        });
       });
-
-      document.getElementById('personReportType').addEventListener('change', function() {
-        document.getElementById('personReportDatalist').innerHTML = '';
-        document.getElementById('personReportSearch').value = '';
-      });
+    } else {
+      suggestions.style.display = 'none';
     }
-  });
+  };
+
+  // ===== ADD DAMAGED PRODUCT (FIXED VERSION) =====
+  window.addDamagedProduct = function() {
+    // وەرگرتنی ناوی کاڵا لە خانەکە
+    const productName = document.getElementById('damageProductSearch').value.trim();
+    const quantity = parseInt(document.getElementById('damageQuantity').value);
+    const reason = document.getElementById('damageReason').value.trim();
+    
+    // پشتڕاستکردنەوەی داتا
+    if (!productName) { 
+      alert('⚠️ تکایە کاڵایەک هەڵبژێرە یان ناوی کاڵا بنووسە!'); 
+      document.getElementById('damageProductSearch').focus();
+      return; 
+    }
+    
+    if (!quantity || quantity < 1) { 
+      alert('⚠️ تکایە بڕی دروست بنووسە (ژمارەیەک لە 1 زیاتر)'); 
+      document.getElementById('damageQuantity').focus();
+      return; 
+    }
+    
+    // گەڕان بەدوای کاڵا - یەکەم: بە ناوی تەواو
+    let product = warehouseProducts.find(p => 
+      p.name.toLowerCase() === productName.toLowerCase()
+    );
+    
+    // ئەگەر نەدۆزرایەوە، بە بەشێکی ناو بگەڕێ
+    if (!product) {
+      product = warehouseProducts.find(p => 
+        p.name.toLowerCase().includes(productName.toLowerCase())
+      );
+    }
+    
+    // ئەگەر هێشتا نەدۆزرایەوە، بە بارکۆد بگەڕێ
+    if (!product) {
+      product = warehouseProducts.find(p => 
+        p.barcode === productName || 
+        p.barcode.includes(productName)
+      );
+    }
+    
+    // ئەگەر کاڵا نەدۆزرایەوە
+    if (!product) { 
+      alert(`⚠️ کاڵای "${productName}" نەدۆزرایەوە! تکایە ناوێکی ڕاست بنووسە یان لە پێشنیارەکان هەڵیبژێرە.`); 
+      document.getElementById('damageProductSearch').focus();
+      return; 
+    }
+    
+    // پشتڕاستکردنەوەی بڕی کاڵا لە مخزن
+    if (product.quantity < quantity) { 
+      alert(`⚠️ بڕی کاڵا لە مخزندا کەمترە!\nکاڵا: ${product.name}\nبڕی ماوە: ${product.quantity}\nبڕی داواکراو: ${quantity}`); 
+      document.getElementById('damageQuantity').focus();
+      return; 
+    }
+    
+    // پشتڕاستکردنەوەی زیادە لەلایەن بەکارهێنەر
+    const confirmMsg = `دڵنیایت لە تۆمارکردنی کاڵای تێکچوو؟
+  📦 کاڵا: ${product.name}
+  📊 بڕ: ${quantity}
+  📝 هۆکار: ${reason || 'تێکچوون'}`;
+    
+    if (!confirm(confirmMsg)) {
+      return;
+    }
+    
+    // --- تۆمارکردن ---
+    
+    // 1. کەمکردنەوەی بڕی کاڵا لە مخزن
+    product.quantity -= quantity;
+    saveWarehouseProducts();
+    
+    // 2. دروستکردنی تۆماری کاڵای تێکچوو
+    const now = new Date();
+    const dateStr = now.toLocaleString('ckb', { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+    
+    const id = 'D' + Math.floor(Math.random() * 90000 + 10000);
+    
+    expiredDamagedProducts.push({ 
+      id: id, 
+      date: dateStr, 
+      productName: product.name, 
+      barcode: product.barcode, 
+      quantity: quantity, 
+      reason: reason || 'تێکچوون', 
+      type: 'damage',
+      productId: product.id
+    });
+    saveExpiryDamage();
+    
+    // 3. تۆمارکردنی مەسروفات (خەرجی) بۆ تێکچوون
+    const damageCost = product.buyPrice * quantity;
+    expenseHistory.unshift({
+      id: 'EXP-DMG-' + Date.now(),
+      date: dateStr,
+      amount: damageCost,
+      category: 'تێکچوونی کاڵا',
+      note: `تێکچوونی کاڵا: ${product.name} (${quantity} × ${product.buyPrice})`,
+      timestamp: now.toISOString()
+    });
+    saveExpenseHistory();
+    
+    // 4. کەمکردنەوە لە واسڵی ئەمرۆ
+    moneyRequests.push({
+      id: 'DMG-MONEY-' + Date.now(),
+      date: dateStr,
+      type: 'expense',
+      entityName: 'تێکچوونی کاڵا',
+      entityPhone: '-',
+      amount: -damageCost,
+      note: `تێکچوونی کاڵا: ${product.name}`,
+      isTransfer: false,
+      isExpense: true
+    });
+    saveMoneyRequests();
+    
+    // --- پاککردنەوەی خانەکان ---
+    document.getElementById('damageProductSearch').value = '';
+    document.getElementById('damageQuantity').value = '1';
+    document.getElementById('damageReason').value = '';
+    document.getElementById('damageProductSuggestions').style.display = 'none';
+    const clearBtn = document.getElementById('damageSearchClear');
+    if (clearBtn) clearBtn.style.display = 'none';
+    
+    const infoDiv = document.getElementById('selectedDamageProductInfo');
+    if (infoDiv) {
+      infoDiv.style.display = 'none';
+      infoDiv.innerHTML = '';
+    }
+    
+    const qtyDisplay = document.getElementById('damageMaxQtyDisplay');
+    if (qtyDisplay) qtyDisplay.textContent = 'بڕی ماوە لە مخزن: -';
+    
+    // --- نوێکردنەوەی لیستەکان ---
+    renderDamagedProducts();
+    renderProductsGrid();
+    updateExpenseStats();
+    updateStats();
+    
+    // --- پیشاندانی پەیامی سەرکەوتن ---
+    alert(`✅ کاڵای تێکچوو بە سەرکەوتوویی تۆمارکرا!
+  📦 کاڵا: ${product.name}
+  📊 بڕ: ${quantity}
+  📝 هۆکار: ${reason || 'تێکچوون'}
+  💰 بەهای تێکچوو: ${damageCost.toLocaleString()} د.ع`);
+    
+    showToast(`✅ کاڵای ${product.name} بە ${quantity} دانە تۆمارکرا`, 'success');
+  };
 
   // ===== DOMContentLoaded =====
   let autoBackupEnabled = localStorage.getItem('market_auto_backup') === 'true';
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', function() {
     if (autoBackupEnabled) { const toggle = document.getElementById('autoBackupToggle'); if (toggle) toggle.checked = true; }
     const savedUser = localStorage.getItem('market_logged_user');
     if (savedUser) {
@@ -6008,101 +6108,6 @@
   }
 
   window.filterDamagedProducts = function() { renderDamagedProducts(); };
-
-  window.searchDamageProduct = function() {
-    const input = document.getElementById('damageProductSearch');
-    if (input) input.dispatchEvent(new Event('input'));
-  };
-
-  // ===== ADD DAMAGED PRODUCT (IMPROVED) =====
-  window.addDamagedProduct = function() {
-    const productName = document.getElementById('damageProductSearch').value.trim();
-    const quantity = parseInt(document.getElementById('damageQuantity').value);
-    const reason = document.getElementById('damageReason').value.trim();
-    
-    if (!productName) { 
-      alert('تکایە کاڵایەک هەڵبژێرە'); 
-      return; 
-    }
-    if (!quantity || quantity < 1) { 
-      alert('تکایە بڕی دروست بنووسە'); 
-      return; 
-    }
-    
-    // گەڕان بە ناوی تەواو یان بەشێکی ناو
-    let product = warehouseProducts.find(p => 
-      p.name.toLowerCase() === productName.toLowerCase() || 
-      p.name.toLowerCase().includes(productName.toLowerCase())
-    );
-    
-    // ئەگەر نەدۆزرایەوە، هەوڵبدە بە بارکۆد
-    if (!product) {
-      product = warehouseProducts.find(p => 
-        p.barcode === productName || 
-        p.barcode.includes(productName)
-      );
-    }
-    
-    // هەوڵبدە ناوەکە لە زانیاری کاڵا وەربگریت کە پێشتر دیاریکراوە
-    if (!product) {
-      const infoDiv = document.getElementById('selectedDamageProductInfo');
-      if (infoDiv && infoDiv.style.display !== 'none') {
-        const text = infoDiv.innerText || '';
-        const match = text.match(/📦\s*([^\|]+)/);
-        if (match && match[1]) {
-          const nameFromInfo = match[1].trim();
-          product = warehouseProducts.find(p => 
-            p.name.toLowerCase() === nameFromInfo.toLowerCase() ||
-            p.name.toLowerCase().includes(nameFromInfo.toLowerCase())
-          );
-        }
-      }
-    }
-    
-    if (!product) { 
-      alert(`کاڵای "${productName}" نەدۆزرایەوە! تکایە ناوێکی ڕاست بنووسە.`); 
-      return; 
-    }
-    if (product.quantity < quantity) { 
-      alert(`بڕی کاڵا لە مخزندا کەمترە! بڕی ماوە: ${product.quantity}`); 
-      return; 
-    }
-    
-    // کەمکردنەوەی بڕی کاڵا لە مخزن
-    product.quantity -= quantity;
-    saveWarehouseProducts();
-    
-    // تۆمارکردنی کاڵای تێکچوو
-    const now = new Date();
-    const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-    const id = 'D' + Math.floor(Math.random() * 9000 + 1000);
-    expiredDamagedProducts.push({ 
-      id: id, 
-      date: dateStr, 
-      productName: product.name, 
-      barcode: product.barcode, 
-      quantity: quantity, 
-      reason: reason || 'تێکچوون', 
-      type: 'damage' 
-    });
-    saveExpiryDamage();
-    
-    // پاککردنەوەی خانەکان
-    document.getElementById('damageProductSearch').value = '';
-    document.getElementById('damageQuantity').value = '1';
-    document.getElementById('damageReason').value = '';
-    document.getElementById('damageProductSuggestions').style.display = 'none';
-    const infoDiv = document.getElementById('selectedDamageProductInfo');
-    if (infoDiv) {
-      infoDiv.style.display = 'none';
-      infoDiv.innerHTML = '';
-    }
-    
-    renderDamagedProducts();
-    renderProductsGrid();
-    updateStats();
-    alert(`کاڵای تێکچوو تۆمارکرا!\nکاڵا: ${product.name}\nبڕ: ${quantity}\nهۆکار: ${reason || 'تێکچوون'}`);
-  };
 
   window.deleteDamagedProduct = function(id) {
     if (!confirm('دڵنیایت لە سڕینەوەی ئەم تۆمارە؟')) return;
