@@ -3097,16 +3097,20 @@
     `).join('');
 
     const overlay = document.createElement('div');
+    overlay.id = 'editOverlay';
     overlay.style.cssText = `
       position: fixed; top:0; left:0; width:100%; height:100%;
       background:rgba(0,0,0,0.6); z-index:9999;
       display:flex; align-items:center; justify-content:center;
     `;
     overlay.innerHTML = `
-      <div style="background:white; border-radius:2rem; padding:2rem; max-width:700px; width:95%; max-height:85vh; overflow-y:auto;">
-        <h3 style="margin-bottom:1rem;">✏️ دەستکاری فاکتوورە ${invId}</h3>
+      <div style="background:white; border-radius:2rem; padding:2rem; max-width:700px; width:95%; max-height:85vh; overflow-y:auto; position:relative;">
+        <button onclick="closeEditOverlay()" style="position:absolute; top:15px; left:15px; background:#dc2626; color:white; border:none; border-radius:50%; width:35px; height:35px; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 8px rgba(0,0,0,0.2);">
+          ✕
+        </button>
         
-        <!-- بەشی گەڕان بەدوای کاڵا -->
+        <h3 style="margin-bottom:1rem; margin-top:0.5rem;">✏️ دەستکاری فاکتوورە ${invId}</h3>
+        
         <div class="edit-product-search-container">
           <label style="font-weight:600; display:block; margin-bottom:0.5rem;">🔍 گەڕان بەدوای کاڵا (ناو یان بارکۆد):</label>
           <div class="search-box" style="position:relative;">
@@ -3128,14 +3132,14 @@
           ${itemsHTML}
         </div>
         <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-          <button onclick="saveInvoiceChanges('${invId}', '${type}')" style="background:#059669; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
-            <i class="fas fa-save"></i> پاشەکەوتکردن
+          <button onclick="saveAndCloseEdit('${invId}', '${type}')" style="background:#059669; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
+            <i class="fas fa-save"></i> پاشەکەوتکردن و داخستن
           </button>
-          <button onclick="this.closest('div[style]').remove()" style="background:#64748b; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
-            <i class="fas fa-times"></i> داخستن
+          <button onclick="closeEditOverlay()" style="background:#64748b; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
+            <i class="fas fa-times"></i> داخستن بەبێ پاشەکەوت
           </button>
-          <button onclick="this.closest('div[style]').remove(); renderHistory(); renderPurchaseHistory();" style="background:#ef4444; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
-            <i class="fas fa-undo"></i> گەڕانەوە
+          <button onclick="cancelAndRefresh('${type}')" style="background:#ef4444; color:white; border:none; padding:0.7rem 2rem; border-radius:1.5rem; font-weight:bold; cursor:pointer;">
+            <i class="fas fa-undo"></i> گەڕانەوە و نوێکردنەوە
           </button>
         </div>
         <div id="editMessage" style="margin-top:1rem; display:none; padding:0.5rem; border-radius:0.5rem;"></div>
@@ -3179,7 +3183,6 @@
           const pid = parseInt(this.dataset.pid);
           const product = warehouseProducts.find(p => p.id === pid);
           if (product) {
-            // زیادکردنی کاڵا بۆ فاکتوورە
             let invoice;
             if (type === 'sale') {
               invoice = saleHistory.find(s => s.id === invId);
@@ -3195,8 +3198,8 @@
               }
               invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
               if (type === 'sale') saveSaleHistory(); else savePurchaseHistory();
-              // نوێکردنەوەی دیالۆگ
-              document.querySelector('#editItemsContainer')?.closest('div[style]')?.remove();
+              const overlay = document.querySelector('#editOverlay');
+              if (overlay) overlay.remove();
               editInvoiceItem(invId, type);
               showToast('✅ کاڵا زیادکرا', 'success');
             }
@@ -3211,73 +3214,16 @@
     }
   };
 
-  // ===== زیادکردنی گەڕانەوە بۆ پەڕەی فاکتوورەکان =====
-  // دوگمەی گەڕانەوە لە ناوەوەی editInvoiceItem زیادکرا
-
-  window.removeInvoiceItem = function(invId, type, idx) {
-    if (!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە لە فاکتوورە؟')) return;
-    let invoice;
-    let saveFunction;
-    
-    if (type === 'sale') {
-      invoice = saleHistory.find(s => s.id === invId);
-      saveFunction = saveSaleHistory;
-    } else {
-      invoice = purchaseHistory.find(p => p.id === invId);
-      saveFunction = savePurchaseHistory;
+  // ===== closeEditOverlay =====
+  window.closeEditOverlay = function() {
+    const overlay = document.getElementById('editOverlay');
+    if (overlay) {
+      overlay.remove();
     }
-    
-    if (!invoice) return;
-    invoice.items.splice(idx, 1);
-    if (invoice.items.length === 0) {
-      if (type === 'sale') {
-        saleHistory = saleHistory.filter(s => s.id !== invId);
-        saveSaleHistory();
-      } else {
-        purchaseHistory = purchaseHistory.filter(p => p.id !== invId);
-        savePurchaseHistory();
-      }
-    } else {
-      invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
-      saveFunction();
-    }
-    document.querySelector('#editItemsContainer')?.closest('div[style]')?.remove();
-    updateStats();
-    renderHistory();
-    renderPurchaseHistory();
-    showToast('کاڵا سڕکرایەوە', 'success');
   };
 
-  window.addItemToInvoice = function(invId, type) {
-    const productName = prompt('ناوی کاڵا بنووسە:');
-    if (!productName) return;
-    const qty = parseInt(prompt('بڕی کاڵا:'));
-    if (!qty || qty < 1) { alert('تکایە بڕی دروست بنووسە'); return; }
-    const price = parseInt(prompt('نرخی کاڵا:'));
-    if (!price || price < 0) { alert('تکایە نرخی دروست بنووسە'); return; }
-    
-    let invoice;
-    let saveFunction;
-    if (type === 'sale') {
-      invoice = saleHistory.find(s => s.id === invId);
-      saveFunction = saveSaleHistory;
-    } else {
-      invoice = purchaseHistory.find(p => p.id === invId);
-      saveFunction = savePurchaseHistory;
-    }
-    if (!invoice) return;
-    
-    invoice.items.push({ name: productName, qty: qty, price: price });
-    invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
-    saveFunction();
-    document.querySelector('#editItemsContainer')?.closest('div[style]')?.remove();
-    updateStats();
-    renderHistory();
-    renderPurchaseHistory();
-    showToast('کاڵا زیادکرا', 'success');
-  };
-
-  window.saveInvoiceChanges = function(invId, type) {
+  // ===== saveAndCloseEdit =====
+  window.saveAndCloseEdit = function(invId, type) {
     let invoice;
     let saveFunction;
     if (type === 'sale') {
@@ -3292,7 +3238,6 @@
     let total = 0;
     const itemsContainer = document.getElementById('editItemsContainer');
     const inputs = itemsContainer.querySelectorAll('input');
-    const items = [];
     
     const qtyInputs = [];
     const priceInputs = [];
@@ -3322,13 +3267,115 @@
     invoice.total = total;
     saveFunction();
     
-    const overlay = document.querySelector('div[style*="position: fixed"]');
-    if (overlay) overlay.remove();
+    closeEditOverlay();
     
     updateStats();
-    renderHistory();
-    renderPurchaseHistory();
+    if (type === 'sale') {
+      renderHistory();
+    } else {
+      renderPurchaseHistory();
+    }
+    
     showToast('فاکتوورە بە سەرکەوتوویی نوێکرایەوە', 'success');
+  };
+
+  // ===== cancelAndRefresh =====
+  window.cancelAndRefresh = function(type) {
+    if (!confirm('دڵنیایت لە گەڕانەوە بەبێ پاشەکەوتکردنی گۆڕانکارییەکان؟')) return;
+    
+    closeEditOverlay();
+    
+    if (type === 'sale') {
+      renderHistory();
+    } else {
+      renderPurchaseHistory();
+    }
+    
+    showToast('گۆڕانکارییەکان هەڵوەشایەوە', 'info');
+  };
+
+  // ===== removeInvoiceItem =====
+  window.removeInvoiceItem = function(invId, type, idx) {
+    if (!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە لە فاکتوورە؟')) return;
+    let invoice;
+    let saveFunction;
+    
+    if (type === 'sale') {
+      invoice = saleHistory.find(s => s.id === invId);
+      saveFunction = saveSaleHistory;
+    } else {
+      invoice = purchaseHistory.find(p => p.id === invId);
+      saveFunction = savePurchaseHistory;
+    }
+    
+    if (!invoice) return;
+    invoice.items.splice(idx, 1);
+    if (invoice.items.length === 0) {
+      if (type === 'sale') {
+        saleHistory = saleHistory.filter(s => s.id !== invId);
+        saveSaleHistory();
+        closeEditOverlay();
+        renderHistory();
+        updateStats();
+        showToast('فاکتوورەکە بە تەواوی سڕکرایەوە', 'success');
+        return;
+      } else {
+        purchaseHistory = purchaseHistory.filter(p => p.id !== invId);
+        savePurchaseHistory();
+        closeEditOverlay();
+        renderPurchaseHistory();
+        updateStats();
+        showToast('فاکتوورەکە بە تەواوی سڕکرایەوە', 'success');
+        return;
+      }
+    } else {
+      invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
+      saveFunction();
+    }
+    
+    const overlay = document.getElementById('editOverlay');
+    if (overlay) {
+      overlay.remove();
+      editInvoiceItem(invId, type);
+    }
+    
+    updateStats();
+    showToast('کاڵا سڕکرایەوە', 'success');
+  };
+
+  // ===== addItemToInvoice =====
+  window.addItemToInvoice = function(invId, type) {
+    const productName = prompt('ناوی کاڵا بنووسە:');
+    if (!productName) return;
+    const qty = parseInt(prompt('بڕی کاڵا:'));
+    if (!qty || qty < 1) { alert('تکایە بڕی دروست بنووسە'); return; }
+    const price = parseInt(prompt('نرخی کاڵا:'));
+    if (!price || price < 0) { alert('تکایە نرخی دروست بنووسە'); return; }
+    
+    let invoice;
+    let saveFunction;
+    if (type === 'sale') {
+      invoice = saleHistory.find(s => s.id === invId);
+      saveFunction = saveSaleHistory;
+    } else {
+      invoice = purchaseHistory.find(p => p.id === invId);
+      saveFunction = savePurchaseHistory;
+    }
+    if (!invoice) return;
+    
+    invoice.items.push({ name: productName, qty: qty, price: price });
+    invoice.total = invoice.items.reduce((sum, i) => sum + (i.qty * i.price), 0);
+    saveFunction();
+    
+    const overlay = document.getElementById('editOverlay');
+    if (overlay) {
+      overlay.remove();
+      editInvoiceItem(invId, type);
+    }
+    
+    updateStats();
+    if (type === 'sale') renderHistory(); else renderPurchaseHistory();
+    showToast('کاڵا زیادکرا', 'success');
   };
 
   // ===== SAVE FUNCTIONS =====
@@ -5172,7 +5219,7 @@
       if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
       if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backup.data.purchaseReturnHistory; savePurchaseReturnHistory(); }
       if (backup.data.employees) { employees = backup.data.employees; saveEmployees(); }
-      if (backup.data.expenseHistory) { expenseHistory = backup.data.expenseHistory; saveExpenseHistory(); }
+      if (backup.data.expenseHistory) { expenseHistory = backupData.expenseHistory; saveExpenseHistory(); }
       if (backup.data.giveMoneyHistory) { giveMoneyHistory = backup.data.giveMoneyHistory; saveGiveMoneyHistory(); }
       if (backup.data.adjustmentHistory) { adjustmentHistory = backup.data.adjustmentHistory; saveAdjustmentHistory(); }
       renderDashboardModules();
@@ -5401,7 +5448,7 @@
         <div>
           <button class="btn-icon" onclick="window.viewInvoice('${s.id}')"><i class="fas fa-eye"></i></button>
           <button class="btn-icon" onclick="window.printInvoice('${s.id}')"><i class="fas fa-print"></i></button>
-          <button class="btn-icon" onclick="window.editSaleInvoice('${s.id}')"><i class="fas fa-edit" style="color:#2563eb;"></i></button>
+          <button class="btn-icon" onclick="window.editInvoiceItem('${s.id}', 'sale')"><i class="fas fa-edit" style="color:#2563eb;"></i></button>
           <button class="btn-icon" onclick="window.deleteInvoice('${s.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
         </div>
       </div>`).join('') : '<p style="text-align:center;color:#94a3b8;">هیچ فاکتوورەیەک نەدۆزرایەوە</p>';
@@ -5444,18 +5491,6 @@
   };
 
   window.deleteInvoice = function(invId) { if (confirm('دڵنیایت لە سڕینەوە؟')) { saleHistory = saleHistory.filter(s => s.id !== invId); saveSaleHistory(); renderHistory(historySearchInput?.value.trim() || ''); historyDetailDiv.style.display = 'none'; updateStats(); } };
-
-  // ===== EDIT SALE INVOICE =====
-  window.editSaleInvoice = function(invId) {
-    // ئەم فانکشنە بە editInvoiceItem جێگیرکراوە
-    editInvoiceItem(invId, 'sale');
-  };
-
-  // ===== EDIT PURCHASE INVOICE =====
-  window.editPurchaseInvoice = function(invId) {
-    // ئەم فانکشنە بە editInvoiceItem جێگیرکراوە
-    editInvoiceItem(invId, 'purchase');
-  };
 
   // ===== PURCHASE RETURN FUNCTIONS =====
   window.searchPurchaseForReturn = function() {
@@ -5934,7 +5969,7 @@
         <div>
           <button class="btn-icon" onclick="viewPurchaseInvoice('${p.id}')"><i class="fas fa-eye"></i></button>
           <button class="btn-icon" onclick="printPurchaseInvoice('${p.id}')"><i class="fas fa-print"></i></button>
-          <button class="btn-icon" onclick="editPurchaseInvoice('${p.id}')"><i class="fas fa-edit" style="color:#2563eb;"></i></button>
+          <button class="btn-icon" onclick="editInvoiceItem('${p.id}', 'purchase')"><i class="fas fa-edit" style="color:#2563eb;"></i></button>
           <button class="btn-icon" onclick="deletePurchaseInvoice('${p.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
         </div>
       </div>`).join('');
