@@ -6043,6 +6043,22 @@
       );
     }
     
+    // هەوڵبدە ناوەکە لە زانیاری کاڵا وەربگریت کە پێشتر دیاریکراوە
+    if (!product) {
+      const infoDiv = document.getElementById('selectedDamageProductInfo');
+      if (infoDiv && infoDiv.style.display !== 'none') {
+        const text = infoDiv.innerText || '';
+        const match = text.match(/📦\s*([^\|]+)/);
+        if (match && match[1]) {
+          const nameFromInfo = match[1].trim();
+          product = warehouseProducts.find(p => 
+            p.name.toLowerCase() === nameFromInfo.toLowerCase() ||
+            p.name.toLowerCase().includes(nameFromInfo.toLowerCase())
+          );
+        }
+      }
+    }
+    
     if (!product) { 
       alert(`کاڵای "${productName}" نەدۆزرایەوە! تکایە ناوێکی ڕاست بنووسە.`); 
       return; 
@@ -6077,7 +6093,10 @@
     document.getElementById('damageReason').value = '';
     document.getElementById('damageProductSuggestions').style.display = 'none';
     const infoDiv = document.getElementById('selectedDamageProductInfo');
-    if (infoDiv) infoDiv.style.display = 'none';
+    if (infoDiv) {
+      infoDiv.style.display = 'none';
+      infoDiv.innerHTML = '';
+    }
     
     renderDamagedProducts();
     renderProductsGrid();
