@@ -2369,10 +2369,13 @@
       .reduce((sum, r) => sum + r.amount, 0);
     const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
     const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
+    
+    // کۆی سەرف و مەسروفات - کڕین تێدا نابێت چونکە جیا حیساب دەکرێت
     const totalSpend = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
                        employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
                        returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
-    const totalSpendAndExpenses = totalSpend + totalExpenses + totalGiveMoney;
+    const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalSpend;
+    
     const today = new Date().toLocaleDateString('ckb');
     const todayCredits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
@@ -2387,6 +2390,7 @@
     const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, c.debt), 0);
 
     // قازانج: فرۆشتن - کڕین - کۆی سەرف و مەسروفات
+    // تێبینی: کڕینی نەقدی لە کۆی کڕین حیساب دەکرێت و لە واسڵی ئەمرۆ کەم دەکات، بەڵام وەک خەرجی حیساب ناکرێت
     const profit = totalSales - totalPurchases - totalSpendAndExpenses;
 
     const statTotalSalesEl = document.getElementById('statTotalSales');
@@ -5643,13 +5647,13 @@
       if (backup.data.warehouseProducts) { warehouseProducts = backup.data.warehouseProducts; saveWarehouseProducts(); }
       if (backup.data.moneyRequests) { moneyRequests = backup.data.moneyRequests; saveMoneyRequests(); }
       if (backup.data.purchaseHistory) { purchaseHistory = backup.data.purchaseHistory; savePurchaseHistory(); }
-      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backup.data.expiredDamagedProducts; saveExpiryDamage(); }
-      if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
-      if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backup.data.purchaseReturnHistory; savePurchaseReturnHistory(); }
-      if (backup.data.employees) { employees = backup.data.employees; saveEmployees(); }
-      if (backup.data.expenseHistory) { expenseHistory = backup.data.expenseHistory; saveExpenseHistory(); }
-      if (backup.data.giveMoneyHistory) { giveMoneyHistory = backup.data.giveMoneyHistory; saveGiveMoneyHistory(); }
-      if (backup.data.adjustmentHistory) { adjustmentHistory = backup.data.adjustmentHistory; saveAdjustmentHistory(); }
+      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backupData.expiredDamagedProducts; saveExpiryDamage(); }
+      if (backup.data.returnHistory) { returnHistory = backupData.returnHistory; saveReturnHistory(); }
+      if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backupData.purchaseReturnHistory; savePurchaseReturnHistory(); }
+      if (backup.data.employees) { employees = backupData.employees; saveEmployees(); }
+      if (backup.data.expenseHistory) { expenseHistory = backupData.expenseHistory; saveExpenseHistory(); }
+      if (backup.data.giveMoneyHistory) { giveMoneyHistory = backupData.giveMoneyHistory; saveGiveMoneyHistory(); }
+      if (backup.data.adjustmentHistory) { adjustmentHistory = backupData.adjustmentHistory; saveAdjustmentHistory(); }
       renderDashboardModules();
       renderPersonsList();
       renderPartnersList();
@@ -6428,7 +6432,7 @@
     updateStats();
   };
 
-  // ===== completePurchase =====
+  // ===== COMPLETE PURCHASE (FIXED) =====
   window.completePurchase = function() {
     if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
     if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
@@ -6469,6 +6473,8 @@
       });
       savePartners();
     } else {
+      // کڕینی نەقدی - تەنها لە کۆی کڕین زیاد دەکات و لە واسڵی ئەمرۆ کەم دەکات
+      // بەڵام وەک خەرجی (isExpense) تۆمار ناکرێت چونکە کڕین خەرجی نییە
       moneyRequests.push({
         id: 'PUR-MONEY' + Date.now(),
         date: dateStr,
@@ -6477,8 +6483,8 @@
         entityPhone: selectedPurchasePartner.phone,
         amount: -total,
         note: `کڕین ${invId}`,
-        isTransfer: false,
-        isExpense: true
+        isTransfer: false
+        // isExpense: true لابردراوە - چونکە کڕین خەرجی نییە!
       });
       saveMoneyRequests();
     }
