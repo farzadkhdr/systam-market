@@ -2390,7 +2390,6 @@
     const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, c.debt), 0);
 
     // قازانج: فرۆشتن - کڕین - کۆی سەرف و مەسروفات
-    // تێبینی: کڕینی نەقدی لە کۆی کڕین حیساب دەکرێت و لە واسڵی ئەمرۆ کەم دەکات، بەڵام وەک خەرجی حیساب ناکرێت
     const profit = totalSales - totalPurchases - totalSpendAndExpenses;
 
     const statTotalSalesEl = document.getElementById('statTotalSales');
@@ -2422,7 +2421,7 @@
     updateAccountingDisplay();
   }
 
-  // ===== SEARCH PRODUCT (GLOBAL IMPROVED) =====
+  // ===== IMPROVED SEARCH FUNCTION WITH ENTER SUPPORT =====
   function setupGlobalProductSearch(inputId, suggestionsId, onSelect, customFilter) {
     const input = document.getElementById(inputId);
     const suggestions = document.getElementById(suggestionsId);
@@ -2430,6 +2429,7 @@
 
     let timer;
     let selectedIndex = -1;
+    let currentFiltered = [];
 
     input.addEventListener('input', function(e) {
       clearTimeout(timer);
@@ -2437,6 +2437,7 @@
       
       if (!query) {
         suggestions.style.display = 'none';
+        currentFiltered = [];
         return;
       }
 
@@ -2446,6 +2447,7 @@
           p.barcode.includes(query)
         );
         if (customFilter) filtered = customFilter(filtered);
+        currentFiltered = filtered;
 
         if (filtered.length) {
           suggestions.innerHTML = filtered.map((p, index) => `
@@ -2468,19 +2470,50 @@
                 onSelect(product);
                 suggestions.style.display = 'none';
                 input.value = '';
+                currentFiltered = [];
               }
             });
           });
         } else {
           suggestions.style.display = 'none';
+          currentFiltered = [];
         }
       }, 300);
     });
 
+    // پشتیبانی لە کلیلی Enter بۆ زیادکردنی کاڵا بە بارکۆد
     input.addEventListener('keydown', function(e) {
       const items = suggestions.querySelectorAll('.suggestion-item');
-      if (!items.length) return;
-
+      
+      // ئەگەر کلیلی Enter کرایەوە
+      if (e.key === 'Enter') {
+        // ئەگەر پێشنیارێک هەڵبژێردرابوو
+        if (selectedIndex >= 0 && items.length > 0) {
+          e.preventDefault();
+          if (items[selectedIndex]) items[selectedIndex].click();
+          return;
+        }
+        
+        // ئەگەر هیچ پێشنیارێک هەڵنەبژێردرابوو، بەڵام بارکۆدێک داخیل کرابوو
+        const query = this.value.trim();
+        if (query) {
+          // گەڕان بەدوای کاڵا بە بارکۆد یان ناو
+          let product = warehouseProducts.find(p => p.barcode === query);
+          if (!product) {
+            product = warehouseProducts.find(p => p.name.toLowerCase() === query.toLowerCase());
+          }
+          if (product && onSelect) {
+            e.preventDefault();
+            onSelect(product);
+            this.value = '';
+            suggestions.style.display = 'none';
+            currentFiltered = [];
+            showToast(`✅ ${product.name} زیادکرا`, 'success');
+          }
+        }
+      }
+      
+      // چاودێری Arrow keys
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
@@ -2489,9 +2522,6 @@
         e.preventDefault();
         selectedIndex = Math.max(selectedIndex - 1, 0);
         updateSelection(items);
-      } else if (e.key === 'Enter' && selectedIndex >= 0) {
-        e.preventDefault();
-        if (items[selectedIndex]) items[selectedIndex].click();
       } else if (e.key === 'Escape') {
         suggestions.style.display = 'none';
       }
@@ -6473,8 +6503,6 @@
       });
       savePartners();
     } else {
-      // کڕینی نەقدی - تەنها لە کۆی کڕین زیاد دەکات و لە واسڵی ئەمرۆ کەم دەکات
-      // بەڵام وەک خەرجی (isExpense) تۆمار ناکرێت چونکە کڕین خەرجی نییە
       moneyRequests.push({
         id: 'PUR-MONEY' + Date.now(),
         date: dateStr,
@@ -6484,7 +6512,6 @@
         amount: -total,
         note: `کڕین ${invId}`,
         isTransfer: false
-        // isExpense: true لابردراوە - چونکە کڕین خەرجی نییە!
       });
       saveMoneyRequests();
     }
