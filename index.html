@@ -1984,6 +1984,191 @@
     </div>
   </div>
 
+  <!-- ===== CARDS VIEW (کارتەکانی ئینتەرنێت و موبایل) ===== -->
+  <div id="cardsView" style="display: none;">
+    <div class="module-view-container">
+      <div class="back-header">
+        <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
+        <div class="page-title"><i class="fas fa-credit-card" style="color:#7c3aed;"></i> کارتەکانی ئینتەرنێت و موبایل</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-cardtab="sell">💳 فرۆشتنی کارت</div>
+        <div class="tab" data-cardtab="add">➕ زیادکردنی کارت</div>
+        <div class="tab" data-cardtab="purchase">🛒 کڕینەوەی کارت</div>
+      </div>
+
+      <!-- بەشی فرۆشتنی کارت -->
+      <div class="panel active" id="cardsSellPanel">
+        <div class="new-sale-layout">
+          <div class="card-glass">
+            <h3 style="margin-bottom:1rem;"><i class="fas fa-search"></i> لیستی کارتەکان</h3>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem;">
+              <div class="search-box" style="flex:1; min-width:150px;">
+                <input type="text" id="cardSellSearch" placeholder="گەڕان بە ناوی کارت..." oninput="filterCardList()">
+                <button onclick="filterCardList()"><i class="fas fa-search"></i></button>
+              </div>
+              <select id="cardSellTypeFilter" onchange="filterCardList()" style="padding:0.5rem 1rem; border-radius:2rem; border:1px solid #cbd5e1; background:white;">
+                <option value="all">📋 هەموو</option>
+                <option value="internet">🌐 ئینتەرنێت</option>
+                <option value="mobile">📱 موبایل</option>
+              </select>
+            </div>
+            <div id="cardListContainer" style="max-height:400px; overflow-y:auto;">
+              <p style="color:#94a3b8; text-align:center;">هیچ کارتێک نەدۆزرایەوە</p>
+            </div>
+          </div>
+
+          <div class="card-glass">
+            <h3 style="margin-bottom:1rem;"><i class="fas fa-cart-plus"></i> فرۆشتنی کارت</h3>
+            <div id="selectedCardInfo" style="display:none; background:#dbeafe; padding:1rem; border-radius:1.5rem; margin-bottom:1rem;">
+              <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+                <div><strong>📇 ناو:</strong> <span id="selectedCardName"></span></div>
+                <div><strong>🏷️ جۆر:</strong> <span id="selectedCardType"></span></div>
+                <div><strong>💰 نرخ:</strong> <span id="selectedCardPrice"></span> د.ع</div>
+                <div><strong>📦 بڕی ماوە:</strong> <span id="selectedCardQty"></span></div>
+              </div>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">بڕی کارت:</label>
+              <input type="number" id="cardSellQuantity" value="1" min="1" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">جۆری فرۆشتن:</label>
+              <select id="cardSellType" onchange="toggleCardCustomerSearch()" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+                <option value="cash">💵 فرۆشتی ئاسایی (نەقدی)</option>
+                <option value="debt">📝 فرۆشتن بە قەرز</option>
+              </select>
+            </div>
+            <div id="cardCustomerSearchDiv" style="display:none; margin-bottom:1rem;">
+              <label style="font-weight:600;">👤 گەڕان بەدوای کەس بۆ قەرز:</label>
+              <div class="search-box" style="margin-top:0.3rem;">
+                <input type="text" id="cardCustomerSearch" placeholder="ناوی کەسەکە..." oninput="searchCardCustomer()">
+                <button onclick="searchCardCustomer()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="cardCustomerSuggestions"></div>
+              <div id="selectedCardCustomerBadge" style="margin-top:0.5rem;"></div>
+            </div>
+            <button onclick="completeCardSale()" style="background:#7c3aed; color:white; border:none; border-radius:2.5rem; padding:0.8rem 2rem; margin-top:1rem; width:100%; font-weight:bold;">
+              <i class="fas fa-check-circle"></i> تەواوکردنی فرۆشتن
+            </button>
+            <div id="cardSaleResult" style="margin-top:1rem; display:none; padding:1rem; border-radius:1rem; background:#d1fae5;"></div>
+          </div>
+        </div>
+        <div class="card-glass" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:1rem;"><i class="fas fa-history"></i> مێژووی فرۆشتن</h4>
+          <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:1rem;">
+            <div class="search-box" style="flex:1; min-width:150px;">
+              <input type="text" id="cardHistorySearch" placeholder="گەڕان بە ناوی کارت یان کەس..." oninput="filterCardHistory()">
+              <button onclick="filterCardHistory()"><i class="fas fa-search"></i></button>
+            </div>
+            <select id="cardHistoryTypeFilter" onchange="filterCardHistory()" style="padding:0.5rem 1rem; border-radius:2rem; border:1px solid #cbd5e1; background:white;">
+              <option value="all">📋 هەموو</option>
+              <option value="internet">🌐 ئینتەرنێت</option>
+              <option value="mobile">📱 موبایل</option>
+            </select>
+          </div>
+          <div id="cardHistoryList" style="max-height:300px; overflow-y:auto;"></div>
+        </div>
+      </div>
+
+      <!-- بەشی زیادکردنی کارت -->
+      <div class="panel" id="cardsAddPanel">
+        <div class="card-glass" style="max-width:700px; margin:0 auto;">
+          <h3 style="margin-bottom:1.5rem;"><i class="fas fa-plus-circle"></i> زیادکردنی کارتی نوێ</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">جۆری کارت:</label>
+              <select id="newCardType" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+                <option value="internet">🌐 ئینتەرنێت</option>
+                <option value="mobile">📱 موبایل</option>
+              </select>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">بڕی کارت (بە دینار):</label>
+              <input type="number" id="newCardAmount" placeholder="بۆ نمونە: 5000" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">بڕی کارت لە مخزن:</label>
+              <input type="number" id="newCardQuantity" value="10" min="0" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">ناوی کارت:</label>
+              <input type="text" id="newCardName" placeholder="ناوی کارت..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">بارکۆدی کارت:</label>
+              <div style="display:flex; gap:0.5rem; margin-top:0.3rem;">
+                <input type="text" id="newCardBarcode" placeholder="بارکۆد..." style="flex:1; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1;">
+                <button onclick="generateCardBarcode()" title="بارکۆدی خۆکار" style="background:#2563eb;color:white;border:none;border-radius:1.5rem;padding:0.7rem 1rem;cursor:pointer;"><i class="fas fa-barcode"></i></button>
+              </div>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">بەرواری بەسەرچوون:</label>
+              <input type="date" id="newCardExpiry" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">نرخی کڕین (بە دینار):</label>
+              <input type="number" id="newCardBuyPrice" value="0" min="0" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="font-weight:600;">نرخی فرۆشتن (بە دینار):</label>
+              <input type="number" id="newCardSellPrice" value="0" min="0" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+            </div>
+          </div>
+          <button onclick="addNewCard()" style="background:#7c3aed; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%; margin-top:1rem;">
+            <i class="fas fa-save"></i> پاشەکەوتکردنی کارت
+          </button>
+        </div>
+      </div>
+
+      <!-- بەشی کڕینەوەی کارت -->
+      <div class="panel" id="cardsPurchasePanel">
+        <div class="card-glass">
+          <h3 style="margin-bottom:1rem;"><i class="fas fa-shopping-basket"></i> کڕینەوەی کارت</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+            <div>
+              <label style="font-weight:600;">🤝 گەڕان بەدوای شەریک:</label>
+              <div class="search-box" style="margin-top:0.3rem;">
+                <input type="text" id="cardPurchasePartnerSearch" placeholder="ناوی شەریک..." oninput="searchCardPurchasePartner()">
+                <button onclick="searchCardPurchasePartner()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="cardPurchasePartnerSuggestions"></div>
+              <div id="selectedCardPurchasePartnerBadge" style="margin-top:0.5rem;"></div>
+            </div>
+            <div>
+              <label style="font-weight:600;">📇 گەڕان بەدوای کارت:</label>
+              <div class="search-box" style="margin-top:0.3rem;">
+                <input type="text" id="cardPurchaseSearch" placeholder="ناوی کارت یان بارکۆد..." oninput="searchCardForPurchase()">
+                <button onclick="searchCardForPurchase()"><i class="fas fa-search"></i></button>
+              </div>
+              <div class="suggestions" id="cardPurchaseSuggestions"></div>
+            </div>
+          </div>
+          <div id="cardPurchaseCart" style="margin-top:1rem;">
+            <p style="color:#94a3b8;">کارت زیاد نەکراوە</p>
+          </div>
+          <div style="margin-top:1rem; font-weight:bold;">کۆی گشتی: <span id="cardPurchaseTotal">0</span> د.ع</div>
+          <div style="margin-top:1rem;">
+            <label><input type="checkbox" id="cardPurchaseCreditCheck" onchange="toggleCardPurchaseCredit()"> کڕین بە قەرز</label>
+          </div>
+          <button onclick="completeCardPurchase()" style="background:#2563eb; color:white; border:none; border-radius:2.5rem; padding:0.8rem 2rem; margin-top:1rem; width:100%; font-weight:bold;">
+            <i class="fas fa-check-circle"></i> تەواوکردنی کڕین
+          </button>
+        </div>
+        <div class="card-glass" style="margin-top:1.5rem;">
+          <h4 style="margin-bottom:1rem;"><i class="fas fa-history"></i> مێژووی کڕینی کارت</h4>
+          <div id="cardPurchaseHistoryList" style="max-height:300px; overflow-y:auto;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -2268,7 +2453,8 @@
     { id: 'barcode', icon: 'fa-barcode', label: 'پرێنتکردنی بارکۆد', color: '#f3e8ff', text: '#6b21a8' },
     { id: 'agents', icon: 'fa-user-tie', label: 'مەندوبەکان', color: '#fef3c7', text: '#b45309' },
     { id: 'give_agent', icon: 'fa-box-open', label: 'پێدانی کاڵاکان بە مەندوبەکان', color: '#f3e8ff', text: '#6b21a8' },
-    { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکویریتی', color: '#e0e7ff', text: '#3730a3' }
+    { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکویریتی', color: '#e0e7ff', text: '#3730a3' },
+    { id: 'cards', icon: 'fa-credit-card', label: 'کارتەکان', color: '#ede9fe', text: '#5b21b6' }
   ];
 
   let moduleOrder = allModules.map(m => m.id);
@@ -2352,6 +2538,35 @@
   let productImageData = '';
   let selectedMoneyEntity = null;
   let selectedGiveEntity = null;
+
+  // ===== CARD SYSTEM =====
+  let cardsInventory = JSON.parse(localStorage.getItem('market_cards_inventory') || JSON.stringify([
+    { id: 1, name: 'کارتی ئینتەرنێت 5,000', type: 'internet', amount: 5000, quantity: 20, barcode: 'CARD001', expiryDate: '2027-12-31', buyPrice: 4500, sellPrice: 5000 },
+    { id: 2, name: 'کارتی موبایل 10,000', type: 'mobile', amount: 10000, quantity: 15, barcode: 'CARD002', expiryDate: '2027-12-31', buyPrice: 9200, sellPrice: 10000 },
+    { id: 3, name: 'کارتی ئینتەرنێت 10,000', type: 'internet', amount: 10000, quantity: 10, barcode: 'CARD003', expiryDate: '2027-12-31', buyPrice: 9300, sellPrice: 10000 }
+  ]));
+
+  let cardSalesHistory = JSON.parse(localStorage.getItem('market_card_sales_history') || '[]');
+  let cardPurchaseHistory = JSON.parse(localStorage.getItem('market_card_purchase_history') || '[]');
+  let selectedCardForSell = null;
+  let selectedCardCustomerForDebt = null;
+  let selectedCardPurchasePartner = null;
+  let cardPurchaseCart = [];
+
+  function saveCardsInventory() {
+    localStorage.setItem('market_cards_inventory', JSON.stringify(cardsInventory));
+    updateStats();
+  }
+
+  function saveCardSalesHistory() {
+    localStorage.setItem('market_card_sales_history', JSON.stringify(cardSalesHistory));
+    updateStats();
+  }
+
+  function saveCardPurchaseHistory() {
+    localStorage.setItem('market_card_purchase_history', JSON.stringify(cardPurchaseHistory));
+    updateStats();
+  }
 
   let adminCredentials = JSON.parse(localStorage.getItem('market_admin_credentials') || JSON.stringify({
     username: 'farzad',
@@ -4242,6 +4457,7 @@
     else if (moduleId === 'employees') navigateTo('employees');
     else if (moduleId === 'security') navigateTo('security');
     else if (moduleId === 'reports') navigateTo('reports');
+    else if (moduleId === 'cards') navigateTo('cards');
     else alert('ئەم بەشە ئێستا تەنیا هەندێک بەش کارایە');
   };
 
@@ -4253,9 +4469,9 @@
   };
 
   window.navigateTo = function(view) {
-    const views = ['dashboardView', 'salesView', 'settingsView', 'personsView', 'partnersView', 'warehouseView', 'pricingView', 'barcodeView', 'moneyRequestView', 'purchaseView', 'agentsView', 'expiryView', 'giveAgentView', 'employeesView', 'securityView', 'moneySpendView', 'accountingView', 'reportView'];
+    const views = ['dashboardView', 'salesView', 'settingsView', 'personsView', 'partnersView', 'warehouseView', 'pricingView', 'barcodeView', 'moneyRequestView', 'purchaseView', 'agentsView', 'expiryView', 'giveAgentView', 'employeesView', 'securityView', 'moneySpendView', 'accountingView', 'reportView', 'cardsView'];
     views.forEach(v => { const el = document.getElementById(v); if (el) el.style.display = 'none'; });
-    const viewMap = { 'dashboard': 'dashboardView', 'sales': 'salesView', 'settings': 'settingsView', 'persons': 'personsView', 'partners': 'partnersView', 'warehouse': 'warehouseView', 'pricing': 'pricingView', 'barcode': 'barcodeView', 'moneyRequest': 'moneyRequestView', 'purchase': 'purchaseView', 'agents': 'agentsView', 'expiry': 'expiryView', 'giveAgent': 'giveAgentView', 'employees': 'employeesView', 'security': 'securityView', 'moneySpend': 'moneySpendView', 'accounting': 'accountingView', 'reports': 'reportView' };
+    const viewMap = { 'dashboard': 'dashboardView', 'sales': 'salesView', 'settings': 'settingsView', 'persons': 'personsView', 'partners': 'partnersView', 'warehouse': 'warehouseView', 'pricing': 'pricingView', 'barcode': 'barcodeView', 'moneyRequest': 'moneyRequestView', 'purchase': 'purchaseView', 'agents': 'agentsView', 'expiry': 'expiryView', 'giveAgent': 'giveAgentView', 'employees': 'employeesView', 'security': 'securityView', 'moneySpend': 'moneySpendView', 'accounting': 'accountingView', 'reports': 'reportView', 'cards': 'cardsView' };
     const targetId = viewMap[view];
     if (targetId) { const el = document.getElementById(targetId); if (el) el.style.display = 'block'; }
     const dashboardStats = document.getElementById('dashboardStats');
@@ -4279,6 +4495,7 @@
     else if (view === 'security') { updateAdminDisplay(); }
     else if (view === 'accounting') { updateAccountingDisplay(); }
     else if (view === 'reports') { /* nothing special */ }
+    else if (view === 'cards') { renderCardList(); renderCardHistory(); renderCardPurchaseHistory(); }
   };
 
   // ===== SETUP SUGGESTION SEARCH =====
@@ -4380,12 +4597,6 @@
     document.addEventListener('click', function(e) {
       if (!finalInput.contains(e.target) && !finalSuggestions.contains(e.target)) {
         finalSuggestions.style.display = 'none';
-        if (inputId === 'damageProductSearch') {
-          const infoDiv = document.getElementById('selectedDamageProductInfo');
-          if (infoDiv && !infoDiv.contains(e.target)) {
-            // نەشاردرێتەوە تا کاڵا هەڵنەبژێردرێت
-          }
-        }
       }
     });
 
@@ -4645,6 +4856,9 @@
     renderGiveHistory();
     renderAdjustmentHistory();
     updateAccountingDisplay();
+    renderCardList();
+    renderCardHistory();
+    renderCardPurchaseHistory();
     document.getElementById('personDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کەسێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     document.getElementById('partnerDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">شەریکێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     document.getElementById('agentDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">مەندوبێک هەڵبژێرە بۆ بینینی زانیاری</p>';
@@ -5567,7 +5781,7 @@
   let backupHistory = JSON.parse(localStorage.getItem('market_backup_history') || '[]');
 
   window.createBackup = function() {
-    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory };
+    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, cardsInventory: cardsInventory, cardSalesHistory: cardSalesHistory, cardPurchaseHistory: cardPurchaseHistory };
     backupHistory.unshift({ date: backupData.date, data: backupData });
     if (backupHistory.length > 10) backupHistory.pop();
     localStorage.setItem('market_backup_history', JSON.stringify(backupHistory));
@@ -5576,7 +5790,7 @@
   };
 
   window.downloadBackup = function() {
-    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory };
+    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, cardsInventory: cardsInventory, cardSalesHistory: cardSalesHistory, cardPurchaseHistory: cardPurchaseHistory };
     const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -5618,6 +5832,9 @@
         if (backupData.expenseHistory) { expenseHistory = backupData.expenseHistory; saveExpenseHistory(); }
         if (backupData.giveMoneyHistory) { giveMoneyHistory = backupData.giveMoneyHistory; saveGiveMoneyHistory(); }
         if (backupData.adjustmentHistory) { adjustmentHistory = backupData.adjustmentHistory; saveAdjustmentHistory(); }
+        if (backupData.cardsInventory) { cardsInventory = backupData.cardsInventory; saveCardsInventory(); }
+        if (backupData.cardSalesHistory) { cardSalesHistory = backupData.cardSalesHistory; saveCardSalesHistory(); }
+        if (backupData.cardPurchaseHistory) { cardPurchaseHistory = backupData.cardPurchaseHistory; saveCardPurchaseHistory(); }
         renderDashboardModules();
         renderPersonsList();
         renderPartnersList();
@@ -5636,6 +5853,9 @@
         renderExpenseHistory();
         renderGiveHistory();
         renderAdjustmentHistory();
+        renderCardList();
+        renderCardHistory();
+        renderCardPurchaseHistory();
         alert('باکەپ بە سەرکەوتوویی گەڕێندرایەوە');
       } catch (err) { alert('فایلی باکەپ نادروستە'); }
     };
@@ -5684,6 +5904,9 @@
       if (backup.data.expenseHistory) { expenseHistory = backupData.expenseHistory; saveExpenseHistory(); }
       if (backup.data.giveMoneyHistory) { giveMoneyHistory = backupData.giveMoneyHistory; saveGiveMoneyHistory(); }
       if (backup.data.adjustmentHistory) { adjustmentHistory = backupData.adjustmentHistory; saveAdjustmentHistory(); }
+      if (backup.data.cardsInventory) { cardsInventory = backup.data.cardsInventory; saveCardsInventory(); }
+      if (backup.data.cardSalesHistory) { cardSalesHistory = backup.data.cardSalesHistory; saveCardSalesHistory(); }
+      if (backup.data.cardPurchaseHistory) { cardPurchaseHistory = backup.data.cardPurchaseHistory; saveCardPurchaseHistory(); }
       renderDashboardModules();
       renderPersonsList();
       renderPartnersList();
@@ -5702,6 +5925,9 @@
       renderExpenseHistory();
       renderGiveHistory();
       renderAdjustmentHistory();
+      renderCardList();
+      renderCardHistory();
+      renderCardPurchaseHistory();
       alert('باکەپ گەڕێندرایەوە');
     }
   };
@@ -5710,7 +5936,7 @@
 
   window.addEventListener('beforeunload', function(e) {
     if (autoBackupEnabled) {
-      const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory };
+      const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, cardsInventory: cardsInventory, cardSalesHistory: cardSalesHistory, cardPurchaseHistory: cardPurchaseHistory };
       backupHistory.unshift({ date: backupData.date, data: backupData });
       if (backupHistory.length > 10) backupHistory.pop();
       localStorage.setItem('market_backup_history', JSON.stringify(backupHistory));
@@ -7310,115 +7536,584 @@
     alert('مۆڵەت سڕکرایەوە');
   };
 
+  // ===== CARD FUNCTIONS =====
+  function renderCardList() {
+    const container = document.getElementById('cardListContainer');
+    if (!container) return;
+    const search = document.getElementById('cardSellSearch')?.value.trim().toLowerCase() || '';
+    const typeFilter = document.getElementById('cardSellTypeFilter')?.value || 'all';
+    
+    let filtered = cardsInventory;
+    if (search) filtered = filtered.filter(c => c.name.toLowerCase().includes(search) || c.barcode.includes(search));
+    if (typeFilter !== 'all') filtered = filtered.filter(c => c.type === typeFilter);
+    
+    if (!filtered.length) {
+      container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ کارتێک نەدۆزرایەوە</p>';
+      return;
+    }
+    
+    container.innerHTML = filtered.map(c => `
+      <div class="person-card" onclick="selectCardForSell(${c.id})" style="cursor:pointer; ${selectedCardForSell?.id === c.id ? 'border-color:#7c3aed; background:#ede9fe;' : ''}">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong>${c.name}</strong>
+            <div style="font-size:0.8rem; color:#64748b;">${c.type === 'internet' ? '🌐 ئینتەرنێت' : '📱 موبایل'} | ${c.barcode}</div>
+          </div>
+          <div style="text-align:left;">
+            <div style="font-weight:700; color:#059669;">${c.sellPrice.toLocaleString()} د.ع</div>
+            <div style="font-size:0.8rem; color:#64748b;">📦 ${c.quantity}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.filterCardList = function() {
+    renderCardList();
+  };
+
+  window.selectCardForSell = function(cardId) {
+    selectedCardForSell = cardsInventory.find(c => c.id === cardId);
+    if (!selectedCardForSell) return;
+    
+    document.getElementById('selectedCardInfo').style.display = 'block';
+    document.getElementById('selectedCardName').textContent = selectedCardForSell.name;
+    document.getElementById('selectedCardType').textContent = selectedCardForSell.type === 'internet' ? '🌐 ئینتەرنێت' : '📱 موبایل';
+    document.getElementById('selectedCardPrice').textContent = selectedCardForSell.sellPrice.toLocaleString();
+    document.getElementById('selectedCardQty').textContent = selectedCardForSell.quantity;
+    document.getElementById('cardSellQuantity').max = selectedCardForSell.quantity;
+    document.getElementById('cardSellQuantity').value = 1;
+    
+    renderCardList();
+  };
+
+  window.toggleCardCustomerSearch = function() {
+    const type = document.getElementById('cardSellType').value;
+    const div = document.getElementById('cardCustomerSearchDiv');
+    div.style.display = type === 'debt' ? 'block' : 'none';
+    if (type !== 'debt') {
+      selectedCardCustomerForDebt = null;
+      document.getElementById('selectedCardCustomerBadge').innerHTML = '';
+      document.getElementById('cardCustomerSearch').value = '';
+      document.getElementById('cardCustomerSuggestions').style.display = 'none';
+    }
+  };
+
+  window.searchCardCustomer = function() {
+    const query = document.getElementById('cardCustomerSearch').value.trim().toLowerCase();
+    const suggestions = document.getElementById('cardCustomerSuggestions');
+    if (!query) { suggestions.style.display = 'none'; return; }
+    const filtered = customers.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query));
+    if (filtered.length) {
+      suggestions.innerHTML = filtered.map(c => `
+        <div class="suggestion-item" data-cid="${c.id}">
+          <span>👤 ${c.name}</span>
+          <span style="font-size:0.8rem; color:#64748b;">📱 ${c.phone} | قەرز: ${(c.debt||0).toLocaleString()}</span>
+        </div>
+      `).join('');
+      suggestions.style.display = 'block';
+      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const cid = parseInt(this.dataset.cid);
+          selectedCardCustomerForDebt = customers.find(c => c.id === cid);
+          if (selectedCardCustomerForDebt) {
+            document.getElementById('selectedCardCustomerBadge').innerHTML = `<span class="customer-badge">👤 ${selectedCardCustomerForDebt.name}</span>`;
+            document.getElementById('cardCustomerSearch').value = selectedCardCustomerForDebt.name;
+          }
+          suggestions.style.display = 'none';
+        });
+      });
+    } else { suggestions.style.display = 'none'; }
+  };
+
+  window.completeCardSale = function() {
+    if (!selectedCardForSell) {
+      alert('تکایە کارتێک هەڵبژێرە');
+      return;
+    }
+    
+    const qty = parseInt(document.getElementById('cardSellQuantity').value);
+    if (!qty || qty < 1 || qty > selectedCardForSell.quantity) {
+      alert('بڕی کارت نادروستە');
+      return;
+    }
+    
+    const sellType = document.getElementById('cardSellType').value;
+    if (sellType === 'debt' && !selectedCardCustomerForDebt) {
+      alert('تکایە کەسێک هەڵبژێرە بۆ قەرز');
+      return;
+    }
+    
+    const totalPrice = qty * selectedCardForSell.sellPrice;
+    const invId = 'CS' + Math.floor(Math.random() * 9000 + 1000);
+    const now = new Date();
+    const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    
+    // کەمکردنەوە لە مخزن
+    selectedCardForSell.quantity -= qty;
+    saveCardsInventory();
+    
+    const customerName = sellType === 'debt' ? selectedCardCustomerForDebt.name : 'کاش';
+    
+    // تۆمارکردنی فرۆشتن
+    cardSalesHistory.unshift({
+      id: invId,
+      date: dateStr,
+      cardName: selectedCardForSell.name,
+      cardType: selectedCardForSell.type,
+      cardAmount: selectedCardForSell.amount,
+      quantity: qty,
+      price: selectedCardForSell.sellPrice,
+      total: totalPrice,
+      customer: customerName,
+      type: sellType,
+      note: sellType === 'debt' ? 'فرۆشتن بە قەرز' : 'فرۆشتی ئاسایی'
+    });
+    saveCardSalesHistory();
+    
+    // ئەگەر قەرز بوو، زیادکردنی بۆ قەرزی کەس
+    if (sellType === 'debt' && selectedCardCustomerForDebt) {
+      selectedCardCustomerForDebt.debt = (selectedCardCustomerForDebt.debt || 0) + totalPrice;
+      if (!selectedCardCustomerForDebt.movements) selectedCardCustomerForDebt.movements = [];
+      selectedCardCustomerForDebt.movements.push({
+        type: 'card_sale_debt',
+        date: dateStr,
+        amount: totalPrice,
+        note: `فرۆشتی کارت ${selectedCardForSell.name} (${qty} دانە)`,
+        invoiceId: invId
+      });
+      saveCustomers();
+    } else {
+      // فرۆشتی ئاسایی - زیادکردن بۆ واسڵی ئەمرۆ
+      moneyRequests.push({
+        id: 'CARD-SALE-MONEY' + Date.now(),
+        date: dateStr,
+        type: 'card_sale',
+        entityName: customerName,
+        entityPhone: '-',
+        amount: totalPrice,
+        note: `فرۆشتی کارت ${selectedCardForSell.name} (${qty} دانە)`,
+        isTransfer: false,
+        isExpense: false
+      });
+      saveMoneyRequests();
+    }
+    
+    // نمایشی ئەنجام
+    const resultDiv = document.getElementById('cardSaleResult');
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = `
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+        <div><strong>✅ فرۆشتن تۆمارکرا!</strong></div>
+        <div>🧾 ${invId}</div>
+      </div>
+      <div style="margin-top:0.5rem;">
+        <div>📇 کارت: ${selectedCardForSell.name}</div>
+        <div>📦 بڕ: ${qty} دانە</div>
+        <div>💰 کۆی گشتی: ${totalPrice.toLocaleString()} د.ع</div>
+        <div>👤 کڕیار: ${customerName}</div>
+        <div>📝 ${sellType === 'debt' ? 'فرۆشتن بە قەرز' : 'فرۆشتی ئاسایی'}</div>
+      </div>
+    `;
+    
+    // ڕێکخستنەوە
+    selectedCardForSell = null;
+    document.getElementById('selectedCardInfo').style.display = 'none';
+    document.getElementById('cardSellQuantity').value = 1;
+    if (sellType === 'debt') {
+      selectedCardCustomerForDebt = null;
+      document.getElementById('selectedCardCustomerBadge').innerHTML = '';
+      document.getElementById('cardCustomerSearch').value = '';
+      document.getElementById('cardCustomerSearchDiv').style.display = 'none';
+    }
+    document.getElementById('cardSellType').value = 'cash';
+    
+    renderCardList();
+    renderCardHistory();
+    updateStats();
+    renderPersonsList();
+  };
+
+  function renderCardHistory() {
+    const container = document.getElementById('cardHistoryList');
+    if (!container) return;
+    const search = document.getElementById('cardHistorySearch')?.value.trim().toLowerCase() || '';
+    const typeFilter = document.getElementById('cardHistoryTypeFilter')?.value || 'all';
+    
+    let filtered = [...cardSalesHistory];
+    if (search) filtered = filtered.filter(s => s.cardName.toLowerCase().includes(search) || s.customer.toLowerCase().includes(search) || s.id.toLowerCase().includes(search));
+    if (typeFilter !== 'all') filtered = filtered.filter(s => s.cardType === typeFilter);
+    
+    if (!filtered.length) {
+      container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ فرۆشتنی کارتێک نەدۆزرایەوە</p>';
+      return;
+    }
+    
+    container.innerHTML = filtered.map(s => `
+      <div class="history-row">
+        <div><strong>${s.id}</strong><br><span style="font-size:0.7rem;">${s.date}</span></div>
+        <div>📇 ${s.cardName}</div>
+        <div>👤 ${s.customer}</div>
+        <div>${s.quantity} × ${s.price.toLocaleString()}</div>
+        <div style="font-weight:700; color:#059669;">${s.total.toLocaleString()} د.ع</div>
+        <div><span style="font-size:0.7rem; background:${s.type === 'debt' ? '#fef3c7' : '#d1fae5'}; padding:0.2rem 0.5rem; border-radius:1rem;">${s.type === 'debt' ? '📝 قەرز' : '💵 ئاسایی'}</span></div>
+        <div>
+          <button class="btn-icon" onclick="deleteCardSale('${s.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.filterCardHistory = function() {
+    renderCardHistory();
+  };
+
+  window.deleteCardSale = function(invId) {
+    if (!confirm('دڵنیایت لە سڕینەوەی ئەم فرۆشتنە؟')) return;
+    const record = cardSalesHistory.find(s => s.id === invId);
+    if (!record) return;
+    
+    // گەڕاندنەوەی بڕ بۆ مخزن
+    const card = cardsInventory.find(c => c.name === record.cardName);
+    if (card) {
+      card.quantity += record.quantity;
+      saveCardsInventory();
+    }
+    
+    // ئەگەر قەرز بوو، کەمکردنەوەی لە قەرزی کەس
+    if (record.type === 'debt') {
+      const customer = customers.find(c => c.name === record.customer);
+      if (customer) {
+        customer.debt = Math.max(0, (customer.debt || 0) - record.total);
+        customer.movements = customer.movements?.filter(m => m.invoiceId !== invId) || [];
+        saveCustomers();
+      }
+    } else {
+      // ئەگەر ئاسایی بوو، کەمکردنەوەی لە واسڵی ئەمرۆ
+      const moneyRecord = moneyRequests.find(m => m.note && m.note.includes(record.cardName) && m.amount > 0);
+      if (moneyRecord) {
+        moneyRequests = moneyRequests.filter(m => m.id !== moneyRecord.id);
+        saveMoneyRequests();
+      }
+    }
+    
+    cardSalesHistory = cardSalesHistory.filter(s => s.id !== invId);
+    saveCardSalesHistory();
+    renderCardHistory();
+    renderCardList();
+    updateStats();
+    renderPersonsList();
+  };
+
+  window.generateCardBarcode = function() {
+    const barcode = 'CARD' + Math.floor(Math.random() * 90000 + 10000);
+    document.getElementById('newCardBarcode').value = barcode;
+  };
+
+  window.addNewCard = function() {
+    const type = document.getElementById('newCardType').value;
+    const amount = parseInt(document.getElementById('newCardAmount').value);
+    const quantity = parseInt(document.getElementById('newCardQuantity').value);
+    const name = document.getElementById('newCardName').value.trim();
+    const barcode = document.getElementById('newCardBarcode').value.trim();
+    const expiryDate = document.getElementById('newCardExpiry').value || '';
+    const buyPrice = parseInt(document.getElementById('newCardBuyPrice').value) || 0;
+    const sellPrice = parseInt(document.getElementById('newCardSellPrice').value) || 0;
+    
+    if (!name || !barcode) {
+      alert('تکایە ناوی کارت و بارکۆد پڕبکەرەوە');
+      return;
+    }
+    if (!amount || amount <= 0) {
+      alert('تکایە بڕی کارت بنووسە');
+      return;
+    }
+    if (quantity < 0) {
+      alert('بڕی کارت لە مخزن نابێت کەمتر بێت لە 0');
+      return;
+    }
+    
+    const newId = cardsInventory.length ? Math.max(...cardsInventory.map(c => c.id)) + 1 : 1;
+    cardsInventory.push({
+      id: newId,
+      name: name,
+      type: type,
+      amount: amount,
+      quantity: quantity,
+      barcode: barcode,
+      expiryDate: expiryDate,
+      buyPrice: buyPrice || amount * 0.9,
+      sellPrice: sellPrice || amount
+    });
+    saveCardsInventory();
+    
+    // پاککردنەوەی فۆرم
+    document.getElementById('newCardName').value = '';
+    document.getElementById('newCardBarcode').value = '';
+    document.getElementById('newCardExpiry').value = '';
+    document.getElementById('newCardAmount').value = '';
+    document.getElementById('newCardQuantity').value = '10';
+    document.getElementById('newCardBuyPrice').value = '0';
+    document.getElementById('newCardSellPrice').value = '0';
+    
+    alert(`کارت "${name}" بە سەرکەوتوویی زیادکرا!`);
+    renderCardList();
+  };
+
+  window.searchCardPurchasePartner = function() {
+    const query = document.getElementById('cardPurchasePartnerSearch').value.trim().toLowerCase();
+    const suggestions = document.getElementById('cardPurchasePartnerSuggestions');
+    if (!query) { suggestions.style.display = 'none'; return; }
+    const filtered = partners.filter(p => p.name.toLowerCase().includes(query) || p.phone.includes(query));
+    if (filtered.length) {
+      suggestions.innerHTML = filtered.map(p => `
+        <div class="suggestion-item" data-pid="${p.id}">
+          <span>🤝 ${p.name}</span>
+          <span style="font-size:0.8rem; color:#64748b;">قەرز: ${(p.debt||0).toLocaleString()}</span>
+        </div>
+      `).join('');
+      suggestions.style.display = 'block';
+      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const pid = parseInt(this.dataset.pid);
+          selectedCardPurchasePartner = partners.find(p => p.id === pid);
+          if (selectedCardPurchasePartner) {
+            document.getElementById('selectedCardPurchasePartnerBadge').innerHTML = `<span class="customer-badge">🤝 ${selectedCardPurchasePartner.name}</span>`;
+            document.getElementById('cardPurchasePartnerSearch').value = selectedCardPurchasePartner.name;
+          }
+          suggestions.style.display = 'none';
+        });
+      });
+    } else { suggestions.style.display = 'none'; }
+  };
+
+  window.searchCardForPurchase = function() {
+    const query = document.getElementById('cardPurchaseSearch').value.trim().toLowerCase();
+    const suggestions = document.getElementById('cardPurchaseSuggestions');
+    if (!query) { suggestions.style.display = 'none'; return; }
+    const filtered = cardsInventory.filter(c => c.name.toLowerCase().includes(query) || c.barcode.includes(query));
+    if (filtered.length) {
+      suggestions.innerHTML = filtered.map(c => `
+        <div class="suggestion-item" data-cid="${c.id}">
+          <span>📇 ${c.name}</span>
+          <span style="font-size:0.8rem; color:#059669;">${c.buyPrice.toLocaleString()} د.ع</span>
+        </div>
+      `).join('');
+      suggestions.style.display = 'block';
+      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const cid = parseInt(this.dataset.cid);
+          const card = cardsInventory.find(c => c.id === cid);
+          if (card) {
+            const existing = cardPurchaseCart.find(i => i.cardId === card.id);
+            if (existing) existing.quantity++;
+            else cardPurchaseCart.push({ cardId: card.id, cardName: card.name, buyPrice: card.buyPrice, quantity: 1 });
+            renderCardPurchaseCart();
+            document.getElementById('cardPurchaseSearch').value = '';
+            suggestions.style.display = 'none';
+          }
+        });
+      });
+    } else { suggestions.style.display = 'none'; }
+  };
+
+  function renderCardPurchaseCart() {
+    const container = document.getElementById('cardPurchaseCart');
+    const totalEl = document.getElementById('cardPurchaseTotal');
+    if (!container) return;
+    if (!cardPurchaseCart.length) {
+      container.innerHTML = '<p style="color:#94a3b8;">کارت زیاد نەکراوە</p>';
+      if (totalEl) totalEl.textContent = '0';
+      return;
+    }
+    container.innerHTML = cardPurchaseCart.map((item, idx) => `
+      <div class="cart-item">
+        <div class="cart-item-details">
+          <span>📇 ${item.cardName}</span>
+          <span>${item.buyPrice.toLocaleString()} د.ع</span>
+        </div>
+        <div class="cart-item-actions">
+          <button class="btn-icon" onclick="updateCardPurchaseQty(${idx}, -1)"><i class="fas fa-minus-circle"></i></button>
+          <input type="number" value="${item.quantity}" min="1" onchange="setCardPurchaseQty(${idx}, this.value)">
+          <button class="btn-icon" onclick="updateCardPurchaseQty(${idx}, 1)"><i class="fas fa-plus-circle"></i></button>
+          <button class="btn-icon" onclick="removeCardPurchaseItem(${idx})"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
+        </div>
+      </div>
+    `).join('');
+    const total = cardPurchaseCart.reduce((s, i) => s + (i.buyPrice * i.quantity), 0);
+    if (totalEl) totalEl.textContent = total.toLocaleString();
+  }
+
+  window.updateCardPurchaseQty = function(idx, delta) {
+    if (cardPurchaseCart[idx].quantity + delta < 1) return;
+    cardPurchaseCart[idx].quantity += delta;
+    renderCardPurchaseCart();
+  };
+
+  window.setCardPurchaseQty = function(idx, val) {
+    const q = parseInt(val);
+    if (!isNaN(q) && q > 0) {
+      cardPurchaseCart[idx].quantity = q;
+      renderCardPurchaseCart();
+    }
+  };
+
+  window.removeCardPurchaseItem = function(idx) {
+    cardPurchaseCart.splice(idx, 1);
+    renderCardPurchaseCart();
+  };
+
+  window.toggleCardPurchaseCredit = function() {
+    // nothing special
+  };
+
+  window.completeCardPurchase = function() {
+    if (!cardPurchaseCart.length) {
+      alert('هیچ کارتێک نییە بۆ کڕین');
+      return;
+    }
+    if (!selectedCardPurchasePartner) {
+      alert('تکایە شەریکێک هەڵبژێرە');
+      return;
+    }
+    
+    const total = cardPurchaseCart.reduce((s, i) => s + (i.buyPrice * i.quantity), 0);
+    const isCash = !document.getElementById('cardPurchaseCreditCheck')?.checked;
+    const invId = 'CP' + Math.floor(Math.random() * 9000 + 1000);
+    const now = new Date();
+    const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    
+    // زیادکردنی کارتەکان بۆ مخزن
+    cardPurchaseCart.forEach(item => {
+      const card = cardsInventory.find(c => c.id === item.cardId);
+      if (card) card.quantity += item.quantity;
+    });
+    saveCardsInventory();
+    
+    // تۆمارکردنی کڕین
+    cardPurchaseHistory.unshift({
+      id: invId,
+      date: dateStr,
+      partner: selectedCardPurchasePartner.name,
+      partnerId: selectedCardPurchasePartner.id,
+      total: total,
+      isCash: isCash,
+      items: cardPurchaseCart.map(i => ({ cardName: i.cardName, quantity: i.quantity, price: i.buyPrice }))
+    });
+    saveCardPurchaseHistory();
+    
+    // ئەگەر قەرز بوو، زیادکردن بۆ قەرزی شەریک
+    if (!isCash) {
+      selectedCardPurchasePartner.debt = (selectedCardPurchasePartner.debt || 0) + total;
+      if (!selectedCardPurchasePartner.movements) selectedCardPurchasePartner.movements = [];
+      selectedCardPurchasePartner.movements.push({
+        type: 'card_purchase_debt',
+        date: dateStr,
+        amount: total,
+        note: `کڕینی کارت ${invId}`,
+        invoiceId: invId
+      });
+      savePartners();
+    } else {
+      moneyRequests.push({
+        id: 'CARD-PUR-MONEY' + Date.now(),
+        date: dateStr,
+        type: 'card_purchase',
+        entityName: selectedCardPurchasePartner.name,
+        entityPhone: selectedCardPurchasePartner.phone,
+        amount: -total,
+        note: `کڕینی کارت ${invId}`,
+        isTransfer: false,
+        isExpense: true
+      });
+      saveMoneyRequests();
+    }
+    
+    // پاککردنەوە
+    cardPurchaseCart = [];
+    selectedCardPurchasePartner = null;
+    renderCardPurchaseCart();
+    document.getElementById('selectedCardPurchasePartnerBadge').innerHTML = '';
+    document.getElementById('cardPurchasePartnerSearch').value = '';
+    document.getElementById('cardPurchaseCreditCheck').checked = false;
+    renderCardPurchaseHistory();
+    renderCardList();
+    updateStats();
+    renderPartnersList();
+    alert(`کڕینی کارت بە سەرکەوتوویی تۆمارکرا!\nکۆی گشتی: ${total.toLocaleString()} د.ع`);
+  };
+
+  function renderCardPurchaseHistory() {
+    const container = document.getElementById('cardPurchaseHistoryList');
+    if (!container) return;
+    if (!cardPurchaseHistory.length) {
+      container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ کڕینی کارتێک نەدۆزرایەوە</p>';
+      return;
+    }
+    container.innerHTML = cardPurchaseHistory.map(p => `
+      <div class="history-row">
+        <div><strong>${p.id}</strong><br><span style="font-size:0.7rem;">${p.date}</span></div>
+        <div>🤝 ${p.partner}</div>
+        <div>${p.items.map(i => `${i.cardName} (${i.quantity})`).join('، ')}</div>
+        <div style="font-weight:700; color:#dc2626;">${p.total.toLocaleString()} د.ع</div>
+        <div><span style="font-size:0.7rem; background:${p.isCash ? '#d1fae5' : '#fef3c7'}; padding:0.2rem 0.5rem; border-radius:1rem;">${p.isCash ? 'نەقدی' : 'قەرز'}</span></div>
+        <div><button class="btn-icon" onclick="deleteCardPurchase('${p.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button></div>
+      </div>
+    `).join('');
+  }
+
+  window.deleteCardPurchase = function(invId) {
+    if (!confirm('دڵنیایت لە سڕینەوەی ئەم کڕینە؟')) return;
+    const record = cardPurchaseHistory.find(p => p.id === invId);
+    if (!record) return;
+    
+    // کەمکردنەوەی بڕ لە مخزن
+    record.items.forEach(item => {
+      const card = cardsInventory.find(c => c.name === item.cardName);
+      if (card) card.quantity = Math.max(0, card.quantity - item.quantity);
+    });
+    saveCardsInventory();
+    
+    // گەڕاندنەوەی قەرز
+    if (!record.isCash) {
+      const partner = partners.find(p => p.id === record.partnerId);
+      if (partner) {
+        partner.debt = Math.max(0, (partner.debt || 0) - record.total);
+        partner.movements = partner.movements?.filter(m => m.invoiceId !== invId) || [];
+        savePartners();
+      }
+    } else {
+      const moneyRecord = moneyRequests.find(m => m.note && m.note.includes(invId));
+      if (moneyRecord) {
+        moneyRequests = moneyRequests.filter(m => m.id !== moneyRecord.id);
+        saveMoneyRequests();
+      }
+    }
+    
+    cardPurchaseHistory = cardPurchaseHistory.filter(p => p.id !== invId);
+    saveCardPurchaseHistory();
+    renderCardPurchaseHistory();
+    renderCardList();
+    updateStats();
+    renderPartnersList();
+  };
+
   // ===== TAB EVENT LISTENERS =====
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('tab')) {
-      if (e.target.dataset.purchasetab) {
-        document.querySelectorAll('[data-purchasetab]').forEach(t => t.classList.remove('active'));
+      // ... (existing tab handlers)
+      
+      // Card tab handler
+      if (e.target.dataset.cardtab) {
+        document.querySelectorAll('[data-cardtab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
-        document.getElementById('newPurchasePanel').classList.toggle('active', e.target.dataset.purchasetab === 'newPurchase');
-        document.getElementById('purchaseHistoryPanel').classList.toggle('active', e.target.dataset.purchasetab === 'history');
-        document.getElementById('purchaseReturnPanel').classList.toggle('active', e.target.dataset.purchasetab === 'return');
-        if (e.target.dataset.purchasetab === 'history') renderPurchaseHistory();
-        if (e.target.dataset.purchasetab === 'return') renderPurchaseReturnHistory();
+        const tab = e.target.dataset.cardtab;
+        document.getElementById('cardsSellPanel').classList.toggle('active', tab === 'sell');
+        document.getElementById('cardsAddPanel').classList.toggle('active', tab === 'add');
+        document.getElementById('cardsPurchasePanel').classList.toggle('active', tab === 'purchase');
+        if (tab === 'sell') { renderCardList(); renderCardHistory(); }
+        if (tab === 'purchase') { renderCardPurchaseHistory(); }
       }
-      if (e.target.dataset.moneytab) {
-        document.querySelectorAll('[data-moneytab]').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        document.getElementById('moneyNewPanel').classList.toggle('active', e.target.dataset.moneytab === 'new');
-        document.getElementById('moneyHistoryPanel').classList.toggle('active', e.target.dataset.moneytab === 'history');
-        if (e.target.dataset.moneytab === 'history') renderMoneyHistory();
-      }
-      if (e.target.dataset.spendtab) {
-        document.querySelectorAll('[data-spendtab]').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        document.getElementById('moneyExpensePanel').classList.toggle('active', e.target.dataset.spendtab === 'expense');
-        document.getElementById('moneyGivePanel').classList.toggle('active', e.target.dataset.spendtab === 'give');
-        if (e.target.dataset.spendtab === 'expense') { renderExpenseHistory(); updateExpenseStats(); }
-        if (e.target.dataset.spendtab === 'give') { renderGiveHistory(); updateGiveStats(); }
-      }
-      if (e.target.dataset.partnertab) {
-        document.querySelectorAll('[data-partnertab]').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        document.getElementById('partnersListPanel').classList.toggle('active', e.target.dataset.partnertab === 'list');
-        document.getElementById('partnersAddPanel').classList.toggle('active', e.target.dataset.partnertab === 'add');
-        if (e.target.dataset.partnertab === 'list') renderPartnersList();
-      }
-      if (e.target.dataset.ptab) {
-        document.querySelectorAll('[data-ptab]').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        const tab = e.target.dataset.ptab;
-        document.getElementById('personsListPanel').classList.toggle('active', tab === 'list');
-        document.getElementById('personsAddPanel').classList.toggle('active', tab === 'add');
-        document.getElementById('personsAdjustPanel').classList.toggle('active', tab === 'adjust');
-        if (tab === 'list') renderPersonsList();
-        if (tab === 'adjust') { selectedAdjustEntity = null; document.getElementById('selectedAdjustEntityInfo').style.display = 'none'; document.getElementById('adjustEntitySearch').value = ''; document.getElementById('adjustEntitySuggestions').style.display = 'none'; renderAdjustmentHistory(); }
-      }
-      if (e.target.dataset.tab) {
-        document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        document.getElementById('newSalePanel').classList.toggle('active', e.target.dataset.tab === 'newSale');
-        document.getElementById('historyPanel').classList.toggle('active', e.target.dataset.tab === 'history');
-        document.getElementById('returnPanel').classList.toggle('active', e.target.dataset.tab === 'return');
-        if (e.target.dataset.tab === 'history') renderHistory();
-        if (e.target.dataset.tab === 'return') renderReturnHistory();
-      }
-      if (e.target.dataset.waretab) {
-        document.querySelectorAll('[data-waretab]').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        document.getElementById('wareAddPanel').classList.toggle('active', e.target.dataset.waretab === 'add');
-        document.getElementById('wareListPanel').classList.toggle('active', e.target.dataset.waretab === 'list');
-        document.getElementById('warePurchasePanel').classList.toggle('active', e.target.dataset.waretab === 'purchase');
-        if (e.target.dataset.waretab === 'list') renderProductsGrid();
-        if (e.target.dataset.waretab === 'purchase') renderWarePurchaseCart();
-      }
-      if (e.target.dataset.agenttab) {
-        document.querySelectorAll('[data-agenttab]').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        const tab = e.target.dataset.agenttab;
-        document.getElementById('agentsListPanel').classList.toggle('active', tab === 'list');
-        document.getElementById('agentsAddPanel').classList.toggle('active', tab === 'add');
-        document.getElementById('agentsInventoryPanel').classList.toggle('active', tab === 'inventory');
-        document.getElementById('agentsSalePanel').classList.toggle('active', tab === 'sale');
-        document.getElementById('agentsReturnPanel').classList.toggle('active', tab === 'return');
-        document.getElementById('agentsWasslPanel').classList.toggle('active', tab === 'wassl');
-        if (tab === 'list') renderAgentsList();
-        if (tab === 'inventory') { selectedAgentForInventory = null; document.getElementById('selectedAgentInventoryBadge').innerHTML = ''; document.getElementById('agentInventorySearch').value = ''; document.getElementById('agentInventoryContent').innerHTML = '<p style="color:#94a3b8; text-align:center;">تکایە مەندوبێک هەڵبژێرە بۆ بینینی جەرد</p>'; }
-        if (tab === 'sale') { currentSaleAgent = null; agentSaleCart = []; agentSaleCustomer = null; renderAgentSaleCart(); document.getElementById('agentProductSearch').value = ''; document.getElementById('agentProductSuggestions').style.display = 'none'; }
-        if (tab === 'return') { selectedAgentForReturn = null; agentReturnCart = []; document.getElementById('selectedAgentReturnBadge').innerHTML = ''; document.getElementById('agentReturnSearch').value = ''; document.getElementById('agentReturnProductSearch').value = ''; document.getElementById('agentReturnInventoryList').innerHTML = '<p style="color:#94a3b8; text-align:center;">تکایە مەندوبێک هەڵبژێرە</p>'; renderAgentReturnCart(); }
-        if (tab === 'wassl') { selectedAgentForWassl = null; document.getElementById('selectedAgentWasslInfo').style.display = 'none'; }
-      }
-      if (e.target.dataset.expirytab) {
-        document.querySelectorAll('[data-expirytab]').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        document.getElementById('expiryExpiryPanel').classList.toggle('active', e.target.dataset.expirytab === 'expiry');
-        document.getElementById('expiryDamagePanel').classList.toggle('active', e.target.dataset.expirytab === 'damage');
-        if (e.target.dataset.expirytab === 'expiry') renderExpiryProducts();
-        if (e.target.dataset.expirytab === 'damage') renderDamagedProducts();
-      }
-      if (e.target.dataset.emptab) {
-        document.querySelectorAll('[data-emptab]').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        const tab = e.target.dataset.emptab;
-        document.getElementById('employeesListPanel').classList.toggle('active', tab === 'list');
-        document.getElementById('employeesAddPanel').classList.toggle('active', tab === 'add');
-        document.getElementById('employeesSalaryPanel').classList.toggle('active', tab === 'salary');
-        document.getElementById('employeesLeavePanel').classList.toggle('active', tab === 'leave');
-        if (tab === 'list') renderEmployeesList();
-        if (tab === 'salary') renderEmployeeSalaryHistory();
-        if (tab === 'leave') renderEmployeeLeaveHistory();
-      }
-    }
-    if (e.target.classList.contains('settings-tab')) {
-      document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-      e.target.classList.add('active');
-      const tab = e.target.dataset.stab;
-      document.getElementById('settingsBackupPanel').classList.toggle('active', tab === 'backup');
-      document.getElementById('settingsAppearancePanel').classList.toggle('active', tab === 'appearance');
-      document.getElementById('settingsLayoutPanel').classList.toggle('active', tab === 'layout');
-      if (tab === 'layout') renderSettingsLayoutModules();
-      if (tab === 'appearance') populateAppearanceFields();
-      if (tab === 'backup') renderBackupHistory();
     }
   });
 
