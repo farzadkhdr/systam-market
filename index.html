@@ -184,8 +184,6 @@
     @keyframes floatParticle { 0% { transform:translateY(100vh) scale(0); opacity:0; } 10% { opacity:1; } 90% { opacity:1; } 100% { transform:translateY(-10vh) scale(1); opacity:0; } }
     .custom-toast { position:fixed; bottom:30px; right:30px; background:rgba(16,185,129,0.95); color:white; padding:1rem 2rem; border-radius:1.5rem; font-weight:600; font-size:1rem; box-shadow:0 20px 40px rgba(0,0,0,0.3); z-index:10000; transform:translateY(20px); opacity:0; transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); max-width:90%; }
     .custom-toast.show { transform:translateY(0); opacity:1; }
-
-    /* ===== LOGO STYLES ===== */
     .logo-upload-container {
       display: flex;
       align-items: center;
@@ -240,16 +238,12 @@
     .logo-remove-btn:hover {
       background: #dc2626;
     }
-
-    /* کارتی قازانج */
     .stat-card.profit-card .stat-icon {
       background: linear-gradient(135deg, #d4af37, #b8942a);
     }
     .profit-positive { color: #059669; }
     .profit-negative { color: #dc2626; }
     .profit-zero { color: #475569; }
-
-    /* کارتەکان - وێنە */
     .card-image-thumb {
       width: 50px;
       height: 50px;
@@ -299,8 +293,6 @@
       border-radius: 1rem;
       color: #991b1b;
     }
-
-    /* لۆگۆ لە پرێنتدا */
     .logo-print {
       display: flex;
       align-items: center;
@@ -339,9 +331,7 @@
         font-size: 2rem !important;
       }
     }
-
     @media (max-width:700px) { .system-container { padding:1.2rem; } .module-section { grid-template-columns:repeat(3,1fr); } .login-box { padding:2rem 1.5rem; border-radius:2rem; } .login-logo-icon { width:60px; height:60px; font-size:2rem; } .login-logo h1 { font-size:1.5rem; } }
-
     .accounting-transfer-box {
       background: #f8fafc;
       border-radius: 1.5rem;
@@ -397,7 +387,6 @@
     }
     .accounting-balance .today-amount { color: #059669; }
     .accounting-balance .total-amount { color: #2563eb; }
-
     .report-container {
       background: white;
       border-radius: 1.5rem;
@@ -429,13 +418,11 @@
     .adjustment-history-item { background:#f8fafc; border-right:4px solid #7c3aed; padding:0.8rem; border-radius:0.8rem; margin-bottom:0.5rem; }
     .adjustment-history-item.positive { border-right-color:#059669; }
     .adjustment-history-item.negative { border-right-color:#dc2626; }
-
     @media print {
       .no-print { display: none !important; }
       .report-container { box-shadow: none; padding: 1rem; }
       .report-table th { background: #e2e8f0 !important; }
     }
-
     .edit-product-search-container {
       background: #f8fafc;
       border-radius: 1rem;
@@ -450,7 +437,6 @@
       position: relative;
       max-height: 150px;
     }
-
     .selected-product-info {
       background:#dbeafe;
       padding:0.5rem 1rem;
@@ -459,7 +445,6 @@
       font-size:0.9rem;
       border:1px solid #93c5fd;
     }
-
     .damage-qty-info {
       font-size:0.8rem;
       color:#64748b;
@@ -536,7 +521,6 @@
       <div class="stat-card"><div class="stat-icon indigo"><i class="fas fa-users"></i></div><div class="stat-info"><h4 id="statTotalPersons">0</h4><span>کۆی کەسەکان</span></div></div>
       <div class="stat-card"><div class="stat-icon pink"><i class="fas fa-hand-holding-heart"></i></div><div class="stat-info"><h4 id="statMyDebtToPartners">0</h4><span>قەرزاری من بۆ شەریک</span></div></div>
       <div class="stat-card"><div class="stat-icon green"><i class="fas fa-handshake"></i></div><div class="stat-info"><h4 id="statPersonsDebtToMe">0</h4><span>قەرزاری کەسەکان بۆ من</span></div></div>
-      <!-- کارتی قازانج -->
       <div class="stat-card profit-card"><div class="stat-icon gold"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h4 id="statProfit">0</h4><span>قازانج (فرۆشتن - کڕین - سەرف)</span></div></div>
     </div>
     <div style="margin-top:0.5rem; display:flex; justify-content:space-between; align-items:center;">
@@ -2385,7 +2369,6 @@
           <div><span style="background:#2563eb; color:white; padding:0.2rem 0.8rem; border-radius:1rem; font-size:0.8rem;">هەڵبژێرە</span></div>
         </div>
       `;
-      // Scroll to the result
       resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     } else {
       resultDiv.innerHTML = `<div class="not-found">❌ هیچ کارتێک بە "${query}" نەدۆزرایەوە</div>`;
@@ -2708,7 +2691,7 @@
 
   let employeePermissions = JSON.parse(localStorage.getItem('market_employee_permissions') || '{}');
 
-  // ===== UPDATE STATS (Improved with Profit Card) =====
+  // ===== UPDATE STATS =====
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
@@ -2717,8 +2700,6 @@
       .reduce((sum, r) => sum + r.amount, 0);
     const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
     const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
-    
-    // کۆی سەرف و مەسروفات - کڕین تێدا نابێت چونکە جیا حیساب دەکرێت
     const totalSpend = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
                        employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
                        returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
@@ -2736,8 +2717,6 @@
     const totalPersons = customers.length;
     const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -p.debt), 0);
     const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, c.debt), 0);
-
-    // قازانج: فرۆشتن - کڕین - کۆی سەرف و مەسروفات
     const profit = totalSales - totalPurchases - totalSpendAndExpenses;
 
     const statTotalSalesEl = document.getElementById('statTotalSales');
@@ -2769,7 +2748,7 @@
     updateAccountingDisplay();
   }
 
-  // ===== IMPROVED SEARCH FUNCTION WITH ENTER SUPPORT =====
+  // ===== SETUP GLOBAL PRODUCT SEARCH =====
   function setupGlobalProductSearch(inputId, suggestionsId, onSelect, customFilter) {
     const input = document.getElementById(inputId);
     const suggestions = document.getElementById(suggestionsId);
@@ -2829,23 +2808,18 @@
       }, 300);
     });
 
-    // پشتیبانی لە کلیلی Enter بۆ زیادکردنی کاڵا بە بارکۆد
     input.addEventListener('keydown', function(e) {
       const items = suggestions.querySelectorAll('.suggestion-item');
       
-      // ئەگەر کلیلی Enter کرایەوە
       if (e.key === 'Enter') {
-        // ئەگەر پێشنیارێک هەڵبژێردرابوو
         if (selectedIndex >= 0 && items.length > 0) {
           e.preventDefault();
           if (items[selectedIndex]) items[selectedIndex].click();
           return;
         }
         
-        // ئەگەر هیچ پێشنیارێک هەڵنەبژێردرابوو، بەڵام بارکۆدێک داخیل کرابوو
         const query = this.value.trim();
         if (query) {
-          // گەڕان بەدوای کاڵا بە بارکۆد یان ناو
           let product = warehouseProducts.find(p => p.barcode === query);
           if (!product) {
             product = warehouseProducts.find(p => p.name.toLowerCase() === query.toLowerCase());
@@ -2861,7 +2835,6 @@
         }
       }
       
-      // چاودێری Arrow keys
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
@@ -2890,12 +2863,10 @@
   }
 
   // ===== SETUP ALL SEARCHES =====
-  // Sales product search
   setupGlobalProductSearch('productSearch', 'productSuggestions', function(product) {
     addToCart(product);
   });
 
-  // Purchase product search
   setupGlobalProductSearch('purchaseProductSearch', 'purchaseProductSuggestions', function(product) {
     const existing = purchaseCart.find(i => i.product.id === product.id);
     if (existing) existing.quantity++;
@@ -2904,7 +2875,6 @@
     updatePurchaseInvoicePreview();
   });
 
-  // Purchase partner search
   function setupPartnerSearch(inputId, suggestionsId, onSelect) {
     const input = document.getElementById(inputId);
     const suggestions = document.getElementById(suggestionsId);
@@ -2957,7 +2927,6 @@
     updatePurchaseInvoicePreview();
   });
 
-  // Agent product search
   setupGlobalProductSearch('agentProductSearch', 'agentProductSuggestions', function(product) {
     if (!currentSaleAgent) { alert('تکایە یەکەم مەندوبێک هەڵبژێرە'); return; }
     const invItem = currentSaleAgent.inventory.find(i => i.productName === product.name);
@@ -2970,7 +2939,6 @@
     renderAgentSaleCart();
   });
 
-  // Give agent product search
   setupGlobalProductSearch('giveProductSearch', 'giveProductSuggestions', function(product) {
     if (!selectedGiveAgent) { alert('تکایە یەکەم مەندوبێک هەڵبژێرە'); return; }
     if (product.quantity <= 0) { alert('کاڵاکە لە مخزن تەواو بووە'); return; }
@@ -2980,7 +2948,6 @@
     renderGiveAgentCart();
   });
 
-  // Agent return product search
   setupGlobalProductSearch('agentReturnProductSearch', 'agentReturnProductSuggestions', function(product) {
     if (!selectedAgentForReturn) { alert('تکایە یەکەم مەندوبێک هەڵبژێرە'); return; }
     const invItem = selectedAgentForReturn.inventory.find(i => i.productName === product.name);
@@ -6821,7 +6788,7 @@
     updateStats();
   };
 
-  // ===== COMPLETE PURCHASE (FIXED) =====
+  // ===== COMPLETE PURCHASE =====
   window.completePurchase = function() {
     if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
     if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
@@ -7669,7 +7636,7 @@
     alert('مۆڵەت سڕکرایەوە');
   };
 
-  // ===== CARD FUNCTIONS =====
+  // ===== CARD FUNCTIONS (بە گۆرانکارییەکانی سڕینەوە) =====
   function renderCardList() {
     const container = document.getElementById('cardListContainer');
     if (!container) return;
@@ -7700,187 +7667,68 @@
             <div style="font-size:0.8rem; color:#64748b;">📦 ${c.quantity}</div>
           </div>
         </div>
+        <div style="margin-top:0.5rem; display:flex; gap:0.5rem; justify-content:flex-end; border-top:1px solid #e2e8f0; padding-top:0.5rem;">
+          <button class="btn-icon" onclick="event.stopPropagation(); deleteCardItem(${c.id})" title="سڕینەوەی کارت" style="color:#dc2626;">
+            <i class="fas fa-trash-alt"></i> سڕینەوە
+          </button>
+        </div>
       </div>
     `).join('');
   }
 
-  window.filterCardList = function() {
+  // ===== فانکشنی نوێ بۆ سڕینەوەی کارت لە لیست =====
+  window.deleteCardItem = function(cardId) {
+    const card = cardsInventory.find(c => c.id === cardId);
+    if (!card) return;
+    if (!confirm(`دڵنیایت لە سڕینەوەی کارتی "${card.name}"؟\nئەم کردارە ناتوانرێت بگەڕێتەوە.`)) return;
+    cardsInventory = cardsInventory.filter(c => c.id !== cardId);
+    saveCardsInventory();
     renderCardList();
+    if (selectedCardForSell?.id === cardId) {
+      selectedCardForSell = null;
+      document.getElementById('selectedCardInfo').style.display = 'none';
+    }
+    showToast(`کارتی "${card.name}" سڕکرایەوە`, 'success');
   };
 
-  window.selectCardForSell = function(cardId) {
-    selectedCardForSell = cardsInventory.find(c => c.id === cardId);
-    if (!selectedCardForSell) return;
-    
-    document.getElementById('selectedCardInfo').style.display = 'block';
-    document.getElementById('selectedCardName').textContent = selectedCardForSell.name;
-    document.getElementById('selectedCardType').textContent = selectedCardForSell.type === 'internet' ? '🌐 ئینتەرنێت' : '📱 موبایل';
-    document.getElementById('selectedCardPrice').textContent = selectedCardForSell.sellPrice.toLocaleString();
-    document.getElementById('selectedCardQty').textContent = selectedCardForSell.quantity;
-    
-    // نمایش وێنە
-    const imageContainer = document.getElementById('selectedCardImage');
-    if (imageContainer) {
-      if (selectedCardForSell.image) {
-        imageContainer.innerHTML = `<img src="${selectedCardForSell.image}" style="width:80px;height:80px;object-fit:cover;border-radius:1rem;border:2px solid #e2e8f0;">`;
-      } else {
-        imageContainer.innerHTML = `<div style="width:80px;height:80px;background:#e2e8f0;border-radius:1rem;display:flex;align-items:center;justify-content:center;font-size:2rem;">📇</div>`;
+  // ===== فانکشنی نوێ بۆ سڕینەوەی تۆماری فرۆشتن لە مێژوو =====
+  window.deleteCardSaleRecord = function(invId) {
+    if (!confirm('دڵنیایت لە سڕینەوەی ئەم تۆماری فرۆشتنە؟\nئەم کردارە ناتوانرێت بگەڕێتەوە.')) return;
+    const record = cardSalesHistory.find(s => s.id === invId);
+    if (!record) return;
+
+    // 1. گەڕاندنەوەی بڕ بۆ مخزن
+    const card = cardsInventory.find(c => c.name === record.cardName);
+    if (card) {
+      card.quantity += record.quantity;
+      saveCardsInventory();
+    }
+
+    // 2. ئەگەر قەرز بوو، کەمکردنەوەی لە قەرزی کەس
+    if (record.type === 'debt') {
+      const customer = customers.find(c => c.name === record.customer);
+      if (customer) {
+        customer.debt = Math.max(0, (customer.debt || 0) - record.total);
+        customer.movements = customer.movements?.filter(m => m.invoiceId !== invId) || [];
+        saveCustomers();
+      }
+    } else {
+      // 3. ئەگەر ئاسایی بوو، کەمکردنەوەی لە واسڵی ئەمرۆ
+      const moneyRecord = moneyRequests.find(m => m.note && m.note.includes(record.cardName) && m.amount > 0);
+      if (moneyRecord) {
+        moneyRequests = moneyRequests.filter(m => m.id !== moneyRecord.id);
+        saveMoneyRequests();
       }
     }
-    
-    document.getElementById('cardSellQuantity').max = selectedCardForSell.quantity;
-    document.getElementById('cardSellQuantity').value = 1;
-    
-    renderCardList();
-  };
 
-  window.toggleCardCustomerSearch = function() {
-    const type = document.getElementById('cardSellType').value;
-    const div = document.getElementById('cardCustomerSearchDiv');
-    div.style.display = type === 'debt' ? 'block' : 'none';
-    if (type !== 'debt') {
-      selectedCardCustomerForDebt = null;
-      document.getElementById('selectedCardCustomerBadge').innerHTML = '';
-      document.getElementById('cardCustomerSearch').value = '';
-      document.getElementById('cardCustomerSuggestions').style.display = 'none';
-    }
-  };
-
-  window.searchCardCustomer = function() {
-    const query = document.getElementById('cardCustomerSearch').value.trim().toLowerCase();
-    const suggestions = document.getElementById('cardCustomerSuggestions');
-    if (!query) { suggestions.style.display = 'none'; return; }
-    const filtered = customers.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query));
-    if (filtered.length) {
-      suggestions.innerHTML = filtered.map(c => `
-        <div class="suggestion-item" data-cid="${c.id}">
-          <span>👤 ${c.name}</span>
-          <span style="font-size:0.8rem; color:#64748b;">📱 ${c.phone} | قەرز: ${(c.debt||0).toLocaleString()}</span>
-        </div>
-      `).join('');
-      suggestions.style.display = 'block';
-      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
-        item.addEventListener('click', function() {
-          const cid = parseInt(this.dataset.cid);
-          selectedCardCustomerForDebt = customers.find(c => c.id === cid);
-          if (selectedCardCustomerForDebt) {
-            document.getElementById('selectedCardCustomerBadge').innerHTML = `<span class="customer-badge">👤 ${selectedCardCustomerForDebt.name}</span>`;
-            document.getElementById('cardCustomerSearch').value = selectedCardCustomerForDebt.name;
-          }
-          suggestions.style.display = 'none';
-        });
-      });
-    } else { suggestions.style.display = 'none'; }
-  };
-
-  window.completeCardSale = function() {
-    if (!selectedCardForSell) {
-      alert('تکایە کارتێک هەڵبژێرە');
-      return;
-    }
-    
-    const qty = parseInt(document.getElementById('cardSellQuantity').value);
-    if (!qty || qty < 1 || qty > selectedCardForSell.quantity) {
-      alert('بڕی کارت نادروستە');
-      return;
-    }
-    
-    const sellType = document.getElementById('cardSellType').value;
-    if (sellType === 'debt' && !selectedCardCustomerForDebt) {
-      alert('تکایە کەسێک هەڵبژێرە بۆ قەرز');
-      return;
-    }
-    
-    const totalPrice = qty * selectedCardForSell.sellPrice;
-    const invId = 'CS' + Math.floor(Math.random() * 9000 + 1000);
-    const now = new Date();
-    const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-    
-    // کەمکردنەوە لە مخزن
-    selectedCardForSell.quantity -= qty;
-    saveCardsInventory();
-    
-    const customerName = sellType === 'debt' ? selectedCardCustomerForDebt.name : 'کاش';
-    
-    // تۆمارکردنی فرۆشتن
-    cardSalesHistory.unshift({
-      id: invId,
-      date: dateStr,
-      cardName: selectedCardForSell.name,
-      cardType: selectedCardForSell.type,
-      cardAmount: selectedCardForSell.amount,
-      quantity: qty,
-      price: selectedCardForSell.sellPrice,
-      total: totalPrice,
-      customer: customerName,
-      type: sellType,
-      note: sellType === 'debt' ? 'فرۆشتن بە قەرز' : 'فرۆشتی ئاسایی'
-    });
+    // 4. سڕینەوەی تۆمار لە مێژوو
+    cardSalesHistory = cardSalesHistory.filter(s => s.id !== invId);
     saveCardSalesHistory();
-    
-    // ئەگەر قەرز بوو، زیادکردنی بۆ قەرزی کەس
-    if (sellType === 'debt' && selectedCardCustomerForDebt) {
-      selectedCardCustomerForDebt.debt = (selectedCardCustomerForDebt.debt || 0) + totalPrice;
-      if (!selectedCardCustomerForDebt.movements) selectedCardCustomerForDebt.movements = [];
-      selectedCardCustomerForDebt.movements.push({
-        type: 'card_sale_debt',
-        date: dateStr,
-        amount: totalPrice,
-        note: `فرۆشتی کارت ${selectedCardForSell.name} (${qty} دانە)`,
-        invoiceId: invId
-      });
-      saveCustomers();
-    } else {
-      // فرۆشتی ئاسایی - زیادکردن بۆ واسڵی ئەمرۆ
-      moneyRequests.push({
-        id: 'CARD-SALE-MONEY' + Date.now(),
-        date: dateStr,
-        type: 'card_sale',
-        entityName: customerName,
-        entityPhone: '-',
-        amount: totalPrice,
-        note: `فرۆشتی کارت ${selectedCardForSell.name} (${qty} دانە)`,
-        isTransfer: false,
-        isExpense: false
-      });
-      saveMoneyRequests();
-    }
-    
-    // نمایشی ئەنجام
-    const resultDiv = document.getElementById('cardSaleResult');
-    resultDiv.style.display = 'block';
-    resultDiv.innerHTML = `
-      <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
-        <div><strong>✅ فرۆشتن تۆمارکرا!</strong></div>
-        <div>🧾 ${invId}</div>
-      </div>
-      <div style="margin-top:0.5rem;">
-        <div>📇 کارت: ${selectedCardForSell.name}</div>
-        <div>📦 بڕ: ${qty} دانە</div>
-        <div>💰 کۆی گشتی: ${totalPrice.toLocaleString()} د.ع</div>
-        <div>👤 کڕیار: ${customerName}</div>
-        <div>📝 ${sellType === 'debt' ? 'فرۆشتن بە قەرز' : 'فرۆشتی ئاسایی'}</div>
-      </div>
-    `;
-    
-    // ڕێکخستنەوە
-    selectedCardForSell = null;
-    document.getElementById('selectedCardInfo').style.display = 'none';
-    document.getElementById('cardSellQuantity').value = 1;
-    if (sellType === 'debt') {
-      selectedCardCustomerForDebt = null;
-      document.getElementById('selectedCardCustomerBadge').innerHTML = '';
-      document.getElementById('cardCustomerSearch').value = '';
-      document.getElementById('cardCustomerSearchDiv').style.display = 'none';
-    }
-    document.getElementById('cardSellType').value = 'cash';
-    document.getElementById('cardQuickResult').innerHTML = '';
-    document.getElementById('cardQuickSearch').value = '';
-    
-    renderCardList();
     renderCardHistory();
+    renderCardList();
     updateStats();
     renderPersonsList();
+    showToast('تۆماری فرۆشتن سڕکرایەوە', 'success');
   };
 
   function renderCardHistory() {
@@ -7907,7 +7755,9 @@
         <div style="font-weight:700; color:#059669;">${s.total.toLocaleString()} د.ع</div>
         <div><span style="font-size:0.7rem; background:${s.type === 'debt' ? '#fef3c7' : '#d1fae5'}; padding:0.2rem 0.5rem; border-radius:1rem;">${s.type === 'debt' ? '📝 قەرز' : '💵 ئاسایی'}</span></div>
         <div>
-          <button class="btn-icon" onclick="deleteCardSale('${s.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
+          <button class="btn-icon" onclick="deleteCardSaleRecord('${s.id}')" title="سڕینەوەی تۆمار" style="color:#dc2626;">
+            <i class="fas fa-trash-alt"></i>
+          </button>
         </div>
       </div>
     `).join('');
@@ -7915,43 +7765,6 @@
 
   window.filterCardHistory = function() {
     renderCardHistory();
-  };
-
-  window.deleteCardSale = function(invId) {
-    if (!confirm('دڵنیایت لە سڕینەوەی ئەم فرۆشتنە؟')) return;
-    const record = cardSalesHistory.find(s => s.id === invId);
-    if (!record) return;
-    
-    // گەڕاندنەوەی بڕ بۆ مخزن
-    const card = cardsInventory.find(c => c.name === record.cardName);
-    if (card) {
-      card.quantity += record.quantity;
-      saveCardsInventory();
-    }
-    
-    // ئەگەر قەرز بوو، کەمکردنەوەی لە قەرزی کەس
-    if (record.type === 'debt') {
-      const customer = customers.find(c => c.name === record.customer);
-      if (customer) {
-        customer.debt = Math.max(0, (customer.debt || 0) - record.total);
-        customer.movements = customer.movements?.filter(m => m.invoiceId !== invId) || [];
-        saveCustomers();
-      }
-    } else {
-      // ئەگەر ئاسایی بوو، کەمکردنەوەی لە واسڵی ئەمرۆ
-      const moneyRecord = moneyRequests.find(m => m.note && m.note.includes(record.cardName) && m.amount > 0);
-      if (moneyRecord) {
-        moneyRequests = moneyRequests.filter(m => m.id !== moneyRecord.id);
-        saveMoneyRequests();
-      }
-    }
-    
-    cardSalesHistory = cardSalesHistory.filter(s => s.id !== invId);
-    saveCardSalesHistory();
-    renderCardHistory();
-    renderCardList();
-    updateStats();
-    renderPersonsList();
   };
 
   window.generateCardBarcode = function() {
@@ -7997,7 +7810,6 @@
     });
     saveCardsInventory();
     
-    // پاککردنەوەی فۆرم
     document.getElementById('newCardName').value = '';
     document.getElementById('newCardBarcode').value = '';
     document.getElementById('newCardExpiry').value = '';
@@ -8116,9 +7928,7 @@
     renderCardPurchaseCart();
   };
 
-  window.toggleCardPurchaseCredit = function() {
-    // nothing special
-  };
+  window.toggleCardPurchaseCredit = function() {};
 
   window.completeCardPurchase = function() {
     if (!cardPurchaseCart.length) {
@@ -8136,14 +7946,12 @@
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     
-    // زیادکردنی کارتەکان بۆ مخزن
     cardPurchaseCart.forEach(item => {
       const card = cardsInventory.find(c => c.id === item.cardId);
       if (card) card.quantity += item.quantity;
     });
     saveCardsInventory();
     
-    // تۆمارکردنی کڕین
     cardPurchaseHistory.unshift({
       id: invId,
       date: dateStr,
@@ -8155,7 +7963,6 @@
     });
     saveCardPurchaseHistory();
     
-    // ئەگەر قەرز بوو، زیادکردن بۆ قەرزی شەریک
     if (!isCash) {
       selectedCardPurchasePartner.debt = (selectedCardPurchasePartner.debt || 0) + total;
       if (!selectedCardPurchasePartner.movements) selectedCardPurchasePartner.movements = [];
@@ -8182,7 +7989,6 @@
       saveMoneyRequests();
     }
     
-    // پاککردنەوە
     cardPurchaseCart = [];
     selectedCardPurchasePartner = null;
     renderCardPurchaseCart();
@@ -8220,14 +8026,12 @@
     const record = cardPurchaseHistory.find(p => p.id === invId);
     if (!record) return;
     
-    // کەمکردنەوەی بڕ لە مخزن
     record.items.forEach(item => {
       const card = cardsInventory.find(c => c.name === item.cardName);
       if (card) card.quantity = Math.max(0, card.quantity - item.quantity);
     });
     saveCardsInventory();
     
-    // گەڕاندنەوەی قەرز
     if (!record.isCash) {
       const partner = partners.find(p => p.id === record.partnerId);
       if (partner) {
@@ -8254,7 +8058,6 @@
   // ===== TAB EVENT LISTENERS =====
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('tab')) {
-      // Card tab handler
       if (e.target.dataset.cardtab) {
         document.querySelectorAll('[data-cardtab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
