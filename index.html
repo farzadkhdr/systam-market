@@ -60,7 +60,6 @@
     .stat-icon.yellow { background:linear-gradient(135deg,#f59e0b,#d97706); }
     .stat-icon.amber { background:linear-gradient(135deg,#d97706,#b45309); }
     .stat-icon.violet { background:linear-gradient(135deg,#7c3aed,#6d28d9); }
-    .stat-icon.gold { background:linear-gradient(135deg,#d4af37,#b8942a); }
     .stat-info h4 { font-size:1.4rem; font-weight:700; color:var(--text-primary); }
     .stat-info span { font-size:0.8rem; color:var(--text-secondary); font-weight:500; }
     .module-section { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:0.8rem; margin:1.8rem 0 1rem; }
@@ -377,6 +376,7 @@
       .report-table th { background: #e2e8f0 !important; }
     }
 
+    /* ===== گۆڕانکاری نوێ بۆ گەڕان بەدوای کاڵا لە گۆڕانکاری فاکتوورە ===== */
     .edit-product-search-container {
       background: #f8fafc;
       border-radius: 1rem;
@@ -391,7 +391,8 @@
       position: relative;
       max-height: 150px;
     }
-
+    
+    /* ===== ئاگاداری هەڵبژاردنی کاڵا بۆ تێکچوون ===== */
     .selected-product-info {
       background:#dbeafe;
       padding:0.5rem 1rem;
@@ -401,6 +402,7 @@
       border:1px solid #93c5fd;
     }
 
+    /* ===== پێشاندانی بڕی ماوەی کاڵا بۆ تێکچوون ===== */
     .damage-qty-info {
       font-size:0.8rem;
       color:#64748b;
@@ -410,14 +412,6 @@
       border-radius:0.5rem;
       display:inline-block;
     }
-
-    /* کارتی قازانج */
-    .stat-card.profit-card .stat-icon {
-      background: linear-gradient(135deg, #d4af37, #b8942a);
-    }
-    .profit-positive { color: #059669; }
-    .profit-negative { color: #dc2626; }
-    .profit-zero { color: #475569; }
   </style>
 </head>
 <body>
@@ -477,16 +471,14 @@
     </div>
     <div id="dashboardStats" class="stats-grid">
       <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h4 id="statTotalSales">0</h4><span>کۆی فرۆشتن</span></div></div>
-      <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-truck"></i></div><div class="stat-info"><h4 id="statTotalPurchases">0</h4><span>کۆی کڕین</span></div></div>
-      <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی پارەی واسڵکراو</span></div></div>
+      <div class="stat-card"><div class="stat-icon green"><i class="fas fa-truck"></i></div><div class="stat-info"><h4 id="statTotalPurchases">0</h4><span>کۆی کڕین</span></div></div>
+      <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی پارەی واسڵکراو</span></div></div>
       <div class="stat-card"><div class="stat-icon red"><i class="fas fa-coins"></i></div><div class="stat-info"><h4 id="statTotalSpendAndExpenses">0</h4><span>کۆی سەرف و مەسروفات</span></div></div>
-      <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoneyReceived">0</h4><span>واسڵی ئەمرۆ</span></div></div>
+      <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoneyReceived">0</h4><span>واسڵی ئەمرۆ</span></div></div>
       <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-boxes"></i></div><div class="stat-info"><h4 id="statTotalProducts">0</h4><span>کۆی کاڵاکان</span></div></div>
       <div class="stat-card"><div class="stat-icon indigo"><i class="fas fa-users"></i></div><div class="stat-info"><h4 id="statTotalPersons">0</h4><span>کۆی کەسەکان</span></div></div>
       <div class="stat-card"><div class="stat-icon pink"><i class="fas fa-hand-holding-heart"></i></div><div class="stat-info"><h4 id="statMyDebtToPartners">0</h4><span>قەرزاری من بۆ شەریک</span></div></div>
-      <div class="stat-card"><div class="stat-icon green"><i class="fas fa-handshake"></i></div><div class="stat-info"><h4 id="statPersonsDebtToMe">0</h4><span>قەرزاری کەسەکان بۆ من</span></div></div>
-      <!-- کارتی قازانج -->
-      <div class="stat-card profit-card"><div class="stat-icon gold"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h4 id="statProfit">0</h4><span>قازانج (فرۆشتن - کڕین - سەرف)</span></div></div>
+      <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-handshake"></i></div><div class="stat-info"><h4 id="statPersonsDebtToMe">0</h4><span>قەرزاری کەسەکان بۆ من</span></div></div>
     </div>
     <div style="margin-top:0.5rem; display:flex; justify-content:space-between; align-items:center;">
       <div class="section-title"><i class="fas fa-th-large" style="color:#2563eb;"></i> هەموو بەشەکان</div>
@@ -1332,11 +1324,12 @@
         </div>
       </div>
       
-      <!-- ===== DAMAGE PANEL ===== -->
+      <!-- ===== DAMAGE PANEL (FIXED) ===== -->
       <div class="panel" id="expiryDamagePanel">
         <div class="card-glass" style="max-width:700px; margin:0 auto;">
           <h3 style="margin-bottom:1rem;"><i class="fas fa-plus-circle" style="color:#dc2626;"></i> تۆمارکردنی کاڵای تێکچوو</h3>
           
+          <!-- گەڕان بەدوای کاڵا -->
           <div style="margin-bottom:1rem;">
             <label style="font-weight:600;">🔍 گەڕان بەدوای کاڵا (ناو یان بارکۆد):</label>
             <div class="search-box" style="position:relative;">
@@ -1347,9 +1340,11 @@
             </div>
             <div class="suggestions" id="damageProductSuggestions" style="position:relative; max-height:200px; overflow-y:auto;"></div>
             
+            <!-- پیشاندانی زانیاری کاڵای هەڵبژێردراو -->
             <div id="selectedDamageProductInfo" class="selected-product-info" style="display:none; margin-top:0.5rem;"></div>
           </div>
 
+          <!-- بڕ و هۆکار -->
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
             <div style="margin-bottom:1rem;">
               <label style="font-weight:600;">📊 بڕی تێکچوو:</label>
@@ -1364,12 +1359,14 @@
             </div>
           </div>
 
+          <!-- دوگمەی تۆمارکردن -->
           <button onclick="addDamagedProduct()" 
                   style="background:#dc2626; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;">
             <i class="fas fa-save"></i> تۆمارکردنی کاڵای تێکچوو
           </button>
         </div>
 
+        <!-- مێژووی کاڵا تێکچووەکان -->
         <div class="card-glass" style="margin-top:1.5rem;">
           <h4 style="margin-bottom:1rem;"><i class="fas fa-history"></i> مێژووی کاڵا تێکچووەکان</h4>
           <div class="filter-row">
@@ -1408,6 +1405,7 @@
         <h3 style="margin-bottom:1rem;"><i class="fas fa-paint-roller"></i> دیزاینی سیستەم</h3>
         <div style="margin-bottom:1.2rem;"><label>ناوی سیستەم (لەسەر فاکتوورەش دەردەکەوێت):</label><input type="text" id="systemNameInput" placeholder="مارکێت" style="width:100%;padding:0.6rem;border-radius:2rem;border:1px solid #cbd5e1;margin-top:0.3rem;"></div>
 
+        <!-- ===== LOGO UPLOAD SECTION ===== -->
         <div style="margin-bottom:1.2rem;">
           <label style="font-weight:600; display:block; margin-bottom:0.5rem;">🖼️ لۆگۆی سیستەم (شێوەی خڕ):</label>
           <div class="logo-upload-container">
@@ -2239,6 +2237,7 @@
     document.getElementById(inputId).value = '';
     const suggestions = document.getElementById(suggestionsId);
     if (suggestions) suggestions.style.display = 'none';
+    // پاککردنی ئاگاداری کاڵای تێکچوو
     if (inputId === 'damageProductSearch') {
       const infoDiv = document.getElementById('selectedDamageProductInfo');
       if (infoDiv) infoDiv.style.display = 'none';
@@ -2359,261 +2358,6 @@
   }));
 
   let employeePermissions = JSON.parse(localStorage.getItem('market_employee_permissions') || '{}');
-
-  // ===== UPDATE STATS (Improved with Profit Card) =====
-  function updateStats() {
-    const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
-    const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
-    const totalMoneyReceived = moneyRequests
-      .filter(r => r.isTransfer === true)
-      .reduce((sum, r) => sum + r.amount, 0);
-    const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
-    const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
-    
-    // کۆی سەرف و مەسروفات - کڕین تێدا نابێت چونکە جیا حیساب دەکرێت
-    const totalSpend = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
-                       employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
-                       returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
-    const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalSpend;
-    
-    const today = new Date().toLocaleDateString('ckb');
-    const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
-      .reduce((sum, r) => sum + r.amount, 0);
-    const todayDebits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.amount < 0)
-      .reduce((sum, r) => sum + Math.abs(r.amount), 0);
-    const todayMoneyReceived = todayCredits - todayDebits;
-    const totalProducts = warehouseProducts.length;
-    const totalPersons = customers.length;
-    const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -p.debt), 0);
-    const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, c.debt), 0);
-
-    // قازانج: فرۆشتن - کڕین - کۆی سەرف و مەسروفات
-    // تێبینی: کڕینی نەقدی لە کۆی کڕین حیساب دەکرێت و لە واسڵی ئەمرۆ کەم دەکات، بەڵام وەک خەرجی حیساب ناکرێت
-    const profit = totalSales - totalPurchases - totalSpendAndExpenses;
-
-    const statTotalSalesEl = document.getElementById('statTotalSales');
-    const statTotalPurchasesEl = document.getElementById('statTotalPurchases');
-    const statTotalMoneyReceivedEl = document.getElementById('statTotalMoneyReceived');
-    const statTotalSpendAndExpensesEl = document.getElementById('statTotalSpendAndExpenses');
-    const statTodayMoneyReceivedEl = document.getElementById('statTodayMoneyReceived');
-    const statTotalProductsEl = document.getElementById('statTotalProducts');
-    const statTotalPersonsEl = document.getElementById('statTotalPersons');
-    const statMyDebtToPartnersEl = document.getElementById('statMyDebtToPartners');
-    const statPersonsDebtToMeEl = document.getElementById('statPersonsDebtToMe');
-    const statProfitEl = document.getElementById('statProfit');
-
-    if (statTotalSalesEl) statTotalSalesEl.textContent = totalSales.toLocaleString();
-    if (statTotalPurchasesEl) statTotalPurchasesEl.textContent = totalPurchases.toLocaleString();
-    if (statTotalMoneyReceivedEl) statTotalMoneyReceivedEl.textContent = totalMoneyReceived.toLocaleString();
-    if (statTotalSpendAndExpensesEl) statTotalSpendAndExpensesEl.textContent = totalSpendAndExpenses.toLocaleString();
-    if (statTodayMoneyReceivedEl) statTodayMoneyReceivedEl.textContent = Math.max(0, todayMoneyReceived).toLocaleString();
-    if (statTotalProductsEl) statTotalProductsEl.textContent = totalProducts;
-    if (statTotalPersonsEl) statTotalPersonsEl.textContent = totalPersons;
-    if (statMyDebtToPartnersEl) statMyDebtToPartnersEl.textContent = myDebtToPartners.toLocaleString();
-    if (statPersonsDebtToMeEl) statPersonsDebtToMeEl.textContent = personsDebtToMe.toLocaleString();
-    
-    if (statProfitEl) {
-      statProfitEl.textContent = profit.toLocaleString();
-      statProfitEl.className = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : 'profit-zero';
-    }
-
-    updateAccountingDisplay();
-  }
-
-  // ===== SEARCH PRODUCT (GLOBAL IMPROVED) =====
-  function setupGlobalProductSearch(inputId, suggestionsId, onSelect, customFilter) {
-    const input = document.getElementById(inputId);
-    const suggestions = document.getElementById(suggestionsId);
-    if (!input || !suggestions) return;
-
-    let timer;
-    let selectedIndex = -1;
-
-    input.addEventListener('input', function(e) {
-      clearTimeout(timer);
-      const query = this.value.trim();
-      
-      if (!query) {
-        suggestions.style.display = 'none';
-        return;
-      }
-
-      timer = setTimeout(() => {
-        let filtered = warehouseProducts.filter(p => 
-          p.name.toLowerCase().includes(query.toLowerCase()) || 
-          p.barcode.includes(query)
-        );
-        if (customFilter) filtered = customFilter(filtered);
-
-        if (filtered.length) {
-          suggestions.innerHTML = filtered.map((p, index) => `
-            <div class="suggestion-item" data-index="${index}" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; cursor:pointer; border-bottom:1px solid #f1f5f9;">
-              <div>
-                <strong>${p.name}</strong>
-                <div style="font-size:0.75rem; color:#64748b;">${p.barcode}</div>
-              </div>
-              <div style="font-size:0.8rem; color:#059669; font-weight:600;">${p.sellPrice.toLocaleString()} د.ع</div>
-            </div>
-          `).join('');
-          suggestions.style.display = 'block';
-          selectedIndex = -1;
-
-          suggestions.querySelectorAll('.suggestion-item').forEach(el => {
-            el.addEventListener('click', function() {
-              const idx = parseInt(this.dataset.index);
-              const product = filtered[idx];
-              if (product && onSelect) {
-                onSelect(product);
-                suggestions.style.display = 'none';
-                input.value = '';
-              }
-            });
-          });
-        } else {
-          suggestions.style.display = 'none';
-        }
-      }, 300);
-    });
-
-    input.addEventListener('keydown', function(e) {
-      const items = suggestions.querySelectorAll('.suggestion-item');
-      if (!items.length) return;
-
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
-        updateSelection(items);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        selectedIndex = Math.max(selectedIndex - 1, 0);
-        updateSelection(items);
-      } else if (e.key === 'Enter' && selectedIndex >= 0) {
-        e.preventDefault();
-        if (items[selectedIndex]) items[selectedIndex].click();
-      } else if (e.key === 'Escape') {
-        suggestions.style.display = 'none';
-      }
-    });
-
-    function updateSelection(items) {
-      items.forEach((el, i) => {
-        el.style.background = i === selectedIndex ? '#dbeafe' : '';
-        if (i === selectedIndex) el.scrollIntoView({ block: 'nearest' });
-      });
-    }
-
-    document.addEventListener('click', function(e) {
-      if (!input.contains(e.target) && !suggestions.contains(e.target)) {
-        suggestions.style.display = 'none';
-      }
-    });
-  }
-
-  // ===== SETUP ALL SEARCHES =====
-  // Sales product search
-  setupGlobalProductSearch('productSearch', 'productSuggestions', function(product) {
-    addToCart(product);
-  });
-
-  // Purchase product search
-  setupGlobalProductSearch('purchaseProductSearch', 'purchaseProductSuggestions', function(product) {
-    const existing = purchaseCart.find(i => i.product.id === product.id);
-    if (existing) existing.quantity++;
-    else purchaseCart.push({ product, quantity: 1 });
-    renderPurchaseCart();
-    updatePurchaseInvoicePreview();
-  });
-
-  // Purchase partner search
-  function setupPartnerSearch(inputId, suggestionsId, onSelect) {
-    const input = document.getElementById(inputId);
-    const suggestions = document.getElementById(suggestionsId);
-    if (!input || !suggestions) return;
-
-    let timer;
-    input.addEventListener('input', function(e) {
-      clearTimeout(timer);
-      const query = this.value.trim();
-      if (!query) { suggestions.style.display = 'none'; return; }
-
-      timer = setTimeout(() => {
-        const filtered = partners.filter(p => p.name.toLowerCase().includes(query.toLowerCase()) || p.phone.includes(query));
-        if (filtered.length) {
-          suggestions.innerHTML = filtered.map(p => `
-            <div class="suggestion-item" data-pid="${p.id}" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; cursor:pointer; border-bottom:1px solid #f1f5f9;">
-              <div><strong>${p.name}</strong><div style="font-size:0.75rem; color:#64748b;">📱 ${p.phone}</div></div>
-              <div style="font-size:0.8rem; color:#64748b;">قەرز: ${(p.debt||0).toLocaleString()}</div>
-            </div>
-          `).join('');
-          suggestions.style.display = 'block';
-
-          suggestions.querySelectorAll('.suggestion-item').forEach(el => {
-            el.addEventListener('click', function() {
-              const pid = parseInt(this.dataset.pid);
-              const partner = partners.find(p => p.id === pid);
-              if (partner && onSelect) {
-                onSelect(partner);
-                suggestions.style.display = 'none';
-                input.value = partner.name;
-              }
-            });
-          });
-        } else {
-          suggestions.style.display = 'none';
-        }
-      }, 300);
-    });
-
-    document.addEventListener('click', function(e) {
-      if (!input.contains(e.target) && !suggestions.contains(e.target)) {
-        suggestions.style.display = 'none';
-      }
-    });
-  }
-
-  setupPartnerSearch('purchasePartnerSearch', 'purchasePartnerSuggestions', function(partner) {
-    selectedPurchasePartner = partner;
-    document.getElementById('selectedPurchasePartnerBadge').innerHTML = `<span class="customer-badge">🤝 ${partner.name}</span>`;
-    updatePurchaseInvoicePreview();
-  });
-
-  // Agent product search
-  setupGlobalProductSearch('agentProductSearch', 'agentProductSuggestions', function(product) {
-    if (!currentSaleAgent) { alert('تکایە یەکەم مەندوبێک هەڵبژێرە'); return; }
-    const invItem = currentSaleAgent.inventory.find(i => i.productName === product.name);
-    if (!invItem) { alert('ئەم کاڵایە لە جەردی مەندوبدا نییە'); return; }
-    const available = invItem.quantity - (invItem.sold || 0) - (invItem.returned || 0);
-    if (available <= 0) { alert('هیچ کاڵایەک بۆ فرۆشتن لە جەرددا نییە'); return; }
-    const existing = agentSaleCart.find(c => c.productName === product.name);
-    if (existing) { if (existing.quantity < available) existing.quantity++; else alert('بڕی زیاتر لە جەرددا نییە'); }
-    else agentSaleCart.push({ productName: product.name, barcode: product.barcode, price: invItem.price, quantity: 1, maxQty: available });
-    renderAgentSaleCart();
-  });
-
-  // Give agent product search
-  setupGlobalProductSearch('giveProductSearch', 'giveProductSuggestions', function(product) {
-    if (!selectedGiveAgent) { alert('تکایە یەکەم مەندوبێک هەڵبژێرە'); return; }
-    if (product.quantity <= 0) { alert('کاڵاکە لە مخزن تەواو بووە'); return; }
-    const existing = giveAgentCart.find(c => c.productId === product.id);
-    if (existing) { if (existing.quantity < product.quantity) existing.quantity++; else alert('بڕی زیاتر لە مخزندا نییە'); }
-    else giveAgentCart.push({ productId: product.id, productName: product.name, barcode: product.barcode, price: product.sellPrice, quantity: 1, maxQty: product.quantity });
-    renderGiveAgentCart();
-  });
-
-  // Agent return product search
-  setupGlobalProductSearch('agentReturnProductSearch', 'agentReturnProductSuggestions', function(product) {
-    if (!selectedAgentForReturn) { alert('تکایە یەکەم مەندوبێک هەڵبژێرە'); return; }
-    const invItem = selectedAgentForReturn.inventory.find(i => i.productName === product.name);
-    if (!invItem) { alert('ئەم کاڵایە لە جەردی مەندوبدا نییە'); return; }
-    const available = invItem.quantity - (invItem.sold || 0) - (invItem.returned || 0);
-    if (available <= 0) { alert('هیچ کاڵایەک بۆ گەڕانەوە لە جەرددا نییە'); return; }
-    const existing = agentReturnCart.find(c => c.productName === product.name);
-    if (existing) { if (existing.quantity < available) existing.quantity++; else alert('بڕی زیاتر لە جەرددا نییە'); }
-    else agentReturnCart.push({ productName: product.name, barcode: product.barcode, price: invItem.price, quantity: 1, maxQty: available });
-    renderAgentReturnCart();
-  });
 
   // ===== ACCOUNTING / TRANSFER FUNCTION =====
   function updateAccountingDisplay() {
@@ -2884,7 +2628,7 @@
     document.getElementById('reportInvoicesPanel').classList.toggle('active', tab === 'invoices');
   };
 
-  // ===== PRODUCT REPORT =====
+  // ===== PRODUCT REPORT WITH IMPROVED SEARCH =====
   window.generateProductReport = function() {
     const input = document.getElementById('productReportSearch');
     const query = input.value.trim();
@@ -3059,7 +2803,7 @@
     input.blur();
   };
 
-  // ===== PERSON/PARTNER REPORT =====
+  // ===== PERSON/PARTNER REPORT WITH IMPROVED SEARCH =====
   window.generatePersonReport = function() {
     const input = document.getElementById('personReportSearch');
     const searchQuery = input.value.trim();
@@ -3741,6 +3485,55 @@
   function saveGiveMoneyHistory() { localStorage.setItem('market_give_money_history', JSON.stringify(giveMoneyHistory)); updateGiveStats(); updateStats(); }
   function saveAdjustmentHistory() { localStorage.setItem('market_adjustment_history', JSON.stringify(adjustmentHistory)); }
 
+  // ===== UPDATE STATS =====
+  function updateStats() {
+    const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
+    const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
+    const totalMoneyReceived = moneyRequests
+      .filter(r => r.isTransfer === true)
+      .reduce((sum, r) => sum + r.amount, 0);
+    const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
+    const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
+    const totalSpend = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
+                       employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
+                       returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
+    const totalSpendAndExpenses = totalSpend + totalExpenses + totalGiveMoney;
+    const today = new Date().toLocaleDateString('ckb');
+    const todayCredits = moneyRequests
+      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .reduce((sum, r) => sum + r.amount, 0);
+    const todayDebits = moneyRequests
+      .filter(r => r.date && r.date.includes(today) && r.amount < 0)
+      .reduce((sum, r) => sum + Math.abs(r.amount), 0);
+    const todayMoneyReceived = todayCredits - todayDebits;
+    const totalProducts = warehouseProducts.length;
+    const totalPersons = customers.length;
+    const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -p.debt), 0);
+    const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, c.debt), 0);
+
+    const statTotalSalesEl = document.getElementById('statTotalSales');
+    const statTotalPurchasesEl = document.getElementById('statTotalPurchases');
+    const statTotalMoneyReceivedEl = document.getElementById('statTotalMoneyReceived');
+    const statTotalSpendAndExpensesEl = document.getElementById('statTotalSpendAndExpenses');
+    const statTodayMoneyReceivedEl = document.getElementById('statTodayMoneyReceived');
+    const statTotalProductsEl = document.getElementById('statTotalProducts');
+    const statTotalPersonsEl = document.getElementById('statTotalPersons');
+    const statMyDebtToPartnersEl = document.getElementById('statMyDebtToPartners');
+    const statPersonsDebtToMeEl = document.getElementById('statPersonsDebtToMe');
+
+    if (statTotalSalesEl) statTotalSalesEl.textContent = totalSales.toLocaleString();
+    if (statTotalPurchasesEl) statTotalPurchasesEl.textContent = totalPurchases.toLocaleString();
+    if (statTotalMoneyReceivedEl) statTotalMoneyReceivedEl.textContent = totalMoneyReceived.toLocaleString();
+    if (statTotalSpendAndExpensesEl) statTotalSpendAndExpensesEl.textContent = totalSpendAndExpenses.toLocaleString();
+    if (statTodayMoneyReceivedEl) statTodayMoneyReceivedEl.textContent = Math.max(0, todayMoneyReceived).toLocaleString();
+    if (statTotalProductsEl) statTotalProductsEl.textContent = totalProducts;
+    if (statTotalPersonsEl) statTotalPersonsEl.textContent = totalPersons;
+    if (statMyDebtToPartnersEl) statMyDebtToPartnersEl.textContent = myDebtToPartners.toLocaleString();
+    if (statPersonsDebtToMeEl) statPersonsDebtToMeEl.textContent = personsDebtToMe.toLocaleString();
+
+    updateAccountingDisplay();
+  }
+
   // ===== EXPENSE FUNCTIONS =====
   function updateExpenseStats() {
     const today = new Date().toLocaleDateString('ckb');
@@ -4350,6 +4143,7 @@
     document.addEventListener('click', function(e) {
       if (!finalInput.contains(e.target) && !finalSuggestions.contains(e.target)) {
         finalSuggestions.style.display = 'none';
+        // پاککردنی ئاگاداری کاڵای تێکچوو کاتێک دەرەوە کلیک دەکەن
         if (inputId === 'damageProductSearch') {
           const infoDiv = document.getElementById('selectedDamageProductInfo');
           if (infoDiv && !infoDiv.contains(e.target)) {
@@ -4362,7 +4156,7 @@
     return { input: finalInput, suggestions: finalSuggestions };
   }
 
-  // ===== SEARCH DAMAGE PRODUCT =====
+  // ===== SEARCH DAMAGE PRODUCT (IMPROVED) =====
   window.searchDamageProduct = function() {
     const input = document.getElementById('damageProductSearch');
     const query = input.value.trim().toLowerCase();
@@ -4372,6 +4166,7 @@
     if (!query) {
       suggestions.style.display = 'none';
       if (clearBtn) clearBtn.style.display = 'none';
+      // پاککردنی زانیاری کاڵا
       const infoDiv = document.getElementById('selectedDamageProductInfo');
       if (infoDiv) infoDiv.style.display = 'none';
       const qtyDisplay = document.getElementById('damageMaxQtyDisplay');
@@ -4404,8 +4199,10 @@
           const pid = parseInt(this.dataset.pid);
           const product = warehouseProducts.find(p => p.id === pid);
           if (product) {
+            // دانانی ناوی کاڵا لە خانەکە
             document.getElementById('damageProductSearch').value = product.name;
             
+            // پیشاندانی زانیاری کاڵا
             const infoDiv = document.getElementById('selectedDamageProductInfo');
             if (infoDiv) {
               infoDiv.style.display = 'block';
@@ -4422,11 +4219,13 @@
               `;
             }
             
+            // دانانی ماکسیمەم بڕی کاڵا
             document.getElementById('damageQuantity').max = product.quantity;
             const qtyDisplay = document.getElementById('damageMaxQtyDisplay');
             if (qtyDisplay) qtyDisplay.textContent = `بڕی ماوە لە مخزن: ${product.quantity} ${product.unit}`;
             document.getElementById('damageQuantity').value = 1;
             
+            // داخستنی پێشنیارەکان
             suggestions.style.display = 'none';
             if (clearBtn) clearBtn.style.display = 'none';
           }
@@ -4437,12 +4236,14 @@
     }
   };
 
-  // ===== ADD DAMAGED PRODUCT =====
+  // ===== ADD DAMAGED PRODUCT (FIXED VERSION) =====
   window.addDamagedProduct = function() {
+    // وەرگرتنی ناوی کاڵا لە خانەکە
     const productName = document.getElementById('damageProductSearch').value.trim();
     const quantity = parseInt(document.getElementById('damageQuantity').value);
     const reason = document.getElementById('damageReason').value.trim();
     
+    // پشتڕاستکردنەوەی داتا
     if (!productName) { 
       alert('⚠️ تکایە کاڵایەک هەڵبژێرە یان ناوی کاڵا بنووسە!'); 
       document.getElementById('damageProductSearch').focus();
@@ -4455,16 +4256,19 @@
       return; 
     }
     
+    // گەڕان بەدوای کاڵا - یەکەم: بە ناوی تەواو
     let product = warehouseProducts.find(p => 
       p.name.toLowerCase() === productName.toLowerCase()
     );
     
+    // ئەگەر نەدۆزرایەوە، بە بەشێکی ناو بگەڕێ
     if (!product) {
       product = warehouseProducts.find(p => 
         p.name.toLowerCase().includes(productName.toLowerCase())
       );
     }
     
+    // ئەگەر هێشتا نەدۆزرایەوە، بە بارکۆد بگەڕێ
     if (!product) {
       product = warehouseProducts.find(p => 
         p.barcode === productName || 
@@ -4472,18 +4276,21 @@
       );
     }
     
+    // ئەگەر کاڵا نەدۆزرایەوە
     if (!product) { 
       alert(`⚠️ کاڵای "${productName}" نەدۆزرایەوە! تکایە ناوێکی ڕاست بنووسە یان لە پێشنیارەکان هەڵیبژێرە.`); 
       document.getElementById('damageProductSearch').focus();
       return; 
     }
     
+    // پشتڕاستکردنەوەی بڕی کاڵا لە مخزن
     if (product.quantity < quantity) { 
       alert(`⚠️ بڕی کاڵا لە مخزندا کەمترە!\nکاڵا: ${product.name}\nبڕی ماوە: ${product.quantity}\nبڕی داواکراو: ${quantity}`); 
       document.getElementById('damageQuantity').focus();
       return; 
     }
     
+    // پشتڕاستکردنەوەی زیادە لەلایەن بەکارهێنەر
     const confirmMsg = `دڵنیایت لە تۆمارکردنی کاڵای تێکچوو؟
   📦 کاڵا: ${product.name}
   📊 بڕ: ${quantity}
@@ -4493,9 +4300,13 @@
       return;
     }
     
+    // --- تۆمارکردن ---
+    
+    // 1. کەمکردنەوەی بڕی کاڵا لە مخزن
     product.quantity -= quantity;
     saveWarehouseProducts();
     
+    // 2. دروستکردنی تۆماری کاڵای تێکچوو
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { 
       year: 'numeric', 
@@ -4519,6 +4330,7 @@
     });
     saveExpiryDamage();
     
+    // 3. تۆمارکردنی مەسروفات (خەرجی) بۆ تێکچوون
     const damageCost = product.buyPrice * quantity;
     expenseHistory.unshift({
       id: 'EXP-DMG-' + Date.now(),
@@ -4530,6 +4342,7 @@
     });
     saveExpenseHistory();
     
+    // 4. کەمکردنەوە لە واسڵی ئەمرۆ
     moneyRequests.push({
       id: 'DMG-MONEY-' + Date.now(),
       date: dateStr,
@@ -4543,6 +4356,7 @@
     });
     saveMoneyRequests();
     
+    // --- پاککردنەوەی خانەکان ---
     document.getElementById('damageProductSearch').value = '';
     document.getElementById('damageQuantity').value = '1';
     document.getElementById('damageReason').value = '';
@@ -4559,11 +4373,13 @@
     const qtyDisplay = document.getElementById('damageMaxQtyDisplay');
     if (qtyDisplay) qtyDisplay.textContent = 'بڕی ماوە لە مخزن: -';
     
+    // --- نوێکردنەوەی لیستەکان ---
     renderDamagedProducts();
     renderProductsGrid();
     updateExpenseStats();
     updateStats();
     
+    // --- پیشاندانی پەیامی سەرکەوتن ---
     alert(`✅ کاڵای تێکچوو بە سەرکەوتوویی تۆمارکرا!
   📦 کاڵا: ${product.name}
   📊 بڕ: ${quantity}
@@ -5647,13 +5463,13 @@
       if (backup.data.warehouseProducts) { warehouseProducts = backup.data.warehouseProducts; saveWarehouseProducts(); }
       if (backup.data.moneyRequests) { moneyRequests = backup.data.moneyRequests; saveMoneyRequests(); }
       if (backup.data.purchaseHistory) { purchaseHistory = backup.data.purchaseHistory; savePurchaseHistory(); }
-      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backupData.expiredDamagedProducts; saveExpiryDamage(); }
-      if (backup.data.returnHistory) { returnHistory = backupData.returnHistory; saveReturnHistory(); }
-      if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backupData.purchaseReturnHistory; savePurchaseReturnHistory(); }
-      if (backup.data.employees) { employees = backupData.employees; saveEmployees(); }
-      if (backup.data.expenseHistory) { expenseHistory = backupData.expenseHistory; saveExpenseHistory(); }
-      if (backup.data.giveMoneyHistory) { giveMoneyHistory = backupData.giveMoneyHistory; saveGiveMoneyHistory(); }
-      if (backup.data.adjustmentHistory) { adjustmentHistory = backupData.adjustmentHistory; saveAdjustmentHistory(); }
+      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backup.data.expiredDamagedProducts; saveExpiryDamage(); }
+      if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
+      if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backup.data.purchaseReturnHistory; savePurchaseReturnHistory(); }
+      if (backup.data.employees) { employees = backup.data.employees; saveEmployees(); }
+      if (backup.data.expenseHistory) { expenseHistory = backup.data.expenseHistory; saveExpenseHistory(); }
+      if (backup.data.giveMoneyHistory) { giveMoneyHistory = backup.data.giveMoneyHistory; saveGiveMoneyHistory(); }
+      if (backup.data.adjustmentHistory) { adjustmentHistory = backup.data.adjustmentHistory; saveAdjustmentHistory(); }
       renderDashboardModules();
       renderPersonsList();
       renderPartnersList();
@@ -6432,7 +6248,7 @@
     updateStats();
   };
 
-  // ===== COMPLETE PURCHASE (FIXED) =====
+  // ===== completePurchase =====
   window.completePurchase = function() {
     if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
     if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
@@ -6473,8 +6289,6 @@
       });
       savePartners();
     } else {
-      // کڕینی نەقدی - تەنها لە کۆی کڕین زیاد دەکات و لە واسڵی ئەمرۆ کەم دەکات
-      // بەڵام وەک خەرجی (isExpense) تۆمار ناکرێت چونکە کڕین خەرجی نییە
       moneyRequests.push({
         id: 'PUR-MONEY' + Date.now(),
         date: dateStr,
@@ -6483,8 +6297,8 @@
         entityPhone: selectedPurchasePartner.phone,
         amount: -total,
         note: `کڕین ${invId}`,
-        isTransfer: false
-        // isExpense: true لابردراوە - چونکە کڕین خەرجی نییە!
+        isTransfer: false,
+        isExpense: true
       });
       saveMoneyRequests();
     }
