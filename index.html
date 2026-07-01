@@ -418,6 +418,43 @@
     .profit-positive { color: #059669; }
     .profit-negative { color: #dc2626; }
     .profit-zero { color: #475569; }
+
+    /* کارتی جەمگزەی دووەم */
+    .stat-card.jemgeza-card .stat-icon {
+      background: linear-gradient(135deg, #d97706, #b45309);
+    }
+    /* کارتی کویک پەی */
+    .stat-card.quickpay-card .stat-icon {
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    }
+
+    /* پانێلی کویک پەی - بۆ داهاتوو */
+    .quickpay-placeholder {
+      text-align:center;
+      padding:3rem 2rem;
+    }
+    .quickpay-placeholder i {
+      font-size:4rem;
+      color:#7c3aed;
+      opacity:0.3;
+      margin-bottom:1rem;
+    }
+    .quickpay-placeholder h3 {
+      color:#64748b;
+      margin-bottom:0.5rem;
+    }
+    .quickpay-placeholder p {
+      color:#94a3b8;
+    }
+    .quickpay-placeholder .coming-soon {
+      background:#fef9c3;
+      padding:0.8rem 1.5rem;
+      border-radius:1.5rem;
+      display:inline-block;
+      margin-top:1.5rem;
+      color:#854d0e;
+      font-weight:600;
+    }
   </style>
 </head>
 <body>
@@ -480,6 +517,7 @@
       <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-truck"></i></div><div class="stat-info"><h4 id="statTotalPurchases">0</h4><span>کۆی کڕین</span></div></div>
       <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی پارەی واسڵکراو</span></div></div>
       <div class="stat-card"><div class="stat-icon red"><i class="fas fa-coins"></i></div><div class="stat-info"><h4 id="statTotalSpendAndExpenses">0</h4><span>کۆی سەرف و مەسروفات</span></div></div>
+      <!-- کارتی واسڵی ئەمرۆ - ئێستا فرۆشتن + واسڵکراو نیشان دەدات -->
       <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoneyReceived">0</h4><span>واسڵی ئەمرۆ</span></div></div>
       <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-boxes"></i></div><div class="stat-info"><h4 id="statTotalProducts">0</h4><span>کۆی کاڵاکان</span></div></div>
       <div class="stat-card"><div class="stat-icon indigo"><i class="fas fa-users"></i></div><div class="stat-info"><h4 id="statTotalPersons">0</h4><span>کۆی کەسەکان</span></div></div>
@@ -487,6 +525,10 @@
       <div class="stat-card"><div class="stat-icon green"><i class="fas fa-handshake"></i></div><div class="stat-info"><h4 id="statPersonsDebtToMe">0</h4><span>قەرزاری کەسەکان بۆ من</span></div></div>
       <!-- کارتی قازانج -->
       <div class="stat-card profit-card"><div class="stat-icon gold"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h4 id="statProfit">0</h4><span>قازانج (فرۆشتن - کڕین - سەرف)</span></div></div>
+      <!-- کارتی جەمگزەی دووەم -->
+      <div class="stat-card jemgeza-card"><div class="stat-icon amber"><i class="fas fa-piggy-bank"></i></div><div class="stat-info"><h4 id="statJemgeza">0</h4><span>جەمگزەی دووەم</span></div></div>
+      <!-- کارتی کویک پەی -->
+      <div class="stat-card quickpay-card"><div class="stat-icon violet"><i class="fas fa-bolt"></i></div><div class="stat-info"><h4 id="statQuickPay">0</h4><span>کویک پەی</span></div></div>
     </div>
     <div style="margin-top:0.5rem; display:flex; justify-content:space-between; align-items:center;">
       <div class="section-title"><i class="fas fa-th-large" style="color:#2563eb;"></i> هەموو بەشەکان</div>
@@ -550,6 +592,8 @@
         <div class="tab active" data-tab="newSale">➕ فرۆشتنی نوێ</div>
         <div class="tab" data-tab="history">📋 مێژووی فرۆشتن</div>
         <div class="tab" data-tab="return">↩️ گەڕانەوەی فرۆشتن</div>
+        <!-- تابێکی کویک پەی بۆ داهاتوو -->
+        <div class="tab" data-tab="quickpay">⚡ کویک پەی</div>
       </div>
       <div class="panel active" id="newSalePanel">
         <div class="new-sale-layout">
@@ -675,6 +719,17 @@
         <div id="returnHistoryList" class="card-glass" style="margin-top:1.5rem;">
           <h4><i class="fas fa-history"></i> مێژووی گەڕانەوەکانی فرۆشتن</h4>
           <div id="returnHistoryContainer" style="max-height:300px; overflow-y:auto;"></div>
+        </div>
+      </div>
+      <!-- ===== پانێلی کویک پەی (بۆ داهاتوو) ===== -->
+      <div class="panel" id="quickPayPanel">
+        <div class="card-glass quickpay-placeholder">
+          <i class="fas fa-bolt"></i>
+          <h3>⚡ بەشی کویک پەی</h3>
+          <p>ئەم بەشە لە وەشانی داهاتوودا تەواو دەکرێت</p>
+          <div class="coming-soon">
+            🚀 لە پڕۆسەی پەرەپێداندایە
+          </div>
         </div>
       </div>
     </div>
@@ -2268,7 +2323,9 @@
     { id: 'barcode', icon: 'fa-barcode', label: 'پرێنتکردنی بارکۆد', color: '#f3e8ff', text: '#6b21a8' },
     { id: 'agents', icon: 'fa-user-tie', label: 'مەندوبەکان', color: '#fef3c7', text: '#b45309' },
     { id: 'give_agent', icon: 'fa-box-open', label: 'پێدانی کاڵاکان بە مەندوبەکان', color: '#f3e8ff', text: '#6b21a8' },
-    { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکویریتی', color: '#e0e7ff', text: '#3730a3' }
+    { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکویریتی', color: '#e0e7ff', text: '#3730a3' },
+    // مۆدیولی کویک پەی بۆ داهاتوو
+    { id: 'quickpay', icon: 'fa-bolt', label: 'کویک پەی', color: '#f3e8ff', text: '#7c3aed' }
   ];
 
   let moduleOrder = allModules.map(m => m.id);
@@ -2360,13 +2417,19 @@
 
   let employeePermissions = JSON.parse(localStorage.getItem('market_employee_permissions') || '{}');
 
-  // ===== UPDATE STATS (Improved with Profit Card) =====
+  // ===== UPDATE STATS (Improved with new cards) =====
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
+    
+    // کۆی پارەی واسڵکراو (گواستراوەکان بۆ کۆی گشتی)
     const totalMoneyReceived = moneyRequests
       .filter(r => r.isTransfer === true)
       .reduce((sum, r) => sum + r.amount, 0);
+    
+    // کۆی پارەی واسڵی ئەمرۆ = کۆی فرۆشتن + کۆی واسڵی پارە (نەک گواستراوەکان)
+    const totalMoneyReceivedAll = totalSales + totalMoneyReceived;
+    
     const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
     const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
     
@@ -2392,6 +2455,12 @@
     // قازانج: فرۆشتن - کڕین - کۆی سەرف و مەسروفات
     const profit = totalSales - totalPurchases - totalSpendAndExpenses;
 
+    // جەمگزەی دووەم لە localStorage دەخوێنرێت
+    const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
+    
+    // کویک پەی لە localStorage دەخوێنرێت
+    const quickPay = parseInt(localStorage.getItem('market_quickpay') || '0');
+
     const statTotalSalesEl = document.getElementById('statTotalSales');
     const statTotalPurchasesEl = document.getElementById('statTotalPurchases');
     const statTotalMoneyReceivedEl = document.getElementById('statTotalMoneyReceived');
@@ -2402,12 +2471,14 @@
     const statMyDebtToPartnersEl = document.getElementById('statMyDebtToPartners');
     const statPersonsDebtToMeEl = document.getElementById('statPersonsDebtToMe');
     const statProfitEl = document.getElementById('statProfit');
+    const statJemgezaEl = document.getElementById('statJemgeza');
+    const statQuickPayEl = document.getElementById('statQuickPay');
 
     if (statTotalSalesEl) statTotalSalesEl.textContent = totalSales.toLocaleString();
     if (statTotalPurchasesEl) statTotalPurchasesEl.textContent = totalPurchases.toLocaleString();
     if (statTotalMoneyReceivedEl) statTotalMoneyReceivedEl.textContent = totalMoneyReceived.toLocaleString();
     if (statTotalSpendAndExpensesEl) statTotalSpendAndExpensesEl.textContent = totalSpendAndExpenses.toLocaleString();
-    if (statTodayMoneyReceivedEl) statTodayMoneyReceivedEl.textContent = Math.max(0, todayMoneyReceived).toLocaleString();
+    if (statTodayMoneyReceivedEl) statTodayMoneyReceivedEl.textContent = Math.max(0, totalMoneyReceivedAll).toLocaleString();
     if (statTotalProductsEl) statTotalProductsEl.textContent = totalProducts;
     if (statTotalPersonsEl) statTotalPersonsEl.textContent = totalPersons;
     if (statMyDebtToPartnersEl) statMyDebtToPartnersEl.textContent = myDebtToPartners.toLocaleString();
@@ -2417,11 +2488,14 @@
       statProfitEl.textContent = profit.toLocaleString();
       statProfitEl.className = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : 'profit-zero';
     }
+    
+    if (statJemgezaEl) statJemgezaEl.textContent = jemgeza.toLocaleString();
+    if (statQuickPayEl) statQuickPayEl.textContent = quickPay.toLocaleString();
 
     updateAccountingDisplay();
   }
 
-  // ===== IMPROVED SEARCH FUNCTION WITH ENTER SUPPORT =====
+  // ===== SEARCH PRODUCT (GLOBAL IMPROVED) =====
   function setupGlobalProductSearch(inputId, suggestionsId, onSelect, customFilter) {
     const input = document.getElementById(inputId);
     const suggestions = document.getElementById(suggestionsId);
@@ -2429,7 +2503,6 @@
 
     let timer;
     let selectedIndex = -1;
-    let currentFiltered = [];
 
     input.addEventListener('input', function(e) {
       clearTimeout(timer);
@@ -2437,7 +2510,6 @@
       
       if (!query) {
         suggestions.style.display = 'none';
-        currentFiltered = [];
         return;
       }
 
@@ -2447,7 +2519,6 @@
           p.barcode.includes(query)
         );
         if (customFilter) filtered = customFilter(filtered);
-        currentFiltered = filtered;
 
         if (filtered.length) {
           suggestions.innerHTML = filtered.map((p, index) => `
@@ -2470,50 +2541,19 @@
                 onSelect(product);
                 suggestions.style.display = 'none';
                 input.value = '';
-                currentFiltered = [];
               }
             });
           });
         } else {
           suggestions.style.display = 'none';
-          currentFiltered = [];
         }
       }, 300);
     });
 
-    // پشتیبانی لە کلیلی Enter بۆ زیادکردنی کاڵا بە بارکۆد
     input.addEventListener('keydown', function(e) {
       const items = suggestions.querySelectorAll('.suggestion-item');
-      
-      // ئەگەر کلیلی Enter کرایەوە
-      if (e.key === 'Enter') {
-        // ئەگەر پێشنیارێک هەڵبژێردرابوو
-        if (selectedIndex >= 0 && items.length > 0) {
-          e.preventDefault();
-          if (items[selectedIndex]) items[selectedIndex].click();
-          return;
-        }
-        
-        // ئەگەر هیچ پێشنیارێک هەڵنەبژێردرابوو، بەڵام بارکۆدێک داخیل کرابوو
-        const query = this.value.trim();
-        if (query) {
-          // گەڕان بەدوای کاڵا بە بارکۆد یان ناو
-          let product = warehouseProducts.find(p => p.barcode === query);
-          if (!product) {
-            product = warehouseProducts.find(p => p.name.toLowerCase() === query.toLowerCase());
-          }
-          if (product && onSelect) {
-            e.preventDefault();
-            onSelect(product);
-            this.value = '';
-            suggestions.style.display = 'none';
-            currentFiltered = [];
-            showToast(`✅ ${product.name} زیادکرا`, 'success');
-          }
-        }
-      }
-      
-      // چاودێری Arrow keys
+      if (!items.length) return;
+
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
@@ -2522,6 +2562,9 @@
         e.preventDefault();
         selectedIndex = Math.max(selectedIndex - 1, 0);
         updateSelection(items);
+      } else if (e.key === 'Enter' && selectedIndex >= 0) {
+        e.preventDefault();
+        if (items[selectedIndex]) items[selectedIndex].click();
       } else if (e.key === 'Escape') {
         suggestions.style.display = 'none';
       }
@@ -4222,6 +4265,16 @@
     else if (moduleId === 'agents') navigateTo('agents');
     else if (moduleId === 'give_agent') navigateTo('giveAgent');
     else if (moduleId === 'accounting') navigateTo('accounting');
+    else if (moduleId === 'quickpay') {
+      navigateTo('sales');
+      setTimeout(() => {
+        document.querySelectorAll('#salesView .tab[data-tab]').forEach(t => t.classList.remove('active'));
+        const qTab = document.querySelector('#salesView .tab[data-tab="quickpay"]');
+        if (qTab) qTab.classList.add('active');
+        document.querySelectorAll('#salesView .panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('quickPayPanel').classList.add('active');
+      }, 50);
+    }
     else if (moduleId === 'purchase_return') { navigateTo('purchase'); setTimeout(() => { 
       document.querySelectorAll('[data-purchasetab]').forEach(t => t.classList.remove('active')); 
       document.querySelector('[data-purchasetab="return"]')?.classList.add('active'); 
@@ -6462,7 +6515,7 @@
     updateStats();
   };
 
-  // ===== COMPLETE PURCHASE (FIXED) =====
+  // ===== COMPLETE PURCHASE =====
   window.completePurchase = function() {
     if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
     if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
@@ -7313,6 +7366,15 @@
   // ===== TAB EVENT LISTENERS =====
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('tab')) {
+      // تابەکانی کویک پەی
+      if (e.target.dataset.tab === 'quickpay') {
+        document.querySelectorAll('#salesView .tab[data-tab]').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        document.querySelectorAll('#salesView .panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('quickPayPanel').classList.add('active');
+        return;
+      }
+      
       if (e.target.dataset.purchasetab) {
         document.querySelectorAll('[data-purchasetab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -7354,7 +7416,7 @@
         if (tab === 'list') renderPersonsList();
         if (tab === 'adjust') { selectedAdjustEntity = null; document.getElementById('selectedAdjustEntityInfo').style.display = 'none'; document.getElementById('adjustEntitySearch').value = ''; document.getElementById('adjustEntitySuggestions').style.display = 'none'; renderAdjustmentHistory(); }
       }
-      if (e.target.dataset.tab) {
+      if (e.target.dataset.tab && e.target.dataset.tab !== 'quickpay') {
         document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
         document.getElementById('newSalePanel').classList.toggle('active', e.target.dataset.tab === 'newSale');
