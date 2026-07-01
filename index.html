@@ -61,6 +61,8 @@
     .stat-icon.amber { background:linear-gradient(135deg,#d97706,#b45309); }
     .stat-icon.violet { background:linear-gradient(135deg,#7c3aed,#6d28d9); }
     .stat-icon.gold { background:linear-gradient(135deg,#d4af37,#b8942a); }
+    .stat-icon.quickpay { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+    .stat-icon.quickpay-fund { background: linear-gradient(135deg, #f59e0b, #d97706); }
     .stat-info h4 { font-size:1.4rem; font-weight:700; color:var(--text-primary); }
     .stat-info span { font-size:0.8rem; color:var(--text-secondary); font-weight:500; }
     .module-section { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:0.8rem; margin:1.8rem 0 1rem; }
@@ -257,6 +259,38 @@
       font-size: 2rem;
       color: #0f172a;
     }
+
+    /* QuickPay Panel */
+    .quickpay-card {
+      background: linear-gradient(145deg, #f5f3ff, #ede9fe);
+      border: 2px solid #c4b5fd;
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .quickpay-card h4 { color: #5b21b6; margin-bottom: 0.8rem; }
+    .quickpay-card .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 600px) {
+      .quickpay-card .form-row { grid-template-columns: 1fr; }
+    }
+    .quickpay-card label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.3rem;
+      color: #4c1d95;
+    }
+    .quickpay-card input, .quickpay-card select {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 1.5rem;
+      border: 1px solid #cbd5e1;
+    }
+
     @media print {
       body { background:white; }
       .system-container { box-shadow:none; backdrop-filter:none; background:white; padding:0; }
@@ -487,6 +521,9 @@
       <div class="stat-card"><div class="stat-icon green"><i class="fas fa-handshake"></i></div><div class="stat-info"><h4 id="statPersonsDebtToMe">0</h4><span>قەرزاری کەسەکان بۆ من</span></div></div>
       <!-- کارتی قازانج -->
       <div class="stat-card profit-card"><div class="stat-icon gold"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h4 id="statProfit">0</h4><span>قازانج (فرۆشتن - کڕین - سەرف)</span></div></div>
+      <!-- کارتی QuickPay -->
+      <div class="stat-card"><div class="stat-icon quickpay"><i class="fas fa-mobile-alt"></i></div><div class="stat-info"><h4 id="statQuickPayBalance">0</h4><span>کۆی پارەی QuickPay</span></div></div>
+      <div class="stat-card"><div class="stat-icon quickpay-fund"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statQuickPayFund">0</h4><span>کۆی پارەی تێکراو بۆ QuickPay</span></div></div>
     </div>
     <div style="margin-top:0.5rem; display:flex; justify-content:space-between; align-items:center;">
       <div class="section-title"><i class="fas fa-th-large" style="color:#2563eb;"></i> هەموو بەشەکان</div>
@@ -550,6 +587,7 @@
         <div class="tab active" data-tab="newSale">➕ فرۆشتنی نوێ</div>
         <div class="tab" data-tab="history">📋 مێژووی فرۆشتن</div>
         <div class="tab" data-tab="return">↩️ گەڕانەوەی فرۆشتن</div>
+        <div class="tab" data-tab="quickpay">📱 کویک پەی</div>
       </div>
       <div class="panel active" id="newSalePanel">
         <div class="new-sale-layout">
@@ -675,6 +713,63 @@
         <div id="returnHistoryList" class="card-glass" style="margin-top:1.5rem;">
           <h4><i class="fas fa-history"></i> مێژووی گەڕانەوەکانی فرۆشتن</h4>
           <div id="returnHistoryContainer" style="max-height:300px; overflow-y:auto;"></div>
+        </div>
+      </div>
+      <!-- QuickPay Panel -->
+      <div class="panel" id="quickpayPanel">
+        <div class="card-glass quickpay-card">
+          <h3><i class="fas fa-mobile-alt" style="color:#7c3aed;"></i> تێکردنی پارە لە کویک پەی</h3>
+          
+          <!-- هەڵبژاردنی جۆری حیساب -->
+          <div class="form-row">
+            <div>
+              <label>🏦 حیساب بۆ کەمکردنەوە:</label>
+              <select id="quickpayFromAccount" style="width:100%; padding:0.6rem; border-radius:1.5rem; border:1px solid #cbd5e1;">
+                <option value="today">واسڵی ئەمرۆ</option>
+                <option value="total">کۆی واسڵکراو</option>
+                <option value="quickpay">کۆی پارەی QuickPay</option>
+              </select>
+            </div>
+            <div>
+              <label>💰 بڕی پارە:</label>
+              <input type="number" id="quickpayAmount" placeholder="بڕی پارە..." min="1" style="width:100%; padding:0.6rem; border-radius:1.5rem; border:1px solid #cbd5e1;">
+            </div>
+          </div>
+
+          <!-- هۆکاری ڕۆشتن -->
+          <div style="margin-bottom:1rem;">
+            <label>📌 هۆکاری ڕۆشتن:</label>
+            <select id="quickpayReason" style="width:100%; padding:0.6rem; border-radius:1.5rem; border:1px solid #cbd5e1;">
+              <option value="card">💳 کارت</option>
+              <option value="fib">🌐 FIB ئینتەرنێت</option>
+              <option value="qicard">📱 QiCard</option>
+              <option value="other">📌 دیکە</option>
+            </select>
+          </div>
+
+          <!-- تێبینی -->
+          <div style="margin-bottom:1rem;">
+            <label>📝 تێبینی:</label>
+            <input type="text" id="quickpayNote" placeholder="تێبینی (ئارەزوومەندانە)..." style="width:100%; padding:0.6rem; border-radius:1.5rem; border:1px solid #cbd5e1;">
+          </div>
+
+          <button onclick="processQuickPay()" style="background:#7c3aed; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%;">
+            <i class="fas fa-check-circle"></i> تێکردنی پارە لە کویک پەی
+          </button>
+
+          <!-- پێشبینینی ئەنجام -->
+          <div id="quickpayPreview" style="margin-top:1.5rem; background:#f8fafc; border-radius:1.5rem; padding:1rem; display:none; border:2px dashed #c4b5fd;">
+            <p><strong>📊 پێشبینین:</strong></p>
+            <div id="quickpayPreviewDetails"></div>
+          </div>
+        </div>
+
+        <!-- مێژووی QuickPay -->
+        <div class="card-glass" style="margin-top:1.5rem;">
+          <h4><i class="fas fa-history"></i> مێژووی تێکردنەکانی QuickPay</h4>
+          <div id="quickpayHistoryList" style="max-height:300px; overflow-y:auto;">
+            <p style="color:#94a3b8; text-align:center;">هیچ تێکردنێک تۆمار نەکراوە</p>
+          </div>
         </div>
       </div>
     </div>
@@ -2268,7 +2363,8 @@
     { id: 'barcode', icon: 'fa-barcode', label: 'پرێنتکردنی بارکۆد', color: '#f3e8ff', text: '#6b21a8' },
     { id: 'agents', icon: 'fa-user-tie', label: 'مەندوبەکان', color: '#fef3c7', text: '#b45309' },
     { id: 'give_agent', icon: 'fa-box-open', label: 'پێدانی کاڵاکان بە مەندوبەکان', color: '#f3e8ff', text: '#6b21a8' },
-    { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکویریتی', color: '#e0e7ff', text: '#3730a3' }
+    { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکویریتی', color: '#e0e7ff', text: '#3730a3' },
+    { id: 'quickpay', icon: 'fa-mobile-alt', label: 'کویک پەی', color: '#ede9fe', text: '#5b21b6' }
   ];
 
   let moduleOrder = allModules.map(m => m.id);
@@ -2360,7 +2456,171 @@
 
   let employeePermissions = JSON.parse(localStorage.getItem('market_employee_permissions') || '{}');
 
-  // ===== UPDATE STATS (Improved with Profit Card) =====
+  // ===== QuickPay System =====
+  let quickPayHistory = JSON.parse(localStorage.getItem('market_quickpay_history') || '[]');
+
+  function updateQuickPayStats() {
+    const totalQuickPay = quickPayHistory.reduce((sum, r) => sum + r.amount, 0);
+    const totalFund = quickPayHistory.reduce((sum, r) => sum + r.amount, 0);
+    
+    const el1 = document.getElementById('statQuickPayBalance');
+    const el2 = document.getElementById('statQuickPayFund');
+    if (el1) el1.textContent = totalQuickPay.toLocaleString();
+    if (el2) el2.textContent = totalFund.toLocaleString();
+  }
+
+  function renderQuickPayHistory() {
+    const container = document.getElementById('quickpayHistoryList');
+    if (!container) return;
+    if (!quickPayHistory.length) {
+      container.innerHTML = '<p style="color:#94a3b8; text-align:center;">هیچ تێکردنێک تۆمار نەکراوە</p>';
+      return;
+    }
+    container.innerHTML = quickPayHistory.map(r => `
+      <div class="history-row">
+        <div><strong>${r.id}</strong> | ${r.date}</div>
+        <div>💰 ${r.amount.toLocaleString()} د.ع</div>
+        <div><span style="background:#ede9fe; padding:0.2rem 0.8rem; border-radius:1rem;">${r.reason === 'card' ? '💳 کارت' : r.reason === 'fib' ? '🌐 FIB' : r.reason === 'qicard' ? '📱 QiCard' : '📌 دیکە'}</span></div>
+        <div style="font-size:0.8rem;">${r.note || ''}</div>
+        <div><button class="btn-icon" onclick="deleteQuickPayRecord('${r.id}')"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button></div>
+      </div>
+    `).join('');
+  }
+
+  window.processQuickPay = function() {
+    const amount = parseInt(document.getElementById('quickpayAmount').value);
+    const fromAccount = document.getElementById('quickpayFromAccount').value;
+    const reason = document.getElementById('quickpayReason').value;
+    const note = document.getElementById('quickpayNote').value.trim();
+
+    if (!amount || amount <= 0) {
+      alert('تکایە بڕی پارەی دروست بنووسە (ژمارەیەک لە 1 زیاتر)');
+      return;
+    }
+
+    // پشتڕاستکردنەوەی بڕی پارە لە حیسابەکە
+    let available = 0;
+    const today = new Date().toLocaleDateString('ckb');
+    const todayCredits = moneyRequests.filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0).reduce((sum, r) => sum + r.amount, 0);
+    const todayDebits = moneyRequests.filter(r => r.date && r.date.includes(today) && r.amount < 0).reduce((sum, r) => sum + Math.abs(r.amount), 0);
+    const todayMoney = todayCredits - todayDebits;
+    const totalMoney = moneyRequests.filter(r => r.isTransfer === true).reduce((sum, r) => sum + r.amount, 0);
+    const quickpayTotal = quickPayHistory.reduce((sum, r) => sum + r.amount, 0);
+
+    if (fromAccount === 'today') available = Math.max(0, todayMoney);
+    else if (fromAccount === 'total') available = totalMoney;
+    else if (fromAccount === 'quickpay') available = quickpayTotal;
+
+    if (amount > available) {
+      alert(`بڕی ${amount.toLocaleString()} د.ع لە حیسابی ${fromAccount === 'today' ? 'واسڵی ئەمرۆ' : fromAccount === 'total' ? 'کۆی واسڵکراو' : 'QuickPay'} زیاترە! (ماوە: ${available.toLocaleString()} د.ع)`);
+      return;
+    }
+
+    // پێشبینین
+    const previewDiv = document.getElementById('quickpayPreview');
+    const previewDetails = document.getElementById('quickpayPreviewDetails');
+    previewDiv.style.display = 'block';
+    previewDetails.innerHTML = `
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+        <span>💰 بڕ: <strong>${amount.toLocaleString()} د.ع</strong></span>
+        <span>🏦 لە حیساب: <strong>${fromAccount === 'today' ? 'واسڵی ئەمرۆ' : fromAccount === 'total' ? 'کۆی واسڵکراو' : 'QuickPay'}</strong></span>
+        <span>📌 هۆکار: <strong>${reason === 'card' ? '💳 کارت' : reason === 'fib' ? '🌐 FIB' : reason === 'qicard' ? '📱 QiCard' : '📌 دیکە'}</strong></span>
+      </div>
+      <div style="margin-top:0.5rem; color:#64748b; font-size:0.9rem;">${note ? `📝 تێبینی: ${note}` : ''}</div>
+    `;
+
+    if (!confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە ${fromAccount === 'today' ? 'واسڵی ئەمرۆ' : fromAccount === 'total' ? 'کۆی واسڵکراو' : 'QuickPay'} کەم بکەیت و بۆ QuickPay زیاد بکەیت؟`)) {
+      previewDiv.style.display = 'none';
+      return;
+    }
+
+    // کەمکردنەوە لە حیسابەکە
+    if (fromAccount === 'today') {
+      moneyRequests.push({
+        id: 'QP-OUT-' + Date.now(),
+        date: new Date().toLocaleString('ckb'),
+        type: 'quickpay_out',
+        entityName: 'کەمکردنەوە بۆ QuickPay',
+        amount: -amount,
+        note: `گواستنەوە بۆ QuickPay (${reason})`,
+        isTransfer: false,
+        isExpense: true
+      });
+    } else if (fromAccount === 'total') {
+      moneyRequests.push({
+        id: 'QP-OUT-TOTAL-' + Date.now(),
+        date: new Date().toLocaleString('ckb'),
+        type: 'quickpay_out_total',
+        entityName: 'کەمکردنەوە لە کۆی واسڵکراو',
+        amount: -amount,
+        note: `گواستنەوە بۆ QuickPay (${reason})`,
+        isTransfer: false,
+        isExpense: true
+      });
+    }
+
+    // زیادکردن بۆ QuickPay
+    const now = new Date();
+    const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const recordId = 'QP' + Math.floor(Math.random() * 90000 + 10000);
+    
+    quickPayHistory.push({
+      id: recordId,
+      date: dateStr,
+      amount: amount,
+      fromAccount: fromAccount,
+      reason: reason,
+      note: note || ''
+    });
+    
+    localStorage.setItem('market_quickpay_history', JSON.stringify(quickPayHistory));
+    saveMoneyRequests();
+    
+    // نوێکردنەوەی پیشاندان
+    document.getElementById('quickpayAmount').value = '';
+    document.getElementById('quickpayNote').value = '';
+    previewDiv.style.display = 'none';
+    
+    renderQuickPayHistory();
+    updateQuickPayStats();
+    updateStats();
+    updateAccountingDisplay();
+    
+    alert(`✅ تێکردن بۆ QuickPay تۆمارکرا!\nبڕ: ${amount.toLocaleString()} د.ع\nهۆکار: ${reason}`);
+  };
+
+  window.deleteQuickPayRecord = function(id) {
+    if (!confirm('دڵنیایت لە سڕینەوەی ئەم تۆمارە؟')) return;
+    const record = quickPayHistory.find(r => r.id === id);
+    if (record) {
+      // گەڕاندنەوەی پارە بۆ حیسابەکە (بۆ سادەیی تەنها لە مێژوو دەسڕدرێت)
+      // لەم حاڵەتەدا پارەکە ناگەڕێتەوە بۆ حیسابەکە چونکە لەوانەیە پارەکە خەرج کرابێت
+    }
+    quickPayHistory = quickPayHistory.filter(r => r.id !== id);
+    localStorage.setItem('market_quickpay_history', JSON.stringify(quickPayHistory));
+    renderQuickPayHistory();
+    updateQuickPayStats();
+  };
+
+  // نمایشی پێشبینین کاتێک بڕ یان حیساب دەگۆڕدرێت
+  document.addEventListener('DOMContentLoaded', function() {
+    const amountInput = document.getElementById('quickpayAmount');
+    const accountSelect = document.getElementById('quickpayFromAccount');
+    if (amountInput) {
+      amountInput.addEventListener('input', function() {
+        const preview = document.getElementById('quickpayPreview');
+        if (preview) preview.style.display = 'none';
+      });
+    }
+    if (accountSelect) {
+      accountSelect.addEventListener('change', function() {
+        const preview = document.getElementById('quickpayPreview');
+        if (preview) preview.style.display = 'none';
+      });
+    }
+  });
+
+  // ===== UPDATE STATS (Improved with Profit Card & QuickPay) =====
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
@@ -2390,7 +2650,6 @@
     const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, c.debt), 0);
 
     // قازانج: فرۆشتن - کڕین - کۆی سەرف و مەسروفات
-    // تێبینی: کڕینی نەقدی لە کۆی کڕین حیساب دەکرێت و لە واسڵی ئەمرۆ کەم دەکات، بەڵام وەک خەرجی حیساب ناکرێت
     const profit = totalSales - totalPurchases - totalSpendAndExpenses;
 
     const statTotalSalesEl = document.getElementById('statTotalSales');
@@ -2420,6 +2679,7 @@
     }
 
     updateAccountingDisplay();
+    updateQuickPayStats();
   }
 
   // ===== SEARCH PRODUCT (GLOBAL IMPROVED) =====
@@ -4212,6 +4472,7 @@
     else if (moduleId === 'employees') navigateTo('employees');
     else if (moduleId === 'security') navigateTo('security');
     else if (moduleId === 'reports') navigateTo('reports');
+    else if (moduleId === 'quickpay') navigateTo('sales');
     else alert('ئەم بەشە ئێستا تەنیا هەندێک بەش کارایە');
   };
 
@@ -4231,7 +4492,7 @@
     const dashboardStats = document.getElementById('dashboardStats');
     if (view === 'dashboard' && dashboardStats) dashboardStats.style.display = 'grid';
     else if (dashboardStats) dashboardStats.style.display = 'none';
-    if (view === 'sales') { renderCart(); updateInvoicePreview(); renderHistory(); renderReturnHistory(); }
+    if (view === 'sales') { renderCart(); updateInvoicePreview(); renderHistory(); renderReturnHistory(); renderQuickPayHistory(); }
     else if (view === 'settings') { renderSettingsPanels(); }
     else if (view === 'dashboard') { updateStats(); renderDashboardModules(); }
     else if (view === 'persons') { renderPersonsList(); document.getElementById('personDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کەسێک هەڵبژێرە بۆ بینینی زانیاری</p>'; renderAdjustmentHistory(); }
@@ -4614,6 +4875,7 @@
     renderExpenseHistory();
     renderGiveHistory();
     renderAdjustmentHistory();
+    renderQuickPayHistory();
     updateAccountingDisplay();
     document.getElementById('personDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کەسێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     document.getElementById('partnerDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">شەریکێک هەڵبژێرە بۆ بینینی زانیاری</p>';
@@ -5537,7 +5799,7 @@
   let backupHistory = JSON.parse(localStorage.getItem('market_backup_history') || '[]');
 
   window.createBackup = function() {
-    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory };
+    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, quickPayHistory: quickPayHistory };
     backupHistory.unshift({ date: backupData.date, data: backupData });
     if (backupHistory.length > 10) backupHistory.pop();
     localStorage.setItem('market_backup_history', JSON.stringify(backupHistory));
@@ -5546,7 +5808,7 @@
   };
 
   window.downloadBackup = function() {
-    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory };
+    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, quickPayHistory: quickPayHistory };
     const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -5588,6 +5850,7 @@
         if (backupData.expenseHistory) { expenseHistory = backupData.expenseHistory; saveExpenseHistory(); }
         if (backupData.giveMoneyHistory) { giveMoneyHistory = backupData.giveMoneyHistory; saveGiveMoneyHistory(); }
         if (backupData.adjustmentHistory) { adjustmentHistory = backupData.adjustmentHistory; saveAdjustmentHistory(); }
+        if (backupData.quickPayHistory) { quickPayHistory = backupData.quickPayHistory; localStorage.setItem('market_quickpay_history', JSON.stringify(quickPayHistory)); }
         renderDashboardModules();
         renderPersonsList();
         renderPartnersList();
@@ -5606,6 +5869,7 @@
         renderExpenseHistory();
         renderGiveHistory();
         renderAdjustmentHistory();
+        renderQuickPayHistory();
         alert('باکەپ بە سەرکەوتوویی گەڕێندرایەوە');
       } catch (err) { alert('فایلی باکەپ نادروستە'); }
     };
@@ -5647,13 +5911,14 @@
       if (backup.data.warehouseProducts) { warehouseProducts = backup.data.warehouseProducts; saveWarehouseProducts(); }
       if (backup.data.moneyRequests) { moneyRequests = backup.data.moneyRequests; saveMoneyRequests(); }
       if (backup.data.purchaseHistory) { purchaseHistory = backup.data.purchaseHistory; savePurchaseHistory(); }
-      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backupData.expiredDamagedProducts; saveExpiryDamage(); }
-      if (backup.data.returnHistory) { returnHistory = backupData.returnHistory; saveReturnHistory(); }
-      if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backupData.purchaseReturnHistory; savePurchaseReturnHistory(); }
-      if (backup.data.employees) { employees = backupData.employees; saveEmployees(); }
-      if (backup.data.expenseHistory) { expenseHistory = backupData.expenseHistory; saveExpenseHistory(); }
-      if (backup.data.giveMoneyHistory) { giveMoneyHistory = backupData.giveMoneyHistory; saveGiveMoneyHistory(); }
-      if (backup.data.adjustmentHistory) { adjustmentHistory = backupData.adjustmentHistory; saveAdjustmentHistory(); }
+      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backup.data.expiredDamagedProducts; saveExpiryDamage(); }
+      if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
+      if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backup.data.purchaseReturnHistory; savePurchaseReturnHistory(); }
+      if (backup.data.employees) { employees = backup.data.employees; saveEmployees(); }
+      if (backup.data.expenseHistory) { expenseHistory = backup.data.expenseHistory; saveExpenseHistory(); }
+      if (backup.data.giveMoneyHistory) { giveMoneyHistory = backup.data.giveMoneyHistory; saveGiveMoneyHistory(); }
+      if (backup.data.adjustmentHistory) { adjustmentHistory = backup.data.adjustmentHistory; saveAdjustmentHistory(); }
+      if (backup.data.quickPayHistory) { quickPayHistory = backup.data.quickPayHistory; localStorage.setItem('market_quickpay_history', JSON.stringify(quickPayHistory)); }
       renderDashboardModules();
       renderPersonsList();
       renderPartnersList();
@@ -5672,6 +5937,7 @@
       renderExpenseHistory();
       renderGiveHistory();
       renderAdjustmentHistory();
+      renderQuickPayHistory();
       alert('باکەپ گەڕێندرایەوە');
     }
   };
@@ -5680,7 +5946,7 @@
 
   window.addEventListener('beforeunload', function(e) {
     if (autoBackupEnabled) {
-      const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory };
+      const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, quickPayHistory: quickPayHistory };
       backupHistory.unshift({ date: backupData.date, data: backupData });
       if (backupHistory.length > 10) backupHistory.pop();
       localStorage.setItem('market_backup_history', JSON.stringify(backupHistory));
@@ -6432,7 +6698,7 @@
     updateStats();
   };
 
-  // ===== COMPLETE PURCHASE (FIXED) =====
+  // ===== COMPLETE PURCHASE =====
   window.completePurchase = function() {
     if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
     if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
@@ -6473,8 +6739,6 @@
       });
       savePartners();
     } else {
-      // کڕینی نەقدی - تەنها لە کۆی کڕین زیاد دەکات و لە واسڵی ئەمرۆ کەم دەکات
-      // بەڵام وەک خەرجی (isExpense) تۆمار ناکرێت چونکە کڕین خەرجی نییە
       moneyRequests.push({
         id: 'PUR-MONEY' + Date.now(),
         date: dateStr,
@@ -6484,7 +6748,6 @@
         amount: -total,
         note: `کڕین ${invId}`,
         isTransfer: false
-        // isExpense: true لابردراوە - چونکە کڕین خەرجی نییە!
       });
       saveMoneyRequests();
     }
@@ -7333,8 +7596,10 @@
         document.getElementById('newSalePanel').classList.toggle('active', e.target.dataset.tab === 'newSale');
         document.getElementById('historyPanel').classList.toggle('active', e.target.dataset.tab === 'history');
         document.getElementById('returnPanel').classList.toggle('active', e.target.dataset.tab === 'return');
+        document.getElementById('quickpayPanel').classList.toggle('active', e.target.dataset.tab === 'quickpay');
         if (e.target.dataset.tab === 'history') renderHistory();
         if (e.target.dataset.tab === 'return') renderReturnHistory();
+        if (e.target.dataset.tab === 'quickpay') { renderQuickPayHistory(); updateQuickPayStats(); }
       }
       if (e.target.dataset.waretab) {
         document.querySelectorAll('[data-waretab]').forEach(t => t.classList.remove('active'));
