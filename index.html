@@ -672,27 +672,27 @@
         <div class="page-title"><i class="fas fa-calculator" style="color:#5b21b6;"></i> حیبساتکردن</div>
       </div>
       <div class="card-glass" style="max-width:700px; margin:0 auto;">
-        <h3 style="margin-bottom:1.5rem;"><i class="fas fa-exchange-alt"></i> گواستنەوەی پارە لە واسڵی ئەمرۆ بۆ کۆی واسڵکراو</h3>
+        <h3 style="margin-bottom:1.5rem;"><i class="fas fa-exchange-alt"></i> گواستنەوەی پارە لە واسڵی ئەمرۆ بۆ جەمگزەی دووەم</h3>
         <div class="accounting-transfer-box">
           <h3><i class="fas fa-arrow-right"></i> گواستنەوەی پارە</h3>
           <div class="input-group">
             <input type="number" id="transferAmount" placeholder="بڕی پارە بۆ گواستنەوە..." min="1">
-            <button onclick="transferMoney()"><i class="fas fa-exchange-alt"></i> گواستنەوە</button>
+            <button onclick="transferMoneyToJemgeza()"><i class="fas fa-exchange-alt"></i> گواستنەوە بۆ جەمگزەی دووەم</button>
           </div>
           <div style="margin-top: 0.8rem; font-size: 0.85rem; color: #64748b;">
-            <i class="fas fa-info-circle"></i> پارە لە واسڵی ئەمرۆ دەبڕدرێت و بۆ کۆی واسڵکراو زیاد دەکرێت.
+            <i class="fas fa-info-circle"></i> پارە لە واسڵی ئەمرۆ دەبڕدرێت و بۆ جەمگزەی دووەم زیاد دەکرێت.
           </div>
         </div>
         <div style="background:#f8fafc; border-radius:1.5rem; padding:1.5rem; margin-bottom:1.5rem; border:2px solid #e2e8f0;">
           <h3 style="margin-bottom:1rem;"><i class="fas fa-balance-scale"></i> کۆی پارە</h3>
           <div class="accounting-balance">
             <span class="today-amount">💰 واسڵی ئەمرۆ: <strong id="accTodayMoney">0</strong> د.ع</span>
-            <span class="total-amount">💰 کۆی واسڵکراو: <strong id="accTotalMoney">0</strong> د.ع</span>
+            <span class="total-amount">💰 جەمگزەی دووەم: <strong id="accJemgeza">0</strong> د.ع</span>
           </div>
         </div>
         <div style="background:#fef9c3; border-radius:1.5rem; padding:1rem; border:1px solid #fde68a;">
           <p style="font-size:0.9rem; color:#854d0e;">
-            <i class="fas fa-lightbulb"></i> <strong>تێبینی:</strong> ئەگەر پارەی واسڵی ئەمرۆت زۆرە و دەتەوێت بەشێکی بگوازیتەوە بۆ کۆی گشتی، بڕەکە بنووسە و کلیکی گواستنەوە بکە.
+            <i class="fas fa-lightbulb"></i> <strong>تێبینی:</strong> ئەگەر پارەی واسڵی ئەمرۆت زۆرە و دەتەوێت بەشێکی بگوازیتەوە بۆ جەمگزەی دووەم، بڕەکە بنووسە و کلیکی گواستنەوە بکە.
           </p>
         </div>
       </div>
@@ -841,14 +841,12 @@
       <!-- ===== پانێلی کویک پەی ===== -->
       <div class="panel" id="quickPayPanel">
         <div class="quickpay-container">
-          <!-- کارتی کۆی کویک پەی -->
           <div class="quickpay-balance-card">
             <div class="label">💰 کۆی پارەی کویک پەی</div>
             <div class="amount" id="quickPayBalance">0</div>
             <div style="font-size:0.8rem; opacity:0.7;">د.ع</div>
           </div>
 
-          <!-- دوو کارتی ناردن و تێکردن -->
           <div class="quickpay-grid">
             <!-- کارتی ناردنی پارە -->
             <div class="quickpay-card-glass">
@@ -2475,7 +2473,8 @@
 
   // ===== HELPERS =====
   window.clearSearch = function(inputId, suggestionsId) {
-    document.getElementById(inputId).value = '';
+    const input = document.getElementById(inputId);
+    if (input) input.value = '';
     const suggestions = document.getElementById(suggestionsId);
     if (suggestions) suggestions.style.display = 'none';
     if (inputId === 'damageProductSearch') {
@@ -2811,7 +2810,6 @@
     
     // کەمکردنەوە لە حیسابی سەرچاوە
     if (source === 'total') {
-      // کەمکردنەوە لە کۆی گشتی پارەی واسڵکراو (بە زیادکردنی قەرز بە سیستەم)
       moneyRequests.push({
         id: 'QP-ADD-TOTAL-' + Date.now(),
         date: dateStr,
@@ -2825,7 +2823,6 @@
       });
       saveMoneyRequests();
     } else if (source === 'today') {
-      // کەمکردنەوە لە واسڵی ئەمرۆ (بە زیادکردنی مەسروفات)
       moneyRequests.push({
         id: 'QP-ADD-TODAY-' + Date.now(),
         date: dateStr,
@@ -2839,15 +2836,12 @@
       });
       saveMoneyRequests();
     } else if (source === 'jemgeza') {
-      // کەمکردنەوە لە جەمگزەی دووەم
       const currentJemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
       localStorage.setItem('market_jemgeza', (currentJemgeza - amount).toString());
     }
     
-    // زیادکردن بۆ کۆی کویک پەی
     quickPayBalance += amount;
     
-    // تۆمارکردن لە مێژووی کویک پەی
     quickPayHistory.unshift({
       id: 'QP-ADD-' + Date.now(),
       date: dateStr,
@@ -2940,21 +2934,17 @@
       return;
     }
     
-    // گۆڕینی بڕ لە مێژوودا
     const oldAmount = record.amount;
     const diff = newAmountInt - oldAmount;
     
     if (record.type === 'send') {
-      // بۆ ناردن: کۆی کویک پەی دەگۆڕێت
       quickPayBalance -= diff;
     } else if (record.type === 'add') {
-      // بۆ تێکردن: کۆی کویک پەی دەگۆڕێت
       quickPayBalance += diff;
     }
     
     record.amount = newAmountInt;
     
-    // گۆڕینی ناوی هۆکار/سەرچاوە
     if (record.type === 'send') {
       const newReason = prompt('هۆکاری نوێ:', record.reason || '');
       if (newReason !== null) record.reason = newReason || record.reason;
@@ -2978,7 +2968,6 @@
       return;
     }
     
-    // گەڕاندنەوەی پارە بۆ کۆی کویک پەی
     if (record.type === 'send') {
       quickPayBalance += record.amount;
     } else if (record.type === 'add') {
@@ -3185,7 +3174,7 @@
     renderAgentReturnCart();
   });
 
-  // ===== ACCOUNTING / TRANSFER FUNCTION =====
+  // ===== ACCOUNTING / TRANSFER FUNCTIONS =====
   function updateAccountingDisplay() {
     const today = new Date().toLocaleDateString('ckb');
     const todayCredits = moneyRequests
@@ -3195,16 +3184,14 @@
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
       .reduce((sum, r) => sum + Math.abs(r.amount), 0);
     const todayMoney = todayCredits - todayDebits;
-    const totalMoney = moneyRequests
-      .filter(r => r.isTransfer === true)
-      .reduce((sum, r) => sum + r.amount, 0);
+    const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     const accToday = document.getElementById('accTodayMoney');
-    const accTotal = document.getElementById('accTotalMoney');
+    const accJemgeza = document.getElementById('accJemgeza');
     if (accToday) accToday.textContent = Math.max(0, todayMoney).toLocaleString();
-    if (accTotal) accTotal.textContent = totalMoney.toLocaleString();
+    if (accJemgeza) accJemgeza.textContent = jemgeza.toLocaleString();
   }
 
-  window.transferMoney = function() {
+  window.transferMoneyToJemgeza = function() {
     const amountInput = document.getElementById('transferAmount');
     const amount = parseInt(amountInput.value);
     if (!amount || amount <= 0) {
@@ -3223,36 +3210,30 @@
       alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${Math.max(0, todayMoney).toLocaleString()} د.ع) زیاترە!`);
       return;
     }
-    if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ کۆی واسڵکراو؟`)) {
+    if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ جەمگزەی دووەم؟`)) {
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+      
+      const currentJemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
+      localStorage.setItem('market_jemgeza', (currentJemgeza + amount).toString());
+      
       moneyRequests.push({
-        id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
+        id: 'TR-JEM-' + Date.now(),
         date: dateStr,
-        type: 'transfer',
-        entityName: 'گواستنەوەی پارە',
-        entityPhone: '-',
-        amount: amount,
-        note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
-        isTransfer: true
-      });
-      moneyRequests.push({
-        id: 'TR-OUT' + Date.now(),
-        date: dateStr,
-        type: 'transfer_out',
-        entityName: 'کەمکردنەوەی واسڵی ئەمرۆ',
+        type: 'transfer_to_jemgeza',
+        entityName: 'گواستنەوە بۆ جەمگزەی دووەم',
         entityPhone: '-',
         amount: -amount,
-        note: `گواستنەوە بۆ کۆی گشتی`,
+        note: `گواستنەوە لە واسڵی ئەمرۆ بۆ جەمگزەی دووەم`,
         isTransfer: false,
         isExpense: true
       });
-      localStorage.setItem('market_money_requests', JSON.stringify(moneyRequests));
+      saveMoneyRequests();
+      
       updateAccountingDisplay();
       updateStats();
       amountInput.value = '';
-      showToast(`✅ ${amount.toLocaleString()} د.ع بە سەرکەوتوویی گواسترایەوە بۆ کۆی واسڵکراو!`, 'success');
-      renderMoneyHistory();
+      showToast(`✅ ${amount.toLocaleString()} د.ع بە سەرکەوتوویی گواسترایەوە بۆ جەمگزەی دووەم!`, 'success');
     }
   };
 
@@ -6197,7 +6178,7 @@
         alert('باکەپ بە سەرکەوتوویی گەڕێندرایەوە');
       } catch (err) { alert('فایلی باکەپ نادروستە'); }
     };
-    reader.readAsText(file);
+    reader.readAsDataURL(file);
     event.target.value = '';
   };
 
