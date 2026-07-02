@@ -577,6 +577,17 @@
     }
     .quickpay-history-item .actions .edit-btn { color: #2563eb; }
     .quickpay-history-item .actions .delete-btn { color: #dc2626; }
+    
+    /* ستایل بۆ جەمگزەی دووەم */
+    .jemgeza-display {
+      background: #fef9c3;
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      border: 1px solid #fde68a;
+      display: inline-block;
+      color: #854d0e;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -672,27 +683,46 @@
         <div class="page-title"><i class="fas fa-calculator" style="color:#5b21b6;"></i> حیبساتکردن</div>
       </div>
       <div class="card-glass" style="max-width:700px; margin:0 auto;">
-        <h3 style="margin-bottom:1.5rem;"><i class="fas fa-exchange-alt"></i> گواستنەوەی پارە لە واسڵی ئەمرۆ بۆ جەمگزەی دووەم</h3>
+        <h3 style="margin-bottom:1.5rem;"><i class="fas fa-exchange-alt"></i> گواستنەوەی پارە</h3>
+        
+        <!-- گواستنەوە بۆ کۆی گشتی -->
         <div class="accounting-transfer-box">
-          <h3><i class="fas fa-arrow-right"></i> گواستنەوەی پارە</h3>
+          <h3><i class="fas fa-arrow-right"></i> گواستنەوەی پارە بۆ کۆی واسڵکراو</h3>
           <div class="input-group">
             <input type="number" id="transferAmount" placeholder="بڕی پارە بۆ گواستنەوە..." min="1">
-            <button onclick="transferMoneyToJemgeza()"><i class="fas fa-exchange-alt"></i> گواستنەوە بۆ جەمگزەی دووەم</button>
+            <button onclick="transferMoney()"><i class="fas fa-exchange-alt"></i> گواستنەوە</button>
+          </div>
+          <div style="margin-top: 0.8rem; font-size: 0.85rem; color: #64748b;">
+            <i class="fas fa-info-circle"></i> پارە لە واسڵی ئەمرۆ دەبڕدرێت و بۆ کۆی واسڵکراو زیاد دەکرێت.
+          </div>
+        </div>
+
+        <!-- گواستنەوە بۆ جەمگزەی دووەم - زیادکراو -->
+        <div class="accounting-transfer-box" style="border-color: #d97706; margin-top: 1rem;">
+          <h3><i class="fas fa-piggy-bank" style="color:#d97706;"></i> گواستنەوەی پارە بۆ جەمگزەی دووەم</h3>
+          <div class="input-group">
+            <input type="number" id="transferToJemgezaAmount" placeholder="بڕی پارە بۆ گواستنەوە بۆ جەمگزەی دووەم..." min="1">
+            <button onclick="transferToJemgeza()" style="background:#d97706;"><i class="fas fa-piggy-bank"></i> گواستنەوە بۆ جەمگزەی دووەم</button>
           </div>
           <div style="margin-top: 0.8rem; font-size: 0.85rem; color: #64748b;">
             <i class="fas fa-info-circle"></i> پارە لە واسڵی ئەمرۆ دەبڕدرێت و بۆ جەمگزەی دووەم زیاد دەکرێت.
+            <span style="display:block; margin-top:0.3rem; background:#fef9c3; padding:0.3rem 0.8rem; border-radius:1rem; color:#854d0e;">
+              جەمگزەی دووەم: <strong id="jemgezaBalanceDisplay">0</strong> د.ع
+            </span>
           </div>
         </div>
+
         <div style="background:#f8fafc; border-radius:1.5rem; padding:1.5rem; margin-bottom:1.5rem; border:2px solid #e2e8f0;">
           <h3 style="margin-bottom:1rem;"><i class="fas fa-balance-scale"></i> کۆی پارە</h3>
           <div class="accounting-balance">
             <span class="today-amount">💰 واسڵی ئەمرۆ: <strong id="accTodayMoney">0</strong> د.ع</span>
-            <span class="total-amount">💰 جەمگزەی دووەم: <strong id="accJemgeza">0</strong> د.ع</span>
+            <span class="total-amount">💰 کۆی واسڵکراو: <strong id="accTotalMoney">0</strong> د.ع</span>
+            <span style="color:#d97706; background:#fef9c3;">🐷 جەمگزەی دووەم: <strong id="accJemgezaMoney">0</strong> د.ع</span>
           </div>
         </div>
         <div style="background:#fef9c3; border-radius:1.5rem; padding:1rem; border:1px solid #fde68a;">
           <p style="font-size:0.9rem; color:#854d0e;">
-            <i class="fas fa-lightbulb"></i> <strong>تێبینی:</strong> ئەگەر پارەی واسڵی ئەمرۆت زۆرە و دەتەوێت بەشێکی بگوازیتەوە بۆ جەمگزەی دووەم، بڕەکە بنووسە و کلیکی گواستنەوە بکە.
+            <i class="fas fa-lightbulb"></i> <strong>تێبینی:</strong> ئەگەر پارەی واسڵی ئەمرۆت زۆرە و دەتەوێت بەشێکی بگوازیتەوە بۆ کۆی گشتی یان جەمگزەی دووەم، بڕەکە بنووسە و کلیکی گواستنەوە بکە.
           </p>
         </div>
       </div>
@@ -841,12 +871,14 @@
       <!-- ===== پانێلی کویک پەی ===== -->
       <div class="panel" id="quickPayPanel">
         <div class="quickpay-container">
+          <!-- کارتی کۆی کویک پەی -->
           <div class="quickpay-balance-card">
             <div class="label">💰 کۆی پارەی کویک پەی</div>
             <div class="amount" id="quickPayBalance">0</div>
             <div style="font-size:0.8rem; opacity:0.7;">د.ع</div>
           </div>
 
+          <!-- دوو کارتی ناردن و تێکردن -->
           <div class="quickpay-grid">
             <!-- کارتی ناردنی پارە -->
             <div class="quickpay-card-glass">
@@ -2473,8 +2505,7 @@
 
   // ===== HELPERS =====
   window.clearSearch = function(inputId, suggestionsId) {
-    const input = document.getElementById(inputId);
-    if (input) input.value = '';
+    document.getElementById(inputId).value = '';
     const suggestions = document.getElementById(suggestionsId);
     if (suggestions) suggestions.style.display = 'none';
     if (inputId === 'damageProductSearch') {
@@ -2610,13 +2641,13 @@
     updateQuickPayStats();
   }
 
-  // ===== UPDATE STATS (Improved with QuickPay) =====
+  // ===== UPDATE STATS (Improved with QuickPay and Jemgeza) =====
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
     
     const totalMoneyReceived = moneyRequests
-      .filter(r => r.isTransfer === true)
+      .filter(r => r.isTransfer === true && !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
     
     const totalMoneyReceivedAll = totalSales + totalMoneyReceived;
@@ -2631,13 +2662,16 @@
     
     const today = new Date().toLocaleDateString('ckb');
     const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && 
+             r.isTransfer !== true && 
+             r.amount > 0 && 
+             r.type !== 'adjustment' &&
+             !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
     const todayDebits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
       .reduce((sum, r) => sum + Math.abs(r.amount), 0);
     
-    // Today money includes QuickPay sends (they add to today's money)
     const todayQuickPaySends = quickPayHistory
       .filter(r => r.type === 'send' && r.date && r.date.includes(today))
       .reduce((sum, r) => sum + r.amount, 0);
@@ -2696,9 +2730,15 @@
     const balanceEl = document.getElementById('quickPayBalance');
     if (balanceEl) balanceEl.textContent = quickPayBalance.toLocaleString();
     
-    // Also update the stat card
     const statQuickPayEl = document.getElementById('statQuickPay');
     if (statQuickPayEl) statQuickPayEl.textContent = quickPayBalance.toLocaleString();
+    
+    // Update jemgeza display in accounting
+    const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
+    const jemgezaDisplay = document.getElementById('jemgezaBalanceDisplay');
+    if (jemgezaDisplay) jemgezaDisplay.textContent = jemgeza.toLocaleString();
+    const accJemgeza = document.getElementById('accJemgezaMoney');
+    if (accJemgeza) accJemgeza.textContent = jemgeza.toLocaleString();
   }
 
   // ===== QUICKPAY FUNCTIONS =====
@@ -2779,13 +2819,17 @@
     if (source === 'total') {
       sourceName = 'کۆی گشتی پارەی واسڵکراو';
       availableAmount = moneyRequests
-        .filter(r => r.isTransfer === true)
+        .filter(r => r.isTransfer === true && !r.isJemgeza)
         .reduce((sum, r) => sum + r.amount, 0);
     } else if (source === 'today') {
       sourceName = 'کۆی واسڵی ئەمرۆ';
       const today = new Date().toLocaleDateString('ckb');
       const todayCredits = moneyRequests
-        .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+        .filter(r => r.date && r.date.includes(today) && 
+               r.isTransfer !== true && 
+               r.amount > 0 && 
+               r.type !== 'adjustment' &&
+               !r.isJemgeza)
         .reduce((sum, r) => sum + r.amount, 0);
       const todayDebits = moneyRequests
         .filter(r => r.date && r.date.includes(today) && r.amount < 0)
@@ -2838,10 +2882,25 @@
     } else if (source === 'jemgeza') {
       const currentJemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
       localStorage.setItem('market_jemgeza', (currentJemgeza - amount).toString());
+      moneyRequests.push({
+        id: 'QP-ADD-JEMGEZA-' + Date.now(),
+        date: dateStr,
+        type: 'quickpay_add_from_jemgeza',
+        entityName: 'تێکردنی کویک پەی',
+        entityPhone: '-',
+        amount: -amount,
+        note: `تێکردن بۆ کویک پەی لە جەمگزەی دووەم`,
+        isTransfer: false,
+        isExpense: true,
+        isJemgeza: true
+      });
+      saveMoneyRequests();
     }
     
+    // زیادکردن بۆ کۆی کویک پەی
     quickPayBalance += amount;
     
+    // تۆمارکردن لە مێژووی کویک پەی
     quickPayHistory.unshift({
       id: 'QP-ADD-' + Date.now(),
       date: dateStr,
@@ -3178,20 +3237,33 @@
   function updateAccountingDisplay() {
     const today = new Date().toLocaleDateString('ckb');
     const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && 
+             r.isTransfer !== true && 
+             r.amount > 0 && 
+             r.type !== 'adjustment' &&
+             !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
     const todayDebits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
       .reduce((sum, r) => sum + Math.abs(r.amount), 0);
     const todayMoney = todayCredits - todayDebits;
+    const totalMoney = moneyRequests
+      .filter(r => r.isTransfer === true && !r.isJemgeza)
+      .reduce((sum, r) => sum + r.amount, 0);
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
+    
     const accToday = document.getElementById('accTodayMoney');
-    const accJemgeza = document.getElementById('accJemgeza');
+    const accTotal = document.getElementById('accTotalMoney');
+    const accJemgeza = document.getElementById('accJemgezaMoney');
+    const jemgezaDisplay = document.getElementById('jemgezaBalanceDisplay');
+    
     if (accToday) accToday.textContent = Math.max(0, todayMoney).toLocaleString();
+    if (accTotal) accTotal.textContent = totalMoney.toLocaleString();
     if (accJemgeza) accJemgeza.textContent = jemgeza.toLocaleString();
+    if (jemgezaDisplay) jemgezaDisplay.textContent = jemgeza.toLocaleString();
   }
 
-  window.transferMoneyToJemgeza = function() {
+  window.transferMoney = function() {
     const amountInput = document.getElementById('transferAmount');
     const amount = parseInt(amountInput.value);
     if (!amount || amount <= 0) {
@@ -3200,7 +3272,68 @@
     }
     const today = new Date().toLocaleDateString('ckb');
     const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && 
+             r.isTransfer !== true && 
+             r.amount > 0 && 
+             r.type !== 'adjustment' &&
+             !r.isJemgeza)
+      .reduce((sum, r) => sum + r.amount, 0);
+    const todayDebits = moneyRequests
+      .filter(r => r.date && r.date.includes(today) && r.amount < 0)
+      .reduce((sum, r) => sum + Math.abs(r.amount), 0);
+    const todayMoney = todayCredits - todayDebits;
+    if (amount > todayMoney) {
+      alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${Math.max(0, todayMoney).toLocaleString()} د.ع) زیاترە!`);
+      return;
+    }
+    if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ کۆی واسڵکراو؟`)) {
+      const now = new Date();
+      const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+      moneyRequests.push({
+        id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
+        date: dateStr,
+        type: 'transfer',
+        entityName: 'گواستنەوەی پارە',
+        entityPhone: '-',
+        amount: amount,
+        note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
+        isTransfer: true
+      });
+      moneyRequests.push({
+        id: 'TR-OUT' + Date.now(),
+        date: dateStr,
+        type: 'transfer_out',
+        entityName: 'کەمکردنەوەی واسڵی ئەمرۆ',
+        entityPhone: '-',
+        amount: -amount,
+        note: `گواستنەوە بۆ کۆی گشتی`,
+        isTransfer: false,
+        isExpense: true
+      });
+      localStorage.setItem('market_money_requests', JSON.stringify(moneyRequests));
+      updateAccountingDisplay();
+      updateStats();
+      amountInput.value = '';
+      showToast(`✅ ${amount.toLocaleString()} د.ع بە سەرکەوتوویی گواسترایەوە بۆ کۆی واسڵکراو!`, 'success');
+      renderMoneyHistory();
+    }
+  };
+
+  // ===== TRANSFER TO JEMGEZA (NEW FUNCTION) =====
+  window.transferToJemgeza = function() {
+    const amountInput = document.getElementById('transferToJemgezaAmount');
+    const amount = parseInt(amountInput.value);
+    if (!amount || amount <= 0) {
+      alert('تکایە بڕی پارەی دروست بنووسە (ژمارەیەک لە 1 زیاتر)');
+      return;
+    }
+    const today = new Date().toLocaleDateString('ckb');
+    const todayCredits = moneyRequests
+      .filter(r => r.date && r.date.includes(today) && 
+             r.isTransfer !== true && 
+             r.amount > 0 && 
+             r.type !== 'adjustment' &&
+             !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
     const todayDebits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
@@ -3214,26 +3347,41 @@
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       
-      const currentJemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
-      localStorage.setItem('market_jemgeza', (currentJemgeza + amount).toString());
-      
       moneyRequests.push({
-        id: 'TR-JEM-' + Date.now(),
+        id: 'JEMGEZA-OUT-' + Date.now(),
         date: dateStr,
         type: 'transfer_to_jemgeza',
         entityName: 'گواستنەوە بۆ جەمگزەی دووەم',
         entityPhone: '-',
         amount: -amount,
-        note: `گواستنەوە لە واسڵی ئەمرۆ بۆ جەمگزەی دووەم`,
+        note: `گواستنەوە بۆ جەمگزەی دووەم`,
         isTransfer: false,
-        isExpense: true
+        isExpense: true,
+        isJemgeza: true
       });
-      saveMoneyRequests();
       
+      const currentJemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
+      localStorage.setItem('market_jemgeza', (currentJemgeza + amount).toString());
+      
+      moneyRequests.push({
+        id: 'JEMGEZA-IN-' + Date.now(),
+        date: dateStr,
+        type: 'jemgeza_transfer',
+        entityName: 'وەرگرتن لە واسڵی ئەمرۆ',
+        entityPhone: '-',
+        amount: amount,
+        note: `گواستنەوە لە واسڵی ئەمرۆ`,
+        isTransfer: true,
+        isJemgeza: true
+      });
+      
+      saveMoneyRequests();
       updateAccountingDisplay();
       updateStats();
       amountInput.value = '';
+      document.getElementById('jemgezaBalanceDisplay').textContent = (currentJemgeza + amount).toLocaleString();
       showToast(`✅ ${amount.toLocaleString()} د.ع بە سەرکەوتوویی گواسترایەوە بۆ جەمگزەی دووەم!`, 'success');
+      renderMoneyHistory();
     }
   };
 
@@ -4296,7 +4444,11 @@
   function updateExpenseStats() {
     const today = new Date().toLocaleDateString('ckb');
     const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && 
+             r.isTransfer !== true && 
+             r.amount > 0 && 
+             r.type !== 'adjustment' &&
+             !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
     const todayDebits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
@@ -4315,7 +4467,11 @@
   function updateGiveStats() {
     const today = new Date().toLocaleDateString('ckb');
     const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.isTransfer !== true && r.amount > 0)
+      .filter(r => r.date && r.date.includes(today) && 
+             r.isTransfer !== true && 
+             r.amount > 0 && 
+             r.type !== 'adjustment' &&
+             !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
     const todayDebits = moneyRequests
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
@@ -6178,7 +6334,7 @@
         alert('باکەپ بە سەرکەوتوویی گەڕێندرایەوە');
       } catch (err) { alert('فایلی باکەپ نادروستە'); }
     };
-    reader.readAsDataURL(file);
+    reader.readAsText(file);
     event.target.value = '';
   };
 
