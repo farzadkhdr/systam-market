@@ -62,6 +62,7 @@
     .stat-icon.violet { background:linear-gradient(135deg,#7c3aed,#6d28d9); }
     .stat-icon.gold { background:linear-gradient(135deg,#d4af37,#b8942a); }
     .stat-icon.quickpay-sales { background:linear-gradient(135deg,#f59e0b,#d97706); }
+    .stat-icon.quickpay-profit { background:linear-gradient(135deg,#8b5cf6,#6d28d9); }
     .stat-info h4 { font-size:1.4rem; font-weight:700; color:var(--text-primary); }
     .stat-info span { font-size:0.8rem; color:var(--text-secondary); font-weight:500; }
     .module-section { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:0.8rem; margin:1.8rem 0 1rem; }
@@ -432,6 +433,10 @@
     .stat-card.quickpay-sales-card .stat-icon {
       background: linear-gradient(135deg, #f59e0b, #d97706);
     }
+    /* کارتی قازانجی کویک پەی - زیادکراو */
+    .stat-card.quickpay-profit-card .stat-icon {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    }
 
     /* ستایلەکانی کویک پەی */
     .quickpay-container {
@@ -663,8 +668,9 @@
       <div class="stat-card profit-card"><div class="stat-icon gold"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h4 id="statProfit">0</h4><span>قازانج (فرۆشتن - کڕین - سەرف)</span></div></div>
       <div class="stat-card jemgeza-card"><div class="stat-icon amber"><i class="fas fa-piggy-bank"></i></div><div class="stat-info"><h4 id="statJemgeza">0</h4><span>جەمگزەی دووەم</span></div></div>
       <div class="stat-card quickpay-card"><div class="stat-icon violet"><i class="fas fa-bolt"></i></div><div class="stat-info"><h4 id="statQuickPay">0</h4><span>کویک پەی</span></div></div>
-      <!-- کارتی نوێ بۆ کۆی فرۆشتنی کویک پەی -->
       <div class="stat-card quickpay-sales-card"><div class="stat-icon quickpay-sales"><i class="fas fa-bolt"></i></div><div class="stat-info"><h4 id="statQuickPaySales">0</h4><span>کۆی فرۆشتنی کویک پەی</span></div></div>
+      <!-- کارتی قازانجی کویک پەی - زیادکراو -->
+      <div class="stat-card quickpay-profit-card"><div class="stat-icon quickpay-profit"><i class="fas fa-chart-pie"></i></div><div class="stat-info"><h4 id="statQuickPayProfit">0</h4><span>📊 قازانجی کویک پەی (تێکراو - نێردراو)</span></div></div>
     </div>
     <div style="margin-top:0.5rem; display:flex; justify-content:space-between; align-items:center;">
       <div class="section-title"><i class="fas fa-th-large" style="color:#2563eb;"></i> هەموو بەشەکان</div>
@@ -704,7 +710,7 @@
           </div>
         </div>
 
-        <!-- گواستنەوە بۆ جەمگزەی دووەم - زیادکراو -->
+        <!-- گواستنەوە بۆ جەمگزەی دووەم -->
         <div class="accounting-transfer-box" style="border-color: #d97706; margin-top: 1rem;">
           <h3><i class="fas fa-piggy-bank" style="color:#d97706;"></i> گواستنەوەی پارە بۆ جەمگزەی دووەم</h3>
           <div class="input-group">
@@ -2640,14 +2646,15 @@
   // ===== DATA: کویک پەی =====
   let quickPayHistory = JSON.parse(localStorage.getItem('market_quickpay_history') || '[]');
   let quickPayBalance = parseInt(localStorage.getItem('market_quickpay_balance') || '0');
-  // کۆی فرۆشتنی کویک پەی - زیادکراو
   let quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
+  let quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0'); // زیادکراو
 
   // ===== SAVE FUNCTIONS FOR QUICKPAY =====
   function saveQuickPayData() {
     localStorage.setItem('market_quickpay_history', JSON.stringify(quickPayHistory));
     localStorage.setItem('market_quickpay_balance', quickPayBalance.toString());
     localStorage.setItem('market_quickpay_sales_total', quickPaySalesTotal.toString());
+    localStorage.setItem('market_quickpay_added_total', quickPayAddedTotal.toString());
     updateQuickPayStats();
   }
 
@@ -2682,7 +2689,6 @@
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
       .reduce((sum, r) => sum + Math.abs(r.amount), 0);
     
-    // تێبینی: کویک پەی ناردن کاریگەری لەسەر واسڵی ئەمرۆ نییە
     const todayMoneyReceived = todayCredits - todayDebits;
     
     const totalProducts = warehouseProducts.length;
@@ -2695,6 +2701,8 @@
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     
     quickPayBalance = parseInt(localStorage.getItem('market_quickpay_balance') || '0');
+    quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
+    quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0');
 
     const statTotalSalesEl = document.getElementById('statTotalSales');
     const statTotalPurchasesEl = document.getElementById('statTotalPurchases');
@@ -2709,6 +2717,7 @@
     const statJemgezaEl = document.getElementById('statJemgeza');
     const statQuickPayEl = document.getElementById('statQuickPay');
     const statQuickPaySalesEl = document.getElementById('statQuickPaySales');
+    const statQuickPayProfitEl = document.getElementById('statQuickPayProfit');
 
     if (statTotalSalesEl) statTotalSalesEl.textContent = totalSales.toLocaleString();
     if (statTotalPurchasesEl) statTotalPurchasesEl.textContent = totalPurchases.toLocaleString();
@@ -2728,6 +2737,12 @@
     if (statJemgezaEl) statJemgezaEl.textContent = jemgeza.toLocaleString();
     if (statQuickPayEl) statQuickPayEl.textContent = quickPayBalance.toLocaleString();
     if (statQuickPaySalesEl) statQuickPaySalesEl.textContent = quickPaySalesTotal.toLocaleString();
+    
+    if (statQuickPayProfitEl) {
+      const quickPayProfit = quickPayAddedTotal - quickPaySalesTotal;
+      statQuickPayProfitEl.textContent = quickPayProfit.toLocaleString();
+      statQuickPayProfitEl.className = quickPayProfit > 0 ? 'profit-positive' : quickPayProfit < 0 ? 'profit-negative' : 'profit-zero';
+    }
 
     updateAccountingDisplay();
     updateQuickPayStats();
@@ -2741,11 +2756,16 @@
     const statQuickPayEl = document.getElementById('statQuickPay');
     if (statQuickPayEl) statQuickPayEl.textContent = quickPayBalance.toLocaleString();
     
-    // نوێکردنەوەی کۆی فرۆشتنی کویک پەی
     const statQuickPaySalesEl = document.getElementById('statQuickPaySales');
     if (statQuickPaySalesEl) statQuickPaySalesEl.textContent = quickPaySalesTotal.toLocaleString();
     
-    // Update jemgeza display in accounting
+    const statQuickPayProfitEl = document.getElementById('statQuickPayProfit');
+    if (statQuickPayProfitEl) {
+      const profit = quickPayAddedTotal - quickPaySalesTotal;
+      statQuickPayProfitEl.textContent = profit.toLocaleString();
+      statQuickPayProfitEl.className = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : 'profit-zero';
+    }
+    
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     const jemgezaDisplay = document.getElementById('jemgezaBalanceDisplay');
     if (jemgezaDisplay) jemgezaDisplay.textContent = jemgeza.toLocaleString();
@@ -2755,7 +2775,7 @@
 
   // ===== QUICKPAY FUNCTIONS =====
 
-  // ناردنی پارەی کویک پەی - گۆڕدراو بۆ زیادکردن لە کۆی فرۆشتنی کویک پەی
+  // ناردنی پارەی کویک پەی
   window.submitQuickPaySend = function() {
     const amountInput = document.getElementById('quickPaySendAmount');
     const amount = parseInt(amountInput.value);
@@ -2775,16 +2795,12 @@
       return;
     }
     
-    // کەمکردنەوە لە کۆی کویک پەی
     quickPayBalance -= amount;
-    
-    // زیادکردن بۆ کۆی فرۆشتنی کویک پەی (نەک واسڵی ئەمرۆ)
     quickPaySalesTotal += amount;
     
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     
-    // تۆمارکردن لە مێژووی کویک پەی (بەبێ زیادکردن لە واسڵی ئەمرۆ)
     quickPayHistory.unshift({
       id: 'QP-SEND-' + Date.now(),
       date: dateStr,
@@ -2816,7 +2832,6 @@
     let sourceName = '';
     let availableAmount = 0;
     
-    // دیاریکردنی بڕی پارەی لە حیسابی سەرچاوە
     if (source === 'total') {
       sourceName = 'کۆی گشتی پارەی واسڵکراو';
       availableAmount = moneyRequests
@@ -2853,7 +2868,6 @@
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     
-    // کەمکردنەوە لە حیسابی سەرچاوە
     if (source === 'total') {
       moneyRequests.push({
         id: 'QP-ADD-TOTAL-' + Date.now(),
@@ -2898,10 +2912,9 @@
       saveMoneyRequests();
     }
     
-    // زیادکردن بۆ کۆی کویک پەی
     quickPayBalance += amount;
+    quickPayAddedTotal += amount; // زیادکردنی پارەی تێکراو
     
-    // تۆمارکردن لە مێژووی کویک پەی
     quickPayHistory.unshift({
       id: 'QP-ADD-' + Date.now(),
       date: dateStr,
@@ -2946,6 +2959,9 @@
     
     const totalSend = filtered.filter(r => r.type === 'send').reduce((sum, r) => sum + r.amount, 0);
     const totalAdd = filtered.filter(r => r.type === 'add').reduce((sum, r) => sum + r.amount, 0);
+    const totalAdded = quickPayAddedTotal;
+    const totalSales = quickPaySalesTotal;
+    const profit = totalAdded - totalSales;
     
     container.innerHTML = `
       <div style="display:flex; gap:1rem; flex-wrap:wrap; background:#f8fafc; padding:0.8rem; border-radius:1rem; margin-bottom:1rem;">
@@ -3002,6 +3018,7 @@
       quickPaySalesTotal = Math.max(0, quickPaySalesTotal + diff);
     } else if (record.type === 'add') {
       quickPayBalance += diff;
+      quickPayAddedTotal = Math.max(0, quickPayAddedTotal + diff);
     }
     
     record.amount = newAmountInt;
@@ -3034,6 +3051,7 @@
       quickPaySalesTotal = Math.max(0, quickPaySalesTotal - record.amount);
     } else if (record.type === 'add') {
       quickPayBalance -= record.amount;
+      quickPayAddedTotal = Math.max(0, quickPayAddedTotal - record.amount);
     }
     
     quickPayHistory = quickPayHistory.filter(r => r.id !== recordId);
@@ -3322,7 +3340,7 @@
     }
   };
 
-  // ===== TRANSFER TO JEMGEZA (NEW FUNCTION) =====
+  // ===== TRANSFER TO JEMGEZA =====
   window.transferToJemgeza = function() {
     const amountInput = document.getElementById('transferToJemgezaAmount');
     const amount = parseInt(amountInput.value);
@@ -5311,8 +5329,8 @@
         } else { hideLogin(); const roleDisplay = document.getElementById('userRoleDisplay'); if (roleDisplay) roleDisplay.textContent = '👑 بەڕێوەبەر'; }
       } catch (e) { showLogin(); }
     } else { showLogin(); }
-    // دەستپێکردنی quickPaySalesTotal
     quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
+    quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0');
     updateStats();
     applyAppearanceToDOM();
     renderLogoPreview();
@@ -6263,7 +6281,7 @@
   let backupHistory = JSON.parse(localStorage.getItem('market_backup_history') || '[]');
 
   window.createBackup = function() {
-    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, quickPayHistory: quickPayHistory, quickPayBalance: quickPayBalance, quickPaySalesTotal: quickPaySalesTotal };
+    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, quickPayHistory: quickPayHistory, quickPayBalance: quickPayBalance, quickPaySalesTotal: quickPaySalesTotal, quickPayAddedTotal: quickPayAddedTotal };
     backupHistory.unshift({ date: backupData.date, data: backupData });
     if (backupHistory.length > 10) backupHistory.pop();
     localStorage.setItem('market_backup_history', JSON.stringify(backupHistory));
@@ -6272,7 +6290,7 @@
   };
 
   window.downloadBackup = function() {
-    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, quickPayHistory: quickPayHistory, quickPayBalance: quickPayBalance, quickPaySalesTotal: quickPaySalesTotal };
+    const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, quickPayHistory: quickPayHistory, quickPayBalance: quickPayBalance, quickPaySalesTotal: quickPaySalesTotal, quickPayAddedTotal: quickPayAddedTotal };
     const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -6317,6 +6335,7 @@
         if (backupData.quickPayHistory) { quickPayHistory = backupData.quickPayHistory; saveQuickPayData(); }
         if (backupData.quickPayBalance !== undefined) { quickPayBalance = backupData.quickPayBalance; saveQuickPayData(); }
         if (backupData.quickPaySalesTotal !== undefined) { quickPaySalesTotal = backupData.quickPaySalesTotal; saveQuickPayData(); }
+        if (backupData.quickPayAddedTotal !== undefined) { quickPayAddedTotal = backupData.quickPayAddedTotal; saveQuickPayData(); }
         renderDashboardModules();
         renderPersonsList();
         renderPartnersList();
@@ -6378,16 +6397,17 @@
       if (backup.data.warehouseProducts) { warehouseProducts = backup.data.warehouseProducts; saveWarehouseProducts(); }
       if (backup.data.moneyRequests) { moneyRequests = backup.data.moneyRequests; saveMoneyRequests(); }
       if (backup.data.purchaseHistory) { purchaseHistory = backup.data.purchaseHistory; savePurchaseHistory(); }
-      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backupData.expiredDamagedProducts; saveExpiryDamage(); }
-      if (backup.data.returnHistory) { returnHistory = backupData.returnHistory; saveReturnHistory(); }
-      if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backupData.purchaseReturnHistory; savePurchaseReturnHistory(); }
-      if (backup.data.employees) { employees = backupData.employees; saveEmployees(); }
-      if (backup.data.expenseHistory) { expenseHistory = backupData.expenseHistory; saveExpenseHistory(); }
-      if (backup.data.giveMoneyHistory) { giveMoneyHistory = backupData.giveMoneyHistory; saveGiveMoneyHistory(); }
-      if (backup.data.adjustmentHistory) { adjustmentHistory = backupData.adjustmentHistory; saveAdjustmentHistory(); }
-      if (backup.data.quickPayHistory) { quickPayHistory = backupData.quickPayHistory; saveQuickPayData(); }
-      if (backup.data.quickPayBalance !== undefined) { quickPayBalance = backupData.quickPayBalance; saveQuickPayData(); }
-      if (backup.data.quickPaySalesTotal !== undefined) { quickPaySalesTotal = backupData.quickPaySalesTotal; saveQuickPayData(); }
+      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backup.data.expiredDamagedProducts; saveExpiryDamage(); }
+      if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
+      if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backup.data.purchaseReturnHistory; savePurchaseReturnHistory(); }
+      if (backup.data.employees) { employees = backup.data.employees; saveEmployees(); }
+      if (backup.data.expenseHistory) { expenseHistory = backup.data.expenseHistory; saveExpenseHistory(); }
+      if (backup.data.giveMoneyHistory) { giveMoneyHistory = backup.data.giveMoneyHistory; saveGiveMoneyHistory(); }
+      if (backup.data.adjustmentHistory) { adjustmentHistory = backup.data.adjustmentHistory; saveAdjustmentHistory(); }
+      if (backup.data.quickPayHistory) { quickPayHistory = backup.data.quickPayHistory; saveQuickPayData(); }
+      if (backup.data.quickPayBalance !== undefined) { quickPayBalance = backup.data.quickPayBalance; saveQuickPayData(); }
+      if (backup.data.quickPaySalesTotal !== undefined) { quickPaySalesTotal = backup.data.quickPaySalesTotal; saveQuickPayData(); }
+      if (backup.data.quickPayAddedTotal !== undefined) { quickPayAddedTotal = backup.data.quickPayAddedTotal; saveQuickPayData(); }
       renderDashboardModules();
       renderPersonsList();
       renderPartnersList();
@@ -6416,7 +6436,7 @@
 
   window.addEventListener('beforeunload', function(e) {
     if (autoBackupEnabled) {
-      const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, quickPayHistory: quickPayHistory, quickPayBalance: quickPayBalance, quickPaySalesTotal: quickPaySalesTotal };
+      const backupData = { date: new Date().toLocaleString('ckb'), order: moduleOrder, appearance: appearance, salesHistory: saleHistory, customers: customers, partners: partners, agents: agents, warehouseProducts: warehouseProducts, moneyRequests: moneyRequests, purchaseHistory: purchaseHistory, expiredDamagedProducts: expiredDamagedProducts, returnHistory: returnHistory, purchaseReturnHistory: purchaseReturnHistory, employees: employees, expenseHistory: expenseHistory, giveMoneyHistory: giveMoneyHistory, adjustmentHistory: adjustmentHistory, quickPayHistory: quickPayHistory, quickPayBalance: quickPayBalance, quickPaySalesTotal: quickPaySalesTotal, quickPayAddedTotal: quickPayAddedTotal };
       backupHistory.unshift({ date: backupData.date, data: backupData });
       if (backupHistory.length > 10) backupHistory.pop();
       localStorage.setItem('market_backup_history', JSON.stringify(backupHistory));
