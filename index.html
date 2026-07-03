@@ -499,7 +499,7 @@
       appearance: auto;
     }
     .quickpay-card-glass .btn-primary {
-      background: #7c3aed;
+      background: #2563eb;
       color: white;
       border: none;
       padding: 0.8rem 2rem;
@@ -510,7 +510,7 @@
       transition: 0.2s;
     }
     .quickpay-card-glass .btn-primary:hover {
-      background: #6d28d9;
+      background: #1d4ed8;
       transform: scale(1.02);
     }
     .quickpay-card-glass .btn-success {
@@ -670,7 +670,7 @@
       <div class="stat-card quickpay-card"><div class="stat-icon violet"><i class="fas fa-bolt"></i></div><div class="stat-info"><h4 id="statQuickPay">0</h4><span>کویک پەی</span></div></div>
       <div class="stat-card quickpay-sales-card"><div class="stat-icon quickpay-sales"><i class="fas fa-bolt"></i></div><div class="stat-info"><h4 id="statQuickPaySales">0</h4><span>کۆی فرۆشتنی کویک پەی</span></div></div>
       <!-- کارتی قازانجی کویک پەی - زیادکراو -->
-      <div class="stat-card quickpay-profit-card"><div class="stat-icon quickpay-profit"><i class="fas fa-chart-pie"></i></div><div class="stat-info"><h4 id="statQuickPayProfit">0</h4><span>📊 قازانجی کویک پەی (تێکراو - نێردراو)</span></div></div>
+      <div class="stat-card quickpay-profit-card"><div class="stat-icon quickpay-profit"><i class="fas fa-chart-pie"></i></div><div class="stat-info"><h4 id="statQuickPayProfit">0</h4><span>📊 قازانجی کویک پەی (تێکراو - فرۆشراو)</span></div></div>
     </div>
     <div style="margin-top:0.5rem; display:flex; justify-content:space-between; align-items:center;">
       <div class="section-title"><i class="fas fa-th-large" style="color:#2563eb;"></i> هەموو بەشەکان</div>
@@ -881,7 +881,7 @@
           <div id="returnHistoryContainer" style="max-height:300px; overflow-y:auto;"></div>
         </div>
       </div>
-      <!-- ===== پانێلی کویک پەی ===== -->
+      <!-- ===== پانێلی کویک پەی (گۆڕدراو) ===== -->
       <div class="panel" id="quickPayPanel">
         <div class="quickpay-container">
           <!-- کارتی کۆی کویک پەی -->
@@ -891,32 +891,30 @@
             <div style="font-size:0.8rem; opacity:0.7;">د.ع</div>
           </div>
 
-          <!-- دوو کارتی ناردن و تێکردن -->
+          <!-- دوو کارتی فرۆشتن و تێکردن -->
           <div class="quickpay-grid">
-            <!-- کارتی ناردنی پارە -->
+            <!-- کارتی فرۆشتنی کویک پەی (جیاتی ناردن) -->
             <div class="quickpay-card-glass">
-              <h4><i class="fas fa-paper-plane" style="color:#dc2626;"></i> ناردنی پارەی کویک پەی</h4>
+              <h4><i class="fas fa-shopping-cart" style="color:#2563eb;"></i> فرۆشتنی کویک پەی</h4>
               <div style="margin-bottom:0.5rem;">
-                <label style="font-weight:600;">بڕی پارە:</label>
-                <input type="number" id="quickPaySendAmount" placeholder="بڕی پارە بنووسە..." min="1">
+                <label style="font-weight:600;">بڕی فرۆشتن:</label>
+                <input type="number" id="quickPaySendAmount" placeholder="بڕی فرۆشتن بنووسە..." min="1">
               </div>
               <div style="margin-bottom:0.5rem;">
-                <label style="font-weight:600;">هۆکاری ناردن:</label>
+                <label style="font-weight:600;">جۆری فرۆشتن:</label>
                 <select id="quickPaySendReason">
-                  <option value="کارتی موبایل">📱 کارتی موبایل</option>
-                  <option value="کارتی ئینتەرنێت">🌐 کارتی ئینتەرنێت</option>
-                  <option value="fib">🔌 fib</option>
-                  <option value="qi card">💳 qi card</option>
-                  <option value="فاستپەی">⚡ فاستپەی</option>
-                  <option value="کارتەکانی ئەلکترۆنی">💳 کارتەکانی ئەلکترۆنی</option>
-                  <option value="هۆکاری تر">📌 هۆکاری تر</option>
+                  <option value="فرۆشتنی کاڵا">📦 فرۆشتنی کاڵا</option>
+                  <option value="فرۆشتنی خزمەتگوزاری">🛠 خزمەتگوزاری</option>
+                  <option value="فرۆشتنی نەقدی">💰 نەقدی</option>
+                  <option value="فرۆشتنی قەرز">📋 قەرز</option>
+                  <option value="دیکە">📌 دیکە</option>
                 </select>
               </div>
-              <button onclick="submitQuickPaySend()" class="btn-danger">
-                <i class="fas fa-paper-plane"></i> ناردنی پارە
+              <button onclick="submitQuickPaySend()" class="btn-primary">
+                <i class="fas fa-cart-plus"></i> تۆمارکردنی فرۆشتن
               </button>
               <div style="font-size:0.8rem; color:#64748b; margin-top:0.5rem;">
-                <i class="fas fa-info-circle"></i> پارە لە کۆی کویک پەی کەم دەکات و بۆ کۆی فرۆشتنی کویک پەی زیاد دەکات
+                <i class="fas fa-info-circle"></i> فرۆشتن تۆمار دەکرێت و بۆ کۆی فرۆشتنی کویک پەی زیاد دەکات، بەبێ کەمکردنی هاوسەنگی کویک پەی
               </div>
             </div>
 
@@ -946,12 +944,12 @@
 
           <!-- مێژووی کویک پەی -->
           <div class="quickpay-card-glass" style="margin-top:1.5rem;">
-            <h4><i class="fas fa-history" style="color:#7c3aed;"></i> مێژووی پارەی کویک پەی</h4>
+            <h4><i class="fas fa-history" style="color:#7c3aed;"></i> مێژووی کویک پەی</h4>
             <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:1rem;">
               <input type="text" id="quickPayHistorySearch" placeholder="گەڕان بە هۆکار..." style="flex:1; padding:0.5rem; border-radius:1.5rem; border:1px solid #cbd5e1;" oninput="filterQuickPayHistory()">
               <select id="quickPayHistoryType" onchange="filterQuickPayHistory()" style="padding:0.5rem; border-radius:1.5rem; border:1px solid #cbd5e1;">
                 <option value="all">👥 هەموو</option>
-                <option value="send">📤 ناردن</option>
+                <option value="sale">🛒 فرۆشتن</option>
                 <option value="add">📥 تێکردن</option>
               </select>
             </div>
@@ -2647,7 +2645,7 @@
   let quickPayHistory = JSON.parse(localStorage.getItem('market_quickpay_history') || '[]');
   let quickPayBalance = parseInt(localStorage.getItem('market_quickpay_balance') || '0');
   let quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
-  let quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0'); // زیادکراو
+  let quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0');
 
   // ===== SAVE FUNCTIONS FOR QUICKPAY =====
   function saveQuickPayData() {
@@ -2775,39 +2773,37 @@
 
   // ===== QUICKPAY FUNCTIONS =====
 
-  // ناردنی پارەی کویک پەی
+  // ناردنی پارەی کویک پەی (گۆڕدراو بۆ فرۆشتن)
   window.submitQuickPaySend = function() {
     const amountInput = document.getElementById('quickPaySendAmount');
     const amount = parseInt(amountInput.value);
     const reason = document.getElementById('quickPaySendReason').value;
     
     if (!amount || amount <= 0) {
-      alert('تکایە بڕی پارەی دروست بنووسە (ژمارەیەک لە 1 زیاتر)');
+      alert('تکایە بڕی فرۆشتن بنووسە (ژمارەیەک لە 1 زیاتر)');
       return;
     }
     
-    if (amount > quickPayBalance) {
-      alert(`بڕی ${amount.toLocaleString()} د.ع لە کۆی پارەی کویک پەی (${quickPayBalance.toLocaleString()} د.ع) زیاترە!`);
+    // 🛑 پارە لە کۆی کویک پەی کەم ناکرێتەوە
+    // تەنها فرۆشتن تۆمار دەکەین بۆ کۆی فرۆشتنی کویک پەی
+    
+    if (!confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع فرۆشراوە بۆ ${reason}؟`)) {
       return;
     }
     
-    if (!confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع بۆ ${reason} دەنێریت؟`)) {
-      return;
-    }
-    
-    quickPayBalance -= amount;
+    // کۆی فرۆشتنی کویک پەی زیاد دەکەین (بەبێ کەمکردنی هاوسەنگی)
     quickPaySalesTotal += amount;
     
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     
     quickPayHistory.unshift({
-      id: 'QP-SEND-' + Date.now(),
+      id: 'QP-SALE-' + Date.now(),
       date: dateStr,
-      type: 'send',
+      type: 'sale', // جیاتی send
       amount: amount,
       reason: reason,
-      note: `ناردن بۆ ${reason}`
+      note: `فرۆشتن بۆ ${reason}`
     });
     
     saveQuickPayData();
@@ -2815,7 +2811,7 @@
     renderQuickPayHistory();
     amountInput.value = '';
     
-    showToast(`✅ ${amount.toLocaleString()} د.ع بە سەرکەوتوویی نێردرا بۆ ${reason} و بۆ کۆی فرۆشتنی کویک پەی زیادکرا`, 'success');
+    showToast(`✅ فرۆشتن بە سەرکەوتوویی تۆمارکرا! بڕ: ${amount.toLocaleString()} د.ع`, 'success');
   };
 
   // تێکردنی پارەی کویک پەی
@@ -2932,7 +2928,7 @@
     showToast(`✅ ${amount.toLocaleString()} د.ع بە سەرکەوتوویی تێکرا لە ${sourceName}`, 'success');
   };
 
-  // ===== RENDER QUICKPAY HISTORY =====
+  // ===== RENDER QUICKPAY HISTORY (گۆڕدراو بۆ پشتیوانی جۆری sale) =====
   function renderQuickPayHistory(filterText = '', typeFilter = 'all') {
     const container = document.getElementById('quickPayHistoryList');
     if (!container) return;
@@ -2957,7 +2953,7 @@
       return;
     }
     
-    const totalSend = filtered.filter(r => r.type === 'send').reduce((sum, r) => sum + r.amount, 0);
+    const totalSend = filtered.filter(r => r.type === 'sale').reduce((sum, r) => sum + r.amount, 0);
     const totalAdd = filtered.filter(r => r.type === 'add').reduce((sum, r) => sum + r.amount, 0);
     const totalAdded = quickPayAddedTotal;
     const totalSales = quickPaySalesTotal;
@@ -2965,21 +2961,21 @@
     
     container.innerHTML = `
       <div style="display:flex; gap:1rem; flex-wrap:wrap; background:#f8fafc; padding:0.8rem; border-radius:1rem; margin-bottom:1rem;">
-        <div style="font-size:0.9rem;"><span style="color:#dc2626; font-weight:700;">📤 ناردن:</span> ${totalSend.toLocaleString()} د.ع</div>
+        <div style="font-size:0.9rem;"><span style="color:#2563eb; font-weight:700;">🛒 فرۆشتن:</span> ${totalSend.toLocaleString()} د.ع</div>
         <div style="font-size:0.9rem;"><span style="color:#059669; font-weight:700;">📥 تێکردن:</span> ${totalAdd.toLocaleString()} د.ع</div>
         <div style="font-size:0.9rem;"><span style="color:#7c3aed; font-weight:700;">💰 کۆی گشتی:</span> ${(totalAdd - totalSend).toLocaleString()} د.ع</div>
       </div>
       ${filtered.map(r => `
-        <div class="quickpay-history-item ${r.type === 'send' ? 'send' : 'receive'}">
+        <div class="quickpay-history-item ${r.type === 'sale' ? 'send' : 'receive'}">
           <div>
-            <div style="font-weight:600;">${r.type === 'send' ? '📤 ناردن' : '📥 تێکردن'}</div>
+            <div style="font-weight:600;">${r.type === 'sale' ? '🛒 فرۆشتن' : '📥 تێکردن'}</div>
             <div style="font-size:0.75rem; color:#64748b;">${r.date}</div>
           </div>
           <div>
-            <div class="${r.type === 'send' ? 'amount-send' : 'amount-receive'}">
-              ${r.type === 'send' ? '-' : '+'}${r.amount.toLocaleString()} د.ع
+            <div class="${r.type === 'sale' ? 'amount-send' : 'amount-receive'}">
+              ${r.type === 'sale' ? '' : '+'}${r.amount.toLocaleString()} د.ع
             </div>
-            <div style="font-size:0.8rem; color:#64748b;">${r.type === 'send' ? r.reason : r.source}</div>
+            <div style="font-size:0.8rem; color:#64748b;">${r.type === 'sale' ? r.reason : r.source}</div>
           </div>
           <div class="actions">
             <button class="edit-btn" onclick="editQuickPayRecord('${r.id}')" title="دەستکاری"><i class="fas fa-edit"></i></button>
@@ -2996,7 +2992,7 @@
     renderQuickPayHistory(search, type);
   };
 
-  // ===== EDIT QUICKPAY RECORD =====
+  // ===== EDIT QUICKPAY RECORD (گۆڕدراو) =====
   window.editQuickPayRecord = function(recordId) {
     const record = quickPayHistory.find(r => r.id === recordId);
     if (!record) return;
@@ -3013,8 +3009,8 @@
     const oldAmount = record.amount;
     const diff = newAmountInt - oldAmount;
     
-    if (record.type === 'send') {
-      quickPayBalance -= diff;
+    if (record.type === 'sale') {
+      // بۆ فرۆشتن، تەنها کۆی فرۆشتنی کویک پەی دەگۆڕدرێت
       quickPaySalesTotal = Math.max(0, quickPaySalesTotal + diff);
     } else if (record.type === 'add') {
       quickPayBalance += diff;
@@ -3023,8 +3019,8 @@
     
     record.amount = newAmountInt;
     
-    if (record.type === 'send') {
-      const newReason = prompt('هۆکاری نوێ:', record.reason || '');
+    if (record.type === 'sale') {
+      const newReason = prompt('جۆری فرۆشتن:', record.reason || '');
       if (newReason !== null) record.reason = newReason || record.reason;
     } else if (record.type === 'add') {
       const newSource = prompt('سەرچاوەی نوێ:', record.source || '');
@@ -3037,17 +3033,16 @@
     showToast('✅ مێژوو بە سەرکەوتوویی گۆڕدرا', 'success');
   };
 
-  // ===== DELETE QUICKPAY RECORD =====
+  // ===== DELETE QUICKPAY RECORD (گۆڕدراو) =====
   window.deleteQuickPayRecord = function(recordId) {
     const record = quickPayHistory.find(r => r.id === recordId);
     if (!record) return;
     
-    if (!confirm(`دڵنیایت لە سڕینەوەی ئەم تۆمارە؟\n${record.type === 'send' ? 'ناردن' : 'تێکردن'} ${record.amount.toLocaleString()} د.ع`)) {
+    if (!confirm(`دڵنیایت لە سڕینەوەی ئەم تۆمارە؟\n${record.type === 'sale' ? 'فرۆشتن' : 'تێکردن'} ${record.amount.toLocaleString()} د.ع`)) {
       return;
     }
     
-    if (record.type === 'send') {
-      quickPayBalance += record.amount;
+    if (record.type === 'sale') {
       quickPaySalesTotal = Math.max(0, quickPaySalesTotal - record.amount);
     } else if (record.type === 'add') {
       quickPayBalance -= record.amount;
