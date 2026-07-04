@@ -186,210 +186,38 @@
     @keyframes floatParticle { 0% { transform:translateY(100vh) scale(0); opacity:0; } 10% { opacity:1; } 90% { opacity:1; } 100% { transform:translateY(-10vh) scale(1); opacity:0; } }
     .custom-toast { position:fixed; bottom:30px; right:30px; background:rgba(16,185,129,0.95); color:white; padding:1rem 2rem; border-radius:1.5rem; font-weight:600; font-size:1rem; box-shadow:0 20px 40px rgba(0,0,0,0.3); z-index:10000; transform:translateY(20px); opacity:0; transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); max-width:90%; }
     .custom-toast.show { transform:translateY(0); opacity:1; }
-
-    /* ===== کورتەکلیلی Alt نیشاندان ===== */
-    .keyboard-hint {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(15, 23, 42, 0.85);
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 2rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      pointer-events: none;
-      opacity: 0.7;
-    }
-    .keyboard-hint kbd {
-      background: rgba(255,255,255,0.15);
-      padding: 0.15rem 0.6rem;
-      border-radius: 0.4rem;
-      font-size: 0.8rem;
-      border: 1px solid rgba(255,255,255,0.2);
-      font-family: monospace;
-    }
-    @media (max-width: 768px) {
-      .keyboard-hint { display: none; }
-    }
-
-    /* ===== LOGO STYLES ===== */
-    .logo-upload-container {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      margin: 1rem 0;
-      flex-wrap: wrap;
-    }
-    .logo-preview-circle {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid #e2e8f0;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f1f5f9;
-      flex-shrink: 0;
-    }
-    .logo-preview-circle img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .logo-preview-circle i {
-      font-size: 2.5rem;
-      color: #94a3b8;
-    }
-    .logo-upload-btn {
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 0.6rem 1.5rem;
-      border-radius: 2rem;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.2s;
-    }
-    .logo-upload-btn:hover {
-      background: #1d4ed8;
-    }
-    .logo-remove-btn {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 0.6rem 1.5rem;
-      border-radius: 2rem;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.2s;
-    }
-    .logo-remove-btn:hover {
-      background: #dc2626;
-    }
-
-    .logo-print {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
-    .logo-print img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .logo-print i {
-      font-size: 2rem;
-      color: #0f172a;
-    }
-    @media print {
-      body { background:white; }
-      .system-container { box-shadow:none; backdrop-filter:none; background:white; padding:0; }
-      .back-header, .tabs, .new-sale-layout .card-glass:first-child, .history-search, .btn-icon, .back-btn, .no-print { display:none !important; }
-      .invoice-preview { border:none; }
-      .barcode-print-section { display:block; }
-      .barcode-print-card { break-inside:avoid; margin-bottom:1rem; }
-      .login-overlay { display:none !important; }
-      .logo-print {
-        display: flex !important;
-        align-items: center !important;
-        gap: 0.8rem !important;
-      }
-      .logo-print img {
-        width: 50px !important;
-        height: 50px !important;
-        border-radius: 50% !important;
-        object-fit: cover !important;
-      }
-      .logo-print i {
-        font-size: 2rem !important;
-      }
-    }
-
+    .keyboard-hint { position: fixed; bottom: 20px; left: 20px; background: rgba(15, 23, 42, 0.85); color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); z-index: 999; display: flex; align-items: center; gap: 0.5rem; pointer-events: none; opacity: 0.7; }
+    .keyboard-hint kbd { background:rgba(255,255,255,0.15); padding:0.15rem 0.6rem; border-radius:0.4rem; font-size:0.8rem; border:1px solid rgba(255,255,255,0.2); font-family:monospace; }
+    .esc-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.85); color: white; padding: 0.5rem 1.5rem; border-radius: 2rem; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); z-index: 999; pointer-events: none; opacity: 0.7; direction: rtl; }
+    .esc-hint kbd { background:rgba(255,255,255,0.15); padding:0.15rem 0.6rem; border-radius:0.4rem; border:1px solid rgba(255,255,255,0.2); font-family:monospace; }
+    @media (max-width: 768px) { .keyboard-hint, .esc-hint { display: none; } }
+    .logo-upload-container { display:flex; align-items:center; gap:1.5rem; margin:1rem 0; flex-wrap:wrap; }
+    .logo-preview-circle { width:80px; height:80px; border-radius:50%; border:3px solid #e2e8f0; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#f1f5f9; flex-shrink:0; }
+    .logo-preview-circle img { width:100%; height:100%; object-fit:cover; }
+    .logo-preview-circle i { font-size:2.5rem; color:#94a3b8; }
+    .logo-upload-btn { background:#2563eb; color:white; border:none; padding:0.6rem 1.5rem; border-radius:2rem; cursor:pointer; font-weight:600; transition:0.2s; }
+    .logo-upload-btn:hover { background:#1d4ed8; }
+    .logo-remove-btn { background:#ef4444; color:white; border:none; padding:0.6rem 1.5rem; border-radius:2rem; cursor:pointer; font-weight:600; transition:0.2s; }
+    .logo-remove-btn:hover { background:#dc2626; }
+    .logo-print { display:flex; align-items:center; gap:0.8rem; }
+    .logo-print img { width:50px; height:50px; border-radius:50%; object-fit:cover; }
+    .logo-print i { font-size:2rem; color:#0f172a; }
+    @media print { body { background:white; } .system-container { box-shadow:none; backdrop-filter:none; background:white; padding:0; } .back-header, .tabs, .new-sale-layout .card-glass:first-child, .history-search, .btn-icon, .back-btn, .no-print { display:none !important; } .invoice-preview { border:none; } .barcode-print-section { display:block; } .barcode-print-card { break-inside:avoid; margin-bottom:1rem; } .login-overlay { display:none !important; } .logo-print { display:flex !important; align-items:center !important; gap:0.8rem !important; } .logo-print img { width:50px !important; height:50px !important; border-radius:50% !important; object-fit:cover !important; } .logo-print i { font-size:2rem !important; } }
     @media (max-width:700px) { .system-container { padding:1.2rem; } .module-section { grid-template-columns:repeat(3,1fr); } .login-box { padding:2rem 1.5rem; border-radius:2rem; } .login-logo-icon { width:60px; height:60px; font-size:2rem; } .login-logo h1 { font-size:1.5rem; } }
-
-    .accounting-transfer-box {
-      background: #f8fafc;
-      border-radius: 1.5rem;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      border: 2px solid #e2e8f0;
-    }
-    .accounting-transfer-box h3 {
-      color: #1e293b;
-      margin-bottom: 1rem;
-      font-size: 1.1rem;
-    }
-    .accounting-transfer-box .input-group {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .accounting-transfer-box .input-group input {
-      flex: 1;
-      min-width: 150px;
-      padding: 0.7rem 1rem;
-      border-radius: 2rem;
-      border: 1px solid #cbd5e1;
-      font-size: 1rem;
-    }
-    .accounting-transfer-box .input-group button {
-      background: #7c3aed;
-      color: white;
-      border: none;
-      padding: 0.7rem 1.8rem;
-      border-radius: 2rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .accounting-transfer-box .input-group button:hover {
-      background: #6d28d9;
-      transform: scale(1.02);
-    }
-    .accounting-balance {
-      display: flex;
-      gap: 2rem;
-      flex-wrap: wrap;
-      margin-top: 0.5rem;
-      font-weight: 600;
-    }
-    .accounting-balance span {
-      background: white;
-      padding: 0.4rem 1.2rem;
-      border-radius: 2rem;
-      border: 1px solid #e2e8f0;
-    }
-    .accounting-balance .today-amount { color: #059669; }
-    .accounting-balance .total-amount { color: #2563eb; }
-
-    .report-container {
-      background: white;
-      border-radius: 1.5rem;
-      padding: 2rem;
-      margin-top: 1rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      direction: rtl;
-    }
-    .report-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid #e2e8f0;
-      padding-bottom: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .report-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; }
-    .report-subtitle { color: #64748b; font-size: 0.9rem; }
+    .accounting-transfer-box { background:#f8fafc; border-radius:1.5rem; padding:1.5rem; margin-bottom:1.5rem; border:2px solid #e2e8f0; }
+    .accounting-transfer-box h3 { color:#1e293b; margin-bottom:1rem; font-size:1.1rem; }
+    .accounting-transfer-box .input-group { display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+    .accounting-transfer-box .input-group input { flex:1; min-width:150px; padding:0.7rem 1rem; border-radius:2rem; border:1px solid #cbd5e1; font-size:1rem; }
+    .accounting-transfer-box .input-group button { background:#7c3aed; color:white; border:none; padding:0.7rem 1.8rem; border-radius:2rem; font-weight:600; cursor:pointer; transition:0.2s; }
+    .accounting-transfer-box .input-group button:hover { background:#6d28d9; transform:scale(1.02); }
+    .accounting-balance { display:flex; gap:2rem; flex-wrap:wrap; margin-top:0.5rem; font-weight:600; }
+    .accounting-balance span { background:white; padding:0.4rem 1.2rem; border-radius:2rem; border:1px solid #e2e8f0; }
+    .accounting-balance .today-amount { color:#059669; }
+    .accounting-balance .total-amount { color:#2563eb; }
+    .report-container { background:white; border-radius:1.5rem; padding:2rem; margin-top:1rem; box-shadow:0 10px 25px rgba(0,0,0,0.1); direction:rtl; }
+    .report-header { display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #e2e8f0; padding-bottom:1rem; margin-bottom:1.5rem; }
+    .report-title { font-size:1.5rem; font-weight:800; color:#0f172a; }
+    .report-subtitle { color:#64748b; font-size:0.9rem; }
     .report-table { width:100%; border-collapse:collapse; margin:1rem 0; }
     .report-table th { background:#f1f5f9; padding:0.8rem; text-align:right; font-weight:700; border-bottom:2px solid #e2e8f0; }
     .report-table td { padding:0.8rem; border-bottom:1px solid #f1f5f9; }
@@ -403,225 +231,47 @@
     .adjustment-history-item { background:#f8fafc; border-right:4px solid #7c3aed; padding:0.8rem; border-radius:0.8rem; margin-bottom:0.5rem; }
     .adjustment-history-item.positive { border-right-color:#059669; }
     .adjustment-history-item.negative { border-right-color:#dc2626; }
-
-    @media print {
-      .no-print { display: none !important; }
-      .report-container { box-shadow: none; padding: 1rem; }
-      .report-table th { background: #e2e8f0 !important; }
-    }
-
-    .edit-product-search-container {
-      background: #f8fafc;
-      border-radius: 1rem;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border: 1px solid #e2e8f0;
-    }
-    .edit-product-search-container .search-box {
-      margin-bottom: 0.5rem;
-    }
-    .edit-product-search-container .suggestions {
-      position: relative;
-      max-height: 150px;
-    }
-
-    .selected-product-info {
-      background:#dbeafe;
-      padding:0.5rem 1rem;
-      border-radius:1rem;
-      margin:0.5rem 0;
-      font-size:0.9rem;
-      border:1px solid #93c5fd;
-    }
-
-    .damage-qty-info {
-      font-size:0.8rem;
-      color:#64748b;
-      margin-top:0.2rem;
-      padding:0.2rem 0.5rem;
-      background:#f1f5f9;
-      border-radius:0.5rem;
-      display:inline-block;
-    }
-
-    .stat-card.profit-card .stat-icon {
-      background: linear-gradient(135deg, #d4af37, #b8942a);
-    }
+    @media print { .no-print { display: none !important; } .report-container { box-shadow: none; padding: 1rem; } .report-table th { background: #e2e8f0 !important; } }
+    .edit-product-search-container { background:#f8fafc; border-radius:1rem; padding:1rem; margin-bottom:1rem; border:1px solid #e2e8f0; }
+    .edit-product-search-container .search-box { margin-bottom:0.5rem; }
+    .edit-product-search-container .suggestions { position:relative; max-height:150px; }
+    .selected-product-info { background:#dbeafe; padding:0.5rem 1rem; border-radius:1rem; margin:0.5rem 0; font-size:0.9rem; border:1px solid #93c5fd; }
+    .damage-qty-info { font-size:0.8rem; color:#64748b; margin-top:0.2rem; padding:0.2rem 0.5rem; background:#f1f5f9; border-radius:0.5rem; display:inline-block; }
+    .stat-card.profit-card .stat-icon { background: linear-gradient(135deg, #d4af37, #b8942a); }
     .profit-positive { color: #059669; }
     .profit-negative { color: #dc2626; }
     .profit-zero { color: #475569; }
-
-    .stat-card.jemgeza-card .stat-icon {
-      background: linear-gradient(135deg, #d97706, #b45309);
-    }
-    .stat-card.quickpay-card .stat-icon {
-      background: linear-gradient(135deg, #7c3aed, #6d28d9);
-    }
-    .stat-card.quickpay-sales-card .stat-icon {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-    }
-    .stat-card.quickpay-profit-card .stat-icon {
-      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-    }
-
-    .quickpay-container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    .quickpay-balance-card {
-      background: linear-gradient(135deg, #7c3aed, #6d28d9);
-      color: white;
-      border-radius: 2rem;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
-    .quickpay-balance-card .amount {
-      font-size: 2.5rem;
-      font-weight: 800;
-    }
-    .quickpay-balance-card .label {
-      font-size: 0.9rem;
-      opacity: 0.8;
-    }
-    .quickpay-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-    @media (max-width: 768px) {
-      .quickpay-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    .quickpay-card-glass {
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(10px);
-      border-radius: 1.5rem;
-      padding: 1.5rem;
-      border: 1px solid rgba(255,255,255,0.5);
-    }
-    .quickpay-card-glass h4 {
-      margin-bottom: 1rem;
-      color: #1e293b;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .quickpay-card-glass select,
-    .quickpay-card-glass input,
-    .quickpay-card-glass textarea {
-      width: 100%;
-      padding: 0.7rem;
-      border-radius: 1.5rem;
-      border: 1px solid #cbd5e1;
-      margin-top: 0.3rem;
-      margin-bottom: 0.8rem;
-      font-size: 1rem;
-      background: white;
-    }
-    .quickpay-card-glass select {
-      appearance: auto;
-    }
-    .quickpay-card-glass .btn-primary {
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 0.8rem 2rem;
-      border-radius: 2rem;
-      font-weight: bold;
-      width: 100%;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .quickpay-card-glass .btn-primary:hover {
-      background: #1d4ed8;
-      transform: scale(1.02);
-    }
-    .quickpay-card-glass .btn-success {
-      background: #059669;
-      color: white;
-      border: none;
-      padding: 0.8rem 2rem;
-      border-radius: 2rem;
-      font-weight: bold;
-      width: 100%;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .quickpay-card-glass .btn-success:hover {
-      background: #047857;
-      transform: scale(1.02);
-    }
-    .quickpay-card-glass .btn-danger {
-      background: #dc2626;
-      color: white;
-      border: none;
-      padding: 0.8rem 2rem;
-      border-radius: 2rem;
-      font-weight: bold;
-      width: 100%;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .quickpay-card-glass .btn-danger:hover {
-      background: #b91c1c;
-      transform: scale(1.02);
-    }
-    .quickpay-history-item {
-      background: #f8fafc;
-      border-radius: 1rem;
-      padding: 0.8rem;
-      margin-bottom: 0.5rem;
-      border-right: 4px solid #7c3aed;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .quickpay-history-item.send {
-      border-right-color: #dc2626;
-    }
-    .quickpay-history-item.receive {
-      border-right-color: #059669;
-    }
-    .quickpay-history-item .amount-send {
-      color: #dc2626;
-      font-weight: 700;
-    }
-    .quickpay-history-item .amount-receive {
-      color: #059669;
-      font-weight: 700;
-    }
-    .quickpay-history-item .actions {
-      display: flex;
-      gap: 0.3rem;
-    }
-    .quickpay-history-item .actions button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.1rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 0.5rem;
-      transition: 0.2s;
-    }
-    .quickpay-history-item .actions button:hover {
-      background: #e2e8f0;
-    }
-    .quickpay-history-item .actions .edit-btn { color: #2563eb; }
-    .quickpay-history-item .actions .delete-btn { color: #dc2626; }
-    
-    .jemgeza-display {
-      background: #fef9c3;
-      padding: 0.5rem 1rem;
-      border-radius: 1rem;
-      border: 1px solid #fde68a;
-      display: inline-block;
-      color: #854d0e;
-      font-weight: 600;
-    }
+    .stat-card.jemgeza-card .stat-icon { background: linear-gradient(135deg, #d97706, #b45309); }
+    .stat-card.quickpay-card .stat-icon { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+    .stat-card.quickpay-sales-card .stat-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .stat-card.quickpay-profit-card .stat-icon { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+    .quickpay-container { max-width:900px; margin:0 auto; }
+    .quickpay-balance-card { background:linear-gradient(135deg,#7c3aed,#6d28d9); color:white; border-radius:2rem; padding:1.5rem; margin-bottom:1.5rem; text-align:center; }
+    .quickpay-balance-card .amount { font-size:2.5rem; font-weight:800; }
+    .quickpay-balance-card .label { font-size:0.9rem; opacity:0.8; }
+    .quickpay-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+    @media (max-width:768px) { .quickpay-grid { grid-template-columns:1fr; } }
+    .quickpay-card-glass { background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); border-radius:1.5rem; padding:1.5rem; border:1px solid rgba(255,255,255,0.5); }
+    .quickpay-card-glass h4 { margin-bottom:1rem; color:#1e293b; display:flex; align-items:center; gap:0.5rem; }
+    .quickpay-card-glass select, .quickpay-card-glass input, .quickpay-card-glass textarea { width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem; margin-bottom:0.8rem; font-size:1rem; background:white; }
+    .quickpay-card-glass select { appearance:auto; }
+    .quickpay-card-glass .btn-primary { background:#2563eb; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%; cursor:pointer; transition:0.2s; }
+    .quickpay-card-glass .btn-primary:hover { background:#1d4ed8; transform:scale(1.02); }
+    .quickpay-card-glass .btn-success { background:#059669; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%; cursor:pointer; transition:0.2s; }
+    .quickpay-card-glass .btn-success:hover { background:#047857; transform:scale(1.02); }
+    .quickpay-card-glass .btn-danger { background:#dc2626; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%; cursor:pointer; transition:0.2s; }
+    .quickpay-card-glass .btn-danger:hover { background:#b91c1c; transform:scale(1.02); }
+    .quickpay-history-item { background:#f8fafc; border-radius:1rem; padding:0.8rem; margin-bottom:0.5rem; border-right:4px solid #7c3aed; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; }
+    .quickpay-history-item.send { border-right-color:#dc2626; }
+    .quickpay-history-item.receive { border-right-color:#059669; }
+    .quickpay-history-item .amount-send { color:#dc2626; font-weight:700; }
+    .quickpay-history-item .amount-receive { color:#059669; font-weight:700; }
+    .quickpay-history-item .actions { display:flex; gap:0.3rem; }
+    .quickpay-history-item .actions button { background:none; border:none; cursor:pointer; font-size:1.1rem; padding:0.2rem 0.5rem; border-radius:0.5rem; transition:0.2s; }
+    .quickpay-history-item .actions button:hover { background:#e2e8f0; }
+    .quickpay-history-item .actions .edit-btn { color:#2563eb; }
+    .quickpay-history-item .actions .delete-btn { color:#dc2626; }
+    .jemgeza-display { background:#fef9c3; padding:0.5rem 1rem; border-radius:1rem; border:1px solid #fde68a; display:inline-block; color:#854d0e; font-weight:600; }
   </style>
 </head>
 <body>
@@ -2283,11 +1933,43 @@
 </div>
 
 <script>
-// ===== گۆرانکارییە سەرەکییەکان =====
-// 1. زیادکردنی تۆماری فرۆشتن بۆ moneyRequests بۆ فرۆشتی کاش
-// 2. زیادکردنی کورتەکلیلی Alt + Enter بۆ تەواوکردنی فرۆشتن
-
 (function() {
+  // ===== چارەسەری کێشەی ESC =====
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const salesView = document.getElementById('salesView');
+      const overlay = document.getElementById('editOverlay');
+      
+      if (overlay) {
+        closeEditOverlay();
+        return;
+      }
+      
+      const historyDetail = document.getElementById('historyInvoiceDetail');
+      if (historyDetail && historyDetail.style.display !== 'none') {
+        historyDetail.style.display = 'none';
+        return;
+      }
+      
+      if (salesView && salesView.style.display !== 'none') {
+        const returnPanel = document.getElementById('returnPanel');
+        if (returnPanel && returnPanel.classList.contains('active')) {
+          document.querySelectorAll('#salesView .tab[data-tab]').forEach(t => t.classList.remove('active'));
+          document.querySelector('#salesView .tab[data-tab="newSale"]')?.classList.add('active');
+          document.querySelectorAll('#salesView .panel').forEach(p => p.classList.remove('active'));
+          document.getElementById('newSalePanel').classList.add('active');
+          return;
+        }
+      }
+      
+      const dashboardView = document.getElementById('dashboardView');
+      if (dashboardView && dashboardView.style.display === 'none') {
+        navigateTo('dashboard');
+        showToast('گەڕایەوە بۆ داشبۆرد', 'info');
+      }
+    }
+  });
+
   // ===== PERMISSION SYSTEM =====
   function hasPermission(moduleId) {
     const loggedUser = JSON.parse(localStorage.getItem('market_logged_user') || '{}');
@@ -2676,7 +2358,7 @@
     updateQuickPayStats();
   }
 
-  // ===== UPDATE STATS (Improved with QuickPay and Jemgeza) =====
+  // ===== UPDATE STATS =====
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
@@ -4847,9 +4529,7 @@
 
   function saveSaleHistory() { localStorage.setItem('market_sales_history', JSON.stringify(saleHistory)); window.saleHistory = saleHistory; updateStats(); }
 
-  // ===== ===== ===== ===== ===== =====
   // ===== COMPLETE SALE FIX =====
-  // ===== ===== ===== ===== ===== =====
   window.completeSale = function() {
     if (!cart.length) { 
       showToast('⚠️ سەبەتە بەتاڵە! تکایە کاڵا زیاد بکە', 'info');
@@ -4870,27 +4550,18 @@
       saveCustomers();
     } else {
       // ===== چارەسەری کێشە: زیادکردنی پارەی فرۆشتن بۆ واسڵی ئەمرۆ =====
-      const today = new Date().toLocaleDateString('ckb');
-      const existingTodayRecord = moneyRequests.find(r => 
-        r.date && r.date.includes(today) && 
-        r.type === 'sale' && 
-        r.note && r.note.includes(invId)
-      );
-      
-      if (!existingTodayRecord) {
-        moneyRequests.push({
-          id: 'SALE-MONEY-' + Date.now(),
-          date: dateStr,
-          type: 'sale',
-          entityName: custName,
-          entityPhone: '-',
-          amount: total, // ئەمە زیاد دەکات بۆ کۆی واسڵی ئەمرۆ
-          note: `فرۆشتن ${invId}`,
-          isTransfer: false,
-          isExpense: false
-        });
-        saveMoneyRequests();
-      }
+      moneyRequests.push({
+        id: 'SALE-MONEY-' + Date.now(),
+        date: dateStr,
+        type: 'sale',
+        entityName: custName,
+        entityPhone: '-',
+        amount: total,
+        note: `فرۆشتن ${invId}`,
+        isTransfer: false,
+        isExpense: false
+      });
+      saveMoneyRequests();
     }
     
     // کەمکردنەوەی کاڵاکان لە مخزن
@@ -4916,9 +4587,7 @@
     showToast(`✅ فرۆشتن بە سەرکەوتوویی تۆمارکرا! بڕ: ${total.toLocaleString()} د.ع`, 'success');
   };
 
-  // ===== ===== ===== ===== ===== =====
   // ===== KEYBOARD SHORTCUT (ALT) =====
-  // ===== ===== ===== ===== ===== =====
   document.addEventListener('keydown', function(e) {
     const salesView = document.getElementById('salesView');
     if (!salesView || salesView.style.display === 'none') return;
@@ -4971,6 +4640,20 @@
     } else {
       const hint = document.querySelector('.keyboard-hint');
       if (hint) hint.remove();
+    }
+    
+    if (view !== 'dashboard') {
+      // نمایشی ڕێنمایی ESC
+      const existingHint = document.querySelector('.esc-hint');
+      if (!existingHint) {
+        const hint = document.createElement('div');
+        hint.className = 'esc-hint';
+        hint.innerHTML = `<kbd>ESC</kbd> بۆ گەڕانەوە بۆ داشبۆرد`;
+        document.body.appendChild(hint);
+        setTimeout(() => { if (hint.parentNode) hint.remove(); }, 4000);
+      }
+    } else {
+      document.querySelectorAll('.esc-hint').forEach(el => el.remove());
     }
     
     if (view === 'settings') { renderSettingsPanels(); }
