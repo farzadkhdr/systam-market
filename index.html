@@ -2371,8 +2371,6 @@
       .filter(s => s.customer === 'کاش')
       .reduce((sum, s) => sum + s.total, 0);
     
-    const totalTodayMoney = totalCashSales + totalMoneyReceived;
-    
     const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
     const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
     
@@ -4529,7 +4527,7 @@
 
   function saveSaleHistory() { localStorage.setItem('market_sales_history', JSON.stringify(saleHistory)); window.saleHistory = saleHistory; updateStats(); }
 
-  // ===== COMPLETE SALE FIX =====
+  // ===== COMPLETE SALE FIX - گۆرانکاری لەم شوێنەدا کراوە =====
   window.completeSale = function() {
     if (!cart.length) { 
       showToast('⚠️ سەبەتە بەتاڵە! تکایە کاڵا زیاد بکە', 'info');
@@ -4549,7 +4547,7 @@
       currentCustomer.debt = (currentCustomer.debt || 0) + total;
       saveCustomers();
     } else {
-      // ===== چارەسەری کێشە: زیادکردنی پارەی فرۆشتن بۆ واسڵی ئەمرۆ =====
+      // فرۆشتن بە نەقد - زیادکردنی پارە بۆ واسڵی ئەمرۆ
       moneyRequests.push({
         id: 'SALE-MONEY-' + Date.now(),
         date: dateStr,
@@ -4561,7 +4559,7 @@
         isTransfer: false,
         isExpense: false
       });
-      saveMoneyRequests();
+      saveMoneyRequests(); // <-- پاشەکەوتکردنی moneyRequests پێش updateStats
     }
     
     // کەمکردنەوەی کاڵاکان لە مخزن
@@ -4581,6 +4579,8 @@
     customerSearch.value = '';
     renderCart();
     updateInvoicePreview();
+    
+    // نوێکردنەوەی ئامارەکان - پاش پاشەکەوتکردنی moneyRequests
     updateStats();
     updateAccountingDisplay();
     
