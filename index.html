@@ -334,7 +334,8 @@
       <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-truck"></i></div><div class="stat-info"><h4 id="statTotalPurchases">0</h4><span>کۆی کڕین</span></div></div>
       <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی پارەی واسڵکراو</span></div></div>
       <div class="stat-card"><div class="stat-icon red"><i class="fas fa-coins"></i></div><div class="stat-info"><h4 id="statTotalSpendAndExpenses">0</h4><span>کۆی سەرف و مەسروفات</span></div></div>
-      <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoneyReceived">0</h4><span>واسڵی ئەمرۆ</span></div></div>
+      <!-- کارتی واسڵی ئەمرۆ زیادکرا -->
+      <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoney">0</h4><span>واسڵی ئەمرۆ</span></div></div>
       <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-boxes"></i></div><div class="stat-info"><h4 id="statTotalProducts">0</h4><span>کۆی کاڵاکان</span></div></div>
       <div class="stat-card"><div class="stat-icon indigo"><i class="fas fa-users"></i></div><div class="stat-info"><h4 id="statTotalPersons">0</h4><span>کۆی کەسەکان</span></div></div>
       <div class="stat-card"><div class="stat-icon pink"><i class="fas fa-hand-holding-heart"></i></div><div class="stat-info"><h4 id="statMyDebtToPartners">0</h4><span>قەرزاری من بۆ شەریک</span></div></div>
@@ -2358,7 +2359,7 @@
     updateQuickPayStats();
   }
 
-  // ===== UPDATE STATS =====
+  // ===== UPDATE STATS (بە کارتی واسڵی ئەمرۆ) =====
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
@@ -2398,7 +2399,7 @@
       .filter(r => r.date && r.date.includes(today) && r.amount < 0)
       .reduce((sum, r) => sum + Math.abs(r.amount), 0);
     
-    const todayMoneyReceived = todayCashSales + todayCredits - todayDebits;
+    const todayMoney = todayCashSales + todayCredits - todayDebits;
     
     const totalProducts = warehouseProducts.length;
     const totalPersons = customers.length;
@@ -2413,11 +2414,12 @@
     quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
     quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0');
 
+    // نوێکردنەوەی هەموو کارتەکان
     const statTotalSalesEl = document.getElementById('statTotalSales');
     const statTotalPurchasesEl = document.getElementById('statTotalPurchases');
     const statTotalMoneyReceivedEl = document.getElementById('statTotalMoneyReceived');
     const statTotalSpendAndExpensesEl = document.getElementById('statTotalSpendAndExpenses');
-    const statTodayMoneyReceivedEl = document.getElementById('statTodayMoneyReceived');
+    const statTodayMoneyEl = document.getElementById('statTodayMoney'); // کارتی نوێ
     const statTotalProductsEl = document.getElementById('statTotalProducts');
     const statTotalPersonsEl = document.getElementById('statTotalPersons');
     const statMyDebtToPartnersEl = document.getElementById('statMyDebtToPartners');
@@ -2432,7 +2434,10 @@
     if (statTotalPurchasesEl) statTotalPurchasesEl.textContent = totalPurchases.toLocaleString();
     if (statTotalMoneyReceivedEl) statTotalMoneyReceivedEl.textContent = totalMoneyReceived.toLocaleString();
     if (statTotalSpendAndExpensesEl) statTotalSpendAndExpensesEl.textContent = totalSpendAndExpenses.toLocaleString();
-    if (statTodayMoneyReceivedEl) statTodayMoneyReceivedEl.textContent = Math.max(0, todayMoneyReceived).toLocaleString();
+    
+    // نوێکردنەوەی کاری واسڵی ئەمرۆ
+    if (statTodayMoneyEl) statTodayMoneyEl.textContent = Math.max(0, todayMoney).toLocaleString();
+    
     if (statTotalProductsEl) statTotalProductsEl.textContent = totalProducts;
     if (statTotalPersonsEl) statTotalPersonsEl.textContent = totalPersons;
     if (statMyDebtToPartnersEl) statMyDebtToPartnersEl.textContent = myDebtToPartners.toLocaleString();
@@ -4527,7 +4532,7 @@
 
   function saveSaleHistory() { localStorage.setItem('market_sales_history', JSON.stringify(saleHistory)); window.saleHistory = saleHistory; updateStats(); }
 
-  // ===== COMPLETE SALE FIX - گۆرانکاری لەم شوێنەدا کراوە =====
+  // ===== COMPLETE SALE =====
   window.completeSale = function() {
     if (!cart.length) { 
       showToast('⚠️ سەبەتە بەتاڵە! تکایە کاڵا زیاد بکە', 'info');
@@ -4539,15 +4544,12 @@
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     
-    // زیادکردنی فرۆشتن بۆ مێژوو
     saleHistory.unshift({ id: invId, date: dateStr, customer: custName, total, items: cart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.unitPrice })) });
     
     if (currentCustomer && creditCheck.checked) {
-      // فرۆشتن بە قەرز - زیادکردنی قەرز بۆ کڕیار
       currentCustomer.debt = (currentCustomer.debt || 0) + total;
       saveCustomers();
     } else {
-      // فرۆشتن بە نەقد - زیادکردنی پارە بۆ واسڵی ئەمرۆ
       moneyRequests.push({
         id: 'SALE-MONEY-' + Date.now(),
         date: dateStr,
@@ -4559,10 +4561,9 @@
         isTransfer: false,
         isExpense: false
       });
-      saveMoneyRequests(); // <-- پاشەکەوتکردنی moneyRequests پێش updateStats
+      saveMoneyRequests();
     }
     
-    // کەمکردنەوەی کاڵاکان لە مخزن
     cart.forEach(item => { 
       const product = warehouseProducts.find(p => p.id === item.product.id); 
       if (product) product.quantity = Math.max(0, product.quantity - item.quantity); 
@@ -4570,7 +4571,6 @@
     saveWarehouseProducts();
     saveSaleHistory();
     
-    // پاککردنەوەی سەبەتە
     cart = [];
     currentCustomer = null;
     creditCheck.checked = false;
@@ -4580,7 +4580,6 @@
     renderCart();
     updateInvoicePreview();
     
-    // نوێکردنەوەی ئامارەکان - پاش پاشەکەوتکردنی moneyRequests
     updateStats();
     updateAccountingDisplay();
     
@@ -4643,7 +4642,6 @@
     }
     
     if (view !== 'dashboard') {
-      // نمایشی ڕێنمایی ESC
       const existingHint = document.querySelector('.esc-hint');
       if (!existingHint) {
         const hint = document.createElement('div');
@@ -4909,11 +4907,6 @@
     document.addEventListener('click', function(e) {
       if (!finalInput.contains(e.target) && !finalSuggestions.contains(e.target)) {
         finalSuggestions.style.display = 'none';
-        if (inputId === 'damageProductSearch') {
-          const infoDiv = document.getElementById('selectedDamageProductInfo');
-          if (infoDiv && !infoDiv.contains(e.target)) {
-          }
-        }
       }
     });
 
