@@ -97,10 +97,11 @@
     .suggestion-item { display:flex; align-items:center; gap:0.8rem; padding:0.7rem 1rem; cursor:pointer; border-bottom:1px solid #f1f5f9; }
     .suggestion-item:hover { background:#f8fafc; }
     .suggestion-item.active { background:#dbeafe; }
-    .cart-item { display:flex; justify-content:space-between; align-items:center; background:#f9fafb; border-radius:1.5rem; padding:0.7rem 1rem; margin-bottom:0.6rem; border:1px solid #edf2f7; }
-    .cart-item-details { display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap; }
-    .cart-item-actions { display:flex; gap:0.3rem; align-items:center; }
+    .cart-item { display:flex; justify-content:space-between; align-items:center; background:#f9fafb; border-radius:1.5rem; padding:0.7rem 1rem; margin-bottom:0.6rem; border:1px solid #edf2f7; flex-wrap:wrap; gap:0.3rem; }
+    .cart-item-details { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
+    .cart-item-actions { display:flex; gap:0.3rem; align-items:center; flex-wrap:wrap; }
     .cart-item-actions input { width:60px; padding:0.3rem; border-radius:1rem; border:1px solid #cbd5e1; text-align:center; }
+    .cart-item-actions .unit-select { padding:0.2rem 0.5rem; border-radius:0.5rem; border:1px solid #cbd5e1; font-size:0.8rem; background:white; }
     .customer-badge { background:#dbeafe; padding:0.3rem 1.2rem; border-radius:2rem; font-weight:600; font-size:0.85rem; display:inline-flex; align-items:center; gap:0.4rem; }
     .invoice-preview { background:#fffbf5; border:2px dashed #cbd5e1; border-radius:2rem; padding:1.4rem; margin-top:1.2rem; }
     .invoice-logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:1.4rem; color:var(--text-primary); }
@@ -112,7 +113,7 @@
     .history-row { display:flex; justify-content:space-between; align-items:center; padding:0.8rem; border-bottom:1px solid #f1f5f9; flex-wrap:wrap; gap:0.5rem; }
     .btn-icon { background:none; border:none; color:#475569; font-size:1.2rem; cursor:pointer; margin:0 0.2rem; }
     .btn-icon:hover { color:#0f172a; }
-    .settings-tabs { display:flex; gap:0.6rem; margin-bottom:2rem; }
+    .settings-tabs { display:flex; gap:0.6rem; margin-bottom:2rem; flex-wrap:wrap; }
     .settings-tab { background:rgba(255,255,255,0.6); padding:0.6rem 1.5rem; border-radius:2rem; font-weight:600; cursor:pointer; border:1px solid #e2e8f0; }
     .settings-tab.active { background:#0f172a; color:white; }
     .theme-palette { display:flex; flex-wrap:wrap; gap:0.8rem; margin-top:1rem; }
@@ -202,6 +203,7 @@
     .logo-print { display:flex; align-items:center; gap:0.8rem; }
     .logo-print img { width:50px; height:50px; border-radius:50%; object-fit:cover; }
     .logo-print i { font-size:2rem; color:#0f172a; }
+    .settings-edit-input { width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #cbd5e1; margin-top:0.2rem; }
     @media print { body { background:white; } .system-container { box-shadow:none; backdrop-filter:none; background:white; padding:0; } .back-header, .tabs, .new-sale-layout .card-glass:first-child, .history-search, .btn-icon, .back-btn, .no-print { display:none !important; } .invoice-preview { border:none; } .barcode-print-section { display:block; } .barcode-print-card { break-inside:avoid; margin-bottom:1rem; } .login-overlay { display:none !important; } .logo-print { display:flex !important; align-items:center !important; gap:0.8rem !important; } .logo-print img { width:50px !important; height:50px !important; border-radius:50% !important; object-fit:cover !important; } .logo-print i { font-size:2rem !important; } }
     @media (max-width:700px) { .system-container { padding:1.2rem; } .module-section { grid-template-columns:repeat(3,1fr); } .login-box { padding:2rem 1.5rem; border-radius:2rem; } .login-logo-icon { width:60px; height:60px; font-size:2rem; } .login-logo h1 { font-size:1.5rem; } }
     .accounting-transfer-box { background:#f8fafc; border-radius:1.5rem; padding:1.5rem; margin-bottom:1.5rem; border:2px solid #e2e8f0; }
@@ -334,7 +336,6 @@
       <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-truck"></i></div><div class="stat-info"><h4 id="statTotalPurchases">0</h4><span>کۆی کڕین</span></div></div>
       <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی پارەی واسڵکراو</span></div></div>
       <div class="stat-card"><div class="stat-icon red"><i class="fas fa-coins"></i></div><div class="stat-info"><h4 id="statTotalSpendAndExpenses">0</h4><span>کۆی سەرف و مەسروفات</span></div></div>
-      <!-- کارتی واسڵی ئەمرۆ -->
       <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoney">0</h4><span>واسڵی ئەمرۆ</span></div></div>
       <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-boxes"></i></div><div class="stat-info"><h4 id="statTotalProducts">0</h4><span>کۆی کاڵاکان</span></div></div>
       <div class="stat-card"><div class="stat-icon indigo"><i class="fas fa-users"></i></div><div class="stat-info"><h4 id="statTotalPersons">0</h4><span>کۆی کەسەکان</span></div></div>
@@ -954,17 +955,12 @@
             </div>
             <div style="margin-bottom:1rem;">
               <label style="font-weight:600;">یەکە:</label>
-              <select id="newProductUnit" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
-                <option value="عدد">عدد (دانە)</option>
-                <option value="کیلۆ">کیلۆ</option>
-                <option value="لیتر">لیتر</option>
-                <option value="مەتر">مەتر</option>
-                <option value="کارتۆن">کارتۆن</option>
-              </select>
+              <select id="newProductUnit" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;"></select>
             </div>
             <div style="margin-bottom:1rem;">
-              <label style="font-weight:600;">بڕی یەکەی دووەم:</label>
-              <input type="number" id="newProductSecondQty" value="0" min="0" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              <label style="font-weight:600;">نرخی یەکەی دووەم (کارتۆن، پاکێج...):</label>
+              <input type="number" id="newProductSecondPrice" value="0" min="0" step="0.01" style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              <div style="font-size:0.8rem; color:#64748b; margin-top:0.2rem;">نرخی کاڵا بە یەکەی دووەم (بۆ نمونە نرخی کارتۆن)</div>
             </div>
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
@@ -1340,6 +1336,8 @@
         <div class="settings-tab active" data-stab="backup">💾 باکەپ</div>
         <div class="settings-tab" data-stab="appearance">🎨 دیزاینی سیستەم</div>
         <div class="settings-tab" data-stab="layout">🔄 ڕێکخستنی بەشەکان</div>
+        <div class="settings-tab" data-stab="edit">✏️ دەستکاری نرخ و بڕ</div>
+        <div class="settings-tab" data-stab="units">📦 یەکەکان</div>
       </div>
       <div id="settingsBackupPanel" class="panel active card-glass">
         <h3 style="margin-bottom:1rem;"><i class="fas fa-cloud-upload-alt"></i> بەڕێوەبردنی باکەپ</h3>
@@ -1387,6 +1385,39 @@
         <p style="margin-bottom:1.2rem; color:#475569;">بەشەکان بە درەگ کردن ئاڵوگۆڕ بکە. پاشان لە داشبۆرد پاشەکەوت دەکرێت.</p>
         <div class="module-section" id="layoutDragContainer"></div>
         <button onclick="syncLayoutFromSettings()" style="background:#0f172a;color:white;border:none;padding:0.7rem 2rem;border-radius:2rem;margin-top:1rem;font-weight:bold;"><i class="fas fa-sync-alt"></i> نوێکردنەوەی ڕێکخستن</button>
+      </div>
+      <div id="settingsEditPanel" class="panel card-glass">
+        <h3 style="margin-bottom:1rem;"><i class="fas fa-edit" style="color:#2563eb;"></i> دەستکاری نرخ و بڕی کاڵا</h3>
+        <div style="margin-bottom:1rem;">
+          <label style="font-weight:600;">🔍 گەڕان بەدوای کاڵا:</label>
+          <div class="search-box" style="position:relative;">
+            <input type="text" id="editProductSearchSettings" placeholder="ناوی کاڵا یان بارکۆد..." oninput="searchProductForEditSettings()">
+            <span class="clear-btn" id="editProductSearchSettingsClear" onclick="clearSearch('editProductSearchSettings', 'editProductSuggestionsSettings')">✕</span>
+            <button onclick="searchProductForEditSettings()"><i class="fas fa-search"></i></button>
+          </div>
+          <div class="suggestions" id="editProductSuggestionsSettings"></div>
+        </div>
+        <div id="editProductSettingsForm" style="display:none; background:#f8fafc; border-radius:1.5rem; padding:1.5rem;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div><label style="font-weight:600;">ناوی کاڵا:</label><input type="text" id="editSettingsProductName" class="settings-edit-input"></div>
+            <div><label style="font-weight:600;">بارکۆد:</label><input type="text" id="editSettingsBarcode" class="settings-edit-input"></div>
+            <div><label style="font-weight:600;">نرخی کڕین:</label><input type="number" id="editSettingsBuyPrice" class="settings-edit-input"></div>
+            <div><label style="font-weight:600;">نرخی فرۆشتن:</label><input type="number" id="editSettingsSellPrice" class="settings-edit-input"></div>
+            <div><label style="font-weight:600;">نرخی یەکەی دووەم:</label><input type="number" id="editSettingsSecondPrice" class="settings-edit-input"></div>
+            <div><label style="font-weight:600;">بڕی کاڵا:</label><input type="number" id="editSettingsQuantity" class="settings-edit-input"></div>
+          </div>
+          <button onclick="saveProductEditSettings()" style="background:#2563eb; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:bold; width:100%; margin-top:1rem;"><i class="fas fa-save"></i> پاشەکەوتکردنی گۆڕانکارییەکان</button>
+        </div>
+      </div>
+      <div id="settingsUnitsPanel" class="panel card-glass">
+        <h3 style="margin-bottom:1rem;"><i class="fas fa-cubes" style="color:#d97706;"></i> بەڕێوەبردنی یەکەکان</h3>
+        <div style="margin-bottom:1.5rem;">
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <input type="text" id="newUnitName" placeholder="ناوی یەکەی نوێ (بۆ نمونە: کارتۆن، پاکێج، دەستە...)" style="flex:1; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1; min-width:200px;">
+            <button onclick="addNewUnit()" style="background:#d97706; color:white; border:none; padding:0.7rem 1.5rem; border-radius:2rem; font-weight:bold; cursor:pointer;"><i class="fas fa-plus"></i> زیادکردن</button>
+          </div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:0.5rem;" id="unitsListContainer"></div>
       </div>
     </div>
   </div>
@@ -1935,6 +1966,9 @@
 
 <script>
 (function() {
+  // ===== لیستی یەکەکان =====
+  let unitsList = JSON.parse(localStorage.getItem('market_units_list') || JSON.stringify(['عدد', 'کیلۆ', 'لیتر', 'مەتر', 'کارتۆن']));
+
   // ===== چارەسەری کێشەی ESC =====
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
@@ -2288,10 +2322,10 @@
   ]));
 
   let warehouseProducts = JSON.parse(localStorage.getItem('market_warehouse_products') || JSON.stringify([
-    { id: 1, name: 'شیری پاستێر', barcode: '623145', image: '', quantity: 50, unit: 'عدد', secondQty: 0, buyPrice: 1200, sellPrice: 1500, expiryDate: '2026-12-31' },
-    { id: 2, name: 'نانی تەواو', barcode: '845210', image: '', quantity: 100, unit: 'عدد', secondQty: 0, buyPrice: 400, sellPrice: 500, expiryDate: '2026-06-15' },
-    { id: 3, name: 'برنجی باسەتی', barcode: '998877', image: '', quantity: 30, unit: 'کیلۆ', secondQty: 0, buyPrice: 2800, sellPrice: 3200, expiryDate: '2027-01-20' },
-    { id: 4, name: 'شەکر', barcode: '445566', image: '', quantity: 20, unit: 'کیلۆ', secondQty: 0, buyPrice: 1500, sellPrice: 1800, expiryDate: '2026-05-20' }
+    { id: 1, name: 'شیری پاستێر', barcode: '623145', image: '', quantity: 50, unit: 'عدد', secondQty: 0, secondPrice: 0, buyPrice: 1200, sellPrice: 1500, expiryDate: '2026-12-31' },
+    { id: 2, name: 'نانی تەواو', barcode: '845210', image: '', quantity: 100, unit: 'عدد', secondQty: 0, secondPrice: 0, buyPrice: 400, sellPrice: 500, expiryDate: '2026-06-15' },
+    { id: 3, name: 'برنجی باسەتی', barcode: '998877', image: '', quantity: 30, unit: 'کیلۆ', secondQty: 0, secondPrice: 0, buyPrice: 2800, sellPrice: 3200, expiryDate: '2027-01-20' },
+    { id: 4, name: 'شەکر', barcode: '445566', image: '', quantity: 20, unit: 'کیلۆ', secondQty: 0, secondPrice: 0, buyPrice: 1500, sellPrice: 1800, expiryDate: '2026-05-20' }
   ]));
 
   let employees = JSON.parse(localStorage.getItem('market_employees') || JSON.stringify([
@@ -2360,7 +2394,7 @@
     updateQuickPayStats();
   }
 
-  // ===== UPDATE TODAY MONEY STAT (FIXED) =====
+  // ===== UPDATE TODAY MONEY STAT =====
   function updateTodayMoneyStat() {
     const today = new Date().toLocaleDateString('ckb');
     
@@ -4537,11 +4571,11 @@
     { id: 'F1001', date: '2026-05-06 10:15', customer: 'کاش', total: 4700, items: [{ name: 'شیری پاستێر', qty: 2, price: 1500 }] },
     { id: 'F1002', date: '2026-05-05 14:30', customer: 'ئارام محەمەد', total: 6400, items: [{ name: 'برنجی باسەتی', qty: 2, price: 3200 }] }
   ]));
-  window.saleHistory = saleHistory; // <-- ئەم ڕستەیە زیادکراوە
+  window.saleHistory = saleHistory;
 
   function saveSaleHistory() { 
     localStorage.setItem('market_sales_history', JSON.stringify(saleHistory)); 
-    window.saleHistory = saleHistory; // <-- ئەم ڕستەیە زیادکراوە
+    window.saleHistory = saleHistory;
     updateStats(); 
   }
 
@@ -4558,7 +4592,7 @@
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     
     saleHistory.unshift({ id: invId, date: dateStr, customer: custName, total, items: cart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.unitPrice })) });
-    window.saleHistory = saleHistory; // <-- ئەم ڕستەیە زیادکراوە
+    window.saleHistory = saleHistory;
     saveSaleHistory();
     
     if (currentCustomer && creditCheck.checked) {
@@ -5138,6 +5172,90 @@
     showToast(`✅ کاڵای ${product.name} بە ${quantity} دانە تۆمارکرا`, 'success');
   };
 
+  // ===== UNITS FUNCTIONS =====
+  function renderUnitsList() {
+    const container = document.getElementById('unitsListContainer');
+    if (!container) return;
+    container.innerHTML = unitsList.map((unit, idx) => `
+      <span class="price-tag" style="background:#f3e8ff; border-color:#7c3aed;">
+        ${unit}
+        <button class="btn-icon" onclick="removeUnit(${idx})" style="font-size:0.8rem; color:#dc2626;">✕</button>
+      </span>
+    `).join('');
+  }
+
+  window.addNewUnit = function() {
+    const name = document.getElementById('newUnitName').value.trim();
+    if (!name) { alert('تکایە ناوی یەکە بنووسە!'); return; }
+    if (unitsList.includes(name)) { alert('ئەم یەکەیە پێشتر هەیە!'); return; }
+    unitsList.push(name);
+    localStorage.setItem('market_units_list', JSON.stringify(unitsList));
+    document.getElementById('newUnitName').value = '';
+    renderUnitsList();
+    showToast(`✅ یەکەی "${name}" زیادکرا`, 'success');
+  };
+
+  window.removeUnit = function(index) {
+    const unit = unitsList[index];
+    if (!confirm(`دڵنیایت لە سڕینەوەی یەکەی "${unit}"؟`)) return;
+    unitsList.splice(index, 1);
+    localStorage.setItem('market_units_list', JSON.stringify(unitsList));
+    renderUnitsList();
+    showToast(`✅ یەکەی "${unit}" سڕکرایەوە`, 'success');
+  };
+
+  // ===== EDIT PRODUCT SETTINGS =====
+  let editingProductId = null;
+
+  window.searchProductForEditSettings = function() {
+    const query = document.getElementById('editProductSearchSettings').value.trim().toLowerCase();
+    const suggestions = document.getElementById('editProductSuggestionsSettings');
+    if (!query) { suggestions.style.display = 'none'; return; }
+    const filtered = warehouseProducts.filter(p => p.name.toLowerCase().includes(query) || p.barcode.includes(query));
+    if (filtered.length) {
+      suggestions.innerHTML = filtered.map(p => `
+        <div class="suggestion-item" data-pid="${p.id}" style="display:flex; justify-content:space-between;">
+          <span>📦 <strong>${p.name}</strong></span>
+          <span style="font-size:0.8rem; color:#64748b;">${p.barcode}</span>
+        </div>
+      `).join('');
+      suggestions.style.display = 'block';
+      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const pid = parseInt(this.dataset.pid);
+          const product = warehouseProducts.find(p => p.id === pid);
+          if (product) {
+            editingProductId = pid;
+            document.getElementById('editSettingsProductName').value = product.name;
+            document.getElementById('editSettingsBarcode').value = product.barcode;
+            document.getElementById('editSettingsBuyPrice').value = product.buyPrice;
+            document.getElementById('editSettingsSellPrice').value = product.sellPrice;
+            document.getElementById('editSettingsSecondPrice').value = product.secondPrice || 0;
+            document.getElementById('editSettingsQuantity').value = product.quantity;
+            document.getElementById('editProductSettingsForm').style.display = 'block';
+            document.getElementById('editProductSearchSettings').value = product.name;
+          }
+          suggestions.style.display = 'none';
+        });
+      });
+    } else { suggestions.style.display = 'none'; }
+  };
+
+  window.saveProductEditSettings = function() {
+    if (!editingProductId) { alert('تکایە کاڵایەک هەڵبژێرە'); return; }
+    const product = warehouseProducts.find(p => p.id === editingProductId);
+    if (!product) return;
+    product.name = document.getElementById('editSettingsProductName').value.trim() || product.name;
+    product.barcode = document.getElementById('editSettingsBarcode').value.trim() || product.barcode;
+    product.buyPrice = parseFloat(document.getElementById('editSettingsBuyPrice').value) || product.buyPrice;
+    product.sellPrice = parseFloat(document.getElementById('editSettingsSellPrice').value) || product.sellPrice;
+    product.secondPrice = parseFloat(document.getElementById('editSettingsSecondPrice').value) || 0;
+    product.quantity = parseInt(document.getElementById('editSettingsQuantity').value) || product.quantity;
+    saveWarehouseProducts();
+    renderProductsGrid();
+    showToast('✅ گۆڕانکارییەکان پاشەکەوتکران', 'success');
+  };
+
   // ===== DOMContentLoaded =====
   let autoBackupEnabled = localStorage.getItem('market_auto_backup') === 'true';
   document.addEventListener('DOMContentLoaded', function() {
@@ -5156,7 +5274,7 @@
     quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
     quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0');
     updateStats();
-    updateTodayMoneyStat(); // <-- ئەم ڕستەیە زیادکراوە بۆ نوێکردنەوەی کارتی واسڵی ئەمرۆ
+    updateTodayMoneyStat();
     applyAppearanceToDOM();
     renderLogoPreview();
     applyLogoToPrint();
@@ -5183,12 +5301,24 @@
     renderGiveHistory();
     renderAdjustmentHistory();
     renderQuickPayHistory();
+    renderUnitsList();
     updateAccountingDisplay();
     document.getElementById('personDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کەسێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     document.getElementById('partnerDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">شەریکێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     document.getElementById('agentDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">مەندوبێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     document.getElementById('employeeDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کارمەندێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     createParticles();
+
+    // پڕکردنەوەی یەکەکان لە هەڵبژاردنی زیادکردنی کاڵا
+    const unitSelect = document.getElementById('newProductUnit');
+    if (unitSelect) {
+      unitsList.forEach(u => {
+        const option = document.createElement('option');
+        option.value = u;
+        option.textContent = u;
+        unitSelect.appendChild(option);
+      });
+    }
   });
 
   // ===== MONEY REQUEST FUNCTIONS =====
@@ -5856,18 +5986,18 @@
     const expiryDate = document.getElementById('newProductExpiry')?.value || '';
     const quantity = parseInt(document.getElementById('newProductQuantity')?.value) || 0;
     const unit = document.getElementById('newProductUnit')?.value || 'عدد';
-    const secondQty = parseInt(document.getElementById('newProductSecondQty')?.value) || 0;
+    const secondPrice = parseFloat(document.getElementById('newProductSecondPrice')?.value) || 0;
     const buyPrice = parseInt(document.getElementById('newProductBuyPrice')?.value) || 0;
     const sellPrice = parseInt(document.getElementById('newProductSellPrice')?.value) || 0;
     if (!name || !barcode) { alert('تکایە ناوی کاڵا و بارکۆد پڕبکەرەوە'); return; }
     const newId = warehouseProducts.length ? Math.max(...warehouseProducts.map(p => p.id)) + 1 : 1;
-    warehouseProducts.push({ id: newId, name, barcode, expiryDate, image: productImageData, quantity, unit, secondQty, buyPrice, sellPrice });
+    warehouseProducts.push({ id: newId, name, barcode, expiryDate, image: productImageData, quantity, unit, secondQty: 0, secondPrice, buyPrice, sellPrice });
     saveWarehouseProducts();
     document.getElementById('newProductName').value = '';
     document.getElementById('newProductBarcode').value = '';
     document.getElementById('newProductExpiry').value = '';
     document.getElementById('newProductQuantity').value = '0';
-    document.getElementById('newProductSecondQty').value = '0';
+    document.getElementById('newProductSecondPrice').value = '0';
     document.getElementById('newProductBuyPrice').value = '0';
     document.getElementById('newProductSellPrice').value = '0';
     document.getElementById('productImagePreview').style.display = 'none';
@@ -6101,6 +6231,7 @@
     populateAppearanceFields();
     renderBackupHistory();
     renderSettingsLayoutModules();
+    renderUnitsList();
   }
 
   let backupHistory = JSON.parse(localStorage.getItem('market_backup_history') || '[]');
@@ -6180,6 +6311,7 @@
         renderGiveHistory();
         renderAdjustmentHistory();
         renderQuickPayHistory();
+        renderUnitsList();
         updateStats();
         alert('باکەپ بە سەرکەوتوویی گەڕێندرایەوە');
       } catch (err) { alert('فایلی باکەپ نادروستە'); }
@@ -6252,6 +6384,7 @@
       renderGiveHistory();
       renderAdjustmentHistory();
       renderQuickPayHistory();
+      renderUnitsList();
       updateStats();
       alert('باکەپ گەڕێندرایەوە');
     }
@@ -6356,26 +6489,68 @@
     if (existing) {
       existing.quantity += 1;
     } else {
-      cart.push({ product, quantity: 1, unitPrice: product.sellPrice });
+      cart.push({ product, quantity: 1, unitPrice: product.sellPrice, unit: 'عدد' });
     }
     renderCart();
     updateInvoicePreview();
   }
 
+  window.salesApp = {
+    updateQuantity: function(i, d) {
+      if (cart[i].quantity + d < 1) return;
+      cart[i].quantity += d;
+      renderCart();
+      updateInvoicePreview();
+    },
+    setQuantity: function(i, val) {
+      const q = parseInt(val);
+      if (!isNaN(q) && q > 0) {
+        cart[i].quantity = q;
+        renderCart();
+        updateInvoicePreview();
+      }
+    },
+    removeItem: function(i) {
+      cart.splice(i, 1);
+      renderCart();
+      updateInvoicePreview();
+    },
+    changeUnit: function(index, newUnit) {
+      if (cart[index]) {
+        cart[index].unit = newUnit;
+        const product = warehouseProducts.find(p => p.id === cart[index].product.id);
+        if (product && product.secondPrice && newUnit !== 'عدد' && newUnit !== 'دانە') {
+          cart[index].unitPrice = product.secondPrice;
+        } else {
+          cart[index].unitPrice = cart[index].product.sellPrice;
+        }
+        renderCart();
+        updateInvoicePreview();
+      }
+    }
+  };
+
   window.addSampleItem = function() { if (warehouseProducts.length) addToCart(warehouseProducts[0]); };
-
-  function removeCartItem(index) { cart.splice(index, 1); renderCart(); updateInvoicePreview(); }
-
-  function updateQuantity(index, delta) { if (cart[index].quantity + delta < 1) return; cart[index].quantity += delta; renderCart(); updateInvoicePreview(); }
-
-  window.salesApp = { updateQuantity: (i, d) => updateQuantity(i, d), setQuantity: (i, val) => { const q = parseInt(val); if (!isNaN(q) && q > 0) { cart[i].quantity = q; renderCart(); updateInvoicePreview(); } }, removeItem: (i) => removeCartItem(i) };
 
   function renderCart() {
     if (!cartContainer) return;
     if (!cart.length) { cartContainer.innerHTML = '<p style="color:#94a3b8; text-align:center;">کاڵا زیاد نەکراوە</p>'; totalSpan.textContent = '0'; return; }
     cartContainer.innerHTML = cart.map((item, idx) => `
-      <div class="cart-item"><div class="cart-item-details"><span>📦 ${item.product.name}</span><span>${item.unitPrice} د.ع</span></div>
-      <div class="cart-item-actions"><button class="btn-icon" onclick="window.salesApp.updateQuantity(${idx},-1)"><i class="fas fa-minus-circle"></i></button><input type="number" value="${item.quantity}" min="1" onchange="window.salesApp.setQuantity(${idx},this.value)"><button class="btn-icon" onclick="window.salesApp.updateQuantity(${idx},1)"><i class="fas fa-plus-circle"></i></button><button class="btn-icon" onclick="window.salesApp.removeItem(${idx})"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button></div></div>`).join('');
+      <div class="cart-item">
+        <div class="cart-item-details">
+          <span>📦 ${item.product.name}</span>
+          <select class="unit-select" data-index="${idx}" onchange="window.salesApp.changeUnit(${idx}, this.value)" style="padding:0.2rem 0.5rem; border-radius:0.5rem; border:1px solid #cbd5e1; font-size:0.8rem; margin:0 0.3rem;">
+            ${unitsList.map(u => `<option value="${u}" ${item.unit === u ? 'selected' : ''}>${u}</option>`).join('')}
+          </select>
+          <span>${item.unitPrice} د.ع</span>
+        </div>
+        <div class="cart-item-actions">
+          <button class="btn-icon" onclick="window.salesApp.updateQuantity(${idx},-1)"><i class="fas fa-minus-circle"></i></button>
+          <input type="number" value="${item.quantity}" min="1" onchange="window.salesApp.setQuantity(${idx},this.value)">
+          <button class="btn-icon" onclick="window.salesApp.updateQuantity(${idx},1)"><i class="fas fa-plus-circle"></i></button>
+          <button class="btn-icon" onclick="window.salesApp.removeItem(${idx})"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
+        </div>
+      </div>`).join('');
     totalSpan.textContent = cart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0).toLocaleString();
   }
 
@@ -6709,7 +6884,7 @@
     if (returnType === 'debt' && !selectedReturnCustomerForDebt) { alert('تکایە کەسێک هەڵبژێرە بۆ کەمکردنەوەی قەرز'); return; }
     const refundAmount = returnQty * selectedReturnProduct.price;
     const product = warehouseProducts.find(p => p.name === selectedReturnProduct.name);
-    if (product) { product.quantity += returnQty; saveWarehouseProducts(); } else { const newId = warehouseProducts.length ? Math.max(...warehouseProducts.map(p => p.id)) + 1 : 1; warehouseProducts.push({ id: newId, name: selectedReturnProduct.name, barcode: '', image: '', quantity: returnQty, unit: 'عدد', secondQty: 0, buyPrice: selectedReturnProduct.price, sellPrice: selectedReturnProduct.price, expiryDate: '' }); saveWarehouseProducts(); }
+    if (product) { product.quantity += returnQty; saveWarehouseProducts(); } else { const newId = warehouseProducts.length ? Math.max(...warehouseProducts.map(p => p.id)) + 1 : 1; warehouseProducts.push({ id: newId, name: selectedReturnProduct.name, barcode: '', image: '', quantity: returnQty, unit: 'عدد', secondQty: 0, secondPrice: 0, buyPrice: selectedReturnProduct.price, sellPrice: selectedReturnProduct.price, expiryDate: '' }); saveWarehouseProducts(); }
     const originalSale = saleHistory.find(s => s.id === selectedReturnSale.id);
     if (originalSale) {
       const saleItem = originalSale.items[selectedReturnProduct.originalIndex];
@@ -7935,9 +8110,12 @@
       document.getElementById('settingsBackupPanel').classList.toggle('active', tab === 'backup');
       document.getElementById('settingsAppearancePanel').classList.toggle('active', tab === 'appearance');
       document.getElementById('settingsLayoutPanel').classList.toggle('active', tab === 'layout');
+      document.getElementById('settingsEditPanel').classList.toggle('active', tab === 'edit');
+      document.getElementById('settingsUnitsPanel').classList.toggle('active', tab === 'units');
       if (tab === 'layout') renderSettingsLayoutModules();
       if (tab === 'appearance') populateAppearanceFields();
       if (tab === 'backup') renderBackupHistory();
+      if (tab === 'units') renderUnitsList();
     }
   });
 
