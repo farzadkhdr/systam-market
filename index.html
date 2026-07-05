@@ -2359,27 +2359,8 @@
     updateQuickPayStats();
   }
 
-  // ===== UPDATE STATS (بە کارتی واسڵی ئەمرۆ) =====
-  function updateStats() {
-    const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
-    const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
-    
-    const totalMoneyReceived = moneyRequests
-      .filter(r => r.isTransfer === true && !r.isJemgeza)
-      .reduce((sum, r) => sum + r.amount, 0);
-    
-    const totalCashSales = saleHistory
-      .filter(s => s.customer === 'کاش')
-      .reduce((sum, s) => sum + s.total, 0);
-    
-    const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
-    const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
-    
-    const totalSpend = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
-                       employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
-                       returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
-    const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalSpend;
-    
+  // ===== UPDATE TODAY MONEY STAT (NEW FUNCTION) =====
+  function updateTodayMoneyStat() {
     const today = new Date().toLocaleDateString('ckb');
     
     const todayCashSales = saleHistory
@@ -2401,6 +2382,38 @@
     
     const todayMoney = todayCashSales + todayCredits - todayDebits;
     
+    const statTodayMoneyEl = document.getElementById('statTodayMoney');
+    if (statTodayMoneyEl) {
+      statTodayMoneyEl.textContent = Math.max(0, todayMoney).toLocaleString();
+    }
+    
+    const accTodayEl = document.getElementById('accTodayMoney');
+    if (accTodayEl) {
+      accTodayEl.textContent = Math.max(0, todayMoney).toLocaleString();
+    }
+  }
+
+  // ===== UPDATE STATS (گۆڕدراو) =====
+  function updateStats() {
+    const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
+    const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
+    
+    const totalMoneyReceived = moneyRequests
+      .filter(r => r.isTransfer === true && !r.isJemgeza)
+      .reduce((sum, r) => sum + r.amount, 0);
+    
+    const totalCashSales = saleHistory
+      .filter(s => s.customer === 'کاش')
+      .reduce((sum, s) => sum + s.total, 0);
+    
+    const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
+    const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
+    
+    const totalSpend = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
+                       employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
+                       returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
+    const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalSpend;
+    
     const totalProducts = warehouseProducts.length;
     const totalPersons = customers.length;
     const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -p.debt), 0);
@@ -2419,7 +2432,6 @@
     const statTotalPurchasesEl = document.getElementById('statTotalPurchases');
     const statTotalMoneyReceivedEl = document.getElementById('statTotalMoneyReceived');
     const statTotalSpendAndExpensesEl = document.getElementById('statTotalSpendAndExpenses');
-    const statTodayMoneyEl = document.getElementById('statTodayMoney'); // کارتی نوێ
     const statTotalProductsEl = document.getElementById('statTotalProducts');
     const statTotalPersonsEl = document.getElementById('statTotalPersons');
     const statMyDebtToPartnersEl = document.getElementById('statMyDebtToPartners');
@@ -2434,12 +2446,6 @@
     if (statTotalPurchasesEl) statTotalPurchasesEl.textContent = totalPurchases.toLocaleString();
     if (statTotalMoneyReceivedEl) statTotalMoneyReceivedEl.textContent = totalMoneyReceived.toLocaleString();
     if (statTotalSpendAndExpensesEl) statTotalSpendAndExpensesEl.textContent = totalSpendAndExpenses.toLocaleString();
-    
-    // نوێکردنەوەی کاری واسڵی ئەمرۆ
-    if (statTodayMoneyEl) {
-      statTodayMoneyEl.textContent = Math.max(0, todayMoney).toLocaleString();
-    }
-    
     if (statTotalProductsEl) statTotalProductsEl.textContent = totalProducts;
     if (statTotalPersonsEl) statTotalPersonsEl.textContent = totalPersons;
     if (statMyDebtToPartnersEl) statMyDebtToPartnersEl.textContent = myDebtToPartners.toLocaleString();
@@ -2460,6 +2466,9 @@
       statQuickPayProfitEl.className = quickPayProfit > 0 ? 'profit-positive' : quickPayProfit < 0 ? 'profit-negative' : 'profit-zero';
     }
 
+    // نوێکردنەوەی کارتی واسڵی ئەمرۆ
+    updateTodayMoneyStat();
+    
     updateAccountingDisplay();
     updateQuickPayStats();
   }
