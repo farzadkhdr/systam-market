@@ -334,7 +334,7 @@
       <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-truck"></i></div><div class="stat-info"><h4 id="statTotalPurchases">0</h4><span>کۆی کڕین</span></div></div>
       <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی پارەی واسڵکراو</span></div></div>
       <div class="stat-card"><div class="stat-icon red"><i class="fas fa-coins"></i></div><div class="stat-info"><h4 id="statTotalSpendAndExpenses">0</h4><span>کۆی سەرف و مەسروفات</span></div></div>
-      <!-- کارتی واسڵی ئەمرۆ زیادکرا -->
+      <!-- کارتی واسڵی ئەمرۆ -->
       <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoney">0</h4><span>واسڵی ئەمرۆ</span></div></div>
       <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-boxes"></i></div><div class="stat-info"><h4 id="statTotalProducts">0</h4><span>کۆی کاڵاکان</span></div></div>
       <div class="stat-card"><div class="stat-icon indigo"><i class="fas fa-users"></i></div><div class="stat-info"><h4 id="statTotalPersons">0</h4><span>کۆی کەسەکان</span></div></div>
@@ -2139,6 +2139,7 @@
         showToast(`👋 بەخێربێیت ${userName}!`, 'success');
         updateStats();
         renderDashboardModules();
+        updateTodayMoneyStat();
       } else {
         document.getElementById('loginErrorMessage').textContent = 'ناوی بەکارهێنەر یان پاسوورد هەڵەیە! تکایە دووبارە هەوڵبدە.';
         errorDiv.classList.add('show');
@@ -2359,26 +2360,26 @@
     updateQuickPayStats();
   }
 
-  // ===== UPDATE TODAY MONEY STAT (NEW FUNCTION) =====
+  // ===== UPDATE TODAY MONEY STAT (FIXED) =====
   function updateTodayMoneyStat() {
     const today = new Date().toLocaleDateString('ckb');
     
-    const todayCashSales = saleHistory
-      .filter(s => s.customer === 'کاش' && s.date && s.date.includes(today))
-      .reduce((sum, s) => sum + s.total, 0);
+    const todayCashSales = (window.saleHistory || []).filter(s => 
+      s.customer === 'کاش' && s.date && s.date.includes(today)
+    ).reduce((sum, s) => sum + s.total, 0);
     
-    const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && 
-             r.isTransfer !== true && 
-             r.amount > 0 && 
-             r.type !== 'adjustment' &&
-             !r.isJemgeza &&
-             r.type !== 'sale')
-      .reduce((sum, r) => sum + r.amount, 0);
+    const todayCredits = moneyRequests.filter(r => 
+      r.date && r.date.includes(today) && 
+      r.isTransfer !== true && 
+      r.amount > 0 && 
+      r.type !== 'adjustment' &&
+      !r.isJemgeza &&
+      r.type !== 'sale'
+    ).reduce((sum, r) => sum + r.amount, 0);
     
-    const todayDebits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.amount < 0)
-      .reduce((sum, r) => sum + Math.abs(r.amount), 0);
+    const todayDebits = moneyRequests.filter(r => 
+      r.date && r.date.includes(today) && r.amount < 0
+    ).reduce((sum, r) => sum + Math.abs(r.amount), 0);
     
     const todayMoney = todayCashSales + todayCredits - todayDebits;
     
@@ -2393,7 +2394,7 @@
     }
   }
 
-  // ===== UPDATE STATS (گۆڕدراو) =====
+  // ===== UPDATE STATS =====
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
@@ -2427,7 +2428,6 @@
     quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
     quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0');
 
-    // نوێکردنەوەی هەموو کارتەکان
     const statTotalSalesEl = document.getElementById('statTotalSales');
     const statTotalPurchasesEl = document.getElementById('statTotalPurchases');
     const statTotalMoneyReceivedEl = document.getElementById('statTotalMoneyReceived');
@@ -2466,9 +2466,7 @@
       statQuickPayProfitEl.className = quickPayProfit > 0 ? 'profit-positive' : quickPayProfit < 0 ? 'profit-negative' : 'profit-zero';
     }
 
-    // نوێکردنەوەی کارتی واسڵی ئەمرۆ
     updateTodayMoneyStat();
-    
     updateAccountingDisplay();
     updateQuickPayStats();
   }
@@ -4539,9 +4537,13 @@
     { id: 'F1001', date: '2026-05-06 10:15', customer: 'کاش', total: 4700, items: [{ name: 'شیری پاستێر', qty: 2, price: 1500 }] },
     { id: 'F1002', date: '2026-05-05 14:30', customer: 'ئارام محەمەد', total: 6400, items: [{ name: 'برنجی باسەتی', qty: 2, price: 3200 }] }
   ]));
-  window.saleHistory = saleHistory;
+  window.saleHistory = saleHistory; // <-- ئەم ڕستەیە زیادکراوە
 
-  function saveSaleHistory() { localStorage.setItem('market_sales_history', JSON.stringify(saleHistory)); window.saleHistory = saleHistory; updateStats(); }
+  function saveSaleHistory() { 
+    localStorage.setItem('market_sales_history', JSON.stringify(saleHistory)); 
+    window.saleHistory = saleHistory; // <-- ئەم ڕستەیە زیادکراوە
+    updateStats(); 
+  }
 
   // ===== COMPLETE SALE =====
   window.completeSale = function() {
@@ -4556,6 +4558,8 @@
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     
     saleHistory.unshift({ id: invId, date: dateStr, customer: custName, total, items: cart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.unitPrice })) });
+    window.saleHistory = saleHistory; // <-- ئەم ڕستەیە زیادکراوە
+    saveSaleHistory();
     
     if (currentCustomer && creditCheck.checked) {
       currentCustomer.debt = (currentCustomer.debt || 0) + total;
@@ -4580,7 +4584,6 @@
       if (product) product.quantity = Math.max(0, product.quantity - item.quantity); 
     });
     saveWarehouseProducts();
-    saveSaleHistory();
     
     cart = [];
     currentCustomer = null;
@@ -5153,6 +5156,7 @@
     quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
     quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0');
     updateStats();
+    updateTodayMoneyStat(); // <-- ئەم ڕستەیە زیادکراوە بۆ نوێکردنەوەی کارتی واسڵی ئەمرۆ
     applyAppearanceToDOM();
     renderLogoPreview();
     applyLogoToPrint();
