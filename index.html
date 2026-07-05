@@ -2436,7 +2436,9 @@
     if (statTotalSpendAndExpensesEl) statTotalSpendAndExpensesEl.textContent = totalSpendAndExpenses.toLocaleString();
     
     // نوێکردنەوەی کاری واسڵی ئەمرۆ
-    if (statTodayMoneyEl) statTodayMoneyEl.textContent = Math.max(0, todayMoney).toLocaleString();
+    if (statTodayMoneyEl) {
+      statTodayMoneyEl.textContent = Math.max(0, todayMoney).toLocaleString();
+    }
     
     if (statTotalProductsEl) statTotalProductsEl.textContent = totalProducts;
     if (statTotalPersonsEl) statTotalPersonsEl.textContent = totalPersons;
