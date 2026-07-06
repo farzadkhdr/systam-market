@@ -2095,6 +2095,67 @@
     }
   }
 
+  // ===== TODAY MONEY CALCULATION (FIXED) =====
+  function calculateTodayMoney() {
+    const today = new Date().toLocaleDateString('ckb');
+    
+    // کۆی فرۆشتنە نەقدیەکانی ئەمرۆ
+    const todayCashSales = (window.saleHistory || []).filter(s => 
+      s.customer === 'کاش' && s.date && s.date.includes(today)
+    ).reduce((sum, s) => sum + s.total, 0);
+    
+    // کۆی واسڵەکانی ئەمرۆ (ئەوەی کەسەکان و شەریکەکان دەدەن)
+    const todayCredits = (moneyRequests || []).filter(r => 
+      r.date && r.date.includes(today) && 
+      r.isTransfer !== true && 
+      r.amount > 0 && 
+      r.type !== 'adjustment' &&
+      !r.isJemgeza &&
+      r.type !== 'sale' &&
+      r.type !== 'agent_sale'
+    ).reduce((sum, r) => sum + r.amount, 0);
+    
+    // کۆی دەرچوونەکانی ئەمرۆ (سەرف، پارە پێدان، گواستنەوەکان)
+    const todayDebits = (moneyRequests || []).filter(r => 
+      r.date && r.date.includes(today) && 
+      r.amount < 0 &&
+      r.type !== 'adjustment' &&
+      !r.isJemgeza
+    ).reduce((sum, r) => sum + Math.abs(r.amount), 0);
+    
+    // واسڵی ئەمرۆ = فرۆشتن + واسڵ - دەرچوون
+    return Math.max(0, todayCashSales + todayCredits - todayDebits);
+  }
+
+  // ===== UPDATE TODAY MONEY STAT (FIXED) =====
+  function updateTodayMoneyStat() {
+    const todayMoney = calculateTodayMoney();
+    
+    // نوێکردنەوەی کارتی داشبۆرد
+    const statTodayMoneyEl = document.getElementById('statTodayMoney');
+    if (statTodayMoneyEl) {
+      statTodayMoneyEl.textContent = todayMoney.toLocaleString();
+    }
+    
+    // نوێکردنەوەی کارتی حیساباتکردن
+    const accTodayEl = document.getElementById('accTodayMoney');
+    if (accTodayEl) {
+      accTodayEl.textContent = todayMoney.toLocaleString();
+    }
+    
+    // نوێکردنەوەی کارتی مەسروفات
+    const todayMoneyDisplay = document.getElementById('todayMoneyDisplay');
+    if (todayMoneyDisplay) {
+      todayMoneyDisplay.textContent = todayMoney.toLocaleString();
+    }
+    
+    // نوێکردنەوەی کارتی پارە پێدان
+    const todayMoneyGiveDisplay = document.getElementById('todayMoneyGiveDisplay');
+    if (todayMoneyGiveDisplay) {
+      todayMoneyGiveDisplay.textContent = todayMoney.toLocaleString();
+    }
+  }
+
   // ===== LOGIN SYSTEM =====
   let isLoggedIn = false;
 
@@ -2396,35 +2457,16 @@
 
   // ===== UPDATE TODAY MONEY STAT =====
   function updateTodayMoneyStat() {
-    const today = new Date().toLocaleDateString('ckb');
-    
-    const todayCashSales = (window.saleHistory || []).filter(s => 
-      s.customer === 'کاش' && s.date && s.date.includes(today)
-    ).reduce((sum, s) => sum + s.total, 0);
-    
-    const todayCredits = moneyRequests.filter(r => 
-      r.date && r.date.includes(today) && 
-      r.isTransfer !== true && 
-      r.amount > 0 && 
-      r.type !== 'adjustment' &&
-      !r.isJemgeza &&
-      r.type !== 'sale'
-    ).reduce((sum, r) => sum + r.amount, 0);
-    
-    const todayDebits = moneyRequests.filter(r => 
-      r.date && r.date.includes(today) && r.amount < 0
-    ).reduce((sum, r) => sum + Math.abs(r.amount), 0);
-    
-    const todayMoney = todayCashSales + todayCredits - todayDebits;
+    const todayMoney = calculateTodayMoney();
     
     const statTodayMoneyEl = document.getElementById('statTodayMoney');
     if (statTodayMoneyEl) {
-      statTodayMoneyEl.textContent = Math.max(0, todayMoney).toLocaleString();
+      statTodayMoneyEl.textContent = todayMoney.toLocaleString();
     }
     
     const accTodayEl = document.getElementById('accTodayMoney');
     if (accTodayEl) {
-      accTodayEl.textContent = Math.max(0, todayMoney).toLocaleString();
+      accTodayEl.textContent = todayMoney.toLocaleString();
     }
   }
 
@@ -2587,18 +2629,7 @@
         .reduce((sum, r) => sum + r.amount, 0);
     } else if (source === 'today') {
       sourceName = 'کۆی واسڵی ئەمرۆ';
-      const today = new Date().toLocaleDateString('ckb');
-      const todayCredits = moneyRequests
-        .filter(r => r.date && r.date.includes(today) && 
-               r.isTransfer !== true && 
-               r.amount > 0 && 
-               r.type !== 'adjustment' &&
-               !r.isJemgeza)
-        .reduce((sum, r) => sum + r.amount, 0);
-      const todayDebits = moneyRequests
-        .filter(r => r.date && r.date.includes(today) && r.amount < 0)
-        .reduce((sum, r) => sum + Math.abs(r.amount), 0);
-      availableAmount = todayCredits - todayDebits;
+      availableAmount = calculateTodayMoney();
     } else if (source === 'jemgeza') {
       sourceName = 'کۆی پارەی جەمگزەی دووەم';
       availableAmount = parseInt(localStorage.getItem('market_jemgeza') || '0');
@@ -2994,31 +3025,10 @@
 
   // ===== ACCOUNTING / TRANSFER FUNCTIONS =====
   function updateAccountingDisplay() {
-    const today = new Date().toLocaleDateString('ckb');
-    
-    const todayCashSales = saleHistory
-      .filter(s => s.customer === 'کاش' && s.date && s.date.includes(today))
-      .reduce((sum, s) => sum + s.total, 0);
-    
-    const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && 
-             r.isTransfer !== true && 
-             r.amount > 0 && 
-             r.type !== 'adjustment' &&
-             !r.isJemgeza &&
-             r.type !== 'sale')
-      .reduce((sum, r) => sum + r.amount, 0);
-    
-    const todayDebits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.amount < 0)
-      .reduce((sum, r) => sum + Math.abs(r.amount), 0);
-    
-    const todayMoney = todayCashSales + todayCredits - todayDebits;
-    
+    const todayMoney = calculateTodayMoney();
     const totalMoney = moneyRequests
       .filter(r => r.isTransfer === true && !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
-    
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     
     const accToday = document.getElementById('accTodayMoney');
@@ -3026,7 +3036,7 @@
     const accJemgeza = document.getElementById('accJemgezaMoney');
     const jemgezaDisplay = document.getElementById('jemgezaBalanceDisplay');
     
-    if (accToday) accToday.textContent = Math.max(0, todayMoney).toLocaleString();
+    if (accToday) accToday.textContent = todayMoney.toLocaleString();
     if (accTotal) accTotal.textContent = totalMoney.toLocaleString();
     if (accJemgeza) accJemgeza.textContent = jemgeza.toLocaleString();
     if (jemgezaDisplay) jemgezaDisplay.textContent = jemgeza.toLocaleString();
@@ -3039,25 +3049,18 @@
       alert('تکایە بڕی پارەی دروست بنووسە (ژمارەیەک لە 1 زیاتر)');
       return;
     }
-    const today = new Date().toLocaleDateString('ckb');
-    const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && 
-             r.isTransfer !== true && 
-             r.amount > 0 && 
-             r.type !== 'adjustment' &&
-             !r.isJemgeza)
-      .reduce((sum, r) => sum + r.amount, 0);
-    const todayDebits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.amount < 0)
-      .reduce((sum, r) => sum + Math.abs(r.amount), 0);
-    const todayMoney = todayCredits - todayDebits;
+    
+    const todayMoney = calculateTodayMoney();
+    
     if (amount > todayMoney) {
       alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${Math.max(0, todayMoney).toLocaleString()} د.ع) زیاترە!`);
       return;
     }
+    
     if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ کۆی واسڵکراو؟`)) {
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+      
       moneyRequests.push({
         id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
         date: dateStr,
@@ -3068,6 +3071,7 @@
         note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
         isTransfer: true
       });
+      
       moneyRequests.push({
         id: 'TR-OUT' + Date.now(),
         date: dateStr,
@@ -3079,6 +3083,7 @@
         isTransfer: false,
         isExpense: true
       });
+      
       localStorage.setItem('market_money_requests', JSON.stringify(moneyRequests));
       updateAccountingDisplay();
       updateStats();
@@ -3095,22 +3100,14 @@
       alert('تکایە بڕی پارەی دروست بنووسە (ژمارەیەک لە 1 زیاتر)');
       return;
     }
-    const today = new Date().toLocaleDateString('ckb');
-    const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && 
-             r.isTransfer !== true && 
-             r.amount > 0 && 
-             r.type !== 'adjustment' &&
-             !r.isJemgeza)
-      .reduce((sum, r) => sum + r.amount, 0);
-    const todayDebits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.amount < 0)
-      .reduce((sum, r) => sum + Math.abs(r.amount), 0);
-    const todayMoney = todayCredits - todayDebits;
+    
+    const todayMoney = calculateTodayMoney();
+    
     if (amount > todayMoney) {
       alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${Math.max(0, todayMoney).toLocaleString()} د.ع) زیاترە!`);
       return;
     }
+    
     if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ جەمگزەی دووەم؟`)) {
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
@@ -4210,20 +4207,10 @@
 
   // ===== EXPENSE FUNCTIONS =====
   function updateExpenseStats() {
-    const today = new Date().toLocaleDateString('ckb');
-    const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && 
-             r.isTransfer !== true && 
-             r.amount > 0 && 
-             r.type !== 'adjustment' &&
-             !r.isJemgeza)
-      .reduce((sum, r) => sum + r.amount, 0);
-    const todayDebits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.amount < 0)
-      .reduce((sum, r) => sum + Math.abs(r.amount), 0);
-    const todayMoney = todayCredits - todayDebits;
-    const todayExpense = expenseHistory.filter(e => e.date && e.date.includes(today)).reduce((sum, e) => sum + e.amount, 0);
+    const todayMoney = calculateTodayMoney();
+    const todayExpense = expenseHistory.filter(e => e.date && e.date.includes(new Date().toLocaleDateString('ckb'))).reduce((sum, e) => sum + e.amount, 0);
     const remaining = todayMoney - todayExpense;
+    
     const displayEl = document.getElementById('todayMoneyDisplay');
     const expenseEl = document.getElementById('todayExpenseDisplay');
     const remainingEl = document.getElementById('todayRemainingDisplay');
@@ -4233,19 +4220,9 @@
   }
 
   function updateGiveStats() {
-    const today = new Date().toLocaleDateString('ckb');
-    const todayCredits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && 
-             r.isTransfer !== true && 
-             r.amount > 0 && 
-             r.type !== 'adjustment' &&
-             !r.isJemgeza)
-      .reduce((sum, r) => sum + r.amount, 0);
-    const todayDebits = moneyRequests
-      .filter(r => r.date && r.date.includes(today) && r.amount < 0)
-      .reduce((sum, r) => sum + Math.abs(r.amount), 0);
-    const todayMoney = todayCredits - todayDebits;
-    const todayGive = giveMoneyHistory.filter(g => g.date && g.date.includes(today)).reduce((sum, g) => sum + g.amount, 0);
+    const todayMoney = calculateTodayMoney();
+    const todayGive = giveMoneyHistory.filter(g => g.date && g.date.includes(new Date().toLocaleDateString('ckb'))).reduce((sum, g) => sum + g.amount, 0);
+    
     const displayEl = document.getElementById('todayMoneyGiveDisplay');
     const giveEl = document.getElementById('todayGiveDisplay');
     if (displayEl) displayEl.textContent = Math.max(0, todayMoney).toLocaleString();
