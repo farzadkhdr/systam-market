@@ -315,6 +315,7 @@
   </div>
 </div>
 
+<!-- ===== MAIN SYSTEM ===== -->
 <div class="system-container hidden" id="mainApp">
 
   <!-- ===== DASHBOARD VIEW ===== -->
@@ -1965,6 +1966,67 @@
 </div>
 
 <script>
+// ===== TODAY MONEY CALCULATION (FIXED - OUTSIDE CLOSURE) =====
+function calculateTodayMoney() {
+    const today = new Date().toLocaleDateString('ckb');
+    
+    // کۆی فرۆشتنە نەقدیەکانی ئەمرۆ
+    const todayCashSales = (window.saleHistory || []).filter(s => 
+      s.customer === 'کاش' && s.date && s.date.includes(today)
+    ).reduce((sum, s) => sum + s.total, 0);
+    
+    // کۆی واسڵەکانی ئەمرۆ (ئەوەی کەسەکان و شەریکەکان دەدەن)
+    const todayCredits = (moneyRequests || []).filter(r => 
+      r.date && r.date.includes(today) && 
+      r.isTransfer !== true && 
+      r.amount > 0 && 
+      r.type !== 'adjustment' &&
+      !r.isJemgeza &&
+      r.type !== 'sale' &&
+      r.type !== 'agent_sale'
+    ).reduce((sum, r) => sum + r.amount, 0);
+    
+    // کۆی دەرچوونەکانی ئەمرۆ (سەرف، پارە پێدان، گواستنەوەکان)
+    const todayDebits = (moneyRequests || []).filter(r => 
+      r.date && r.date.includes(today) && 
+      r.amount < 0 &&
+      r.type !== 'adjustment' &&
+      !r.isJemgeza
+    ).reduce((sum, r) => sum + Math.abs(r.amount), 0);
+    
+    // واسڵی ئەمرۆ = فرۆشتن + واسڵ - دەرچوون
+    return Math.max(0, todayCashSales + todayCredits - todayDebits);
+}
+
+// ===== UPDATE TODAY MONEY STAT (FIXED - OUTSIDE CLOSURE) =====
+function updateTodayMoneyStat() {
+    const todayMoney = calculateTodayMoney();
+    
+    // نوێکردنەوەی کارتی داشبۆرد
+    const statTodayMoneyEl = document.getElementById('statTodayMoney');
+    if (statTodayMoneyEl) {
+        statTodayMoneyEl.textContent = todayMoney.toLocaleString();
+    }
+    
+    // نوێکردنەوەی کارتی حیساباتکردن
+    const accTodayEl = document.getElementById('accTodayMoney');
+    if (accTodayEl) {
+        accTodayEl.textContent = todayMoney.toLocaleString();
+    }
+    
+    // نوێکردنەوەی کارتی مەسروفات
+    const todayMoneyDisplay = document.getElementById('todayMoneyDisplay');
+    if (todayMoneyDisplay) {
+        todayMoneyDisplay.textContent = todayMoney.toLocaleString();
+    }
+    
+    // نوێکردنەوەی کارتی پارە پێدان
+    const todayMoneyGiveDisplay = document.getElementById('todayMoneyGiveDisplay');
+    if (todayMoneyGiveDisplay) {
+        todayMoneyGiveDisplay.textContent = todayMoney.toLocaleString();
+    }
+}
+
 (function() {
   // ===== لیستی یەکەکان =====
   let unitsList = JSON.parse(localStorage.getItem('market_units_list') || JSON.stringify(['عدد', 'کیلۆ', 'لیتر', 'مەتر', 'کارتۆن']));
@@ -2093,86 +2155,6 @@
         logoIcon.innerHTML = `<i class="fas ${appearance.systemIcon}"></i>`;
       }
     }
-  }
-
-  // ===== TODAY MONEY CALCULATION (FIXED) =====
-  function calculateTodayMoney() {
-    const today = new Date().toLocaleDateString('ckb');
-    
-    // کۆی فرۆشتنە نەقدیەکانی ئەمرۆ
-    const todayCashSales = (window.saleHistory || []).filter(s => 
-      s.customer === 'کاش' && s.date && s.date.includes(today)
-    ).reduce((sum, s) => sum + s.total, 0);
-    
-    // کۆی واسڵەکانی ئەمرۆ (ئەوەی کەسەکان و شەریکەکان دەدەن)
-    const todayCredits = (moneyRequests || []).filter(r => 
-      r.date && r.date.includes(today) && 
-      r.isTransfer !== true && 
-      r.amount > 0 && 
-      r.type !== 'adjustment' &&
-      !r.isJemgeza &&
-      r.type !== 'sale' &&
-      r.type !== 'agent_sale'
-    ).reduce((sum, r) => sum + r.amount, 0);
-    
-    // کۆی دەرچوونەکانی ئەمرۆ (سەرف، پارە پێدان، گواستنەوەکان)
-    const todayDebits = (moneyRequests || []).filter(r => 
-      r.date && r.date.includes(today) && 
-      r.amount < 0 &&
-      r.type !== 'adjustment' &&
-      !r.isJemgeza
-    ).reduce((sum, r) => sum + Math.abs(r.amount), 0);
-    
-    // کۆی فرۆشتنە قەرزەکانی ئەمرۆ (کەسەکان)
-    const todayCreditSales = (window.saleHistory || []).filter(s => 
-      s.customer !== 'کاش' && s.date && s.date.includes(today)
-    ).reduce((sum, s) => sum + s.total, 0);
-    
-    // کۆی قەرزی کەسەکان کە پێیان دراوە (ئەوەی کەسەکان دەست دەکەن بە فرۆشتن بە قەرز، ئەمەش بەشێکە لە واسڵی ئەمرۆ)
-    const todayDebtPayments = (moneyRequests || []).filter(r => 
-      r.date && r.date.includes(today) && 
-      r.type === 'person' && 
-      r.amount > 0
-    ).reduce((sum, r) => sum + r.amount, 0);
-    
-    // واسڵی ئەمرۆ = فرۆشتن (نەقدی + قەرز) + واسڵ - دەرچوون
-    return Math.max(0, todayCashSales + todayCredits + todayCreditSales + todayDebtPayments - todayDebits);
-  }
-
-  // ===== UPDATE TODAY MONEY STAT (FIXED) =====
-  function updateTodayMoneyStat() {
-    const todayMoney = calculateTodayMoney();
-    
-    // نوێکردنەوەی کارتی داشبۆرد
-    const statTodayMoneyEl = document.getElementById('statTodayMoney');
-    if (statTodayMoneyEl) {
-      statTodayMoneyEl.textContent = todayMoney.toLocaleString();
-    }
-    
-    // نوێکردنەوەی کارتی حیساباتکردن
-    const accTodayEl = document.getElementById('accTodayMoney');
-    if (accTodayEl) {
-      accTodayEl.textContent = todayMoney.toLocaleString();
-    }
-    
-    // نوێکردنەوەی کارتی مەسروفات
-    const todayMoneyDisplay = document.getElementById('todayMoneyDisplay');
-    if (todayMoneyDisplay) {
-      todayMoneyDisplay.textContent = todayMoney.toLocaleString();
-    }
-    
-    // نوێکردنەوەی کارتی پارە پێدان
-    const todayMoneyGiveDisplay = document.getElementById('todayMoneyGiveDisplay');
-    if (todayMoneyGiveDisplay) {
-      todayMoneyGiveDisplay.textContent = todayMoney.toLocaleString();
-    }
-    
-    // نوێکردنەوەی کارتی حیساباتکردن (جەمگەزە)
-    const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
-    const jemgezaDisplay = document.getElementById('jemgezaBalanceDisplay');
-    if (jemgezaDisplay) jemgezaDisplay.textContent = jemgeza.toLocaleString();
-    const accJemgeza = document.getElementById('accJemgezaMoney');
-    if (accJemgeza) accJemgeza.textContent = jemgeza.toLocaleString();
   }
 
   // ===== LOGIN SYSTEM =====
@@ -2474,6 +2456,83 @@
     updateQuickPayStats();
   }
 
+  // ===== UPDATE STATS =====
+  function updateStats() {
+    const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
+    const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
+    
+    const totalMoneyReceived = moneyRequests
+      .filter(r => r.isTransfer === true && !r.isJemgeza)
+      .reduce((sum, r) => sum + r.amount, 0);
+    
+    const totalCashSales = saleHistory
+      .filter(s => s.customer === 'کاش')
+      .reduce((sum, s) => sum + s.total, 0);
+    
+    const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
+    const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
+    
+    const totalSpend = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
+                       employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
+                       returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
+    const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalSpend;
+    
+    const totalProducts = warehouseProducts.length;
+    const totalPersons = customers.length;
+    const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -p.debt), 0);
+    const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, c.debt), 0);
+
+    const profit = totalSales - totalPurchases - totalSpendAndExpenses;
+
+    const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
+    
+    quickPayBalance = parseInt(localStorage.getItem('market_quickpay_balance') || '0');
+    quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
+    quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0');
+
+    const statTotalSalesEl = document.getElementById('statTotalSales');
+    const statTotalPurchasesEl = document.getElementById('statTotalPurchases');
+    const statTotalMoneyReceivedEl = document.getElementById('statTotalMoneyReceived');
+    const statTotalSpendAndExpensesEl = document.getElementById('statTotalSpendAndExpenses');
+    const statTotalProductsEl = document.getElementById('statTotalProducts');
+    const statTotalPersonsEl = document.getElementById('statTotalPersons');
+    const statMyDebtToPartnersEl = document.getElementById('statMyDebtToPartners');
+    const statPersonsDebtToMeEl = document.getElementById('statPersonsDebtToMe');
+    const statProfitEl = document.getElementById('statProfit');
+    const statJemgezaEl = document.getElementById('statJemgeza');
+    const statQuickPayEl = document.getElementById('statQuickPay');
+    const statQuickPaySalesEl = document.getElementById('statQuickPaySales');
+    const statQuickPayProfitEl = document.getElementById('statQuickPayProfit');
+
+    if (statTotalSalesEl) statTotalSalesEl.textContent = totalSales.toLocaleString();
+    if (statTotalPurchasesEl) statTotalPurchasesEl.textContent = totalPurchases.toLocaleString();
+    if (statTotalMoneyReceivedEl) statTotalMoneyReceivedEl.textContent = totalMoneyReceived.toLocaleString();
+    if (statTotalSpendAndExpensesEl) statTotalSpendAndExpensesEl.textContent = totalSpendAndExpenses.toLocaleString();
+    if (statTotalProductsEl) statTotalProductsEl.textContent = totalProducts;
+    if (statTotalPersonsEl) statTotalPersonsEl.textContent = totalPersons;
+    if (statMyDebtToPartnersEl) statMyDebtToPartnersEl.textContent = myDebtToPartners.toLocaleString();
+    if (statPersonsDebtToMeEl) statPersonsDebtToMeEl.textContent = personsDebtToMe.toLocaleString();
+    
+    if (statProfitEl) {
+      statProfitEl.textContent = profit.toLocaleString();
+      statProfitEl.className = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : 'profit-zero';
+    }
+    
+    if (statJemgezaEl) statJemgezaEl.textContent = jemgeza.toLocaleString();
+    if (statQuickPayEl) statQuickPayEl.textContent = quickPayBalance.toLocaleString();
+    if (statQuickPaySalesEl) statQuickPaySalesEl.textContent = quickPaySalesTotal.toLocaleString();
+    
+    if (statQuickPayProfitEl) {
+      const quickPayProfit = quickPayAddedTotal - quickPaySalesTotal;
+      statQuickPayProfitEl.textContent = quickPayProfit.toLocaleString();
+      statQuickPayProfitEl.className = quickPayProfit > 0 ? 'profit-positive' : quickPayProfit < 0 ? 'profit-negative' : 'profit-zero';
+    }
+
+    updateTodayMoneyStat();
+    updateAccountingDisplay();
+    updateQuickPayStats();
+  }
+
   // ===== UPDATE QUICKPAY STATS =====
   function updateQuickPayStats() {
     const balanceEl = document.getElementById('quickPayBalance');
@@ -2491,6 +2550,12 @@
       statQuickPayProfitEl.textContent = profit.toLocaleString();
       statQuickPayProfitEl.className = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : 'profit-zero';
     }
+    
+    const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
+    const jemgezaDisplay = document.getElementById('jemgezaBalanceDisplay');
+    if (jemgezaDisplay) jemgezaDisplay.textContent = jemgeza.toLocaleString();
+    const accJemgeza = document.getElementById('accJemgezaMoney');
+    if (accJemgeza) accJemgeza.textContent = jemgeza.toLocaleString();
   }
 
   // ===== QUICKPAY FUNCTIONS =====
@@ -2659,6 +2724,9 @@
     
     const totalSend = filtered.filter(r => r.type === 'sale').reduce((sum, r) => sum + r.amount, 0);
     const totalAdd = filtered.filter(r => r.type === 'add').reduce((sum, r) => sum + r.amount, 0);
+    const totalAdded = quickPayAddedTotal;
+    const totalSales = quickPaySalesTotal;
+    const profit = totalAdded - totalSales;
     
     container.innerHTML = `
       <div style="display:flex; gap:1rem; flex-wrap:wrap; background:#f8fafc; padding:0.8rem; border-radius:1rem; margin-bottom:1rem;">
@@ -4474,7 +4542,7 @@
     updateStats(); 
   }
 
-  // ===== COMPLETE SALE (FIXED) =====
+  // ===== COMPLETE SALE =====
   window.completeSale = function() {
     if (!cart.length) { 
       showToast('⚠️ سەبەتە بەتاڵە! تکایە کاڵا زیاد بکە', 'info');
@@ -4491,11 +4559,9 @@
     saveSaleHistory();
     
     if (currentCustomer && creditCheck.checked) {
-      // فرۆشتن بە قەرز - تەنها قەرز زیاد دەکات، پارە نەقدی تۆمار ناکرێت
       currentCustomer.debt = (currentCustomer.debt || 0) + total;
       saveCustomers();
     } else {
-      // فرۆشتن بە نەقدی - پارەکە بۆ واسڵی ئەمرۆ زیاد دەکات
       moneyRequests.push({
         id: 'SALE-MONEY-' + Date.now(),
         date: dateStr,
@@ -4527,7 +4593,7 @@
     
     updateStats();
     updateAccountingDisplay();
-    updateTodayMoneyStat(); // ✅ زیادکردنی نوێکردنەوەی واسڵی ئەمرۆ
+    updateTodayMoneyStat(); // ئەمە زیادکرا بۆ نوێکردنەوەی واسڵی ئەمرۆ
     
     showToast(`✅ فرۆشتن بە سەرکەوتوویی تۆمارکرا! بڕ: ${total.toLocaleString()} د.ع`, 'success');
   };
@@ -5260,7 +5326,6 @@
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const invId = 'W' + Math.floor(Math.random() * 9000 + 1000);
     const record = { id: invId, date: dateStr, type: selectedMoneyEntity.type, entityId: selectedMoneyEntity.id, entityName: selectedMoneyEntity.name, entityPhone: selectedMoneyEntity.phone, amount: amount, note: note, previousDebt: selectedMoneyEntity.debt || 0, isTransfer: false };
-    
     if (selectedMoneyEntity.type === 'person') {
       const person = customers.find(c => c.id === selectedMoneyEntity.id);
       if (person) {
@@ -5278,14 +5343,8 @@
         savePartners();
       }
     }
-    
-    // ✅ زیادکردنی پارە بۆ واسڵی ئەمرۆ (بە پۆزەتیڤ)
     moneyRequests.unshift(record);
     saveMoneyRequests();
-    
-    // ✅ نوێکردنەوەی واسڵی ئەمرۆ
-    updateTodayMoneyStat();
-    
     selectedMoneyEntity = null;
     document.getElementById('moneyAmount').value = '';
     document.getElementById('moneyNote').value = '';
