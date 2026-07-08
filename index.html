@@ -2099,7 +2099,7 @@
   function calculateTodayMoney() {
     const today = new Date().toLocaleDateString('ckb');
     
-    // کۆی فرۆشتنە نەقدیەکانی ئەمرۆ
+    // کۆی فرۆشتنە نەقدیەکانی ئەمرۆ (لە saleHistory)
     const todayCashSales = (window.saleHistory || []).filter(s => 
       s.customer === 'کاش' && s.date && s.date.includes(today)
     ).reduce((sum, s) => sum + s.total, 0);
@@ -2122,372 +2122,88 @@
       !r.isJemgeza
     ).reduce((sum, r) => sum + Math.abs(r.amount), 0);
     
-    // واسڵی ئەمرۆ = فرۆشتن + واسڵ - دەرچوون
-    return Math.max(0, todayCashSales + todayCredits - todayDebits);
+    // کۆی مەسروفاتی ئەمرۆ (لە expenseHistory)
+    const todayExpenses = (expenseHistory || []).filter(e => 
+      e.date && e.date.includes(today)
+    ).reduce((sum, e) => sum + e.amount, 0);
+    
+    // کۆی پارە پێدانی ئەمرۆ (لە giveMoneyHistory)
+    const todayGiveMoney = (giveMoneyHistory || []).filter(g => 
+      g.date && g.date.includes(today)
+    ).reduce((sum, g) => sum + g.amount, 0);
+    
+    // واسڵی ئەمرۆ = فرۆشتن + واسڵ - دەرچوون - مەسروفات - پارە پێدان
+    return Math.max(0, todayCashSales + todayCredits - todayDebits - todayExpenses - todayGiveMoney);
   }
 
   // ===== UPDATE TODAY MONEY STAT (FIXED) =====
   function updateTodayMoneyStat() {
     const todayMoney = calculateTodayMoney();
     
-    // نوێکردنەوەی کارتی داشبۆرد
+    // نوێکردنەوەی کارتی واسڵی ئەمرۆ لە داشبۆرد
     const statTodayMoneyEl = document.getElementById('statTodayMoney');
     if (statTodayMoneyEl) {
       statTodayMoneyEl.textContent = todayMoney.toLocaleString();
     }
     
-    // نوێکردنەوەی کارتی حیساباتکردن
+    // نوێکردنەوەی کارتی واسڵی ئەمرۆ لە حیساباتکردن
     const accTodayEl = document.getElementById('accTodayMoney');
     if (accTodayEl) {
       accTodayEl.textContent = todayMoney.toLocaleString();
     }
     
-    // نوێکردنەوەی کارتی مەسروفات
+    // نوێکردنەوەی کارتی واسڵی ئەمرۆ لە مەسروفات
     const todayMoneyDisplay = document.getElementById('todayMoneyDisplay');
     if (todayMoneyDisplay) {
       todayMoneyDisplay.textContent = todayMoney.toLocaleString();
     }
     
-    // نوێکردنەوەی کارتی پارە پێدان
+    // نوێکردنەوەی کارتی واسڵی ئەمرۆ لە پارە پێدان
     const todayMoneyGiveDisplay = document.getElementById('todayMoneyGiveDisplay');
     if (todayMoneyGiveDisplay) {
       todayMoneyGiveDisplay.textContent = todayMoney.toLocaleString();
     }
   }
 
-  // ===== LOGIN SYSTEM =====
-  let isLoggedIn = false;
-
-  function createParticles() {
-    const container = document.getElementById('loginParticles');
-    if (!container) return;
-    for (let i = 0; i < 40; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.style.left = Math.random() * 100 + '%';
-      particle.style.width = (Math.random() * 6 + 2) + 'px';
-      particle.style.height = particle.style.width;
-      particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
-      particle.style.animationDelay = (Math.random() * 20) + 's';
-      particle.style.background = `rgba(${99 + Math.random() * 50}, ${102 + Math.random() * 50}, ${241 + Math.random() * 50}, ${0.15 + Math.random() * 0.25})`;
-      container.appendChild(particle);
-    }
-  }
-
-  function showLogin() {
-    const overlay = document.getElementById('loginOverlay');
-    const system = document.getElementById('mainApp');
-    if (overlay) overlay.classList.add('active');
-    if (system) { system.classList.remove('visible'); system.classList.add('hidden'); }
-    const dashboardStats = document.getElementById('dashboardStats');
-    if (dashboardStats) dashboardStats.style.display = 'none';
-  }
-
-  function hideLogin() {
-    const overlay = document.getElementById('loginOverlay');
-    const system = document.getElementById('mainApp');
-    if (overlay) overlay.classList.remove('active');
-    if (system) { system.classList.remove('hidden'); system.classList.add('visible'); }
-    isLoggedIn = true;
-    const dashboardStats = document.getElementById('dashboardStats');
-    if (dashboardStats) dashboardStats.style.display = 'grid';
-  }
-
-  window.handleLogin = function() {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-    const btn = document.getElementById('loginBtn');
-    const errorDiv = document.getElementById('loginError');
-    errorDiv.classList.remove('show');
-    if (!username || !password) {
-      document.getElementById('loginErrorMessage').textContent = 'تکایە ناوی بەکارهێنەر و پاسوورد پڕبکەرەوە!';
-      errorDiv.classList.add('show');
-      return;
-    }
-    btn.classList.add('loading');
-    setTimeout(() => {
-      let isValid = false;
-      let userRole = 'admin';
-      let userName = 'بەڕێوەبەر';
-      if (username === adminCredentials.username && password === adminCredentials.password) {
-        isValid = true;
-        userRole = 'admin';
-        userName = 'بەڕێوەبەر';
-      } else {
-        const employee = employees.find(e => e.username === username && e.password === password);
-        if (employee) {
-          isValid = true;
-          userRole = 'employee';
-          userName = employee.name;
-          const perms = employeePermissions[employee.id] || {};
-          sessionStorage.setItem('market_session_permissions', JSON.stringify(perms));
-          localStorage.setItem('market_logged_employee', JSON.stringify(employee));
-        }
-      }
-      btn.classList.remove('loading');
-      if (isValid) {
-        localStorage.setItem('market_logged_user', JSON.stringify({ username, role: userRole, name: userName }));
-        hideLogin();
-        const roleDisplay = document.getElementById('userRoleDisplay');
-        if (roleDisplay) roleDisplay.textContent = userRole === 'admin' ? '👑 بەڕێوەبەر' : `👤 ${userName}`;
-        showToast(`👋 بەخێربێیت ${userName}!`, 'success');
-        updateStats();
-        renderDashboardModules();
-        updateTodayMoneyStat();
-      } else {
-        document.getElementById('loginErrorMessage').textContent = 'ناوی بەکارهێنەر یان پاسوورد هەڵەیە! تکایە دووبارە هەوڵبدە.';
-        errorDiv.classList.add('show');
-        document.getElementById('loginPassword').value = '';
-        document.getElementById('loginPassword').focus();
-      }
-    }, 800);
-  };
-
-  function showToast(message, type = 'info') {
-    const existing = document.querySelector('.custom-toast');
-    if (existing) existing.remove();
-    const toast = document.createElement('div');
-    toast.className = 'custom-toast';
-    toast.style.cssText = `
-      position: fixed; bottom: 30px; right: 30px;
-      background: ${type === 'success' ? 'rgba(16, 185, 129, 0.95)' : 'rgba(99, 102, 241, 0.95)'};
-      color: white; padding: 1rem 2rem; border-radius: 1.5rem;
-      font-weight: 600; font-size: 1rem;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3); z-index: 10000;
-      backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15);
-      max-width: 90%;
-    `;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    requestAnimationFrame(() => {
-      toast.style.transform = 'translateY(0)';
-      toast.style.opacity = '1';
-      toast.style.transition = 'all 0.5s cubic-bezier(0.34,1.56,0.64,1)';
-    });
-    setTimeout(() => {
-      toast.style.transform = 'translateY(20px)';
-      toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 500);
-    }, 3500);
-  }
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      const overlay = document.getElementById('loginOverlay');
-      if (overlay && overlay.classList.contains('active')) handleLogin();
-    }
-  });
-
-  function updateDateTime() {
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit' });
-    const timeStr = now.toLocaleTimeString('ckb', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-    const dateEl = document.getElementById('currentDate');
-    const timeEl = document.getElementById('currentTime');
-    const invoiceDateEl = document.getElementById('invoiceDate');
-    if (dateEl) dateEl.textContent = dateStr;
-    if (timeEl) timeEl.textContent = timeStr;
-    if (invoiceDateEl) invoiceDateEl.textContent = dateStr + ' ' + timeStr;
-  }
-  updateDateTime();
-  setInterval(updateDateTime, 1000);
-
-  const originalLogout = window.logout;
-  window.logout = function() {
-    if (!confirm('دڵنیایت لە دەرچوون لە سیستەم؟')) return;
-    localStorage.setItem('market_module_order', JSON.stringify(moduleOrder));
-    localStorage.setItem('market_appearance_name', appearance.systemName);
-    localStorage.setItem('market_appearance_icon', appearance.systemIcon);
-    localStorage.setItem('market_appearance_bg', appearance.bgColor);
-    localStorage.removeItem('market_logged_user');
-    localStorage.removeItem('market_logged_employee');
-    sessionStorage.removeItem('market_session_permissions');
-    isLoggedIn = false;
-    showLogin();
-    document.getElementById('loginUsername').value = '';
-    document.getElementById('loginPassword').value = '';
-    document.getElementById('loginError').classList.remove('show');
-    navigateTo('dashboard');
-    const dashboardStats = document.getElementById('dashboardStats');
-    if (dashboardStats) dashboardStats.style.display = 'none';
-  };
-
-  // ===== HELPERS =====
-  window.clearSearch = function(inputId, suggestionsId) {
-    document.getElementById(inputId).value = '';
-    const suggestions = document.getElementById(suggestionsId);
-    if (suggestions) suggestions.style.display = 'none';
-    if (inputId === 'damageProductSearch') {
-      const infoDiv = document.getElementById('selectedDamageProductInfo');
-      if (infoDiv) infoDiv.style.display = 'none';
-      const qtyDisplay = document.getElementById('damageMaxQtyDisplay');
-      if (qtyDisplay) qtyDisplay.textContent = 'بڕی ماوە لە مخزن: -';
-    }
-  };
-
-  // ===== ALL MODULES =====
-  const allModules = [
-    { id: 'sales', icon: 'fa-cart-plus', label: 'فرۆشتن', color: '#fef3c7', text: '#b45309' },
-    { id: 'purchase', icon: 'fa-truck', label: 'کڕین', color: '#dbeafe', text: '#1e40af' },
-    { id: 'purchase_return', icon: 'fa-undo-alt', label: 'گەڕانەوەی کڕین', color: '#fce7f3', text: '#9d174d' },
-    { id: 'sales_return', icon: 'fa-redo', label: 'گەڕانەوەی فرۆشتن', color: '#d1fae5', text: '#065f46' },
-    { id: 'dashboard', icon: 'fa-tachometer-alt', label: 'داشبۆرد', color: '#e0e7ff', text: '#3730a3' },
-    { id: 'reports', icon: 'fa-file-alt', label: 'تەقاریر', color: '#f3e8ff', text: '#6b21a8' },
-    { id: 'accounting', icon: 'fa-calculator', label: 'حیساباتکردن', color: '#ede9fe', text: '#5b21b6' },
-    { id: 'warehouse', icon: 'fa-warehouse', label: 'مخزن', color: '#fee2e2', text: '#991b1b' },
-    { id: 'expiry', icon: 'fa-exclamation-triangle', label: 'بەسەرچوون و تێکچوون', color: '#ccfbf1', text: '#115e59' },
-    { id: 'persons', icon: 'fa-users', label: 'کەسەکان', color: '#f3e8ff', text: '#6b21a8' },
-    { id: 'partners', icon: 'fa-handshake', label: 'شەریکەکان', color: '#fef3c7', text: '#b45309' },
-    { id: 'settings', icon: 'fa-cogs', label: 'رێکخستن', color: '#d1fae5', text: '#065f46' },
-    { id: 'employees', icon: 'fa-id-badge', label: 'کارمەندەکان', color: '#e0e7ff', text: '#3730a3' },
-    { id: 'money_request', icon: 'fa-money-check-alt', label: 'واسڵکردنی پارە', color: '#fef9c3', text: '#854d0e' },
-    { id: 'money_spend', icon: 'fa-coins', label: 'سەرفکردنی پارە', color: '#fef3c7', text: '#854d0e' },
-    { id: 'pricing', icon: 'fa-tags', label: 'دروستکردنی نرخ', color: '#ccfbf1', text: '#115e59' },
-    { id: 'barcode', icon: 'fa-barcode', label: 'پرێنتکردنی بارکۆد', color: '#f3e8ff', text: '#6b21a8' },
-    { id: 'agents', icon: 'fa-user-tie', label: 'مەندوبەکان', color: '#fef3c7', text: '#b45309' },
-    { id: 'give_agent', icon: 'fa-box-open', label: 'پێدانی کاڵاکان بە مەندوبەکان', color: '#f3e8ff', text: '#6b21a8' },
-    { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکویریتی', color: '#e0e7ff', text: '#3730a3' },
-    { id: 'quickpay', icon: 'fa-bolt', label: 'کویک پەی', color: '#f3e8ff', text: '#7c3aed' }
-  ];
-
-  let moduleOrder = allModules.map(m => m.id);
-  const savedOrder = localStorage.getItem('market_module_order');
-  if (savedOrder) {
-    try {
-      const parsed = JSON.parse(savedOrder);
-      if (Array.isArray(parsed) && parsed.length === allModules.length) moduleOrder = parsed;
-    } catch (e) {}
-  }
-
-  let appearance = {
-    systemName: localStorage.getItem('market_appearance_name') || 'مارکێت',
-    systemIcon: localStorage.getItem('market_appearance_icon') || 'fa-store-alt',
-    bgColor: localStorage.getItem('market_appearance_bg') || '#f8f9fe'
-  };
-
-  let customers = JSON.parse(localStorage.getItem('market_customers') || JSON.stringify([
-    { id: 1, name: 'ئارام محەمەد', phone: '0750 111 2233', address: 'هەولێر، شەقامی 60 مەتری', debt: 45000, movements: [], purchaseReturns: [] },
-    { id: 2, name: 'سارا عومەر', phone: '0750 444 5566', address: 'سلێمانی، گەڕەکی سەرشەقام', debt: 12000, movements: [], purchaseReturns: [] },
-    { id: 3, name: 'دلێر عەلی', phone: '0750 777 8899', address: 'دهۆک، شەقامی بازاڕ', debt: 0, movements: [], purchaseReturns: [] }
-  ]));
-
-  let partners = JSON.parse(localStorage.getItem('market_partners') || JSON.stringify([
-    { id: 1, name: 'کۆمپانیای ئاسۆ', phone: '0750 222 3344', address: 'هەولێر، شەقامی بازرگانی', debt: 150000, movements: [], type: 'کۆمپانیا' },
-    { id: 2, name: 'بازرگانی دابین', phone: '0750 555 6677', address: 'سلێمانی، شەقامی سەرەکی', debt: 85000, movements: [], type: 'بازرگانی' }
-  ]));
-
-  let agents = JSON.parse(localStorage.getItem('market_agents') || JSON.stringify([
-    { id: 1, name: 'هێمن عەلی', phone: '0750 123 4567', address: 'هەولێر، شەقامی بازاڕ', debt: 0, movements: [], inventory: [{ productId: 1, productName: 'شیری پاستێر', barcode: '623145', quantity: 5, sold: 2, returned: 0, price: 1500 }, { productId: 2, productName: 'نانی تەواو', barcode: '845210', quantity: 10, sold: 3, returned: 1, price: 500 }] },
-    { id: 2, name: 'سامان ئیسماعیل', phone: '0750 987 6543', address: 'سلێمانی، شەقامی سەرەکی', debt: 25000, movements: [], inventory: [{ productId: 3, productName: 'برنجی باسەتی', barcode: '998877', quantity: 3, sold: 1, returned: 0, price: 3200 }, { productId: 4, productName: 'شەکر', barcode: '445566', quantity: 5, sold: 0, returned: 0, price: 1800 }] }
-  ]));
-
-  let warehouseProducts = JSON.parse(localStorage.getItem('market_warehouse_products') || JSON.stringify([
-    { id: 1, name: 'شیری پاستێر', barcode: '623145', image: '', quantity: 50, unit: 'عدد', secondQty: 0, secondPrice: 0, buyPrice: 1200, sellPrice: 1500, expiryDate: '2026-12-31' },
-    { id: 2, name: 'نانی تەواو', barcode: '845210', image: '', quantity: 100, unit: 'عدد', secondQty: 0, secondPrice: 0, buyPrice: 400, sellPrice: 500, expiryDate: '2026-06-15' },
-    { id: 3, name: 'برنجی باسەتی', barcode: '998877', image: '', quantity: 30, unit: 'کیلۆ', secondQty: 0, secondPrice: 0, buyPrice: 2800, sellPrice: 3200, expiryDate: '2027-01-20' },
-    { id: 4, name: 'شەکر', barcode: '445566', image: '', quantity: 20, unit: 'کیلۆ', secondQty: 0, secondPrice: 0, buyPrice: 1500, sellPrice: 1800, expiryDate: '2026-05-20' }
-  ]));
-
-  let employees = JSON.parse(localStorage.getItem('market_employees') || JSON.stringify([
-    { id: 1, name: 'محەممەد رەسول', phone: '0750 111 1111', address: 'هەولێر، شەقامی 60 مەتری', username: 'mhamad', password: '123456', salary: 750000, salaryHistory: [{ month: '2025-01', amount: 750000, date: '2025-01-30', note: 'موچەی مانگی یەک' }, { month: '2025-02', amount: 750000, date: '2025-02-28', note: 'موچەی مانگی دوو' }], leaves: [{ start: '2025-03-01', end: '2025-03-03', reason: 'نەخۆشی' }, { start: '2025-03-10', end: '2025-03-12', reason: 'مۆڵەتی خێزانی' }] },
-    { id: 2, name: 'فەرهاد عەلی', phone: '0750 222 2222', address: 'سلێمانی، شەقامی سەرەکی', username: 'farhad', password: '654321', salary: 600000, salaryHistory: [], leaves: [] }
-  ]));
-
-  let expiredDamagedProducts = JSON.parse(localStorage.getItem('market_expiry_damage') || '[]');
-  let moneyRequests = JSON.parse(localStorage.getItem('market_money_requests') || '[]');
-  let purchaseHistory = JSON.parse(localStorage.getItem('market_purchase_history') || '[]');
-  let purchaseCart = [];
-  let selectedPurchasePartner = null;
-  let purchaseReturnHistory = JSON.parse(localStorage.getItem('market_purchase_return_history') || '[]');
-  let selectedPurchaseReturn = null;
-  let selectedPurchaseReturnProduct = null;
-  let selectedPurchaseReturnPartnerForDebt = null;
-  let returnHistory = JSON.parse(localStorage.getItem('market_return_history') || '[]');
-  let selectedReturnSale = null;
-  let selectedReturnProduct = null;
-  let selectedReturnCustomerForDebt = null;
-
-  let expenseHistory = JSON.parse(localStorage.getItem('market_expense_history') || '[]');
-  let giveMoneyHistory = JSON.parse(localStorage.getItem('market_give_money_history') || '[]');
-
-  let selectedAgentId = null;
-  let selectedAgentForInventory = null;
-  let selectedAgentForWassl = null;
-  let selectedAgentForReturn = null;
-  let agentSaleCart = [];
-  let agentReturnCart = [];
-  let agentSaleCustomer = null;
-  let currentSaleAgent = null;
-  let giveAgentCart = [];
-  let selectedGiveAgent = null;
-  let selectedEmployeeId = null;
-  let selectedEmployeeForSalary = null;
-  let selectedEmployeeForLeave = null;
-  let selectedPersonId = null;
-  let selectedPartnerId = null;
-  let selectedPricingProducts = [];
-  let selectedBarcodeProducts = [];
-  let warePurchaseCart = [];
-  let productImageData = '';
-  let selectedMoneyEntity = null;
-  let selectedGiveEntity = null;
-
-  let adminCredentials = JSON.parse(localStorage.getItem('market_admin_credentials') || JSON.stringify({
-    username: 'farzad',
-    password: 'farzad1234'
-  }));
-
-  let employeePermissions = JSON.parse(localStorage.getItem('market_employee_permissions') || '{}');
-
-  // ===== DATA: کویک پەی =====
-  let quickPayHistory = JSON.parse(localStorage.getItem('market_quickpay_history') || '[]');
-  let quickPayBalance = parseInt(localStorage.getItem('market_quickpay_balance') || '0');
-  let quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
-  let quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0');
-
-  // ===== SAVE FUNCTIONS FOR QUICKPAY =====
-  function saveQuickPayData() {
-    localStorage.setItem('market_quickpay_history', JSON.stringify(quickPayHistory));
-    localStorage.setItem('market_quickpay_balance', quickPayBalance.toString());
-    localStorage.setItem('market_quickpay_sales_total', quickPaySalesTotal.toString());
-    localStorage.setItem('market_quickpay_added_total', quickPayAddedTotal.toString());
-    updateQuickPayStats();
-  }
-
-  // ===== UPDATE STATS =====
+  // ===== UPDATE STATS (FIXED) =====
   function updateStats() {
+    // کۆی فرۆشتن
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
+    
+    // کۆی کڕین
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
     
+    // کۆی پارەی واسڵکراو
     const totalMoneyReceived = moneyRequests
       .filter(r => r.isTransfer === true && !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
     
-    const totalCashSales = saleHistory
-      .filter(s => s.customer === 'کاش')
-      .reduce((sum, s) => sum + s.total, 0);
-    
+    // کۆی سەرف و مەسروفات
     const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
     const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
-    
     const totalSpend = purchaseHistory.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
                        employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
                        returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
     const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalSpend;
     
+    // کۆی کاڵاکان و کەسەکان
     const totalProducts = warehouseProducts.length;
     const totalPersons = customers.length;
+    
+    // قەرزەکان
     const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -p.debt), 0);
     const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, c.debt), 0);
-
-    const profit = totalSales - totalPurchases - totalSpendAndExpenses;
-
-    const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     
+    // قازانج
+    const profit = totalSales - totalPurchases - totalSpendAndExpenses;
+    
+    // جەمگەزە و کویک پەی
+    const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     quickPayBalance = parseInt(localStorage.getItem('market_quickpay_balance') || '0');
     quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
     quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0');
-
+    
+    // نوێکردنەوەی کارتەکانی داشبۆرد
     const statTotalSalesEl = document.getElementById('statTotalSales');
     const statTotalPurchasesEl = document.getElementById('statTotalPurchases');
     const statTotalMoneyReceivedEl = document.getElementById('statTotalMoneyReceived');
@@ -2526,7 +2242,7 @@
       statQuickPayProfitEl.className = quickPayProfit > 0 ? 'profit-positive' : quickPayProfit < 0 ? 'profit-negative' : 'profit-zero';
     }
 
-    // ===== ئەمە زیاد کراوە بۆ نوێکردنەوەی کارتی واسڵی ئەمرۆ =====
+    // ===== ئەمە زۆر گرنگە! بانگی updateTodayMoneyStat دەکات =====
     updateTodayMoneyStat();
     updateAccountingDisplay();
     updateQuickPayStats();
