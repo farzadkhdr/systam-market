@@ -2107,7 +2107,6 @@
     // کۆی واسڵەکانی ئەمرۆ (ئەوەی کەسەکان و شەریکەکان دەدەن)
     const todayCredits = (moneyRequests || []).filter(r => 
       r.date && r.date.includes(today) && 
-      r.isTransfer !== true && 
       r.amount > 0 && 
       r.type !== 'adjustment' &&
       !r.isJemgeza &&
