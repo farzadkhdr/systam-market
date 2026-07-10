@@ -2095,7 +2095,7 @@
     }
   }
 
-  // ===== TODAY MONEY CALCULATION (FIXED) =====
+  // ===== TODAY MONEY CALCULATION =====
   // ئەم فانکشنە بە وردی هەموو جۆرەکانی پارەی واسڵکراو، فرۆشتن، و دەرچوونەکانی ئەمرۆ هەژمار دەکات
   function calculateTodayMoney() {
     // 1. بەدەستهێنانی بەرواری ئەمڕۆ بە شێوەیەکی یەکسان
@@ -2106,9 +2106,7 @@
         s.customer === 'کاش' && s.date && s.date.includes(today)
     ).reduce((sum, s) => sum + s.total, 0);
     
-    // 3. کۆی پارەی واسڵکراوی ئەمرۆ (ئەوەی کەسەکان و شەریکەکان دەدەن)
-    //    تەنها ئەو تۆمارانەی کە جۆریان 'person' یان 'partner' یان 'agent' یان 'give_money' نییە
-    //    و بڕەکەیان ئەرێنییە و لە جەمگەزە دووەم یان گواستنەوە نییە
+    // 3. کۆی پارەی واسڵکراوی ئەمرۆ 
     const todayCredits = (moneyRequests || []).filter(r => 
         r.date && r.date.includes(today) && 
         r.amount > 0 && 
@@ -2126,9 +2124,7 @@
         r.type !== 'transfer_to_jemgeza'
     ).reduce((sum, r) => sum + r.amount, 0);
     
-    // 4. کۆی دەرچوونەکانی ئەمرۆ (سەرف، پارە پێدان، گواستنەوەکان)
-    //    هەموو ئەو تۆمارانەی کە بڕەکەیان سالبە (نرخی کەمتر لە سفر) و
-    //    لە جەمگەزە دووەم نییە
+    // 4. کۆی دەرچوونەکانی ئەمرۆ 
     const todayDebits = (moneyRequests || []).filter(r => 
         r.date && r.date.includes(today) && 
         r.amount < 0 &&
@@ -2137,12 +2133,11 @@
     ).reduce((sum, r) => sum + Math.abs(r.amount), 0);
     
     // 5. واسڵی ئەمرۆ = فرۆشتن + واسڵ - دەرچوون
-    //    هەرگیز نابێت لە ژێر سفردا بێت
     const result = todayCashSales + todayCredits - todayDebits;
     return Math.max(0, result);
   }
 
-  // ===== UPDATE TODAY MONEY STAT (FIXED) =====
+  // ===== UPDATE TODAY MONEY STAT =====
   function updateTodayMoneyStat() {
     const todayMoney = calculateTodayMoney();
     
@@ -2554,7 +2549,6 @@
       statQuickPayProfitEl.className = quickPayProfit > 0 ? 'profit-positive' : quickPayProfit < 0 ? 'profit-negative' : 'profit-zero';
     }
 
-    // ===== ئەمە زیاد کراوە بۆ نوێکردنەوەی کارتی واسڵی ئەمرۆ =====
     updateTodayMoneyStat();
     updateAccountingDisplay();
     updateQuickPayStats();
@@ -2849,7 +2843,7 @@
     showToast('✅ تۆمار سڕکرایەوە', 'success');
   };
 
-  // ===== SEARCH PRODUCT (GLOBAL IMPROVED) =====
+  // ===== SEARCH PRODUCT =====
   function setupGlobalProductSearch(inputId, suggestionsId, onSelect, customFilter) {
     const input = document.getElementById(inputId);
     const suggestions = document.getElementById(suggestionsId);
@@ -3039,9 +3033,11 @@
   // ===== ACCOUNTING / TRANSFER FUNCTIONS =====
   function updateAccountingDisplay() {
     const todayMoney = calculateTodayMoney();
+    // کۆی گشتی پارەی واسڵکراو - هەموو تۆمارەکانی isTransfer=true و isJemgeza=false
     const totalMoney = moneyRequests
-      .filter(r => r.isTransfer === true && !r.isJemgeza)
-      .reduce((sum, r) => sum + r.amount, 0);
+        .filter(r => r.isTransfer === true && !r.isJemgeza)
+        .reduce((sum, r) => sum + r.amount, 0);
+    
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     
     const accToday = document.getElementById('accTodayMoney');
@@ -3074,6 +3070,7 @@
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       
+      // تۆماری زیادکردنی پارە بۆ کۆی گشتی
       moneyRequests.push({
         id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
         date: dateStr,
@@ -3082,9 +3079,11 @@
         entityPhone: '-',
         amount: amount,
         note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
-        isTransfer: true
+        isTransfer: true,
+        isJemgeza: false
       });
       
+      // تۆماری کەمکردنەوەی پارە لە واسڵی ئەمرۆ
       moneyRequests.push({
         id: 'TR-OUT' + Date.now(),
         date: dateStr,
@@ -3094,10 +3093,11 @@
         amount: -amount,
         note: `گواستنەوە بۆ کۆی گشتی`,
         isTransfer: false,
-        isExpense: true
+        isExpense: true,
+        isJemgeza: false
       });
       
-      localStorage.setItem('market_money_requests', JSON.stringify(moneyRequests));
+      saveMoneyRequests();
       updateAccountingDisplay();
       updateStats();
       amountInput.value = '';
@@ -7040,7 +7040,7 @@
           <button class="btn-icon" onclick="removePurchaseCartItem(${idx})"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
         </div>
       </div>`).join('');
-    const total = purchaseCart.reduce((s, i) => s + (item.product.buyPrice * item.quantity), 0);
+    const total = purchaseCart.reduce((s, i) => s + (i.product.buyPrice * i.quantity), 0);
     if (totalEl) totalEl.textContent = total.toLocaleString();
   }
 
