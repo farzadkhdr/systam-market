@@ -110,6 +110,17 @@
             box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
         }
 
+        .btn-danger {
+            background: #c62828;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b71c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(198, 40, 40, 0.3);
+        }
+
         .btn:active {
             transform: translateY(0);
         }
@@ -213,14 +224,11 @@
             font-weight: 600;
         }
 
-        .currency-badge {
-            display: inline-block;
-            background: #1a237e;
-            color: white;
-            padding: 4px 18px;
-            border-radius: 30px;
+        .invoice-number {
+            text-align: left;
             font-size: 14px;
-            margin-top: 6px;
+            color: #666;
+            margin-bottom: 10px;
         }
 
         @media (max-width: 480px) {
@@ -236,6 +244,38 @@
         .invoice * {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
+        /* Toast notification */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            font-weight: 600;
+        }
+
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: #2e7d32;
+        }
+
+        .toast.error {
+            background: #c62828;
+        }
     </style>
 </head>
 <body>
@@ -246,12 +286,12 @@
     <!-- فۆرم -->
     <div class="form-group">
         <label>👤 ناوی کڕیار</label>
-        <input type="text" id="customerName" placeholder="نمونە: محەممەد عەلی">
+        <input type="text" id="customerName" placeholder="نمونە: محەممەد عەلی" required>
     </div>
 
     <div class="form-group">
         <label>👨‍💻 ناوی پرۆگرامێر</label>
-        <input type="text" id="programmerName" placeholder="نمونە: ئەحمەد ڕەشید">
+        <input type="text" id="programmerName" placeholder="نمونە: ئەحمەد ڕەشید" required>
     </div>
 
     <div class="form-group">
@@ -266,7 +306,7 @@
 
     <div class="form-group">
         <label>💰 بڕی پارەی سپۆنسەر (دینار)</label>
-        <input type="number" id="amount" placeholder="بڕی پارە بە دینار" step="0.001" min="0">
+        <input type="number" id="amount" placeholder="بڕی پارە بە دینار" step="0.001" min="0" required>
     </div>
 
     <div class="form-group">
@@ -282,35 +322,37 @@
     <div class="btn-group">
         <button class="btn btn-primary" onclick="generateInvoice()">🚀 دروستکردنی فاکتۆر</button>
         <button class="btn btn-success" id="pdfBtn" onclick="downloadPDF()" disabled>📥 داگرتنی PDF</button>
+        <button class="btn btn-danger" onclick="clearAll()">🗑️ پاککردنەوە</button>
     </div>
 
     <!-- ===== فاکتۆر ===== -->
     <div class="invoice-wrapper" id="invoiceWrapper">
         <div class="invoice" id="invoiceContent">
             <div class="invoice-header">فاکتوری سپۆنسەر</div>
+            <div class="invoice-number" id="invoiceNumber">ژمارە: ---</div>
 
             <div class="invoice-row">
-                <span class="invoice-label">ناوی کڕیار</span>
+                <span class="invoice-label">👤 ناوی کڕیار</span>
                 <span class="invoice-value" id="showCustomer">---</span>
             </div>
             <div class="invoice-row">
-                <span class="invoice-label">ناوی پرۆگرامێر</span>
+                <span class="invoice-label">👨‍💻 ناوی پرۆگرامێر</span>
                 <span class="invoice-value" id="showName">---</span>
             </div>
             <div class="invoice-row">
-                <span class="invoice-label">بەروار</span>
+                <span class="invoice-label">📅 بەروار</span>
                 <span class="invoice-value" id="showDate">---</span>
             </div>
             <div class="invoice-row">
-                <span class="invoice-label">جۆری سپۆنسەر</span>
+                <span class="invoice-label">🏷️ جۆری سپۆنسەر</span>
                 <span class="invoice-value" id="showSponsor">---</span>
             </div>
             <div class="invoice-row">
-                <span class="invoice-label">بڕی پارە</span>
+                <span class="invoice-label">💰 بڕی پارە</span>
                 <span class="invoice-value amount" id="showAmount">---</span>
             </div>
             <div class="invoice-row">
-                <span class="invoice-label">شێوازی پارەدان</span>
+                <span class="invoice-label">💳 شێوازی پارەدان</span>
                 <span class="invoice-value" id="showPayment">---</span>
             </div>
 
@@ -333,17 +375,27 @@
     </div>
 </div>
 
+<!-- Toast notification -->
+<div id="toast" class="toast"></div>
+
 <script>
     let invoiceData = {};
+    let invoiceCounter = 0;
 
     function generateInvoice() {
         // وەرگرتنی زانیارییەکان
-        const customer = document.getElementById('customerName').value.trim() || '---';
-        const name = document.getElementById('programmerName').value.trim() || '---';
+        const customer = document.getElementById('customerName').value.trim();
+        const name = document.getElementById('programmerName').value.trim();
         const dateInput = document.getElementById('invoiceDate').value;
         const sponsor = document.getElementById('sponsorType').value.trim() || '---';
         const amount = document.getElementById('amount').value;
         const payment = document.getElementById('paymentMethod').value;
+
+        // پشتڕاستکردنەوەی خانە پێویستەکان
+        if (!customer || !name || !amount || parseFloat(amount) <= 0) {
+            showToast('تکایە هەموو خانە پێویستەکان پڕ بکەوە!', 'error');
+            return;
+        }
 
         // ڕێکخستنی بەروار بۆ شێوەی خوازراو
         let formattedDate = '---';
@@ -356,15 +408,23 @@
         }
 
         // بڕی پارە بە دینار
-        let amountDisplay = '---';
-        if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
-            amountDisplay = `${parseFloat(amount).toFixed(3)} دینار`;
-        } else {
-            amountDisplay = '0.000 دینار';
-        }
+        const amountNum = parseFloat(amount);
+        const amountDisplay = `${amountNum.toFixed(3)} دینار`;
+
+        // ژمارەی فاکتۆر
+        invoiceCounter++;
+        const invoiceNum = `INV-${String(invoiceCounter).padStart(4, '0')}-${new Date().getFullYear()}`;
 
         // هەڵگرتنی زانیارییەکان بۆ PDF
-        invoiceData = { customer, name, formattedDate, sponsor, amountDisplay, payment };
+        invoiceData = { 
+            customer, 
+            name, 
+            formattedDate, 
+            sponsor, 
+            amountDisplay, 
+            payment,
+            invoiceNum
+        };
 
         // نیشاندانی لە فاکتۆردا
         document.getElementById('showCustomer').textContent = customer;
@@ -373,30 +433,32 @@
         document.getElementById('showSponsor').textContent = sponsor;
         document.getElementById('showAmount').textContent = amountDisplay;
         document.getElementById('showPayment').textContent = payment;
+        document.getElementById('invoiceNumber').textContent = `ژمارە: ${invoiceNum}`;
 
         // پیشاندانی فاکتۆر و چالاککردنی دوگمەی PDF
         const wrapper = document.getElementById('invoiceWrapper');
         wrapper.classList.add('show');
         document.getElementById('pdfBtn').disabled = false;
 
-        // ئەگەر بەروار بەتاڵ بوو، دەستکاری بکە
-        if (dateInput === '') {
-            document.getElementById('showDate').textContent = '---';
-            invoiceData.formattedDate = '---';
-        }
+        showToast('فاکتۆر بە سەرکەوتوویی دروست کرا! ✅', 'success');
     }
 
     function downloadPDF() {
+        if (!invoiceData.customer) {
+            showToast('تکایە یەکەم جار فاکتۆرەکە دروست بکە!', 'error');
+            return;
+        }
+
         const element = document.getElementById('invoiceContent');
         const opt = {
             margin:        [10, 10, 10, 10],
-            filename:     `فاکتوری_سپۆنسەر_${invoiceData.customer || 'بێناو'}.pdf`,
+            filename:     `فاکتوری_سپۆنسەر_${invoiceData.customer}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, letterRendering: true, useCORS: true, logging: false },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // نیشاندانی بارکردن (ئۆپشنال)
+        // نیشاندانی بارکردن
         const btn = document.getElementById('pdfBtn');
         const originalText = btn.textContent;
         btn.textContent = '⏳ ئامادەدەکرێت...';
@@ -405,14 +467,50 @@
         html2pdf().set(opt).from(element).save().then(function() {
             btn.textContent = originalText;
             btn.disabled = false;
+            showToast('PDF بە سەرکەوتوویی داگیرا! 📥', 'success');
         }).catch(function(err) {
             console.error('PDF هەڵە:', err);
             btn.textContent = '❌ هەڵە';
+            showToast('هەڵە لە دروستکردنی PDF', 'error');
             setTimeout(() => {
                 btn.textContent = originalText;
                 btn.disabled = false;
             }, 2000);
         });
+    }
+
+    function clearAll() {
+        // پاککردنەوەی خانەکانی فۆرم
+        document.getElementById('customerName').value = '';
+        document.getElementById('programmerName').value = '';
+        document.getElementById('sponsorType').value = '';
+        document.getElementById('amount').value = '';
+        
+        // گێڕانەوەی بەروار بۆ ئەمڕۆ
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('invoiceDate').value = today;
+        
+        // دیفۆڵتی شێوازی پارەدان
+        document.getElementById('paymentMethod').value = 'نەقدی';
+        
+        // شاردنەوەی فاکتۆر
+        document.getElementById('invoiceWrapper').classList.remove('show');
+        document.getElementById('pdfBtn').disabled = true;
+        
+        // پاککردنەوەی داتاکان
+        invoiceData = {};
+        
+        showToast('هەموو شتێک پاککرایەوە 🗑️', 'success');
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'toast show ' + type;
+        
+        setTimeout(() => {
+            toast.className = 'toast';
+        }, 3000);
     }
 
     // بەرواری ئەمڕۆ بە دیفۆڵت دابنێ
