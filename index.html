@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>فاکتوری سپۆنسەر</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -26,7 +27,7 @@
             border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             padding: 30px;
-            max-width: 600px;
+            max-width: 650px;
             width: 100%;
         }
 
@@ -68,24 +69,45 @@
             box-shadow: 0 0 0 4px rgba(26, 35, 126, 0.1);
         }
 
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
         .btn {
-            width: 100%;
-            padding: 14px;
-            background: #1a237e;
-            color: white;
+            flex: 1;
+            padding: 14px 20px;
             border: none;
             border-radius: 10px;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             cursor: pointer;
             transition: 0.3s;
-            margin-top: 10px;
+            min-width: 140px;
         }
 
-        .btn:hover {
+        .btn-primary {
+            background: #1a237e;
+            color: white;
+        }
+
+        .btn-primary:hover {
             background: #0d1457;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(26, 35, 126, 0.3);
+        }
+
+        .btn-success {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
         }
 
         .btn:active {
@@ -93,17 +115,12 @@
         }
 
         /* ===== فاکتۆر ===== */
-        .invoice {
+        .invoice-wrapper {
             margin-top: 30px;
-            background: #ffffff;
-            border: 3px solid #1a237e;
-            border-radius: 16px;
-            padding: 25px 25px 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             display: none;
         }
 
-        .invoice.show {
+        .invoice-wrapper.show {
             display: block;
             animation: fadeSlide 0.5s ease;
         }
@@ -113,23 +130,31 @@
             100% { opacity: 1; transform: translateY(0); }
         }
 
+        .invoice {
+            background: #ffffff;
+            border: 3px solid #1a237e;
+            border-radius: 16px;
+            padding: 30px 30px 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
         .invoice-header {
             text-align: center;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
             color: #1a237e;
             border-bottom: 3px double #1a237e;
-            padding-bottom: 12px;
-            margin-bottom: 18px;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
             letter-spacing: 1px;
         }
 
         .invoice-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            padding: 12px 0;
             border-bottom: 1px dashed #e0e0e0;
-            font-size: 16px;
+            font-size: 17px;
         }
 
         .invoice-row:last-of-type {
@@ -148,18 +173,18 @@
         }
 
         .invoice-value.amount {
-            font-size: 22px;
+            font-size: 24px;
             color: #b71c1c;
             font-weight: 800;
         }
 
         .signature-section {
-            margin-top: 25px;
-            padding-top: 18px;
+            margin-top: 30px;
+            padding-top: 20px;
             border-top: 2px solid #1a237e;
             display: flex;
             justify-content: space-between;
-            gap: 20px;
+            gap: 30px;
         }
 
         .signature-box {
@@ -170,29 +195,29 @@
         .signature-box .label {
             font-weight: 700;
             color: #333;
-            font-size: 14px;
-            margin-bottom: 8px;
+            font-size: 15px;
+            margin-bottom: 10px;
         }
 
         .signature-line {
             border-bottom: 2px solid #333;
-            height: 30px;
+            height: 35px;
             margin-top: 6px;
         }
 
         .footer-thanks {
             text-align: center;
-            font-size: 18px;
+            font-size: 20px;
             color: #1a237e;
-            margin-top: 20px;
+            margin-top: 25px;
             font-weight: 600;
         }
 
-        .badge {
+        .currency-badge {
             display: inline-block;
             background: #1a237e;
             color: white;
-            padding: 4px 16px;
+            padding: 4px 18px;
             border-radius: 30px;
             font-size: 14px;
             margin-top: 6px;
@@ -201,8 +226,15 @@
         @media (max-width: 480px) {
             .container { padding: 16px; }
             .invoice { padding: 18px; }
-            .invoice-row { font-size: 14px; flex-wrap: wrap; }
-            .signature-section { flex-direction: column; gap: 12px; }
+            .invoice-row { font-size: 15px; flex-wrap: wrap; gap: 6px; }
+            .signature-section { flex-direction: column; gap: 15px; }
+            .btn-group { flex-direction: column; }
+            .btn { min-width: unset; }
+        }
+
+        /* دەق بۆ PDF - دڵنیابوون لە دروست دەرکەوتن */
+        .invoice * {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
     </style>
 </head>
@@ -212,6 +244,11 @@
     <h1>📄 فاکتوری سپۆنسەر</h1>
 
     <!-- فۆرم -->
+    <div class="form-group">
+        <label>👤 ناوی کڕیار</label>
+        <input type="text" id="customerName" placeholder="نمونە: محەممەد عەلی">
+    </div>
+
     <div class="form-group">
         <label>👨‍💻 ناوی پرۆگرامێر</label>
         <input type="text" id="programmerName" placeholder="نمونە: ئەحمەد ڕەشید">
@@ -228,8 +265,8 @@
     </div>
 
     <div class="form-group">
-        <label>💰 بڕی پارەی سپۆنسەر ($)</label>
-        <input type="number" id="amount" placeholder="بڕی پارە بە دۆلار" step="0.01" min="0">
+        <label>💰 بڕی پارەی سپۆنسەر (دینار)</label>
+        <input type="number" id="amount" placeholder="بڕی پارە بە دینار" step="0.001" min="0">
     </div>
 
     <div class="form-group">
@@ -242,54 +279,66 @@
         </select>
     </div>
 
-    <button class="btn" onclick="generateInvoice()">🚀 دروستکردنی فاکتۆر</button>
+    <div class="btn-group">
+        <button class="btn btn-primary" onclick="generateInvoice()">🚀 دروستکردنی فاکتۆر</button>
+        <button class="btn btn-success" id="pdfBtn" onclick="downloadPDF()" disabled>📥 داگرتنی PDF</button>
+    </div>
 
     <!-- ===== فاکتۆر ===== -->
-    <div class="invoice" id="invoiceDisplay">
-        <div class="invoice-header">فاکتوری سپۆنسەر</div>
+    <div class="invoice-wrapper" id="invoiceWrapper">
+        <div class="invoice" id="invoiceContent">
+            <div class="invoice-header">فاکتوری سپۆنسەر</div>
 
-        <div class="invoice-row">
-            <span class="invoice-label">ناوی پرۆگرامێر</span>
-            <span class="invoice-value" id="showName">---</span>
-        </div>
-        <div class="invoice-row">
-            <span class="invoice-label">بەروار</span>
-            <span class="invoice-value" id="showDate">---</span>
-        </div>
-        <div class="invoice-row">
-            <span class="invoice-label">جۆری سپۆنسەر</span>
-            <span class="invoice-value" id="showSponsor">---</span>
-        </div>
-        <div class="invoice-row">
-            <span class="invoice-label">بڕی پارە</span>
-            <span class="invoice-value amount" id="showAmount">---</span>
-        </div>
-        <div class="invoice-row">
-            <span class="invoice-label">شێوازی پارەدان</span>
-            <span class="invoice-value" id="showPayment">---</span>
-        </div>
-
-        <!-- واژووەکان -->
-        <div class="signature-section">
-            <div class="signature-box">
-                <div class="label">✍️ واژووی پرۆگرامێر</div>
-                <div class="signature-line"></div>
+            <div class="invoice-row">
+                <span class="invoice-label">ناوی کڕیار</span>
+                <span class="invoice-value" id="showCustomer">---</span>
             </div>
-            <div class="signature-box">
-                <div class="label">✍️ واژووی کڕیار</div>
-                <div class="signature-line"></div>
+            <div class="invoice-row">
+                <span class="invoice-label">ناوی پرۆگرامێر</span>
+                <span class="invoice-value" id="showName">---</span>
             </div>
-        </div>
+            <div class="invoice-row">
+                <span class="invoice-label">بەروار</span>
+                <span class="invoice-value" id="showDate">---</span>
+            </div>
+            <div class="invoice-row">
+                <span class="invoice-label">جۆری سپۆنسەر</span>
+                <span class="invoice-value" id="showSponsor">---</span>
+            </div>
+            <div class="invoice-row">
+                <span class="invoice-label">بڕی پارە</span>
+                <span class="invoice-value amount" id="showAmount">---</span>
+            </div>
+            <div class="invoice-row">
+                <span class="invoice-label">شێوازی پارەدان</span>
+                <span class="invoice-value" id="showPayment">---</span>
+            </div>
 
-        <div class="footer-thanks">
-            ❤️ سوپاس بۆ بازرگانییەکەت!
+            <!-- واژووەکان -->
+            <div class="signature-section">
+                <div class="signature-box">
+                    <div class="label">✍️ واژووی پرۆگرامێر</div>
+                    <div class="signature-line"></div>
+                </div>
+                <div class="signature-box">
+                    <div class="label">✍️ واژووی کڕیار</div>
+                    <div class="signature-line"></div>
+                </div>
+            </div>
+
+            <div class="footer-thanks">
+                ❤️ سوپاس بۆ بازرگانییەکەت!
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+    let invoiceData = {};
+
     function generateInvoice() {
         // وەرگرتنی زانیارییەکان
+        const customer = document.getElementById('customerName').value.trim() || '---';
         const name = document.getElementById('programmerName').value.trim() || '---';
         const dateInput = document.getElementById('invoiceDate').value;
         const sponsor = document.getElementById('sponsorType').value.trim() || '---';
@@ -306,32 +355,67 @@
             formattedDate = `${day}/${month}/${year}`;
         }
 
-        // بڕی پارە
+        // بڕی پارە بە دینار
         let amountDisplay = '---';
         if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
-            amountDisplay = `${parseFloat(amount).toFixed(2)} $`;
+            amountDisplay = `${parseFloat(amount).toFixed(3)} دینار`;
         } else {
-            amountDisplay = '0.00 $';
+            amountDisplay = '0.000 دینار';
         }
 
+        // هەڵگرتنی زانیارییەکان بۆ PDF
+        invoiceData = { customer, name, formattedDate, sponsor, amountDisplay, payment };
+
         // نیشاندانی لە فاکتۆردا
+        document.getElementById('showCustomer').textContent = customer;
         document.getElementById('showName').textContent = name;
         document.getElementById('showDate').textContent = formattedDate;
         document.getElementById('showSponsor').textContent = sponsor;
         document.getElementById('showAmount').textContent = amountDisplay;
         document.getElementById('showPayment').textContent = payment;
 
-        // پیشاندانی فاکتۆر
-        const invoiceEl = document.getElementById('invoiceDisplay');
-        invoiceEl.classList.add('show');
+        // پیشاندانی فاکتۆر و چالاککردنی دوگمەی PDF
+        const wrapper = document.getElementById('invoiceWrapper');
+        wrapper.classList.add('show');
+        document.getElementById('pdfBtn').disabled = false;
 
         // ئەگەر بەروار بەتاڵ بوو، دەستکاری بکە
         if (dateInput === '') {
             document.getElementById('showDate').textContent = '---';
+            invoiceData.formattedDate = '---';
         }
     }
 
-    // بەرواری ئەمڕۆ بە دیفۆڵت دابنێ (بۆ ئاسانی)
+    function downloadPDF() {
+        const element = document.getElementById('invoiceContent');
+        const opt = {
+            margin:        [10, 10, 10, 10],
+            filename:     `فاکتوری_سپۆنسەر_${invoiceData.customer || 'بێناو'}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, letterRendering: true, useCORS: true, logging: false },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // نیشاندانی بارکردن (ئۆپشنال)
+        const btn = document.getElementById('pdfBtn');
+        const originalText = btn.textContent;
+        btn.textContent = '⏳ ئامادەدەکرێت...';
+        btn.disabled = true;
+
+        html2pdf().set(opt).from(element).save().then(function() {
+            btn.textContent = originalText;
+            btn.disabled = false;
+        }).catch(function(err) {
+            console.error('PDF هەڵە:', err);
+            btn.textContent = '❌ هەڵە';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+        });
+    }
+
+    // بەرواری ئەمڕۆ بە دیفۆڵت دابنێ
     document.addEventListener('DOMContentLoaded', function() {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('invoiceDate').value = today;
