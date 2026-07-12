@@ -2119,9 +2119,7 @@
         r.type !== 'quickpay_add_from_today' &&
         r.type !== 'quickpay_add_from_total' &&
         r.type !== 'quickpay_add_from_jemgeza' &&
-        r.type !== 'transfer_to_jemgeza' &&
-        r.type !== 'sales_return' &&
-        r.type !== 'purchase'
+        r.type !== 'transfer_to_jemgeza'
     ).reduce((sum, r) => sum + r.amount, 0);
 
     // 3. کۆی دەرچوونەکانی ئەمرۆ (سەرف، پارە پێدان، گواستنەوەکان، کەمکردنەوەی واسڵ)
@@ -3045,7 +3043,6 @@
     if (jemgezaDisplay) jemgezaDisplay.textContent = jemgeza.toLocaleString();
   }
 
-  // ===== TRANSFER MONEY (FIXED) =====
   window.transferMoney = function() {
     const amountInput = document.getElementById('transferAmount');
     const amount = parseInt(amountInput.value);
