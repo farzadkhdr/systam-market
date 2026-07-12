@@ -2098,19 +2098,20 @@
   // ===== TODAY MONEY CALCULATION (FIXED) =====
   function calculateTodayMoney() {
     const today = new Date().toLocaleDateString('ckb');
-    
-    // کۆی فرۆشتنە نەقدیەکانی ئەمرۆ
+
+    // 1. کۆی فرۆشتنە نەقدیەکانی ئەمرۆ (کڕیار = کاش)
     const todayCashSales = (window.saleHistory || []).filter(s => 
         s.customer === 'کاش' && s.date && s.date.includes(today)
     ).reduce((sum, s) => sum + s.total, 0);
-    
-    // کۆی پارەی واسڵکراوی ئەمرۆ (لە کەس و شەریکەکان)
+
+    // 2. کۆی پارەی واسڵکراوی ئەمرۆ (ئەوەی کەسەکان و شەریکەکان دەدەن)
     const todayCredits = (moneyRequests || []).filter(r => 
         r.date && r.date.includes(today) && 
         r.amount > 0 && 
         r.type !== 'adjustment' &&
         !r.isJemgeza &&
         r.type !== 'sale' &&
+        r.type !== 'agent_sale' &&
         r.type !== 'expense' &&
         r.type !== 'transfer_out' &&
         r.type !== 'give_money' &&
@@ -2120,27 +2121,27 @@
         r.type !== 'quickpay_add_from_jemgeza' &&
         r.type !== 'transfer_to_jemgeza'
     ).reduce((sum, r) => sum + r.amount, 0);
-    
-    // کۆی دەرچوونەکانی ئەمرۆ (لە moneyRequests)
+
+    // 3. کۆی دەرچوونەکانی ئەمرۆ (سەرف، پارە پێدان، گواستنەوەکان، کەمکردنەوەی واسڵ)
     const todayDebits = (moneyRequests || []).filter(r => 
         r.date && r.date.includes(today) && 
         r.amount < 0 &&
-        r.type !== 'adjustment' &&
-        !r.isJemgeza
+        (r.type === 'transfer_out' || 
+         r.type === 'expense' || 
+         r.type === 'transfer_to_jemgeza' ||
+         r.type === 'give_money' ||
+         r.type === 'salary' ||
+         r.type === 'quickpay_add_from_today' ||
+         r.type === 'quickpay_add_from_total' ||
+         r.type === 'quickpay_add_from_jemgeza' ||
+         r.type === 'sales_return' ||
+         r.type === 'purchase' ||
+         r.type === 'purchase_return' ||
+         r.type === 'adjustment')
     ).reduce((sum, r) => sum + Math.abs(r.amount), 0);
-    
-    // مەسروفاتی ئەمرۆ
-    const todayExpenses = (expenseHistory || []).filter(e => 
-        e.date && e.date.includes(today)
-    ).reduce((sum, e) => sum + e.amount, 0);
-    
-    // پارە پێدانی ئەمرۆ
-    const todayGiveMoney = (giveMoneyHistory || []).filter(g => 
-        g.date && g.date.includes(today)
-    ).reduce((sum, g) => sum + g.amount, 0);
-    
-    // کۆی گشتی واسڵی ئەمرۆ
-    const result = todayCashSales + todayCredits - todayDebits - todayExpenses - todayGiveMoney;
+
+    // 4. واسڵی ئەمرۆ = فرۆشتن + واسڵ - دەرچوون
+    const result = todayCashSales + todayCredits - todayDebits;
     return Math.max(0, result);
   }
 
@@ -2149,28 +2150,20 @@
     const todayMoney = calculateTodayMoney();
     
     const statTodayMoneyEl = document.getElementById('statTodayMoney');
-    if (statTodayMoneyEl) {
-      statTodayMoneyEl.textContent = todayMoney.toLocaleString();
-    }
+    if (statTodayMoneyEl) statTodayMoneyEl.textContent = todayMoney.toLocaleString();
     
     const accTodayEl = document.getElementById('accTodayMoney');
-    if (accTodayEl) {
-      accTodayEl.textContent = todayMoney.toLocaleString();
-    }
+    if (accTodayEl) accTodayEl.textContent = todayMoney.toLocaleString();
     
     const todayMoneyDisplay = document.getElementById('todayMoneyDisplay');
-    if (todayMoneyDisplay) {
-      todayMoneyDisplay.textContent = todayMoney.toLocaleString();
-    }
+    if (todayMoneyDisplay) todayMoneyDisplay.textContent = todayMoney.toLocaleString();
     
     const todayMoneyGiveDisplay = document.getElementById('todayMoneyGiveDisplay');
-    if (todayMoneyGiveDisplay) {
-      todayMoneyGiveDisplay.textContent = todayMoney.toLocaleString();
-    }
+    if (todayMoneyGiveDisplay) todayMoneyGiveDisplay.textContent = todayMoney.toLocaleString();
 
     const remainingDisplay = document.getElementById('todayRemainingDisplay');
     if (remainingDisplay) {
-      const todayExpense = (expenseHistory || []).filter(e => 
+      const todayExpense = (window.expenseHistory || []).filter(e => 
           e.date && e.date.includes(new Date().toLocaleDateString('ckb'))
       ).reduce((sum, e) => sum + e.amount, 0);
       remainingDisplay.textContent = Math.max(0, todayMoney - todayExpense).toLocaleString();
@@ -2178,120 +2171,6 @@
 
     updateAccountingDisplay();
   }
-
-  // ===== TRANSFER MONEY (FIXED) =====
-  window.transferMoney = function() {
-    const amountInput = document.getElementById('transferAmount');
-    const amount = parseInt(amountInput.value);
-    if (!amount || amount <= 0) {
-      alert('تکایە بڕی پارەی دروست بنووسە (ژمارەیەک لە 1 زیاتر)');
-      return;
-    }
-    
-    const todayMoney = calculateTodayMoney();
-    
-    if (amount > todayMoney) {
-      alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${Math.max(0, todayMoney).toLocaleString()} د.ع) زیاترە!`);
-      return;
-    }
-    
-    if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ کۆی واسڵکراو؟`)) {
-      const now = new Date();
-      const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-      
-      // زیادکردنی بڕی گواستراوە بۆ کۆی گشتی
-      moneyRequests.push({
-        id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
-        date: dateStr,
-        type: 'transfer',
-        entityName: 'گواستنەوەی پارە',
-        entityPhone: '-',
-        amount: amount,
-        note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
-        isTransfer: true
-      });
-      
-      // کەمکردنەوەی بڕی پارە لە واسڵی ئەمرۆ
-      moneyRequests.push({
-        id: 'TR-OUT' + Date.now(),
-        date: dateStr,
-        type: 'transfer_out',
-        entityName: 'کەمکردنەوەی واسڵی ئەمرۆ',
-        entityPhone: '-',
-        amount: -amount,
-        note: `گواستنەوە بۆ کۆی گشتی`,
-        isTransfer: false,
-        isExpense: true
-      });
-      
-      localStorage.setItem('market_money_requests', JSON.stringify(moneyRequests));
-      updateAccountingDisplay();
-      updateStats();
-      amountInput.value = '';
-      showToast(`✅ ${amount.toLocaleString()} د.ع بە سەرکەوتوویی گواسترایەوە بۆ کۆی واسڵکراو!`, 'success');
-      renderMoneyHistory();
-    }
-  };
-
-  // ===== TRANSFER TO JEMGEZA (FIXED) =====
-  window.transferToJemgeza = function() {
-    const amountInput = document.getElementById('transferToJemgezaAmount');
-    const amount = parseInt(amountInput.value);
-    if (!amount || amount <= 0) {
-      alert('تکایە بڕی پارەی دروست بنووسە (ژمارەیەک لە 1 زیاتر)');
-      return;
-    }
-    
-    const todayMoney = calculateTodayMoney();
-    
-    if (amount > todayMoney) {
-      alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${Math.max(0, todayMoney).toLocaleString()} د.ع) زیاترە!`);
-      return;
-    }
-    
-    if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ جەمگزەی دووەم؟`)) {
-      const now = new Date();
-      const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-      
-      // کەمکردنەوەی بڕی پارە لە واسڵی ئەمرۆ
-      moneyRequests.push({
-        id: 'JEMGEZA-OUT-' + Date.now(),
-        date: dateStr,
-        type: 'transfer_to_jemgeza',
-        entityName: 'گواستنەوە بۆ جەمگزەی دووەم',
-        entityPhone: '-',
-        amount: -amount,
-        note: `گواستنەوە بۆ جەمگزەی دووەم`,
-        isTransfer: false,
-        isExpense: true,
-        isJemgeza: true
-      });
-      
-      // زیادکردنی بڕی گواستراوە بۆ جەمگزەی دووەم
-      const currentJemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
-      localStorage.setItem('market_jemgeza', (currentJemgeza + amount).toString());
-      
-      moneyRequests.push({
-        id: 'JEMGEZA-IN-' + Date.now(),
-        date: dateStr,
-        type: 'jemgeza_transfer',
-        entityName: 'وەرگرتن لە واسڵی ئەمرۆ',
-        entityPhone: '-',
-        amount: amount,
-        note: `گواستنەوە لە واسڵی ئەمرۆ`,
-        isTransfer: true,
-        isJemgeza: true
-      });
-      
-      saveMoneyRequests();
-      updateAccountingDisplay();
-      updateStats();
-      amountInput.value = '';
-      document.getElementById('jemgezaBalanceDisplay').textContent = (currentJemgeza + amount).toLocaleString();
-      showToast(`✅ ${amount.toLocaleString()} د.ع بە سەرکەوتوویی گواسترایەوە بۆ جەمگزەی دووەم!`, 'success');
-      renderMoneyHistory();
-    }
-  };
 
   // ===== LOGIN SYSTEM =====
   let isLoggedIn = false;
@@ -3163,6 +3042,116 @@
     if (accJemgeza) accJemgeza.textContent = jemgeza.toLocaleString();
     if (jemgezaDisplay) jemgezaDisplay.textContent = jemgeza.toLocaleString();
   }
+
+  window.transferMoney = function() {
+    const amountInput = document.getElementById('transferAmount');
+    const amount = parseInt(amountInput.value);
+    if (!amount || amount <= 0) {
+      alert('تکایە بڕی پارەی دروست بنووسە (ژمارەیەک لە 1 زیاتر)');
+      return;
+    }
+    
+    const todayMoney = calculateTodayMoney();
+    
+    if (amount > todayMoney) {
+      alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${Math.max(0, todayMoney).toLocaleString()} د.ع) زیاترە!`);
+      return;
+    }
+    
+    if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ کۆی واسڵکراو؟`)) {
+      const now = new Date();
+      const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+      
+      moneyRequests.push({
+        id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
+        date: dateStr,
+        type: 'transfer',
+        entityName: 'گواستنەوەی پارە',
+        entityPhone: '-',
+        amount: amount,
+        note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
+        isTransfer: true
+      });
+      
+      moneyRequests.push({
+        id: 'TR-OUT' + Date.now(),
+        date: dateStr,
+        type: 'transfer_out',
+        entityName: 'کەمکردنەوەی واسڵی ئەمرۆ',
+        entityPhone: '-',
+        amount: -amount,
+        note: `گواستنەوە بۆ کۆی گشتی`,
+        isTransfer: false,
+        isExpense: true
+      });
+      
+      saveMoneyRequests();
+      updateAccountingDisplay();
+      updateTodayMoneyStat();
+      updateStats();
+      amountInput.value = '';
+      showToast(`✅ ${amount.toLocaleString()} د.ع بە سەرکەوتوویی گواسترایەوە بۆ کۆی واسڵکراو!`, 'success');
+      renderMoneyHistory();
+    }
+  };
+
+  window.transferToJemgeza = function() {
+    const amountInput = document.getElementById('transferToJemgezaAmount');
+    const amount = parseInt(amountInput.value);
+    if (!amount || amount <= 0) {
+      alert('تکایە بڕی پارەی دروست بنووسە (ژمارەیەک لە 1 زیاتر)');
+      return;
+    }
+    
+    const todayMoney = calculateTodayMoney();
+    
+    if (amount > todayMoney) {
+      alert(`بڕی ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ (${Math.max(0, todayMoney).toLocaleString()} د.ع) زیاترە!`);
+      return;
+    }
+    
+    if (confirm(`دڵنیایت کە ${amount.toLocaleString()} د.ع لە واسڵی ئەمرۆ بگوازیتەوە بۆ جەمگزەی دووەم؟`)) {
+      const now = new Date();
+      const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+      
+      moneyRequests.push({
+        id: 'JEMGEZA-OUT-' + Date.now(),
+        date: dateStr,
+        type: 'transfer_to_jemgeza',
+        entityName: 'گواستنەوە بۆ جەمگزەی دووەم',
+        entityPhone: '-',
+        amount: -amount,
+        note: `گواستنەوە بۆ جەمگزەی دووەم`,
+        isTransfer: false,
+        isExpense: true,
+        isJemgeza: true
+      });
+      
+      const currentJemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
+      localStorage.setItem('market_jemgeza', (currentJemgeza + amount).toString());
+      
+      moneyRequests.push({
+        id: 'JEMGEZA-IN-' + Date.now(),
+        date: dateStr,
+        type: 'jemgeza_transfer',
+        entityName: 'وەرگرتن لە واسڵی ئەمرۆ',
+        entityPhone: '-',
+        amount: amount,
+        note: `گواستنەوە لە واسڵی ئەمرۆ`,
+        isTransfer: true,
+        isJemgeza: true
+      });
+      
+      saveMoneyRequests();
+      updateAccountingDisplay();
+      updateTodayMoneyStat();
+      updateStats();
+      amountInput.value = '';
+      document.getElementById('jemgezaBalanceDisplay').textContent = (currentJemgeza + amount).toLocaleString();
+      showToast(`✅ ${amount.toLocaleString()} د.ع بە سەرکەوتوویی گواسترایەوە بۆ جەمگزەی دووەم!`, 'success');
+      renderMoneyHistory();
+    }
+  };
 
   // ===== SECURITY FUNCTIONS =====
   window.changeAdminPassword = function() {
@@ -4270,6 +4259,7 @@
     document.getElementById('expenseDateTime').value = '';
     renderExpenseHistory();
     updateExpenseStats();
+    updateTodayMoneyStat();
     updateStats();
     alert(`مەسروفات بە سەرکەوتوویی تۆمارکرا!\nبڕ: ${amount.toLocaleString()} د.ع\nهۆکار: ${category}`);
   };
@@ -4318,6 +4308,7 @@
     saveMoneyRequests();
     renderExpenseHistory();
     updateExpenseStats();
+    updateTodayMoneyStat();
     updateStats();
   };
 
@@ -4461,6 +4452,7 @@
     document.getElementById('moneyGiveSuggestions').style.display = 'none';
     renderGiveHistory();
     updateGiveStats();
+    updateTodayMoneyStat();
     updateStats();
     renderPersonsList();
     renderPartnersList();
@@ -4550,6 +4542,7 @@
     saveMoneyRequests();
     renderGiveHistory();
     updateGiveStats();
+    updateTodayMoneyStat();
     updateStats();
     renderPersonsList();
     renderPartnersList();
@@ -4621,6 +4614,7 @@
     
     updateStats();
     updateAccountingDisplay();
+    updateTodayMoneyStat();
     
     showToast(`✅ فرۆشتن بە سەرکەوتوویی تۆمارکرا! بڕ: ${total.toLocaleString()} د.ع`, 'success');
   };
@@ -5152,6 +5146,7 @@
     renderDamagedProducts();
     renderProductsGrid();
     updateExpenseStats();
+    updateTodayMoneyStat();
     updateStats();
     
     alert(`✅ کاڵای تێکچوو بە سەرکەوتوویی تۆمارکرا!
@@ -5300,7 +5295,6 @@
     document.getElementById('employeeDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کارمەندێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     createParticles();
 
-    // پڕکردنەوەی یەکەکان لە هەڵبژاردنی زیادکردنی کاڵا
     const unitSelect = document.getElementById('newProductUnit');
     if (unitSelect) {
       unitsList.forEach(u => {
@@ -5926,6 +5920,7 @@
     renderMoneyHistory();
     renderAdjustmentHistory();
     updateStats();
+    updateTodayMoneyStat();
 
     const opText = operation === 'positive' ? 'زیادکرا' : 'کەمکرا';
     alert(`قەرز بە سەرکەوتوویی گۆڕدرا!\n${opText}: ${amount.toLocaleString()} د.ع\nقەرزی پێشوو: ${oldDebt.toLocaleString()}\nقەرزی ئێستا: ${newDebt.toLocaleString()} د.ع`);
