@@ -2099,7 +2099,7 @@
   function calculateTodayMoney() {
     const today = new Date().toLocaleDateString('ckb');
 
-    // 1. کۆی فرۆشتنە نەقدیەکانی ئەمرۆ (کڕیار = کاش)
+    // 1. کۆی فرۆشتنە نەقدیەکانی ئەمرۆ (کڕیار = کاش یان isCashSale = true)
     const todayCashSales = (window.saleHistory || []).filter(s => 
         s.customer === 'کاش' && s.date && s.date.includes(today)
     ).reduce((sum, s) => sum + s.total, 0);
@@ -2119,7 +2119,8 @@
         r.type !== 'quickpay_add_from_today' &&
         r.type !== 'quickpay_add_from_total' &&
         r.type !== 'quickpay_add_from_jemgeza' &&
-        r.type !== 'transfer_to_jemgeza'
+        r.type !== 'transfer_to_jemgeza' &&
+        r.type !== 'sales_return'
     ).reduce((sum, r) => sum + r.amount, 0);
 
     // 3. کۆی دەرچوونەکانی ئەمرۆ (سەرف، پارە پێدان، گواستنەوەکان، کەمکردنەوەی واسڵ)
@@ -2476,6 +2477,7 @@
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
     
+    // کۆی پارەی واسڵکراو - تەنیا ئەوانەی isTransfer = true
     const totalMoneyReceived = moneyRequests
       .filter(r => r.isTransfer === true && !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
@@ -3027,6 +3029,7 @@
   // ===== ACCOUNTING / TRANSFER FUNCTIONS =====
   function updateAccountingDisplay() {
     const todayMoney = calculateTodayMoney();
+    // کۆی پارەی واسڵکراو - تەنیا ئەوانەی isTransfer = true
     const totalMoney = moneyRequests
       .filter(r => r.isTransfer === true && !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
@@ -3062,6 +3065,7 @@
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       
+      // ← ئەم تۆمارە بۆ کۆی پارەی واسڵکراو زیاد دەکات
       moneyRequests.push({
         id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
         date: dateStr,
@@ -3073,6 +3077,7 @@
         isTransfer: true
       });
       
+      // ← ئەم تۆمارە لە واسڵی ئەمرۆ کەم دەکات
       moneyRequests.push({
         id: 'TR-OUT' + Date.now(),
         date: dateStr,
@@ -4563,7 +4568,7 @@
     updateStats(); 
   }
 
-  // ===== COMPLETE SALE =====
+  // ===== COMPLETE SALE (FIXED) =====
   window.completeSale = function() {
     if (!cart.length) { 
       showToast('⚠️ سەبەتە بەتاڵە! تکایە کاڵا زیاد بکە', 'info');
@@ -4571,7 +4576,8 @@
     }
     const total = cart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0);
     const invId = 'F' + (Math.floor(Math.random() * 9000) + 1000);
-    const custName = (currentCustomer && creditCheck.checked) ? currentCustomer.name : 'کاش';
+    const isCredit = creditCheck && creditCheck.checked;
+    const custName = (currentCustomer && isCredit) ? currentCustomer.name : 'کاش';
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     
@@ -4579,20 +4585,23 @@
     window.saleHistory = saleHistory;
     saveSaleHistory();
     
-    if (currentCustomer && creditCheck.checked) {
+    if (isCredit && currentCustomer) {
+      // فرۆشتن بە قەرز - قەرز زیاد دەکات
       currentCustomer.debt = (currentCustomer.debt || 0) + total;
       saveCustomers();
     } else {
+      // فرۆشتن بە نەقد - پارە دەچێتە واسڵی ئەمرۆ
       moneyRequests.push({
         id: 'SALE-MONEY-' + Date.now(),
         date: dateStr,
         type: 'sale',
-        entityName: custName,
+        entityName: 'کاش',
         entityPhone: '-',
         amount: total,
-        note: `فرۆشتن ${invId}`,
+        note: `فرۆشتن ${invId} (نەقد)`,
         isTransfer: false,
-        isExpense: false
+        isExpense: false,
+        isCashSale: true
       });
       saveMoneyRequests();
     }
@@ -4605,10 +4614,12 @@
     
     cart = [];
     currentCustomer = null;
-    creditCheck.checked = false;
-    creditSection.style.display = 'none';
+    if (creditCheck) {
+      creditCheck.checked = false;
+      creditSection.style.display = 'none';
+    }
     updateSelectedCustomerBadge();
-    customerSearch.value = '';
+    if (customerSearch) customerSearch.value = '';
     renderCart();
     updateInvoicePreview();
     
@@ -7036,7 +7047,7 @@
           <button class="btn-icon" onclick="removePurchaseCartItem(${idx})"><i class="fas fa-trash-alt" style="color:#b91c1c;"></i></button>
         </div>
       </div>`).join('');
-    const total = purchaseCart.reduce((s, i) => s + (item.product.buyPrice * item.quantity), 0);
+    const total = purchaseCart.reduce((s, i) => s + (i.product.buyPrice * i.quantity), 0);
     if (totalEl) totalEl.textContent = total.toLocaleString();
   }
 
