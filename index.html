@@ -3026,7 +3026,7 @@
     renderAgentReturnCart();
   });
 
-  // ===== ACCOUNTING / TRANSFER FUNCTIONS =====
+  // ===== ACCOUNTING / TRANSFER FUNCTIONS (FIXED) =====
   function updateAccountingDisplay() {
     const todayMoney = calculateTodayMoney();
     // کۆی پارەی واسڵکراو - تەنیا ئەوانەی isTransfer = true
@@ -3065,7 +3065,7 @@
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       
-      // ← ئەم تۆمارە بۆ کۆی پارەی واسڵکراو زیاد دەکات
+      // ← زیادکردن بۆ کۆی گشتی (موجەب)
       moneyRequests.push({
         id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
         date: dateStr,
@@ -3074,10 +3074,11 @@
         entityPhone: '-',
         amount: amount,
         note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
-        isTransfer: true
+        isTransfer: true,
+        isExpense: false
       });
       
-      // ← ئەم تۆمارە لە واسڵی ئەمرۆ کەم دەکات
+      // ← کەمکردنەوە لە واسڵی ئەمرۆ (سالب)
       moneyRequests.push({
         id: 'TR-OUT' + Date.now(),
         date: dateStr,
@@ -3119,6 +3120,7 @@
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       
+      // ← کەمکردنەوە لە واسڵی ئەمرۆ (سالب)
       moneyRequests.push({
         id: 'JEMGEZA-OUT-' + Date.now(),
         date: dateStr,
@@ -3132,6 +3134,7 @@
         isJemgeza: true
       });
       
+      // ← زیادکردن بۆ جەمگزەی دووەم
       const currentJemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
       localStorage.setItem('market_jemgeza', (currentJemgeza + amount).toString());
       
@@ -3142,7 +3145,7 @@
         entityName: 'وەرگرتن لە واسڵی ئەمرۆ',
         entityPhone: '-',
         amount: amount,
-        note: `گواستنەوە لە واسڵی ئەمرۆ`,
+        note: `گواستنەوە لە واسڵی ئەمرۆ بۆ جەمگزە`,
         isTransfer: true,
         isJemgeza: true
       });
