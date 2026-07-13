@@ -8443,7 +8443,7 @@
     }
   });
 
-  // ===== ACCOUNT CLOSING SYSTEM =====
+  // ===== ACCOUNT CLOSING SYSTEM - FIXED =====
   window.closeAccountingPeriod = function() {
     if (!isAdmin()) {
       alert('تەنیا بەڕێوەبەر دەتوانێت ئەم کارە بکات!');
@@ -8451,12 +8451,12 @@
     }
 
     const today = new Date();
-    const dateStr = today.toLocaleString('ckb', { 
-      year: 'numeric', 
-      month: '2-digit', 
+    const dateStr = today.toLocaleString('ckb', {
+      year: 'numeric',
+      month: '2-digit',
       day: '2-digit',
-      hour: '2-digit', 
-      minute: '2-digit' 
+      hour: '2-digit',
+      minute: '2-digit'
     });
 
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
@@ -8470,7 +8470,7 @@
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
 
     const closingId = 'CLOSING-' + Date.now();
-    
+
     const confirmMsg = `دڵنیایت لە داخستنی حیسابات؟
 📊 ئامارەکانی ئێستا:
 💰 کۆی فرۆشتن: ${totalSales.toLocaleString()} د.ع
@@ -8480,8 +8480,8 @@
 📈 قازانج: ${profit.toLocaleString()} د.ع
 🐷 جەمگزەی دووەم: ${jemgeza.toLocaleString()} د.ع
 
-⚠️ ئاگادارباش: دوای داخستن، کارتەکانی داشبۆرد سفر دەبنەوە 
-بەڵام مێژووی فرۆشتن، کڕین، واسڵەکان و هەموو زانیارییەکانی تر دەمێننەوە.
+⚠️ ئاگادارباش: دوای داخستن، کارتەکانی داشبۆرد سفر دەبنەوە
+✅ بەڵام هەموو مێژووەکان (فرۆشتن، کڕین، واسڵ، کارمەند، هتد) دەمێننەوە!
 ئەم کارە ناگەڕێتەوە!`;
 
     if (!confirm(confirmMsg)) return;
@@ -8543,17 +8543,45 @@
     });
     saveQuickPayData();
 
-    updateStats();
-    updateTodayMoneyStat();
+    // ✅ سفرکردنەوەی کارتەکانی داشبۆرد (UI)
+    document.getElementById('statTotalSales').textContent = '0';
+    document.getElementById('statTotalPurchases').textContent = '0';
+    document.getElementById('statTotalMoneyReceived').textContent = '0';
+    document.getElementById('statTotalSpendAndExpenses').textContent = '0';
+    document.getElementById('statTodayMoney').textContent = '0';
+    document.getElementById('statTotalProducts').textContent = '0';
+    document.getElementById('statTotalPersons').textContent = '0';
+    document.getElementById('statMyDebtToPartners').textContent = '0';
+    document.getElementById('statPersonsDebtToMe').textContent = '0';
+
+    const profitEl = document.getElementById('statProfit');
+    if (profitEl) {
+      profitEl.textContent = '0';
+      profitEl.className = 'profit-zero';
+    }
+
+    document.getElementById('statJemgeza').textContent = '0';
+    document.getElementById('statQuickPay').textContent = '0';
+    document.getElementById('statQuickPaySales').textContent = '0';
+
+    const quickPayProfitEl = document.getElementById('statQuickPayProfit');
+    if (quickPayProfitEl) {
+      quickPayProfitEl.textContent = '0';
+      quickPayProfitEl.className = 'profit-zero';
+    }
+
     updateAccountingDisplay();
+    updateTodayMoneyStat();
     updateQuickPayStats();
     renderClosingHistory();
-    
+
     showToast(`✅ حیسابات بە سەرکەوتوویی داخرا!
 📊 قازانجی کۆتایی: ${profit.toLocaleString()} د.ع
-📅 بەروار: ${dateStr}`, 'success');
+📅 بەروار: ${dateStr}
+💾 هەموو مێژووەکان پارێزراون!`, 'success');
   };
 
+  // ===== CLOSING HISTORY RENDER =====
   function renderClosingHistory() {
     const container = document.getElementById('closingHistoryList');
     if (!container) return;
@@ -8589,6 +8617,7 @@
     `).join('');
   }
 
+  // ===== UNDO CLOSING =====
   window.undoClosing = function(recordId) {
     if (!isAdmin()) {
       alert('تەنیا بەڕێوەبەر دەتوانێت ئەم کارە بکات!');
@@ -8612,12 +8641,12 @@
 تێبینی: گەڕاندنەوەی داخستن تەنیا کارتەکان دەگەڕێنێتەوە و کاریگەری لەسەر مێژووی فرۆشتن یان کڕین نییە.`)) return;
 
     const today = new Date();
-    const dateStr = today.toLocaleString('ckb', { 
-      year: 'numeric', 
-      month: '2-digit', 
+    const dateStr = today.toLocaleString('ckb', {
+      year: 'numeric',
+      month: '2-digit',
       day: '2-digit',
-      hour: '2-digit', 
-      minute: '2-digit' 
+      hour: '2-digit',
+      minute: '2-digit'
     });
 
     localStorage.setItem('market_jemgeza', record.jemgeza.toString());
