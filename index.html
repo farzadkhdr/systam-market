@@ -2204,7 +2204,8 @@
         r.type !== 'quickpay_add_from_total' &&
         r.type !== 'quickpay_add_from_jemgeza' &&
         r.type !== 'transfer_to_jemgeza' &&
-        r.type !== 'sales_return'
+        r.type !== 'sales_return' &&
+        !r.isTransferOut
     ).reduce((sum, r) => sum + r.amount, 0);
 
     // 3. کۆی دەرچوونەکانی ئەمرۆ
@@ -2222,7 +2223,8 @@
          r.type === 'sales_return' ||
          r.type === 'purchase' ||
          r.type === 'purchase_return' ||
-         r.type === 'adjustment')
+         r.type === 'adjustment' ||
+         r.isTransferOut === true)
     ).reduce((sum, r) => sum + Math.abs(r.amount), 0);
 
     const result = todayCashSales + todayCredits - todayDebits;
@@ -3188,6 +3190,7 @@
     if (quickpaySalesDisplay) quickpaySalesDisplay.textContent = quickpaySales.toLocaleString();
   }
 
+  // ===== TRANSFER MONEY - FIXED =====
   window.transferMoney = function() {
     const amountInput = document.getElementById('transferAmount');
     const amount = parseInt(amountInput.value);
@@ -3218,8 +3221,9 @@
         isTransfer: true
       });
       
+      // ===== کەمکردنەوەی لە واسڵی ئەمرۆ (ئەمە کێشەکە چارەسەر دەکات) =====
       moneyRequests.push({
-        id: 'TR-OUT' + Date.now(),
+        id: 'TR-OUT-' + Date.now(),
         date: dateStr,
         type: 'transfer_out',
         entityName: 'کەمکردنەوەی واسڵی ئەمرۆ',
@@ -3227,7 +3231,8 @@
         amount: -amount,
         note: `گواستنەوە بۆ کۆی گشتی`,
         isTransfer: false,
-        isExpense: true
+        isExpense: true,
+        isTransferOut: true
       });
       
       saveMoneyRequests();
@@ -3269,7 +3274,8 @@
         note: `گواستنەوە بۆ جەمگزەی دووەم`,
         isTransfer: false,
         isExpense: true,
-        isJemgeza: true
+        isJemgeza: true,
+        isTransferOut: true
       });
       
       const currentJemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
@@ -8506,11 +8512,17 @@
     if (closingHistory.length > 50) closingHistory = closingHistory.slice(0, 50);
     localStorage.setItem('market_closing_history', JSON.stringify(closingHistory));
 
-    // سفرکردنەوەی کارتەکان
+    // ===== سفرکردنەوەی کارتەکان (ئەمە کێشەکە چارەسەر دەکات) =====
+    
+    // 1. سفرکردنەوەی کۆی واسڵکراو (بەڵام مێژووەکان دەمێنن)
     const transferRecords = moneyRequests.filter(r => r.isTransfer === true && !r.isJemgeza);
-    transferRecords.forEach(r => { r.isTransfer = false; r.wasTransferred = true; });
+    transferRecords.forEach(r => { 
+      r.isTransfer = false; 
+      r.wasTransferred = true; 
+    });
     saveMoneyRequests();
 
+    // 2. زیادکردنی تۆماری داخستن بۆ مێژوو
     moneyRequests.push({
       id: 'RESET-' + Date.now(),
       date: dateStr,
@@ -8525,8 +8537,10 @@
     });
     saveMoneyRequests();
 
+    // 3. سفرکردنەوەی جەمگزە
     localStorage.setItem('market_jemgeza', '0');
 
+    // 4. سفرکردنەوەی کویک پەی
     quickPayBalance = 0;
     quickPaySalesTotal = 0;
     quickPayAddedTotal = 0;
@@ -8543,33 +8557,35 @@
     });
     saveQuickPayData();
 
-    // ✅ سفرکردنەوەی کارتەکانی داشبۆرد (UI)
-    document.getElementById('statTotalSales').textContent = '0';
-    document.getElementById('statTotalPurchases').textContent = '0';
-    document.getElementById('statTotalMoneyReceived').textContent = '0';
-    document.getElementById('statTotalSpendAndExpenses').textContent = '0';
-    document.getElementById('statTodayMoney').textContent = '0';
-    document.getElementById('statTotalProducts').textContent = '0';
-    document.getElementById('statTotalPersons').textContent = '0';
-    document.getElementById('statMyDebtToPartners').textContent = '0';
-    document.getElementById('statPersonsDebtToMe').textContent = '0';
+    // 5. سفرکردنەوەی کارتەکانی داشبۆرد (UI)
+    const statElements = {
+      'statTotalSales': '0',
+      'statTotalPurchases': '0',
+      'statTotalMoneyReceived': '0',
+      'statTotalSpendAndExpenses': '0',
+      'statTodayMoney': '0',
+      'statTotalProducts': warehouseProducts.length.toString(),
+      'statTotalPersons': customers.length.toString(),
+      'statMyDebtToPartners': '0',
+      'statPersonsDebtToMe': '0',
+      'statProfit': '0',
+      'statJemgeza': '0',
+      'statQuickPay': '0',
+      'statQuickPaySales': '0',
+      'statQuickPayProfit': '0'
+    };
 
-    const profitEl = document.getElementById('statProfit');
-    if (profitEl) {
-      profitEl.textContent = '0';
-      profitEl.className = 'profit-zero';
-    }
+    Object.keys(statElements).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = statElements[id];
+        if (id === 'statProfit' || id === 'statQuickPayProfit') {
+          el.className = 'profit-zero';
+        }
+      }
+    });
 
-    document.getElementById('statJemgeza').textContent = '0';
-    document.getElementById('statQuickPay').textContent = '0';
-    document.getElementById('statQuickPaySales').textContent = '0';
-
-    const quickPayProfitEl = document.getElementById('statQuickPayProfit');
-    if (quickPayProfitEl) {
-      quickPayProfitEl.textContent = '0';
-      quickPayProfitEl.className = 'profit-zero';
-    }
-
+    // 6. نوێکردنەوەی هەموو دیسپلەیەکان
     updateAccountingDisplay();
     updateTodayMoneyStat();
     updateQuickPayStats();
