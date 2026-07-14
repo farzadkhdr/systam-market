@@ -2188,7 +2188,7 @@
         s.customer === 'کاش' && s.date && s.date.includes(today)
     ).reduce((sum, s) => sum + s.total, 0);
 
-    // 2. کۆی پارەی واسڵکراوی ئەمرۆ
+    // 2. کۆی پارەی واسڵکراوی ئەمرۆ (تەنیا ئەوانەی کە isTransferOut نین)
     const todayCredits = (moneyRequests || []).filter(r => 
         r.date && r.date.includes(today) && 
         r.amount > 0 && 
@@ -2208,7 +2208,7 @@
         !r.isTransferOut
     ).reduce((sum, r) => sum + r.amount, 0);
 
-    // 3. کۆی دەرچوونەکانی ئەمرۆ
+    // 3. کۆی دەرچوونەکانی ئەمرۆ (ئەمەش گرنگە)
     const todayDebits = (moneyRequests || []).filter(r => 
         r.date && r.date.includes(today) && 
         r.amount < 0 &&
@@ -3210,12 +3210,12 @@
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       
-      // ===== گواستنەوە بۆ کۆی گشتی (زیادکردن) =====
+      // 1. زیادکردنی پارە بۆ کۆی گشتی (واسڵکراو)
       moneyRequests.push({
-        id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
+        id: 'TRANSFER-IN-' + Date.now(),
         date: dateStr,
-        type: 'transfer',
-        entityName: 'گواستنەوەی پارە',
+        type: 'transfer_in',
+        entityName: 'گواستنەوە بۆ کۆی گشتی',
         entityPhone: '-',
         amount: amount,
         note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
@@ -3223,13 +3223,12 @@
         isCashTransfer: true
       });
       
-      // ===== کەمکردنەوەی لە واسڵی ئەمرۆ (ئەمە کێشەکە چارەسەر دەکات) =====
-      // ئەم تۆمارە وەک خەرجی تۆمار دەکرێت بۆ ئەوەی واسڵی ئەمرۆ کەم بکاتەوە
+      // 2. کەمکردنەوەی پارە لە واسڵی ئەمرۆ (ئەمە کێشەکە چارەسەر دەکات)
       moneyRequests.push({
-        id: 'TR-OUT-' + Date.now(),
+        id: 'TRANSFER-OUT-' + Date.now(),
         date: dateStr,
         type: 'transfer_out',
-        entityName: 'کەمکردنەوەی واسڵی ئەمرۆ',
+        entityName: 'کەمکردنەوە لە واسڵی ئەمرۆ',
         entityPhone: '-',
         amount: -amount,
         note: `گواستنەوە بۆ کۆی گشتی`,
@@ -8516,7 +8515,7 @@
     if (closingHistory.length > 50) closingHistory = closingHistory.slice(0, 50);
     localStorage.setItem('market_closing_history', JSON.stringify(closingHistory));
 
-    // ===== سفرکردنەوەی کارتەکان (ئەمە کێشەکە چارەسەر دەکات) =====
+    // ===== سفرکردنەوەی کارتەکان =====
     
     // 1. سفرکردنەوەی کۆی واسڵکراو (بەڵام مێژووەکان دەمێنن)
     const transferRecords = moneyRequests.filter(r => r.isTransfer === true && !r.isJemgeza);
@@ -8563,58 +8562,37 @@
     });
     saveQuickPayData();
 
-    // 5. سفرکردنەوەی کارتەکانی داشبۆرد (UI) - ئەمەش زیاد دەکەین
-    // کارتەکان بە زۆر سفر بکەرەوە
-    const statElements = {
-      'statTotalSales': '0',
-      'statTotalPurchases': '0',
-      'statTotalMoneyReceived': '0',
-      'statTotalSpendAndExpenses': '0',
-      'statTodayMoney': '0',
-      'statTotalProducts': warehouseProducts.length.toString(),
-      'statTotalPersons': customers.length.toString(),
-      'statMyDebtToPartners': '0',
-      'statPersonsDebtToMe': '0',
-      'statProfit': '0',
-      'statJemgeza': '0',
-      'statQuickPay': '0',
-      'statQuickPaySales': '0',
-      'statQuickPayProfit': '0'
-    };
+    // 5. سفرکردنەوەی کارتەکانی داشبۆرد بە زۆر
+    document.getElementById('statTotalSales').textContent = '0';
+    document.getElementById('statTotalPurchases').textContent = '0';
+    document.getElementById('statTotalMoneyReceived').textContent = '0';
+    document.getElementById('statTotalSpendAndExpenses').textContent = '0';
+    document.getElementById('statTotalProducts').textContent = warehouseProducts.length.toString();
+    document.getElementById('statTotalPersons').textContent = customers.length.toString();
+    document.getElementById('statMyDebtToPartners').textContent = '0';
+    document.getElementById('statPersonsDebtToMe').textContent = '0';
+    document.getElementById('statProfit').textContent = '0';
+    document.getElementById('statProfit').className = 'profit-zero';
+    document.getElementById('statJemgeza').textContent = '0';
+    document.getElementById('statQuickPay').textContent = '0';
+    document.getElementById('statQuickPaySales').textContent = '0';
+    document.getElementById('statQuickPayProfit').textContent = '0';
+    document.getElementById('statQuickPayProfit').className = 'profit-zero';
+    document.getElementById('statTodayMoney').textContent = '0';
 
-    Object.keys(statElements).forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.textContent = statElements[id];
-        if (id === 'statProfit' || id === 'statQuickPayProfit') {
-          el.className = 'profit-zero';
-        }
-        if (id === 'statTodayMoney') {
-          el.textContent = '0';
-        }
-      }
-    });
+    // 6. سفرکردنەوەی دیسپلەیەکانی تری UI
+    document.getElementById('accTodayMoney').textContent = '0';
+    document.getElementById('accTotalMoney').textContent = '0';
+    document.getElementById('accJemgezaMoney').textContent = '0';
+    document.getElementById('jemgezaBalanceDisplay').textContent = '0';
+    document.getElementById('jemgezaBalanceDisplay2').textContent = '0';
 
-    // 6. نوێکردنەوەی هەموو دیسپلەیەکان
+    // 7. نوێکردنەوەی هەموو دیسپلەیەکان
     updateAccountingDisplay();
     updateTodayMoneyStat();
     updateQuickPayStats();
     renderClosingHistory();
-
-    // 7. سفرکردنەوەی دیسپلەی جەمگزە لە UI
-    const jemgezaDisplay = document.getElementById('jemgezaBalanceDisplay');
-    if (jemgezaDisplay) jemgezaDisplay.textContent = '0';
-    const jemgezaDisplay2 = document.getElementById('jemgezaBalanceDisplay2');
-    if (jemgezaDisplay2) jemgezaDisplay2.textContent = '0';
-    const accJemgeza = document.getElementById('accJemgezaMoney');
-    if (accJemgeza) accJemgeza.textContent = '0';
-
-    // 8. سفرکردنەوەی دیسپلەی کۆی گشتی
-    const accTotal = document.getElementById('accTotalMoney');
-    if (accTotal) accTotal.textContent = '0';
-    
-    const accToday = document.getElementById('accTodayMoney');
-    if (accToday) accToday.textContent = '0';
+    updateStats();
 
     showToast(`✅ حیسابات بە سەرکەوتوویی داخرا!
 📊 قازانجی کۆتایی: ${profit.toLocaleString()} د.ع
