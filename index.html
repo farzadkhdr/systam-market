@@ -3210,6 +3210,7 @@
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       
+      // ===== گواستنەوە بۆ کۆی گشتی (زیادکردن) =====
       moneyRequests.push({
         id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
         date: dateStr,
@@ -3218,10 +3219,12 @@
         entityPhone: '-',
         amount: amount,
         note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
-        isTransfer: true
+        isTransfer: true,
+        isCashTransfer: true
       });
       
       // ===== کەمکردنەوەی لە واسڵی ئەمرۆ (ئەمە کێشەکە چارەسەر دەکات) =====
+      // ئەم تۆمارە وەک خەرجی تۆمار دەکرێت بۆ ئەوەی واسڵی ئەمرۆ کەم بکاتەوە
       moneyRequests.push({
         id: 'TR-OUT-' + Date.now(),
         date: dateStr,
@@ -3232,7 +3235,8 @@
         note: `گواستنەوە بۆ کۆی گشتی`,
         isTransfer: false,
         isExpense: true,
-        isTransferOut: true
+        isTransferOut: true,
+        isCashSale: false
       });
       
       saveMoneyRequests();
@@ -8519,6 +8523,7 @@
     transferRecords.forEach(r => { 
       r.isTransfer = false; 
       r.wasTransferred = true; 
+      r.resetOn = dateStr;
     });
     saveMoneyRequests();
 
@@ -8533,7 +8538,8 @@
       note: `داخستنی حیسابات - ژمارە: ${closingId}`,
       isTransfer: false,
       isExpense: false,
-      isReset: true
+      isReset: true,
+      resetDate: dateStr
     });
     saveMoneyRequests();
 
@@ -8557,7 +8563,8 @@
     });
     saveQuickPayData();
 
-    // 5. سفرکردنەوەی کارتەکانی داشبۆرد (UI)
+    // 5. سفرکردنەوەی کارتەکانی داشبۆرد (UI) - ئەمەش زیاد دەکەین
+    // کارتەکان بە زۆر سفر بکەرەوە
     const statElements = {
       'statTotalSales': '0',
       'statTotalPurchases': '0',
@@ -8582,6 +8589,9 @@
         if (id === 'statProfit' || id === 'statQuickPayProfit') {
           el.className = 'profit-zero';
         }
+        if (id === 'statTodayMoney') {
+          el.textContent = '0';
+        }
       }
     });
 
@@ -8590,6 +8600,21 @@
     updateTodayMoneyStat();
     updateQuickPayStats();
     renderClosingHistory();
+
+    // 7. سفرکردنەوەی دیسپلەی جەمگزە لە UI
+    const jemgezaDisplay = document.getElementById('jemgezaBalanceDisplay');
+    if (jemgezaDisplay) jemgezaDisplay.textContent = '0';
+    const jemgezaDisplay2 = document.getElementById('jemgezaBalanceDisplay2');
+    if (jemgezaDisplay2) jemgezaDisplay2.textContent = '0';
+    const accJemgeza = document.getElementById('accJemgezaMoney');
+    if (accJemgeza) accJemgeza.textContent = '0';
+
+    // 8. سفرکردنەوەی دیسپلەی کۆی گشتی
+    const accTotal = document.getElementById('accTotalMoney');
+    if (accTotal) accTotal.textContent = '0';
+    
+    const accToday = document.getElementById('accTodayMoney');
+    if (accToday) accToday.textContent = '0';
 
     showToast(`✅ حیسابات بە سەرکەوتوویی داخرا!
 📊 قازانجی کۆتایی: ${profit.toLocaleString()} د.ع
