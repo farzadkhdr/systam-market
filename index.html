@@ -3212,10 +3212,10 @@
       
       // زیادکردنی بۆ کۆی گشتی
       moneyRequests.push({
-        id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
+        id: 'TR-' + Date.now(),
         date: dateStr,
         type: 'transfer',
-        entityName: 'گواستنەوەی پارە',
+        entityName: 'گواستنەوەی پارە بۆ کۆی گشتی',
         entityPhone: '-',
         amount: amount,
         note: `گواستنەوە لە واسڵی ئەمرۆ بۆ کۆی گشتی`,
@@ -3223,7 +3223,7 @@
         isCashTransfer: true
       });
       
-      // کەمکردنەوەی لە واسڵی ئەمرۆ (ئەمە کێشەکە چارەسەر دەکات)
+      // کەمکردنەوەی لە واسڵی ئەمرۆ
       moneyRequests.push({
         id: 'TR-OUT-' + Date.now(),
         date: dateStr,
@@ -3234,8 +3234,7 @@
         note: `گواستنەوە بۆ کۆی گشتی`,
         isTransfer: false,
         isExpense: true,
-        isTransferOut: true,
-        isCashSale: false
+        isTransferOut: true
       });
       
       saveMoneyRequests();
