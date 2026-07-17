@@ -2558,13 +2558,14 @@
     updateQuickPayStats();
   }
 
-  // ===== UPDATE STATS =====
+  // ===== UPDATE STATS (FIXED) =====
   function updateStats() {
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
     
+    // ✅ کۆی گشتی پارەی واسڵکراو - تەنها ئەوانەی isTransfer = true و !isJemgeza
     const totalMoneyReceived = moneyRequests
-      .filter(r => r.isTransfer === true && !r.isJemgeza && !r.ignoreInTodayCalculation)
+      .filter(r => r.isTransfer === true && !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
     
     const totalCashSales = saleHistory
@@ -2770,7 +2771,7 @@
     if (source === 'total') {
       sourceName = 'کۆی گشتی پارەی واسڵکراو';
       availableAmount = moneyRequests
-        .filter(r => r.isTransfer === true && !r.isJemgeza && !r.ignoreInTodayCalculation)
+        .filter(r => r.isTransfer === true && !r.isJemgeza)
         .reduce((sum, r) => sum + r.amount, 0);
     } else if (source === 'today') {
       sourceName = 'کۆی واسڵی ئەمرۆ';
@@ -3174,9 +3175,12 @@
   // ===== ACCOUNTING / TRANSFER FUNCTIONS =====
   function updateAccountingDisplay() {
     const todayMoney = calculateTodayMoney();
+    
+    // ✅ کۆی گشتی پارەی واسڵکراو
     const totalMoney = moneyRequests
-      .filter(r => r.isTransfer === true && !r.isJemgeza && !r.ignoreInTodayCalculation)
+      .filter(r => r.isTransfer === true && !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
+      
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     const quickpaySales = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
     
@@ -3215,7 +3219,7 @@
       const now = new Date();
       const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       
-      // زیادکردنی بۆ کۆی گشتی
+      // ✅ زیادکردن بۆ کۆی گشتی واسڵکراو - isTransfer = true
       moneyRequests.push({
         id: 'TR' + Math.floor(Math.random() * 9000 + 1000),
         date: dateStr,
@@ -3229,7 +3233,7 @@
         ignoreInTodayCalculation: true
       });
       
-      // کەمکردنەوە لە واسڵی ئەمرۆ (ئێستا وەک دەرچوون هەژمار دەکرێت)
+      // ✅ کەمکردنەوە لە واسڵی ئەمرۆ
       moneyRequests.push({
         id: 'TR-OUT-' + Date.now(),
         date: dateStr,
@@ -8494,7 +8498,7 @@
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
     const totalMoneyReceived = moneyRequests
-      .filter(r => r.isTransfer === true && !r.isJemgeza && !r.ignoreInTodayCalculation)
+      .filter(r => r.isTransfer === true && !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
     const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
     const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
@@ -8541,7 +8545,7 @@
     // ===== سفرکردنەوەی کارتەکان =====
     
     // 1. سفرکردنەوەی کۆی واسڵکراو (بەڵام مێژووەکان دەمێنن)
-    const transferRecords = moneyRequests.filter(r => r.isTransfer === true && !r.isJemgeza && !r.ignoreInTodayCalculation);
+    const transferRecords = moneyRequests.filter(r => r.isTransfer === true && !r.isJemgeza);
     transferRecords.forEach(r => { 
       r.isTransfer = false; 
       r.wasTransferred = true; 
