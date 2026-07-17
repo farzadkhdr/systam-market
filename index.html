@@ -2444,14 +2444,13 @@
     { id: 'partners', icon: 'fa-handshake', label: 'شەریکەکان', color: '#fef3c7', text: '#b45309' },
     { id: 'settings', icon: 'fa-cogs', label: 'رێکخستن', color: '#d1fae5', text: '#065f46' },
     { id: 'employees', icon: 'fa-id-badge', label: 'کارمەندەکان', color: '#e0e7ff', text: '#3730a3' },
+    { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکویریتی', color: '#e0e7ff', text: '#3730a3' },
     { id: 'money_request', icon: 'fa-money-check-alt', label: 'واسڵکردنی پارە', color: '#fef9c3', text: '#854d0e' },
     { id: 'money_spend', icon: 'fa-coins', label: 'سەرفکردنی پارە', color: '#fef3c7', text: '#854d0e' },
     { id: 'pricing', icon: 'fa-tags', label: 'دروستکردنی نرخ', color: '#ccfbf1', text: '#115e59' },
     { id: 'barcode', icon: 'fa-barcode', label: 'پرێنتکردنی بارکۆد', color: '#f3e8ff', text: '#6b21a8' },
     { id: 'agents', icon: 'fa-user-tie', label: 'مەندوبەکان', color: '#fef3c7', text: '#b45309' },
-    { id: 'give_agent', icon: 'fa-box-open', label: 'پێدانی کاڵاکان بە مەندوبەکان', color: '#f3e8ff', text: '#6b21a8' },
-    { id: 'security', icon: 'fa-shield-alt', label: 'پاراستن و سکویریتی', color: '#e0e7ff', text: '#3730a3' },
-    { id: 'quickpay', icon: 'fa-bolt', label: 'کویک پەی', color: '#f3e8ff', text: '#7c3aed' }
+    { id: 'give_agent', icon: 'fa-box-open', label: 'پێدانی کاڵاکان بە مەندوبەکان', color: '#f3e8ff', text: '#6b21a8' }
   ];
 
   let moduleOrder = allModules.map(m => m.id);
@@ -8542,8 +8541,10 @@
     if (closingHistory.length > 50) closingHistory = closingHistory.slice(0, 50);
     localStorage.setItem('market_closing_history', JSON.stringify(closingHistory));
 
-    // ===== سفرکردنەوەی کارتەکان =====
-    
+    // ========================================================
+    // ✅ سفرکردنەوەی کارتەکان (تازە و باشترکراو)
+    // ========================================================
+
     // 1. سفرکردنەوەی کۆی واسڵکراو (بەڵام مێژووەکان دەمێنن)
     const transferRecords = moneyRequests.filter(r => r.isTransfer === true && !r.isJemgeza);
     transferRecords.forEach(r => { 
@@ -8554,27 +8555,26 @@
     });
     saveMoneyRequests();
 
-    // 2. زیادکردنی تۆماری داخستن بۆ مێژوو
-    moneyRequests.push({
-      id: 'RESET-' + Date.now(),
-      date: dateStr,
-      type: 'period_reset',
-      entityName: 'داخستنی حیسابات',
-      entityPhone: '-',
-      amount: 0,
-      note: `داخستنی حیسابات - ژمارە: ${closingId}`,
-      isTransfer: false,
-      isExpense: false,
-      isReset: true,
-      resetDate: dateStr,
-      ignoreInTodayCalculation: true
-    });
-    saveMoneyRequests();
+    // 2. ✅ سفرکردنەوەی کۆی فرۆشتن (بەبێ سڕینەوەی مێژوو)
+    // نرخەکانی فرۆشتن لە saleHistory ماون، تەنها کارتەکە سفر دەکەین
+    // بۆ ئەمە ئێمە کارتەکانی UI سفر دەکەین و نرخەکانی کۆن پاشەکەوت دەکەین
 
-    // 3. سفرکردنەوەی جەمگزە
+    // 3. ✅ سفرکردنەوەی کۆی کڕین (بەبێ سڕینەوەی مێژوو)
+    // نرخەکانی کڕین لە purchaseHistory ماون
+
+    // 4. ✅ سفرکردنەوەی کۆی واسڵی ئەمرۆ (UI)
+    // نرخەکانی واسڵی ئەمرۆ لە moneyRequests ماون
+
+    // 5. ✅ سفرکردنەوەی کۆی سەرف و مەسروفات (UI)
+    // نرخەکانی مەسروفات لە expenseHistory ماون
+
+    // 6. ✅ سفرکردنەوەی قازانج (UI)
+    // نرخەکانی قازانج لەمەوە دەردەچن: totalSales - totalPurchases - totalExpenses
+
+    // 7. سفرکردنەوەی جەمگزە
     localStorage.setItem('market_jemgeza', '0');
 
-    // 4. سفرکردنەوەی کویک پەی
+    // 8. سفرکردنەوەی کویک پەی
     quickPayBalance = 0;
     quickPaySalesTotal = 0;
     quickPayAddedTotal = 0;
@@ -8591,28 +8591,49 @@
     });
     saveQuickPayData();
 
-    // 5. سفرکردنەوەی کارتەکانی داشبۆرد (UI)
+    // 9. ✅ زیادکردنی تۆماری سفرکردن بۆ مێژوو
+    moneyRequests.push({
+      id: 'RESET-STATS-' + Date.now(),
+      date: dateStr,
+      type: 'period_reset_stats',
+      entityName: 'سفرکردنی کارتەکان',
+      entityPhone: '-',
+      amount: 0,
+      note: `سفرکردنی کارتەکانی فرۆشتن و کڕین و واسڵ و مەسروفات - ${closingId}`,
+      isTransfer: false,
+      isExpense: false,
+      isReset: true,
+      resetDate: dateStr,
+      ignoreInTodayCalculation: true
+    });
+    saveMoneyRequests();
+
+    // ========================================================
+    // ✅ سفرکردنی کارتەکانی UI
+    // ========================================================
+
+    // کارتەکانی داشبۆرد کە دەبێت سفر بن
     const statElements = {
-      'statTotalSales': '0',
-      'statTotalPurchases': '0',
-      'statTotalMoneyReceived': '0',
-      'statTotalSpendAndExpenses': '0',
-      'statTodayMoney': '0',
-      'statTotalProducts': warehouseProducts.length.toString(),
-      'statTotalPersons': customers.length.toString(),
-      'statMyDebtToPartners': '0',
-      'statPersonsDebtToMe': '0',
-      'statProfit': '0',
-      'statJemgeza': '0',
-      'statQuickPay': '0',
-      'statQuickPaySales': '0',
-      'statQuickPayProfit': '0'
+      'statTotalSales': '0',          // کۆی فرۆشتن
+      'statTotalPurchases': '0',      // کۆی کڕین
+      'statTotalMoneyReceived': '0',  // کۆی واسڵکراو
+      'statTotalSpendAndExpenses': '0', // کۆی سەرف و مەسروفات
+      'statTodayMoney': '0',          // واسڵی ئەمرۆ
+      'statMyDebtToPartners': '0',    // قەرزاری من بۆ شەریک
+      'statPersonsDebtToMe': '0',     // قەرزاری کەسەکان بۆ من
+      'statProfit': '0',              // قازانج
+      'statJemgeza': '0',             // جەمگزەی دووەم
+      'statQuickPay': '0',            // کویک پەی
+      'statQuickPaySales': '0',       // کۆی فرۆشتنی کویک پەی
+      'statQuickPayProfit': '0'       // قازانجی کویک پەی
     };
 
+    // سفرکردنی هەموو کارتەکان
     Object.keys(statElements).forEach(id => {
       const el = document.getElementById(id);
       if (el) {
         el.textContent = statElements[id];
+        // ڕەنگەکانی قازانج بگۆڕە بۆ بێ قازانج
         if (id === 'statProfit' || id === 'statQuickPayProfit') {
           el.className = 'profit-zero';
         }
@@ -8622,13 +8643,23 @@
       }
     });
 
-    // 6. نوێکردنەوەی هەموو دیسپلەیەکان
+    // کارتی ژمارەی کاڵاکان و کەسەکان ناسڕدرێنەوە (دەمێنن)
+    const statTotalProducts = document.getElementById('statTotalProducts');
+    if (statTotalProducts) statTotalProducts.textContent = warehouseProducts.length.toString();
+    
+    const statTotalPersons = document.getElementById('statTotalPersons');
+    if (statTotalPersons) statTotalPersons.textContent = customers.length.toString();
+
+    // ========================================================
+    // ✅ نوێکردنەوەی هەموو دیسپلەیەکان
+    // ========================================================
+    
     updateAccountingDisplay();
     updateTodayMoneyStat();
     updateQuickPayStats();
     renderClosingHistory();
 
-    // 7. سفرکردنەوەی دیسپلەی جەمگزە لە UI
+    // سفرکردنی دیسپلەی جەمگزە لە UI
     const jemgezaDisplay = document.getElementById('jemgezaBalanceDisplay');
     if (jemgezaDisplay) jemgezaDisplay.textContent = '0';
     const jemgezaDisplay2 = document.getElementById('jemgezaBalanceDisplay2');
@@ -8636,17 +8667,32 @@
     const accJemgeza = document.getElementById('accJemgezaMoney');
     if (accJemgeza) accJemgeza.textContent = '0';
 
-    // 8. سفرکردنەوەی دیسپلەی کۆی گشتی
+    // سفرکردنی دیسپلەی کۆی گشتی
     const accTotal = document.getElementById('accTotalMoney');
     if (accTotal) accTotal.textContent = '0';
     
     const accToday = document.getElementById('accTodayMoney');
     if (accToday) accToday.textContent = '0';
 
+    // سفرکردنی دیسپلەی مەسروفات
+    const todayExpenseDisplay = document.getElementById('todayExpenseDisplay');
+    if (todayExpenseDisplay) todayExpenseDisplay.textContent = '0';
+    const todayRemainingDisplay = document.getElementById('todayRemainingDisplay');
+    if (todayRemainingDisplay) todayRemainingDisplay.textContent = '0';
+
+    // سفرکردنی دیسپلەی پارە پێدان
+    const todayGiveDisplay = document.getElementById('todayGiveDisplay');
+    if (todayGiveDisplay) todayGiveDisplay.textContent = '0';
+
+    // ========================================================
+    // ✅ پەیامی سەرکەوتن
+    // ========================================================
+    
     showToast(`✅ حیسابات بە سەرکەوتوویی داخرا!
 📊 قازانجی کۆتایی: ${profit.toLocaleString()} د.ع
 📅 بەروار: ${dateStr}
-💾 هەموو مێژووەکان پارێزراون!`, 'success');
+💾 هەموو مێژووەکان پارێزراون!
+💰 کارتی فرۆشتن و کڕین و هەموو کارتەکانی تر سفرکرانەوە!`, 'success');
   };
 
   // ===== CLOSING HISTORY RENDER =====
