@@ -2206,15 +2206,16 @@
         r.type !== 'transfer_to_jemgeza' &&
         r.type !== 'sales_return' &&
         !r.isTransferOut &&
-        !r.ignoreInTodayCalculation // 🟢 زیاد کراوە
+        !r.ignoreInTodayCalculation
     ).reduce((sum, r) => sum + r.amount, 0);
 
-    // 3. کۆی دەرچوونەکانی ئەمرۆ
+    // 3. کۆی دەرچوونەکانی ئەمرۆ (ئەمەش تۆمارەکانی گواستنەوەی پارە دەگرێتەوە)
     const todayDebits = (moneyRequests || []).filter(r => 
         r.date && r.date.includes(today) && 
         r.amount < 0 &&
         !r.ignoreInTodayCalculation &&
         (r.type === 'expense' || 
+         r.type === 'transfer_out' ||
          r.type === 'transfer_to_jemgeza' ||
          r.type === 'give_money' ||
          r.type === 'salary' ||
@@ -3228,7 +3229,7 @@
         ignoreInTodayCalculation: true
       });
       
-      // کەمکردنەوە لە واسڵی ئەمرۆ
+      // کەمکردنەوە لە واسڵی ئەمرۆ (ئێستا وەک دەرچوون هەژمار دەکرێت)
       moneyRequests.push({
         id: 'TR-OUT-' + Date.now(),
         date: dateStr,
@@ -3241,7 +3242,7 @@
         isExpense: true,
         isTransferOut: true,
         isCashSale: false,
-        ignoreInTodayCalculation: true
+        ignoreInTodayCalculation: false
       });
       
       saveMoneyRequests();
@@ -3286,7 +3287,7 @@
         isExpense: true,
         isJemgeza: true,
         isTransferOut: true,
-        ignoreInTodayCalculation: true
+        ignoreInTodayCalculation: false
       });
       
       // زیادکردن بۆ جەمگزە
