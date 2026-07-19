@@ -233,6 +233,41 @@
     .adjustment-history-item { background:#f8fafc; border-right:4px solid #7c3aed; padding:0.8rem; border-radius:0.8rem; margin-bottom:0.5rem; }
     .adjustment-history-item.positive { border-right-color:#059669; }
     .adjustment-history-item.negative { border-right-color:#dc2626; }
+    /* Low Stock CSS */
+    .low-stock-item {
+      background:#f8fafc;
+      border-radius:1rem;
+      padding:0.8rem 1rem;
+      margin-bottom:0.5rem;
+      border-right:4px solid #dc2626;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:0.5rem;
+      transition: all 0.3s ease;
+    }
+    .low-stock-item:hover {
+      background:#f1f5f9;
+      transform:translateX(-3px);
+    }
+    .low-stock-item .stock-badge {
+      background:#fee2e2;
+      color:#991b1b;
+      padding:0.2rem 0.8rem;
+      border-radius:1rem;
+      font-weight:600;
+      font-size:0.8rem;
+    }
+    .low-stock-item .stock-badge.critical {
+      background:#fecaca;
+      color:#7f1d1d;
+      animation:pulse-warning 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-warning {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.7; transform:scale(1.05); }
+    }
     @media print { .no-print { display: none !important; } .report-container { box-shadow: none; padding: 1rem; } .report-table th { background: #e2e8f0 !important; } }
     .edit-product-search-container { background:#f8fafc; border-radius:1rem; padding:1rem; margin-bottom:1rem; border:1px solid #e2e8f0; }
     .edit-product-search-container .search-box { margin-bottom:0.5rem; }
@@ -1006,6 +1041,7 @@
         <div class="tab active" data-waretab="add">➕ زیادکردنی کاڵا</div>
         <div class="tab" data-waretab="list">📋 لیستی کاڵاکان</div>
         <div class="tab" data-waretab="purchase">🛒 کڕینەوە لە مخزن</div>
+        <div class="tab" data-waretab="lowstock">📉 کاڵا کەم بووەکان</div>
       </div>
       <div class="panel active" id="wareAddPanel">
         <div class="card-glass" style="max-width:700px; margin:0 auto;">
@@ -1081,6 +1117,28 @@
           <div id="warePurchaseCart" style="margin-top:1rem;"><p style="color:#94a3b8;">کاڵا زیاد نەکراوە</p></div>
           <div style="margin-top:1rem; font-weight:bold;">کۆی گشتی: <span id="warePurchaseTotal">0</span> دینار</div>
           <button onclick="completeWarehousePurchase()" style="background:#059669; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; width:100%; margin-top:1rem;"><i class="fas fa-check-circle"></i> تەواوکردنی کڕین</button>
+        </div>
+      </div>
+      <!-- Low Stock Panel -->
+      <div class="panel" id="wareLowStockPanel">
+        <div class="card-glass">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:1rem;">
+            <h3><i class="fas fa-exclamation-triangle" style="color:#dc2626;"></i> کاڵا کەم بووەکان</h3>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <span style="font-size:0.8rem; color:#64748b;">سنووری کەمبوون:</span>
+              <input type="number" id="lowStockThreshold" value="10" min="1" style="width:70px; padding:0.3rem 0.5rem; border-radius:1rem; border:1px solid #cbd5e1; text-align:center;">
+              <button onclick="renderLowStockProducts()" style="background:#0f172a; color:white; border:none; padding:0.3rem 1rem; border-radius:1rem; cursor:pointer; font-size:0.8rem;"><i class="fas fa-sync-alt"></i> نوێکردنەوە</button>
+            </div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <div class="search-box">
+              <input type="text" id="lowStockSearch" placeholder="گەڕان بە ناوی کاڵا یان بارکۆد..." oninput="renderLowStockProducts()">
+              <button onclick="renderLowStockProducts()"><i class="fas fa-search"></i></button>
+            </div>
+          </div>
+          <div id="lowStockProductsList" style="max-height:500px; overflow-y:auto;">
+            <p style="color:#94a3b8; text-align:center;">بارکردن...</p>
+          </div>
         </div>
       </div>
     </div>
@@ -4432,7 +4490,15 @@
   function saveCustomers() { localStorage.setItem('market_customers', JSON.stringify(customers)); updateStats(); }
   function savePartners() { localStorage.setItem('market_partners', JSON.stringify(partners)); updateStats(); }
   function saveAgents() { localStorage.setItem('market_agents', JSON.stringify(agents)); updateStats(); }
-  function saveWarehouseProducts() { localStorage.setItem('market_warehouse_products', JSON.stringify(warehouseProducts)); updateStats(); }
+  function saveWarehouseProducts() { 
+    localStorage.setItem('market_warehouse_products', JSON.stringify(warehouseProducts)); 
+    updateStats();
+    // ئەگەر تابی کاڵا کەم بووەکان کراوە بێت، نوێی بکەرەوە
+    const lowStockPanel = document.getElementById('wareLowStockPanel');
+    if (lowStockPanel && lowStockPanel.classList.contains('active')) {
+      renderLowStockProducts();
+    }
+  }
   function saveExpiryDamage() { localStorage.setItem('market_expiry_damage', JSON.stringify(expiredDamagedProducts)); }
   function saveMoneyRequests() { localStorage.setItem('market_money_requests', JSON.stringify(moneyRequests)); updateStats(); updateAccountingDisplay(); }
   function savePurchaseHistory() { localStorage.setItem('market_purchase_history', JSON.stringify(purchaseHistory)); updateStats(); }
@@ -5086,7 +5152,7 @@
     else if (view === 'dashboard') { updateStats(); renderDashboardModules(); }
     else if (view === 'persons') { renderPersonsList(); document.getElementById('personDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کەسێک هەڵبژێرە بۆ بینینی زانیاری</p>'; renderAdjustmentHistory(); }
     else if (view === 'partners') { renderPartnersList(); document.getElementById('partnerDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">شەریکێک هەڵبژێرە بۆ بینینی زانیاری</p>'; }
-    else if (view === 'warehouse') { renderProductsGrid(); renderWarePurchaseCart(); }
+    else if (view === 'warehouse') { renderProductsGrid(); renderWarePurchaseCart(); renderLowStockProducts(); }
     else if (view === 'pricing') { renderPricingUI(); }
     else if (view === 'barcode') { populateBarcodeSelect(); renderBarcodeProductsList(); }
     else if (view === 'moneyRequest') { renderMoneyHistory(); }
@@ -5638,6 +5704,89 @@
     showToast('✅ گۆڕانکارییەکان پاشەکەوتکران', 'success');
   };
 
+  // ===== LOW STOCK FUNCTIONS =====
+  function renderLowStockProducts() {
+    const container = document.getElementById('lowStockProductsList');
+    if (!container) return;
+    
+    const threshold = parseInt(document.getElementById('lowStockThreshold')?.value) || 10;
+    const searchQuery = document.getElementById('lowStockSearch')?.value.trim().toLowerCase() || '';
+    
+    let lowStockProducts = warehouseProducts.filter(p => p.quantity <= threshold);
+    
+    if (searchQuery) {
+      lowStockProducts = lowStockProducts.filter(p => 
+        p.name.toLowerCase().includes(searchQuery) || 
+        p.barcode.includes(searchQuery)
+      );
+    }
+    
+    // ڕیزکردن بەپێی بڕی کەمترین
+    lowStockProducts.sort((a, b) => a.quantity - b.quantity);
+    
+    if (!lowStockProducts.length) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:2rem; color:#94a3b8;">
+          <i class="fas fa-check-circle" style="font-size:2rem; color:#059669; display:block; margin-bottom:0.5rem;"></i>
+          <span>هیچ کاڵایەک کەم نییە! هەموو کاڵاکان لە ئاستی پێویست زیاترن.</span>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = `
+      <div style="background:#fef2f2; padding:0.8rem 1rem; border-radius:1rem; margin-bottom:1rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+        <span><strong>📊 ژمارەی کاڵا کەم بووەکان:</strong> ${lowStockProducts.length}</span>
+        <span><strong>📦 کۆی کاڵاکان:</strong> ${warehouseProducts.length}</span>
+        <span><strong>⚙️ سنوور:</strong> ${threshold}</span>
+      </div>
+      ${lowStockProducts.map(p => {
+        const isCritical = p.quantity <= 3;
+        return `
+          <div class="low-stock-item">
+            <div style="display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap;">
+              <div style="font-weight:600;">${p.name}</div>
+              <div style="font-size:0.8rem; color:#64748b;">بارکۆد: ${p.barcode}</div>
+              <div style="font-size:0.8rem; color:#64748b;">نرخ: ${p.sellPrice.toLocaleString()} د.ع</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap;">
+              <span class="stock-badge ${isCritical ? 'critical' : ''}">
+                📦 ${p.quantity} ${p.unit}
+              </span>
+              ${isCritical ? '<span style="font-size:0.7rem; color:#dc2626; font-weight:600;">⚠️ زۆر کەمە!</span>' : ''}
+              <button onclick="quickAddStock('${p.id}')" style="background:#2563eb; color:white; border:none; padding:0.2rem 0.8rem; border-radius:1rem; cursor:pointer; font-size:0.8rem;">
+                <i class="fas fa-plus"></i> زیادکردن
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    `;
+  }
+
+  // ===== QUICK ADD STOCK =====
+  window.quickAddStock = function(productId) {
+    const product = warehouseProducts.find(p => p.id === productId);
+    if (!product) return;
+    
+    const amount = prompt(`تکایە بڕی کاڵای "${product.name}" کە دەتەوێت زیاد بکەیت بنووسە:`, '10');
+    if (amount === null) return;
+    
+    const addQty = parseInt(amount);
+    if (isNaN(addQty) || addQty <= 0) {
+      alert('تکایە ژمارەیەکی دروست بنووسە (لە 1 زیاتر)');
+      return;
+    }
+    
+    product.quantity += addQty;
+    saveWarehouseProducts();
+    renderLowStockProducts();
+    renderProductsGrid();
+    updateStats();
+    
+    showToast(`✅ ${addQty} ${product.unit} بۆ کاڵای "${product.name}" زیادکرا!`, 'success');
+  };
+
   // ===== DOMContentLoaded =====
   let autoBackupEnabled = localStorage.getItem('market_auto_backup') === 'true';
   document.addEventListener('DOMContentLoaded', function() {
@@ -5686,6 +5835,7 @@
     renderUnitsList();
     updateAccountingDisplay();
     renderClosingHistory();
+    renderLowStockProducts();
     document.getElementById('personDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کەسێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     document.getElementById('partnerDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">شەریکێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     document.getElementById('agentDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">مەندوبێک هەڵبژێرە بۆ بینینی زانیاری</p>';
@@ -6390,6 +6540,7 @@
     alert('کاڵا بە سەرکەوتوویی زیادکرا');
     renderProductsGrid();
     populateBarcodeSelect();
+    renderLowStockProducts();
   };
 
   window.filterProducts = function() { renderProductsGrid(); };
@@ -6445,6 +6596,7 @@
     saveWarehouseProducts();
     renderProductsGrid();
     populateBarcodeSelect();
+    renderLowStockProducts();
   };
 
   window.deleteProduct = function(productId) {
@@ -6455,6 +6607,7 @@
     saveWarehouseProducts();
     renderProductsGrid();
     populateBarcodeSelect();
+    renderLowStockProducts();
   };
 
   window.searchWarehouseProducts = function() {
@@ -6495,6 +6648,7 @@
     renderWarePurchaseCart();
     updateStats();
     renderProductsGrid();
+    renderLowStockProducts();
     alert(`کڕین بە سەرکەوتوویی تۆمارکرا!\nکۆی گشتی: ${total.toLocaleString()} د.ع`);
   };
 
@@ -7631,6 +7785,7 @@
     renderProductsGrid();
     renderPurchaseHistory();
     renderPartnersList();
+    renderLowStockProducts();
     alert(`کڕین بە سەرکەوتوویی تۆمارکرا!\nژمارەی فاکتوورە: ${invId}\nکۆی گشتی: ${total.toLocaleString()} د.ع`);
   };
 
@@ -8137,6 +8292,7 @@
     renderGiveAgentCart();
     renderProductsGrid();
     updateStats();
+    renderLowStockProducts();
     document.getElementById('giveAgentNote').value = '';
     alert(`پێدانی کاڵا بە ${selectedGiveAgent.name} تۆمارکرا!`);
   };
@@ -8421,6 +8577,7 @@
   // ===== TAB EVENT LISTENERS =====
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('tab')) {
+      // ===== QUICKPAY TAB HANDLER =====
       if (e.target.dataset.tab === 'quickpay') {
         document.querySelectorAll('#salesView .tab[data-tab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -8431,6 +8588,7 @@
         return;
       }
       
+      // ===== PURCHASE TABS =====
       if (e.target.dataset.purchasetab) {
         document.querySelectorAll('[data-purchasetab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -8440,6 +8598,8 @@
         if (e.target.dataset.purchasetab === 'history') renderPurchaseHistory();
         if (e.target.dataset.purchasetab === 'return') renderPurchaseReturnHistory();
       }
+      
+      // ===== MONEY TABS =====
       if (e.target.dataset.moneytab) {
         document.querySelectorAll('[data-moneytab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -8447,6 +8607,8 @@
         document.getElementById('moneyHistoryPanel').classList.toggle('active', e.target.dataset.moneytab === 'history');
         if (e.target.dataset.moneytab === 'history') renderMoneyHistory();
       }
+      
+      // ===== SPEND TABS =====
       if (e.target.dataset.spendtab) {
         document.querySelectorAll('[data-spendtab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -8455,6 +8617,8 @@
         if (e.target.dataset.spendtab === 'expense') { renderExpenseHistory(); updateExpenseStats(); }
         if (e.target.dataset.spendtab === 'give') { renderGiveHistory(); updateGiveStats(); }
       }
+      
+      // ===== PARTNER TABS =====
       if (e.target.dataset.partnertab) {
         document.querySelectorAll('[data-partnertab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -8462,6 +8626,8 @@
         document.getElementById('partnersAddPanel').classList.toggle('active', e.target.dataset.partnertab === 'add');
         if (e.target.dataset.partnertab === 'list') renderPartnersList();
       }
+      
+      // ===== PERSON TABS =====
       if (e.target.dataset.ptab) {
         document.querySelectorAll('[data-ptab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -8472,6 +8638,8 @@
         if (tab === 'list') renderPersonsList();
         if (tab === 'adjust') { selectedAdjustEntity = null; document.getElementById('selectedAdjustEntityInfo').style.display = 'none'; document.getElementById('adjustEntitySearch').value = ''; document.getElementById('adjustEntitySuggestions').style.display = 'none'; renderAdjustmentHistory(); }
       }
+      
+      // ===== SALES TABS (except quickpay) =====
       if (e.target.dataset.tab && e.target.dataset.tab !== 'quickpay') {
         document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -8481,15 +8649,22 @@
         if (e.target.dataset.tab === 'history') renderHistory();
         if (e.target.dataset.tab === 'return') renderReturnHistory();
       }
+      
+      // ===== WAREHOUSE TABS =====
       if (e.target.dataset.waretab) {
         document.querySelectorAll('[data-waretab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
-        document.getElementById('wareAddPanel').classList.toggle('active', e.target.dataset.waretab === 'add');
-        document.getElementById('wareListPanel').classList.toggle('active', e.target.dataset.waretab === 'list');
-        document.getElementById('warePurchasePanel').classList.toggle('active', e.target.dataset.waretab === 'purchase');
-        if (e.target.dataset.waretab === 'list') renderProductsGrid();
-        if (e.target.dataset.waretab === 'purchase') renderWarePurchaseCart();
+        const tab = e.target.dataset.waretab;
+        document.getElementById('wareAddPanel').classList.toggle('active', tab === 'add');
+        document.getElementById('wareListPanel').classList.toggle('active', tab === 'list');
+        document.getElementById('warePurchasePanel').classList.toggle('active', tab === 'purchase');
+        document.getElementById('wareLowStockPanel').classList.toggle('active', tab === 'lowstock');
+        if (tab === 'list') renderProductsGrid();
+        if (tab === 'purchase') renderWarePurchaseCart();
+        if (tab === 'lowstock') renderLowStockProducts();
       }
+      
+      // ===== AGENT TABS =====
       if (e.target.dataset.agenttab) {
         document.querySelectorAll('[data-agenttab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -8506,6 +8681,8 @@
         if (tab === 'return') { selectedAgentForReturn = null; agentReturnCart = []; document.getElementById('selectedAgentReturnBadge').innerHTML = ''; document.getElementById('agentReturnSearch').value = ''; document.getElementById('agentReturnProductSearch').value = ''; document.getElementById('agentReturnInventoryList').innerHTML = '<p style="color:#94a3b8; text-align:center;">تکایە مەندوبێک هەڵبژێرە</p>'; renderAgentReturnCart(); }
         if (tab === 'wassl') { selectedAgentForWassl = null; document.getElementById('selectedAgentWasslInfo').style.display = 'none'; }
       }
+      
+      // ===== EXPIRY TABS =====
       if (e.target.dataset.expirytab) {
         document.querySelectorAll('[data-expirytab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -8514,6 +8691,8 @@
         if (e.target.dataset.expirytab === 'expiry') renderExpiryProducts();
         if (e.target.dataset.expirytab === 'damage') renderDamagedProducts();
       }
+      
+      // ===== EMPLOYEE TABS =====
       if (e.target.dataset.emptab) {
         document.querySelectorAll('[data-emptab]').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
@@ -8543,7 +8722,7 @@
     }
   });
 
-  // ===== ACCOUNT CLOSING SYSTEM - CHAKRAWA (FIXED) =====
+  // ===== ACCOUNT CLOSING SYSTEM - FIXED =====
   window.closeAccountingPeriod = function() {
     if (!isAdmin()) {
       alert('تەنیا بەڕێوەبەر دەتوانێت ئەم کارە بکات!');
@@ -8559,7 +8738,6 @@
       minute: '2-digit'
     });
 
-    // ئامارەکانی ئێستا بۆ تۆمارکردن
     const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
     const totalMoneyReceived = moneyRequests
@@ -8569,27 +8747,24 @@
     const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
     const profit = totalSales - totalPurchases - totalExpenses - totalGiveMoney;
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
-    const totalPersonsDebt = customers.reduce((sum, c) => sum + Math.max(0, c.debt), 0);
-    const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -p.debt), 0);
 
     const closingId = 'CLOSING-' + Date.now();
 
     const confirmMsg = `دڵنیایت لە داخستنی حیسابات؟
-  📊 ئامارەکانی ئێستا:
-  💰 کۆی فرۆشتن: ${totalSales.toLocaleString()} د.ع
-  📦 کۆی کڕین: ${totalPurchases.toLocaleString()} د.ع
-  💳 کۆی واسڵکراو: ${totalMoneyReceived.toLocaleString()} د.ع
-  📉 کۆی مەسروفات: ${(totalExpenses + totalGiveMoney).toLocaleString()} د.ع
-  📈 قازانج: ${profit.toLocaleString()} د.ع
-  🐷 جەمگزەی دووەم: ${jemgeza.toLocaleString()} د.ع
+📊 ئامارەکانی ئێستا:
+💰 کۆی فرۆشتن: ${totalSales.toLocaleString()} د.ع
+📦 کۆی کڕین: ${totalPurchases.toLocaleString()} د.ع
+💳 کۆی واسڵکراو: ${totalMoneyReceived.toLocaleString()} د.ع
+📉 کۆی مەسروفات: ${(totalExpenses + totalGiveMoney).toLocaleString()} د.ع
+📈 قازانج: ${profit.toLocaleString()} د.ع
+🐷 جەمگزەی دووەم: ${jemgeza.toLocaleString()} د.ع
 
-  ⚠️ ئاگادارباش: دوای داخستن، کارتەکانی داشبۆرد سفر دەبنەوە
-  ✅ بەڵام هەموو مێژووەکان (فرۆشتن، کڕین، واسڵ، کارمەند، هتد) دەمێننەوە!
-  ئەم کارە ناگەڕێتەوە!`;
+⚠️ ئاگادارباش: دوای داخستن، کارتەکانی داشبۆرد سفر دەبنەوە
+✅ بەڵام هەموو مێژووەکان (فرۆشتن، کڕین، واسڵ، کارمەند، هتد) دەمێننەوە!
+ئەم کارە ناگەڕێتەوە!`;
 
     if (!confirm(confirmMsg)) return;
 
-    // 📌 تۆمارکردنی داخستن لە مێژوو
     const closingRecord = {
       id: closingId,
       date: dateStr,
@@ -8602,9 +8777,7 @@
       jemgeza: jemgeza,
       quickPayBalance: quickPayBalance,
       quickPaySalesTotal: quickPaySalesTotal,
-      quickPayAddedTotal: quickPayAddedTotal,
-      totalPersonsDebt: totalPersonsDebt,
-      myDebtToPartners: myDebtToPartners
+      quickPayAddedTotal: quickPayAddedTotal
     };
 
     let closingHistory = JSON.parse(localStorage.getItem('market_closing_history') || '[]');
@@ -8612,7 +8785,7 @@
     if (closingHistory.length > 50) closingHistory = closingHistory.slice(0, 50);
     localStorage.setItem('market_closing_history', JSON.stringify(closingHistory));
 
-    // ===== ✅ سفرکردنەوەی هەموو کارتەکانی داشبۆرد =====
+    // ===== سفرکردنەوەی کارتەکان =====
     
     // 1. سفرکردنەوەی کۆی واسڵکراو (بەڵام مێژووەکان دەمێنن)
     const transferRecords = moneyRequests.filter(r => r.isTransfer === true && !r.isJemgeza);
@@ -8661,34 +8834,44 @@
     });
     saveQuickPayData();
 
-    // ===== ✅ سفرکردنەوەی کارتەکانی UI =====
-    // ئێمە کارتەکان بە ڕاستەوخۆ سفر دەکەینەوە
-    document.getElementById('statTotalSales').textContent = '0';
-    document.getElementById('statTotalPurchases').textContent = '0';
-    document.getElementById('statTotalMoneyReceived').textContent = '0';
-    document.getElementById('statTotalSpendAndExpenses').textContent = '0';
-    document.getElementById('statTodayMoney').textContent = '0';
-    document.getElementById('statProfit').textContent = '0';
-    document.getElementById('statProfit').className = 'profit-zero';
-    document.getElementById('statJemgeza').textContent = '0';
-    document.getElementById('statQuickPay').textContent = '0';
-    document.getElementById('statQuickPaySales').textContent = '0';
-    document.getElementById('statQuickPayProfit').textContent = '0';
-    document.getElementById('statQuickPayProfit').className = 'profit-zero';
-    document.getElementById('statMyDebtToPartners').textContent = '0';
-    document.getElementById('statPersonsDebtToMe').textContent = '0';
-    
-    // 📊 ژمارەی کاڵا و کەسەکان ناگۆڕدرێت
-    document.getElementById('statTotalProducts').textContent = warehouseProducts.length.toString();
-    document.getElementById('statTotalPersons').textContent = customers.length.toString();
+    // 5. سفرکردنەوەی کارتەکانی داشبۆرد (UI)
+    const statElements = {
+      'statTotalSales': '0',
+      'statTotalPurchases': '0',
+      'statTotalMoneyReceived': '0',
+      'statTotalSpendAndExpenses': '0',
+      'statTodayMoney': '0',
+      'statTotalProducts': warehouseProducts.length.toString(),
+      'statTotalPersons': customers.length.toString(),
+      'statMyDebtToPartners': '0',
+      'statPersonsDebtToMe': '0',
+      'statProfit': '0',
+      'statJemgeza': '0',
+      'statQuickPay': '0',
+      'statQuickPaySales': '0',
+      'statQuickPayProfit': '0'
+    };
 
-    // 5. نوێکردنەوەی هەموو دیسپلەیەکان
+    Object.keys(statElements).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = statElements[id];
+        if (id === 'statProfit' || id === 'statQuickPayProfit') {
+          el.className = 'profit-zero';
+        }
+        if (id === 'statTodayMoney') {
+          el.textContent = '0';
+        }
+      }
+    });
+
+    // 6. نوێکردنەوەی هەموو دیسپلەیەکان
     updateAccountingDisplay();
     updateTodayMoneyStat();
     updateQuickPayStats();
     renderClosingHistory();
 
-    // 6. سفرکردنەوەی دیسپلەی جەمگزە لە UI
+    // 7. سفرکردنەوەی دیسپلەی جەمگزە لە UI
     const jemgezaDisplay = document.getElementById('jemgezaBalanceDisplay');
     if (jemgezaDisplay) jemgezaDisplay.textContent = '0';
     const jemgezaDisplay2 = document.getElementById('jemgezaBalanceDisplay2');
@@ -8696,21 +8879,17 @@
     const accJemgeza = document.getElementById('accJemgezaMoney');
     if (accJemgeza) accJemgeza.textContent = '0';
 
-    // 7. سفرکردنەوەی دیسپلەی کۆی گشتی
+    // 8. سفرکردنەوەی دیسپلەی کۆی گشتی
     const accTotal = document.getElementById('accTotalMoney');
     if (accTotal) accTotal.textContent = '0';
     
     const accToday = document.getElementById('accTodayMoney');
     if (accToday) accToday.textContent = '0';
 
-    // 8. سفرکردنەوەی کۆی مەسروفات و سەرف لە دیسپلەی تری UI
-    const statTotalSpendAndExpensesEl = document.getElementById('statTotalSpendAndExpenses');
-    if (statTotalSpendAndExpensesEl) statTotalSpendAndExpensesEl.textContent = '0';
-
     showToast(`✅ حیسابات بە سەرکەوتوویی داخرا!
-  📊 قازانجی کۆتایی: ${profit.toLocaleString()} د.ع
-  📅 بەروار: ${dateStr}
-  💾 هەموو مێژووەکان پارێزراون!`, 'success');
+📊 قازانجی کۆتایی: ${profit.toLocaleString()} د.ع
+📅 بەروار: ${dateStr}
+💾 هەموو مێژووەکان پارێزراون!`, 'success');
   };
 
   // ===== CLOSING HISTORY RENDER =====
@@ -8769,8 +8948,8 @@
     }
 
     if (!confirm(`دڵنیایت لە گەڕاندنەوەی داخستنی ${record.id}؟
-  ئەم کارە کارتەکانی داشبۆرد دەگەڕێنێتەوە بۆ ئەو ئامارانەی پێش داخستن بوون.
-  تێبینی: گەڕاندنەوەی داخستن تەنیا کارتەکان دەگەڕێنێتەوە و کاریگەری لەسەر مێژووی فرۆشتن یان کڕین نییە.`)) return;
+ئەم کارە کارتەکانی داشبۆرد دەگەڕێنێتەوە بۆ ئەو ئامارانەی پێش داخستن بوون.
+تێبینی: گەڕاندنەوەی داخستن تەنیا کارتەکان دەگەڕێنێتەوە و کاریگەری لەسەر مێژووی فرۆشتن یان کڕین نییە.`)) return;
 
     const today = new Date();
     const dateStr = today.toLocaleString('ckb', {
