@@ -2219,20 +2219,6 @@
     return loggedUser.role === 'admin';
   }
 
-  // ===== دۆزینەوەی دوایین داخستن =====
-  function getLastClosingDate() {
-    const closingHistory = JSON.parse(localStorage.getItem('market_closing_history') || '[]');
-    const lastClosing = closingHistory.length > 0 ? closingHistory[0] : null;
-    return lastClosing && !lastClosing.undone ? lastClosing.date : null;
-  }
-
-  // ===== فلتەرکردنی مێژوو بەپێی بەرواری داخستن =====
-  function filterByClosing(items) {
-    const closingDate = getLastClosingDate();
-    if (!closingDate) return items;
-    return items.filter(item => item.date && item.date > closingDate);
-  }
-
   // ===== LOGO FUNCTIONS =====
   let systemLogo = localStorage.getItem('market_system_logo') || '';
 
@@ -2310,19 +2296,15 @@
     }
   }
 
-  // ===== TODAY MONEY CALCULATION (FIXED WITH CLOSING) =====
+  // ===== TODAY MONEY CALCULATION (FIXED) =====
   function calculateTodayMoney() {
     const today = new Date().toLocaleDateString('ckb');
-    const closingDate = getLastClosingDate();
 
-    const filteredSales = closingDate ? saleHistory.filter(s => s.date > closingDate) : saleHistory;
-    const filteredMoneyRequests = closingDate ? moneyRequests.filter(r => r.date > closingDate) : moneyRequests;
-
-    const todayCashSales = filteredSales.filter(s => 
+    const todayCashSales = (window.saleHistory || []).filter(s => 
         s.customer === 'کاش' && s.date && s.date.includes(today)
     ).reduce((sum, s) => sum + s.total, 0);
 
-    const todayCredits = filteredMoneyRequests.filter(r => 
+    const todayCredits = (moneyRequests || []).filter(r => 
         r.date && r.date.includes(today) && 
         r.amount > 0 && 
         r.type !== 'adjustment' &&
@@ -2342,7 +2324,7 @@
         !r.ignoreInTodayCalculation
     ).reduce((sum, r) => sum + r.amount, 0);
 
-    const todayDebits = filteredMoneyRequests.filter(r => 
+    const todayDebits = (moneyRequests || []).filter(r => 
         r.date && r.date.includes(today) && 
         r.amount < 0 &&
         !r.ignoreInTodayCalculation &&
@@ -2382,9 +2364,7 @@
 
     const remainingDisplay = document.getElementById('todayRemainingDisplay');
     if (remainingDisplay) {
-      const closingDate = getLastClosingDate();
-      const filteredExpenses = closingDate ? expenseHistory.filter(e => e.date > closingDate) : expenseHistory;
-      const todayExpense = filteredExpenses.filter(e => 
+      const todayExpense = (window.expenseHistory || []).filter(e => 
           e.date && e.date.includes(new Date().toLocaleDateString('ckb'))
       ).reduce((sum, e) => sum + e.amount, 0);
       remainingDisplay.textContent = Math.max(0, todayMoney - todayExpense).toLocaleString();
@@ -2692,20 +2672,41 @@
     updateQuickPayStats();
   }
 
-  // ===== UPDATE STATS (FIXED WITH CLOSING) =====
+  // ===== UPDATE STATS (FIXED WITH CLOSING SUPPORT) =====
   function updateStats() {
-    // دۆزینەوەی دوایین داخستن
-    const closingDate = getLastClosingDate();
+    // بەدەستهێنانی کاتی داخستن
+    const closingDate = localStorage.getItem('market_last_closing_date');
+    let filteredSales = saleHistory;
+    let filteredPurchases = purchaseHistory;
+    let filteredExpenses = expenseHistory;
+    let filteredGiveMoney = giveMoneyHistory;
+    let filteredMoneyRequests = moneyRequests;
     
-    // فلتەرکردنی مێژوو بەپێی بەرواری داخستن
-    const filteredSales = closingDate ? saleHistory.filter(s => s.date > closingDate) : saleHistory;
-    const filteredPurchases = closingDate ? purchaseHistory.filter(p => p.date > closingDate) : purchaseHistory;
-    const filteredExpenses = closingDate ? expenseHistory.filter(e => e.date > closingDate) : expenseHistory;
-    const filteredGiveMoney = closingDate ? giveMoneyHistory.filter(g => g.date > closingDate) : giveMoneyHistory;
-    const filteredReturns = closingDate ? returnHistory.filter(r => r.date > closingDate) : returnHistory;
-    const filteredMoneyRequests = closingDate ? moneyRequests.filter(r => r.date > closingDate) : moneyRequests;
+    if (closingDate) {
+      const closingTime = new Date(closingDate);
+      filteredSales = saleHistory.filter(s => {
+        const saleDate = new Date(s.date);
+        return saleDate > closingTime;
+      });
+      filteredPurchases = purchaseHistory.filter(p => {
+        const purchaseDate = new Date(p.date);
+        return purchaseDate > closingTime;
+      });
+      filteredExpenses = expenseHistory.filter(e => {
+        const expenseDate = new Date(e.date);
+        return expenseDate > closingTime;
+      });
+      filteredGiveMoney = giveMoneyHistory.filter(g => {
+        const giveDate = new Date(g.date);
+        return giveDate > closingTime;
+      });
+      filteredMoneyRequests = moneyRequests.filter(r => {
+        const reqDate = new Date(r.date);
+        return reqDate > closingTime;
+      });
+    }
     
-    // ژمێرەکان بەپێی فلتەرکراوەکان
+    // ئامارەکان
     const totalSales = filteredSales.reduce((sum, s) => sum + s.total, 0);
     const totalPurchases = filteredPurchases.reduce((sum, p) => sum + p.total, 0);
     
@@ -2718,7 +2719,7 @@
     
     const totalSpend = filteredPurchases.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
                        employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
-                       filteredReturns.reduce((sum, r) => sum + r.refundAmount, 0);
+                       returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
     const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalSpend;
     
     const totalProducts = warehouseProducts.length;
@@ -2730,10 +2731,6 @@
     
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     
-    quickPayBalance = parseInt(localStorage.getItem('market_quickpay_balance') || '0');
-    quickPaySalesTotal = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
-    quickPayAddedTotal = parseInt(localStorage.getItem('market_quickpay_added_total') || '0');
-
     // پڕکردنەوەی کارتەکان
     const statMap = {
       'statTotalSales': totalSales,
@@ -2750,23 +2747,23 @@
     };
 
     Object.keys(statMap).forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = typeof statMap[id] === 'number' ? statMap[id].toLocaleString() : statMap[id];
+      const el = document.getElementById(id);
+      if (el) el.textContent = typeof statMap[id] === 'number' ? statMap[id].toLocaleString() : statMap[id];
     });
     
     // نیشاندانی قازانج
     const statProfitEl = document.getElementById('statProfit');
     if (statProfitEl) {
-        statProfitEl.textContent = profit.toLocaleString();
-        statProfitEl.className = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : 'profit-zero';
+      statProfitEl.textContent = profit.toLocaleString();
+      statProfitEl.className = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : 'profit-zero';
     }
     
     // نیشاندانی قازانجی کویک پەی
     const statQuickPayProfitEl = document.getElementById('statQuickPayProfit');
     if (statQuickPayProfitEl) {
-        const quickPayProfit = quickPayAddedTotal - quickPaySalesTotal;
-        statQuickPayProfitEl.textContent = quickPayProfit.toLocaleString();
-        statQuickPayProfitEl.className = quickPayProfit > 0 ? 'profit-positive' : quickPayProfit < 0 ? 'profit-negative' : 'profit-zero';
+      const quickPayProfit = quickPayAddedTotal - quickPaySalesTotal;
+      statQuickPayProfitEl.textContent = quickPayProfit.toLocaleString();
+      statQuickPayProfitEl.className = quickPayProfit > 0 ? 'profit-positive' : quickPayProfit < 0 ? 'profit-negative' : 'profit-zero';
     }
 
     updateTodayMoneyStat();
@@ -2908,9 +2905,7 @@
     
     if (source === 'total') {
       sourceName = 'کۆی گشتی پارەی واسڵکراو';
-      const closingDate = getLastClosingDate();
-      const filteredMoneyRequests = closingDate ? moneyRequests.filter(r => r.date > closingDate) : moneyRequests;
-      availableAmount = filteredMoneyRequests
+      availableAmount = moneyRequests
         .filter(r => r.isTransfer === true && !r.isJemgeza)
         .reduce((sum, r) => sum + r.amount, 0);
     } else if (source === 'today') {
@@ -3315,10 +3310,8 @@
   // ===== ACCOUNTING / TRANSFER FUNCTIONS =====
   function updateAccountingDisplay() {
     const todayMoney = calculateTodayMoney();
-    const closingDate = getLastClosingDate();
-    const filteredMoneyRequests = closingDate ? moneyRequests.filter(r => r.date > closingDate) : moneyRequests;
     
-    const totalMoney = filteredMoneyRequests
+    const totalMoney = moneyRequests
       .filter(r => r.isTransfer === true && !r.isJemgeza)
       .reduce((sum, r) => sum + r.amount, 0);
       
@@ -4524,9 +4517,7 @@
   // ===== EXPENSE FUNCTIONS =====
   function updateExpenseStats() {
     const todayMoney = calculateTodayMoney();
-    const closingDate = getLastClosingDate();
-    const filteredExpenses = closingDate ? expenseHistory.filter(e => e.date > closingDate) : expenseHistory;
-    const todayExpense = filteredExpenses.filter(e => e.date && e.date.includes(new Date().toLocaleDateString('ckb'))).reduce((sum, e) => sum + e.amount, 0);
+    const todayExpense = expenseHistory.filter(e => e.date && e.date.includes(new Date().toLocaleDateString('ckb'))).reduce((sum, e) => sum + e.amount, 0);
     const remaining = todayMoney - todayExpense;
     
     const displayEl = document.getElementById('todayMoneyDisplay');
@@ -4539,9 +4530,7 @@
 
   function updateGiveStats() {
     const todayMoney = calculateTodayMoney();
-    const closingDate = getLastClosingDate();
-    const filteredGive = closingDate ? giveMoneyHistory.filter(g => g.date > closingDate) : giveMoneyHistory;
-    const todayGive = filteredGive.filter(g => g.date && g.date.includes(new Date().toLocaleDateString('ckb'))).reduce((sum, g) => sum + g.amount, 0);
+    const todayGive = giveMoneyHistory.filter(g => g.date && g.date.includes(new Date().toLocaleDateString('ckb'))).reduce((sum, g) => sum + g.amount, 0);
     
     const displayEl = document.getElementById('todayMoneyGiveDisplay');
     const giveEl = document.getElementById('todayGiveDisplay');
@@ -8852,7 +8841,10 @@
     });
     saveQuickPayData();
 
-    // 5. سفرکردنەوەی کارتەکانی داشبۆرد
+    // 5. تۆمارکردنی کاتی داخستن بۆ فیلترکردنی فرۆشتنە نوێیەکان
+    localStorage.setItem('market_last_closing_date', today.toISOString());
+
+    // 6. سفرکردنەوەی کارتەکانی داشبۆرد
     const statIds = [
       'statTotalSales', 'statTotalPurchases', 'statTotalMoneyReceived',
       'statTotalSpendAndExpenses', 'statTodayMoney', 'statTotalProducts',
@@ -8871,7 +8863,7 @@
       }
     });
 
-    // 6. سفرکردنەوەی دیسپلەیەکانی تر
+    // 7. سفرکردنەوەی دیسپلەیەکانی تر
     const displays = [
       'accTodayMoney', 'accTotalMoney', 'accJemgezaMoney',
       'jemgezaBalanceDisplay', 'jemgezaBalanceDisplay2',
@@ -8883,7 +8875,7 @@
       if (el) el.textContent = '0';
     });
 
-    // 7. سفرکردنەوەی واسڵی ئەمرۆ لە دیسپلەیەکان
+    // 8. سفرکردنەوەی واسڵی ئەمرۆ لە دیسپلەیەکان
     const todayMoneyDisplays = [
       'todayMoneyDisplay', 'todayMoneyGiveDisplay', 'todayRemainingDisplay'
     ];
@@ -8892,7 +8884,7 @@
       if (el) el.textContent = '0';
     });
 
-    // 8. سفرکردنەوەی دیسپلەی مەسروفات
+    // 9. سفرکردنەوەی دیسپلەی مەسروفات
     const expenseDisplays = ['todayExpenseDisplay', 'todayGiveDisplay'];
     expenseDisplays.forEach(id => {
       const el = document.getElementById(id);
@@ -8948,6 +8940,9 @@
     localStorage.setItem('market_quickpay_balance', quickPayBalance.toString());
     localStorage.setItem('market_quickpay_sales_total', quickPaySalesTotal.toString());
     localStorage.setItem('market_quickpay_added_total', quickPayAddedTotal.toString());
+
+    // لابردنی کاتی داخستن (بۆ ئەوەی فرۆشتنە کۆنەکان دووبارە دەربکەون)
+    localStorage.removeItem('market_last_closing_date');
 
     // تۆمارکردنی گەڕاندنەوە
     moneyRequests.push({
