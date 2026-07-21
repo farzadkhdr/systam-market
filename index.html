@@ -6897,7 +6897,7 @@
       if (backup.data.warehouseProducts) { warehouseProducts = backup.data.warehouseProducts; saveWarehouseProducts(); }
       if (backup.data.moneyRequests) { moneyRequests = backup.data.moneyRequests; saveMoneyRequests(); }
       if (backup.data.purchaseHistory) { purchaseHistory = backup.data.purchaseHistory; savePurchaseHistory(); }
-      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backup.data.expiredDamagedProducts; saveExpiryDamage(); }
+      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backupData.expiredDamagedProducts; saveExpiryDamage(); }
       if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
       if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backup.data.purchaseReturnHistory; savePurchaseReturnHistory(); }
       if (backup.data.employees) { employees = backup.data.employees; saveEmployees(); }
@@ -8792,39 +8792,14 @@
     if (closingHistory.length > 50) closingHistory = closingHistory.slice(0, 50);
     localStorage.setItem('market_closing_history', JSON.stringify(closingHistory));
 
-    // ===== سفرکردنەوەی هەموو کارتەکان =====
-    
-    // 1. سفرکردنەوەی کۆی واسڵکراو
-    const transferRecords = moneyRequests.filter(r => r.isTransfer === true && !r.isJemgeza);
-    transferRecords.forEach(r => { 
-      r.isTransfer = false; 
-      r.wasTransferred = true; 
-      r.resetOn = dateStr;
-      r.ignoreInTodayCalculation = true;
-    });
-    saveMoneyRequests();
+    // ===== تۆمارکردنی کاتی داخستن =====
+    const closingTime = today.toISOString();
+    localStorage.setItem('market_last_closing_date', closingTime);
 
-    // 2. تۆماری داخستن زیاد بکە
-    moneyRequests.push({
-      id: 'RESET-' + Date.now(),
-      date: dateStr,
-      type: 'period_reset',
-      entityName: 'داخستنی حیسابات',
-      entityPhone: '-',
-      amount: 0,
-      note: `داخستنی حیسابات - ژمارە: ${closingId}`,
-      isTransfer: false,
-      isExpense: false,
-      isReset: true,
-      resetDate: dateStr,
-      ignoreInTodayCalculation: true
-    });
-    saveMoneyRequests();
-
-    // 3. سفرکردنەوەی جەمگزە
+    // ===== سفرکردنەوەی جەمگزە =====
     localStorage.setItem('market_jemgeza', '0');
 
-    // 4. سفرکردنەوەی کویک پەی
+    // ===== سفرکردنەوەی کویک پەی =====
     quickPayBalance = 0;
     quickPaySalesTotal = 0;
     quickPayAddedTotal = 0;
@@ -8841,10 +8816,31 @@
     });
     saveQuickPayData();
 
-    // 5. تۆمارکردنی کاتی داخستن بۆ فیلترکردنی فرۆشتنە نوێیەکان
-    localStorage.setItem('market_last_closing_date', today.toISOString());
+    // ===== تۆماری داخستن زیاد بکە =====
+    moneyRequests.push({
+      id: 'RESET-' + Date.now(),
+      date: dateStr,
+      type: 'period_reset',
+      entityName: 'داخستنی حیسابات',
+      entityPhone: '-',
+      amount: 0,
+      note: `داخستنی حیسابات - ژمارە: ${closingId}`,
+      isTransfer: false,
+      isExpense: false,
+      isReset: true,
+      resetDate: dateStr,
+      ignoreInTodayCalculation: true
+    });
+    saveMoneyRequests();
 
-    // 6. سفرکردنەوەی کارتەکانی داشبۆرد
+    // ===== نوێکردنەوەی ئامارەکان =====
+    updateStats();
+    updateTodayMoneyStat();
+    updateAccountingDisplay();
+    updateQuickPayStats();
+    renderClosingHistory();
+
+    // ===== کارتەکان سفر دەکەینەوە بە دەستی =====
     const statIds = [
       'statTotalSales', 'statTotalPurchases', 'statTotalMoneyReceived',
       'statTotalSpendAndExpenses', 'statTodayMoney', 'statTotalProducts',
@@ -8863,7 +8859,7 @@
       }
     });
 
-    // 7. سفرکردنەوەی دیسپلەیەکانی تر
+    // ===== سفرکردنەوەی دیسپلەیەکانی تر =====
     const displays = [
       'accTodayMoney', 'accTotalMoney', 'accJemgezaMoney',
       'jemgezaBalanceDisplay', 'jemgezaBalanceDisplay2',
@@ -8875,7 +8871,6 @@
       if (el) el.textContent = '0';
     });
 
-    // 8. سفرکردنەوەی واسڵی ئەمرۆ لە دیسپلەیەکان
     const todayMoneyDisplays = [
       'todayMoneyDisplay', 'todayMoneyGiveDisplay', 'todayRemainingDisplay'
     ];
@@ -8884,14 +8879,12 @@
       if (el) el.textContent = '0';
     });
 
-    // 9. سفرکردنەوەی دیسپلەی مەسروفات
     const expenseDisplays = ['todayExpenseDisplay', 'todayGiveDisplay'];
     expenseDisplays.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.textContent = '0';
     });
 
-    renderClosingHistory();
     showToast(`✅ حیسابات بە سەرکەوتوویی داخرا!
   📊 قازانجی کۆتایی: ${profit.toLocaleString()} د.ع
   📅 بەروار: ${dateStr}
