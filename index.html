@@ -572,6 +572,11 @@
             </div>
             
             <button onclick="completeSale()" style="background:#0f172a; color:white; border:none; border-radius:2.5rem; padding:0.8rem 2rem; margin-top:1rem; width:100%; font-weight:bold;"><i class="fas fa-check-circle"></i> تەواوکردنی فرۆشتن</button>
+            <div class="f2-hint" style="margin-top:0.5rem;">
+              <span style="font-size:0.75rem; color:#3730a3;">
+                ⌨️ <kbd>Alt</kbd> + <kbd>Enter</kbd> بۆ تەواوکردنی فرۆشتن
+              </span>
+            </div>
           </div>
           <div class="card-glass invoice-preview" id="invoicePreview">
             <div class="invoice-logo" id="invoiceHeaderLogo"><i class="fas fa-store-alt" style="font-size:2rem;"></i> <span id="invoiceSystemName">مارکێت</span></div>
@@ -788,6 +793,11 @@
               <label><input type="checkbox" id="creditPurchaseCheck" onchange="updatePurchaseInvoicePreview()"> کڕین بە قەرز</label>
             </div>
             <button onclick="completePurchase()" style="background:#1e40af; color:white; border:none; border-radius:2.5rem; padding:0.8rem 2rem; margin-top:1rem; width:100%; font-weight:bold;"><i class="fas fa-check-circle"></i> تەواوکردنی کڕین</button>
+            <div class="f2-hint" style="margin-top:0.5rem;">
+              <span style="font-size:0.75rem; color:#3730a3;">
+                ⌨️ <kbd>Alt</kbd> + <kbd>Enter</kbd> بۆ تەواوکردنی کڕین
+              </span>
+            </div>
           </div>
           <div class="card-glass invoice-preview" id="purchaseInvoicePreview">
             <div class="invoice-logo"><i class="fas fa-truck" style="font-size:2rem;"></i> <span>کڕین</span></div>
@@ -2146,8 +2156,44 @@
     }
   });
 
-  // ===== KEYBOARD SHORTCUTS FOR CART =====
+  // ===== KEYBOARD SHORTCUTS =====
   document.addEventListener('keydown', function(e) {
+    // کلیلی Alt بۆ تەواوکردنی فرۆشتن یان کڕین
+    if (e.key === 'Alt' || (e.altKey && e.key === 'Enter')) {
+      e.preventDefault();
+      
+      // پشکنینی کە ئایا لە بەشی کڕینین
+      const purchaseView = document.getElementById('purchaseView');
+      if (purchaseView && purchaseView.style.display !== 'none') {
+        const activePanel = document.querySelector('#purchaseView .panel.active');
+        if (activePanel && activePanel.id === 'newPurchasePanel') {
+          if (purchaseCart.length > 0) {
+            completePurchase();
+            showToast('✅ کڕین تەواوکرا!', 'success');
+          } else {
+            showToast('⚠️ سەبەتەی کڕین بەتاڵە!', 'info');
+          }
+          return;
+        }
+      }
+      
+      // پشکنینی کە ئایا لە بەشی فرۆشتنین
+      const salesView = document.getElementById('salesView');
+      if (salesView && salesView.style.display !== 'none') {
+        const activePanel = document.querySelector('#salesView .panel.active');
+        if (activePanel && activePanel.id === 'newSalePanel') {
+          if (cart.length > 0) {
+            completeSale();
+            showToast('✅ فرۆشتن تەواوکرا!', 'success');
+          } else {
+            showToast('⚠️ سەبەتە بەتاڵە!', 'info');
+          }
+          return;
+        }
+      }
+    }
+    
+    // کلیلی + بۆ زیادکردنی بڕی کاڵا لە سەبەتە
     if (e.key === '+' || e.key === 'Add') {
       const salesView = document.getElementById('salesView');
       if (salesView && salesView.style.display !== 'none') {
@@ -2164,6 +2210,7 @@
       }
     }
 
+    // کلیلی - بۆ کەمکردنی بڕی کاڵا لە سەبەتە
     if (e.key === '-' || e.key === 'Minus') {
       const salesView = document.getElementById('salesView');
       if (salesView && salesView.style.display !== 'none') {
@@ -2187,6 +2234,7 @@
       }
     }
 
+    // کلیلی Shift بۆ گواستنەوە لە نێوان داشبۆرد و فرۆشتن
     if (e.key === 'Shift' && !e.repeat) {
       const dashboardView = document.getElementById('dashboardView');
       const salesView = document.getElementById('salesView');
@@ -3216,8 +3264,11 @@
 
   setupGlobalProductSearch('purchaseProductSearch', 'purchaseProductSuggestions', function(product) {
     const existing = purchaseCart.find(i => i.product.id === product.id);
-    if (existing) existing.quantity++;
-    else purchaseCart.push({ product, quantity: 1 });
+    if (existing) {
+      existing.quantity++;
+    } else {
+      purchaseCart.push({ product, quantity: 1, unit: product.unit || 'عدد' });
+    }
     renderPurchaseCart();
     updatePurchaseInvoicePreview();
   });
@@ -5059,21 +5110,8 @@
     }, 500);
   };
 
-  // ===== KEYBOARD SHORTCUT (ALT) =====
-  document.addEventListener('keydown', function(e) {
-    const salesView = document.getElementById('salesView');
-    if (!salesView || salesView.style.display === 'none') return;
-    
-    if (e.key === 'Alt' || (e.altKey && e.key === 'Enter')) {
-      e.preventDefault();
-      
-      if (cart.length > 0) {
-        completeSale();
-      } else {
-        showToast('⚠️ سەبەتە بەتاڵە! تکایە کاڵا زیاد بکە', 'info');
-      }
-    }
-  });
+  // ===== KEYBOARD SHORTCUT (Alt) =====
+  // تەواوکرا لە سەرەوە
 
   // ===== MANUAL TOTAL EDIT =====
   window.updateManualTotal = function(index, value) {
@@ -5113,7 +5151,7 @@
       <kbd>Alt</kbd> + <kbd>Enter</kbd>
       <span style="opacity:0.6; margin-right:0.3rem;">یان دوو جار</span>
       <kbd>Alt</kbd>
-      <span style="opacity:0.6;">بۆ تەواوکردنی فرۆشتن</span>
+      <span style="opacity:0.6;">بۆ تەواوکردنی فرۆشتن/کڕین</span>
     `;
     document.body.appendChild(hint);
   }
@@ -5130,12 +5168,20 @@
     if (view === 'dashboard' && dashboardStats) dashboardStats.style.display = 'grid';
     else if (dashboardStats) dashboardStats.style.display = 'none';
     
-    if (view === 'sales') {
+    if (view === 'sales' || view === 'purchase') {
       showKeyboardHint();
-      renderCart(); 
-      updateInvoicePreview(); 
-      renderHistory(); 
-      renderReturnHistory();
+      if (view === 'sales') {
+        renderCart(); 
+        updateInvoicePreview(); 
+        renderHistory(); 
+        renderReturnHistory();
+      }
+      if (view === 'purchase') {
+        renderPurchaseCart(); 
+        updatePurchaseInvoicePreview(); 
+        renderPurchaseHistory(); 
+        renderPurchaseReturnHistory();
+      }
     } else {
       const hint = document.querySelector('.keyboard-hint');
       if (hint) hint.remove();
@@ -5638,6 +5684,7 @@
     `).join('');
   }
 
+  // ===== ئەم فانکشنە گۆڕدراوە بۆ نوێکردنەوەی هەموو سلێکتەکان =====
   window.addNewUnit = function() {
     const name = document.getElementById('newUnitName').value.trim();
     if (!name) { alert('تکایە ناوی یەکە بنووسە!'); return; }
@@ -5646,8 +5693,27 @@
     localStorage.setItem('market_units_list', JSON.stringify(unitsList));
     document.getElementById('newUnitName').value = '';
     renderUnitsList();
+    // نوێکردنەوەی هەموو سلێکتەکان
+    updateAllUnitSelects();
     showToast(`✅ یەکەی "${name}" زیادکرا`, 'success');
   };
+
+  // ===== فانکشنی نوێ بۆ نوێکردنەوەی هەموو سلێکتەکان =====
+  function updateAllUnitSelects() {
+    // سلێکتی زیادکردنی کاڵا
+    const addUnitSelect = document.getElementById('newProductUnit');
+    if (addUnitSelect) {
+      const currentValue = addUnitSelect.value;
+      addUnitSelect.innerHTML = '';
+      unitsList.forEach(u => {
+        const option = document.createElement('option');
+        option.value = u;
+        option.textContent = u;
+        addUnitSelect.appendChild(option);
+      });
+      if (unitsList.includes(currentValue)) addUnitSelect.value = currentValue;
+    }
+  }
 
   window.removeUnit = function(index) {
     const unit = unitsList[index];
@@ -5655,6 +5721,7 @@
     unitsList.splice(index, 1);
     localStorage.setItem('market_units_list', JSON.stringify(unitsList));
     renderUnitsList();
+    updateAllUnitSelects();
     showToast(`✅ یەکەی "${unit}" سڕکرایەوە`, 'success');
   };
 
@@ -5841,6 +5908,8 @@
     updateAccountingDisplay();
     renderClosingHistory();
     renderLowStockProducts();
+    // نوێکردنەوەی سلێکتەکان
+    updateAllUnitSelects();
     document.getElementById('personDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کەسێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     document.getElementById('partnerDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">شەریکێک هەڵبژێرە بۆ بینینی زانیاری</p>';
     document.getElementById('agentDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">مەندوبێک هەڵبژێرە بۆ بینینی زانیاری</p>';
@@ -6622,8 +6691,15 @@
 
   function addToWarePurchaseCart(product) {
     const existing = warePurchaseCart.find(i => i.product.id === product.id);
-    if (existing) existing.quantity++;
-    else warePurchaseCart.push({ product, quantity: 1 });
+    if (existing) {
+      existing.quantity++;
+    } else {
+      warePurchaseCart.push({ 
+        product, 
+        quantity: 1, 
+        unit: product.unit || 'عدد'
+      });
+    }
     renderWarePurchaseCart();
   }
 
@@ -6897,7 +6973,7 @@
       if (backup.data.warehouseProducts) { warehouseProducts = backup.data.warehouseProducts; saveWarehouseProducts(); }
       if (backup.data.moneyRequests) { moneyRequests = backup.data.moneyRequests; saveMoneyRequests(); }
       if (backup.data.purchaseHistory) { purchaseHistory = backup.data.purchaseHistory; savePurchaseHistory(); }
-      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backupData.expiredDamagedProducts; saveExpiryDamage(); }
+      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backup.data.expiredDamagedProducts; saveExpiryDamage(); }
       if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
       if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backup.data.purchaseReturnHistory; savePurchaseReturnHistory(); }
       if (backup.data.employees) { employees = backup.data.employees; saveEmployees(); }
@@ -7614,14 +7690,25 @@
     if (input) input.dispatchEvent(new Event('input'));
   };
 
+  // ===== گۆرینی فانکشنی renderPurchaseCart بۆ زیادکردنی یەکە =====
   function renderPurchaseCart() {
     const container = document.getElementById('purchaseCartItems');
     const totalEl = document.getElementById('purchaseTotalAmount');
     if (!container) return;
-    if (!purchaseCart.length) { container.innerHTML = '<p style="color:#94a3b8; text-align:center;">کاڵا زیاد نەکراوە</p>'; if (totalEl) totalEl.textContent = '0'; return; }
+    if (!purchaseCart.length) { 
+      container.innerHTML = '<p style="color:#94a3b8; text-align:center;">کاڵا زیاد نەکراوە</p>'; 
+      if (totalEl) totalEl.textContent = '0'; 
+      return; 
+    }
     container.innerHTML = purchaseCart.map((item, idx) => `
       <div class="cart-item">
-        <div class="cart-item-details"><span>📦 ${item.product.name}</span><span>${item.product.buyPrice} د.ع</span></div>
+        <div class="cart-item-details">
+          <span>📦 ${item.product.name}</span>
+          <select class="unit-select" onchange="window.updatePurchaseUnit(${idx}, this.value)" style="padding:0.2rem 0.5rem; border-radius:0.5rem; border:1px solid #cbd5e1; font-size:0.8rem;">
+            ${unitsList.map(u => `<option value="${u}" ${item.unit === u ? 'selected' : ''}>${u}</option>`).join('')}
+          </select>
+          <span>${item.product.buyPrice} د.ع</span>
+        </div>
         <div class="cart-item-actions">
           <button class="btn-icon" onclick="updatePurchaseCartQty(${idx}, -1)"><i class="fas fa-minus-circle"></i></button>
           <input type="number" value="${item.quantity}" min="1" onchange="setPurchaseCartQty(${idx}, this.value)">
@@ -7633,9 +7720,39 @@
     if (totalEl) totalEl.textContent = total.toLocaleString();
   }
 
-  window.updatePurchaseCartQty = function(idx, delta) { if (purchaseCart[idx].quantity + delta < 1) return; purchaseCart[idx].quantity += delta; renderPurchaseCart(); updatePurchaseInvoicePreview(); };
-  window.setPurchaseCartQty = function(idx, val) { const q = parseInt(val); if (!isNaN(q) && q > 0) { purchaseCart[idx].quantity = q; renderPurchaseCart(); updatePurchaseInvoicePreview(); } };
-  window.removePurchaseCartItem = function(idx) { purchaseCart.splice(idx, 1); renderPurchaseCart(); updatePurchaseInvoicePreview(); };
+  // ===== فانکشنی نوێ بۆ گۆڕینی یەکە لە کڕین =====
+  window.updatePurchaseUnit = function(idx, newUnit) {
+    if (purchaseCart[idx]) {
+      purchaseCart[idx].unit = newUnit;
+      renderPurchaseCart();
+      updatePurchaseInvoicePreview();
+    }
+  };
+
+  window.updatePurchaseCartQty = function(idx, delta) {
+    if (!purchaseCart[idx]) return;
+    const newQty = purchaseCart[idx].quantity + delta;
+    if (newQty < 1) return;
+    purchaseCart[idx].quantity = newQty;
+    renderPurchaseCart();
+    updatePurchaseInvoicePreview();
+  };
+
+  window.setPurchaseCartQty = function(idx, val) {
+    if (!purchaseCart[idx]) return;
+    const q = parseInt(val);
+    if (!isNaN(q) && q > 0) {
+      purchaseCart[idx].quantity = q;
+      renderPurchaseCart();
+      updatePurchaseInvoicePreview();
+    }
+  };
+
+  window.removePurchaseCartItem = function(idx) { 
+    purchaseCart.splice(idx, 1); 
+    renderPurchaseCart(); 
+    updatePurchaseInvoicePreview(); 
+  };
 
   function updatePurchaseInvoicePreview() {
     const invNumber = document.getElementById('purchaseInvNumber');
@@ -8792,31 +8909,19 @@
     if (closingHistory.length > 50) closingHistory = closingHistory.slice(0, 50);
     localStorage.setItem('market_closing_history', JSON.stringify(closingHistory));
 
-    // ===== تۆمارکردنی کاتی داخستن =====
-    const closingTime = today.toISOString();
-    localStorage.setItem('market_last_closing_date', closingTime);
-
-    // ===== سفرکردنەوەی جەمگزە =====
-    localStorage.setItem('market_jemgeza', '0');
-
-    // ===== سفرکردنەوەی کویک پەی =====
-    quickPayBalance = 0;
-    quickPaySalesTotal = 0;
-    quickPayAddedTotal = 0;
-    localStorage.setItem('market_quickpay_balance', '0');
-    localStorage.setItem('market_quickpay_sales_total', '0');
-    localStorage.setItem('market_quickpay_added_total', '0');
-
-    quickPayHistory.push({
-      id: 'RESET-QP-' + Date.now(),
-      date: dateStr,
-      type: 'period_reset',
-      amount: 0,
-      note: `داخستنی حیسابات - کویک پەی سفرکرایەوە`
+    // ===== سفرکردنەوەی هەموو کارتەکان =====
+    
+    // 1. سفرکردنەوەی کۆی واسڵکراو
+    const transferRecords = moneyRequests.filter(r => r.isTransfer === true && !r.isJemgeza);
+    transferRecords.forEach(r => { 
+      r.isTransfer = false; 
+      r.wasTransferred = true; 
+      r.resetOn = dateStr;
+      r.ignoreInTodayCalculation = true;
     });
-    saveQuickPayData();
+    saveMoneyRequests();
 
-    // ===== تۆماری داخستن زیاد بکە =====
+    // 2. تۆماری داخستن زیاد بکە
     moneyRequests.push({
       id: 'RESET-' + Date.now(),
       date: dateStr,
@@ -8833,14 +8938,30 @@
     });
     saveMoneyRequests();
 
-    // ===== نوێکردنەوەی ئامارەکان =====
-    updateStats();
-    updateTodayMoneyStat();
-    updateAccountingDisplay();
-    updateQuickPayStats();
-    renderClosingHistory();
+    // 3. سفرکردنەوەی جەمگزە
+    localStorage.setItem('market_jemgeza', '0');
 
-    // ===== کارتەکان سفر دەکەینەوە بە دەستی =====
+    // 4. سفرکردنەوەی کویک پەی
+    quickPayBalance = 0;
+    quickPaySalesTotal = 0;
+    quickPayAddedTotal = 0;
+    localStorage.setItem('market_quickpay_balance', '0');
+    localStorage.setItem('market_quickpay_sales_total', '0');
+    localStorage.setItem('market_quickpay_added_total', '0');
+
+    quickPayHistory.push({
+      id: 'RESET-QP-' + Date.now(),
+      date: dateStr,
+      type: 'period_reset',
+      amount: 0,
+      note: `داخستنی حیسابات - کویک پەی سفرکرایەوە`
+    });
+    saveQuickPayData();
+
+    // 5. تۆمارکردنی کاتی داخستن بۆ فیلترکردنی فرۆشتنە نوێیەکان
+    localStorage.setItem('market_last_closing_date', today.toISOString());
+
+    // 6. سفرکردنەوەی کارتەکانی داشبۆرد
     const statIds = [
       'statTotalSales', 'statTotalPurchases', 'statTotalMoneyReceived',
       'statTotalSpendAndExpenses', 'statTodayMoney', 'statTotalProducts',
@@ -8859,7 +8980,7 @@
       }
     });
 
-    // ===== سفرکردنەوەی دیسپلەیەکانی تر =====
+    // 7. سفرکردنەوەی دیسپلەیەکانی تر
     const displays = [
       'accTodayMoney', 'accTotalMoney', 'accJemgezaMoney',
       'jemgezaBalanceDisplay', 'jemgezaBalanceDisplay2',
@@ -8871,6 +8992,7 @@
       if (el) el.textContent = '0';
     });
 
+    // 8. سفرکردنەوەی واسڵی ئەمرۆ لە دیسپلەیەکان
     const todayMoneyDisplays = [
       'todayMoneyDisplay', 'todayMoneyGiveDisplay', 'todayRemainingDisplay'
     ];
@@ -8879,12 +9001,14 @@
       if (el) el.textContent = '0';
     });
 
+    // 9. سفرکردنەوەی دیسپلەی مەسروفات
     const expenseDisplays = ['todayExpenseDisplay', 'todayGiveDisplay'];
     expenseDisplays.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.textContent = '0';
     });
 
+    renderClosingHistory();
     showToast(`✅ حیسابات بە سەرکەوتوویی داخرا!
   📊 قازانجی کۆتایی: ${profit.toLocaleString()} د.ع
   📅 بەروار: ${dateStr}
