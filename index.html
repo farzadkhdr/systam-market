@@ -674,7 +674,7 @@
         </div>
       </div>
       
-      <!-- ===== پانێلی کویک پەی (گۆڕانکاری کراوە) ===== -->
+      <!-- ===== پانێلی کویک پەی ===== -->
       <div class="panel" id="quickPayPanel">
         <div class="quickpay-container">
           <div class="quickpay-balance-card">
@@ -744,7 +744,7 @@
             <div id="quickPayHistoryList" style="max-height:300px; overflow-y:auto;"></div>
           </div>
 
-          <!-- ===== تابی داخستنی پارەی کویک پەی (نوێ) ===== -->
+          <!-- ===== تابی داخستنی پارەی کویک پەی ===== -->
           <div class="quickpay-card-glass" style="margin-top:1.5rem; border-color: #dc2626; border-width: 2px;">
             <h4 style="color:#dc2626;"><i class="fas fa-ban" style="color:#dc2626;"></i> داخستنی پارەی کویک پەی</h4>
             <div style="background:#fef2f2; padding:1rem; border-radius:1rem; margin-bottom:1rem;">
@@ -2398,15 +2398,26 @@
 
   // ===== TODAY MONEY CALCULATION (FIXED) =====
   function calculateTodayMoney() {
-    const today = new Date().toLocaleDateString('ckb');
+    // پشکنینی ئەوەی ئایا دوای داخستنە یان نا
+    const closingDate = localStorage.getItem('market_last_closing_date');
+    if (closingDate) {
+        const closingTime = new Date(closingDate);
+        const today = new Date();
+        // ئەگەر ئەمڕۆ پێش یان هەمان کاتی داخستن بێت، گەڕاندنەوەی 0
+        if (today <= closingTime) {
+            return 0;
+        }
+    }
+    
+    const todayStr = new Date().toLocaleDateString('ckb');
 
-    const todayCashSales = (window.saleHistory || []).filter(s => 
-        s.customer === 'کاش' && s.date && s.date.includes(today)
-    ).reduce((sum, s) => sum + s.total, 0);
+    const todayCashSales = (saleHistory || []).filter(s => 
+        s.customer === 'کاش' && s.date && s.date.includes(todayStr)
+    ).reduce((sum, s) => sum + (s.total || 0), 0);
 
     const todayCredits = (moneyRequests || []).filter(r => 
-        r.date && r.date.includes(today) && 
-        r.amount > 0 && 
+        r.date && r.date.includes(todayStr) && 
+        (r.amount || 0) > 0 && 
         r.type !== 'adjustment' &&
         !r.isJemgeza &&
         r.type !== 'sale' &&
@@ -2421,13 +2432,17 @@
         r.type !== 'transfer_to_jemgeza' &&
         r.type !== 'sales_return' &&
         !r.isTransferOut &&
-        !r.ignoreInTodayCalculation
-    ).reduce((sum, r) => sum + r.amount, 0);
+        !r.ignoreInTodayCalculation &&
+        !r.isReset &&
+        !r.wasTransferred
+    ).reduce((sum, r) => sum + (r.amount || 0), 0);
 
     const todayDebits = (moneyRequests || []).filter(r => 
-        r.date && r.date.includes(today) && 
-        r.amount < 0 &&
+        r.date && r.date.includes(todayStr) && 
+        (r.amount || 0) < 0 &&
         !r.ignoreInTodayCalculation &&
+        !r.isReset &&
+        !r.wasTransferred &&
         (r.type === 'expense' || 
          r.type === 'transfer_out' ||
          r.type === 'transfer_to_jemgeza' ||
@@ -2440,7 +2455,7 @@
          r.type === 'purchase' ||
          r.type === 'purchase_return' ||
          r.type === 'adjustment')
-    ).reduce((sum, r) => sum + Math.abs(r.amount), 0);
+    ).reduce((sum, r) => sum + Math.abs(r.amount || 0), 0);
 
     const result = todayCashSales + todayCredits - todayDebits;
     return Math.max(0, result);
@@ -2448,26 +2463,54 @@
 
   // ===== UPDATE TODAY MONEY STAT =====
   function updateTodayMoneyStat() {
-    const todayMoney = calculateTodayMoney();
+    const closingDate = localStorage.getItem('market_last_closing_date');
+    let todayMoney = 0;
+    
+    if (!closingDate) {
+        todayMoney = calculateTodayMoney();
+    } else {
+        const closingTime = new Date(closingDate);
+        const now = new Date();
+        if (now > closingTime) {
+            todayMoney = calculateTodayMoney();
+        }
+    }
     
     const statTodayMoneyEl = document.getElementById('statTodayMoney');
-    if (statTodayMoneyEl) statTodayMoneyEl.textContent = todayMoney.toLocaleString();
+    if (statTodayMoneyEl) {
+        statTodayMoneyEl.textContent = todayMoney.toLocaleString();
+        if (todayMoney === 0) statTodayMoneyEl.textContent = '0';
+    }
     
     const accTodayEl = document.getElementById('accTodayMoney');
-    if (accTodayEl) accTodayEl.textContent = todayMoney.toLocaleString();
+    if (accTodayEl) {
+        accTodayEl.textContent = todayMoney.toLocaleString();
+        if (todayMoney === 0) accTodayEl.textContent = '0';
+    }
     
     const todayMoneyDisplay = document.getElementById('todayMoneyDisplay');
-    if (todayMoneyDisplay) todayMoneyDisplay.textContent = todayMoney.toLocaleString();
+    if (todayMoneyDisplay) {
+        todayMoneyDisplay.textContent = todayMoney.toLocaleString();
+        if (todayMoney === 0) todayMoneyDisplay.textContent = '0';
+    }
     
     const todayMoneyGiveDisplay = document.getElementById('todayMoneyGiveDisplay');
-    if (todayMoneyGiveDisplay) todayMoneyGiveDisplay.textContent = todayMoney.toLocaleString();
+    if (todayMoneyGiveDisplay) {
+        todayMoneyGiveDisplay.textContent = todayMoney.toLocaleString();
+        if (todayMoney === 0) todayMoneyGiveDisplay.textContent = '0';
+    }
 
     const remainingDisplay = document.getElementById('todayRemainingDisplay');
     if (remainingDisplay) {
-      const todayExpense = (window.expenseHistory || []).filter(e => 
-          e.date && e.date.includes(new Date().toLocaleDateString('ckb'))
-      ).reduce((sum, e) => sum + e.amount, 0);
-      remainingDisplay.textContent = Math.max(0, todayMoney - todayExpense).toLocaleString();
+        let todayExpense = 0;
+        if (!closingDate) {
+            todayExpense = (expenseHistory || []).filter(e => 
+                e.date && e.date.includes(new Date().toLocaleDateString('ckb'))
+            ).reduce((sum, e) => sum + (e.amount || 0), 0);
+        }
+        const remaining = Math.max(0, todayMoney - todayExpense);
+        remainingDisplay.textContent = remaining.toLocaleString();
+        if (remaining === 0) remainingDisplay.textContent = '0';
     }
 
     updateAccountingDisplay();
@@ -2882,90 +2925,97 @@
   function updateStats() {
     // ===== فلتەر بە بەرواری داخستن =====
     const closingDate = localStorage.getItem('market_last_closing_date');
-    let filteredSales = saleHistory;
-    let filteredPurchases = purchaseHistory;
-    let filteredExpenses = expenseHistory;
-    let filteredGiveMoney = giveMoneyHistory;
-    let filteredMoneyRequests = moneyRequests;
+    
+    let isAfterClosing = false;
+    let closingTime = null;
     
     if (closingDate) {
-      const closingTime = new Date(closingDate);
-      filteredSales = saleHistory.filter(s => {
-        const saleDate = new Date(s.date);
-        return saleDate > closingTime;
-      });
-      filteredPurchases = purchaseHistory.filter(p => {
-        const purchaseDate = new Date(p.date);
-        return purchaseDate > closingTime;
-      });
-      filteredExpenses = expenseHistory.filter(e => {
-        const expenseDate = new Date(e.date);
-        return expenseDate > closingTime;
-      });
-      filteredGiveMoney = giveMoneyHistory.filter(g => {
-        const giveDate = new Date(g.date);
-        return giveDate > closingTime;
-      });
-      filteredMoneyRequests = moneyRequests.filter(r => {
-        const reqDate = new Date(r.date);
-        return reqDate > closingTime;
-      });
+        closingTime = new Date(closingDate);
+        isAfterClosing = true;
     }
     
-    const totalSales = filteredSales.reduce((sum, s) => sum + s.total, 0);
-    const totalPurchases = filteredPurchases.reduce((sum, p) => sum + p.total, 0);
+    let filteredSales = isAfterClosing ? [] : saleHistory;
+    let filteredPurchases = isAfterClosing ? [] : purchaseHistory;
+    let filteredExpenses = isAfterClosing ? [] : expenseHistory;
+    let filteredGiveMoney = isAfterClosing ? [] : giveMoneyHistory;
+    let filteredMoneyRequests = isAfterClosing ? [] : moneyRequests;
     
+    if (isAfterClosing && closingTime) {
+        filteredSales = saleHistory.filter(s => {
+            try { return new Date(s.date) > closingTime; } catch(e) { return false; }
+        });
+        filteredPurchases = purchaseHistory.filter(p => {
+            try { return new Date(p.date) > closingTime; } catch(e) { return false; }
+        });
+        filteredExpenses = expenseHistory.filter(e => {
+            try { return new Date(e.date) > closingTime; } catch(e) { return false; }
+        });
+        filteredGiveMoney = giveMoneyHistory.filter(g => {
+            try { return new Date(g.date) > closingTime; } catch(e) { return false; }
+        });
+        filteredMoneyRequests = moneyRequests.filter(r => {
+            try { return new Date(r.date) > closingTime; } catch(e) { return false; }
+        });
+    }
+    
+    const totalSales = filteredSales.reduce((sum, s) => sum + (s.total || 0), 0);
+    const totalPurchases = filteredPurchases.reduce((sum, p) => sum + (p.total || 0), 0);
     const totalMoneyReceived = filteredMoneyRequests
-        .filter(r => r.isTransfer === true && !r.isJemgeza)
-        .reduce((sum, r) => sum + r.amount, 0);
+        .filter(r => r.isTransfer === true && !r.isJemgeza && !r.wasTransferred)
+        .reduce((sum, r) => sum + (r.amount || 0), 0);
+    const totalExpenses = filteredExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const totalGiveMoney = filteredGiveMoney.reduce((sum, g) => sum + (g.amount || 0), 0);
     
-    const totalExpenses = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
-    const totalGiveMoney = filteredGiveMoney.reduce((sum, g) => sum + g.amount, 0);
-    
-    const totalSpend = filteredPurchases.filter(p => p.isCash).reduce((sum, p) => sum + p.total, 0) +
-                       employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + sh.amount, 0), 0) +
-                       returnHistory.reduce((sum, r) => sum + r.refundAmount, 0);
+    const totalSpend = filteredPurchases.filter(p => p.isCash).reduce((sum, p) => sum + (p.total || 0), 0) +
+                       employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + (sh.amount || 0), 0), 0) +
+                       returnHistory.reduce((sum, r) => sum + (r.refundAmount || 0), 0);
     const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalSpend;
     
     const totalProducts = warehouseProducts.length;
     const totalPersons = customers.length;
-    const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -p.debt), 0);
-    const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, c.debt), 0);
+    const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -(p.debt || 0)), 0);
+    const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, (c.debt || 0)), 0);
     
     const profit = totalSales - totalPurchases - totalSpendAndExpenses;
-    
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     
     const statMap = {
-      'statTotalSales': totalSales,
-      'statTotalPurchases': totalPurchases,
-      'statTotalMoneyReceived': totalMoneyReceived,
-      'statTotalSpendAndExpenses': totalSpendAndExpenses,
-      'statTotalProducts': totalProducts,
-      'statTotalPersons': totalPersons,
-      'statMyDebtToPartners': myDebtToPartners,
-      'statPersonsDebtToMe': personsDebtToMe,
-      'statJemgeza': jemgeza,
-      'statQuickPay': quickPayBalance,
-      'statQuickPaySales': quickPaySalesTotal
+        'statTotalSales': totalSales,
+        'statTotalPurchases': totalPurchases,
+        'statTotalMoneyReceived': totalMoneyReceived,
+        'statTotalSpendAndExpenses': totalSpendAndExpenses,
+        'statTotalProducts': totalProducts,
+        'statTotalPersons': totalPersons,
+        'statMyDebtToPartners': myDebtToPartners,
+        'statPersonsDebtToMe': personsDebtToMe,
+        'statJemgeza': jemgeza,
+        'statQuickPay': quickPayBalance,
+        'statQuickPaySales': quickPaySalesTotal
     };
 
     Object.keys(statMap).forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = typeof statMap[id] === 'number' ? statMap[id].toLocaleString() : statMap[id];
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = typeof statMap[id] === 'number' ? statMap[id].toLocaleString() : statMap[id];
+            if (statMap[id] === 0 || statMap[id] === '0') {
+                el.textContent = '0';
+            }
+        }
     });
     
     const statProfitEl = document.getElementById('statProfit');
     if (statProfitEl) {
-      statProfitEl.textContent = profit.toLocaleString();
-      statProfitEl.className = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : 'profit-zero';
+        statProfitEl.textContent = profit.toLocaleString();
+        statProfitEl.className = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : 'profit-zero';
+        if (profit === 0) statProfitEl.textContent = '0';
     }
     
     const statQuickPayProfitEl = document.getElementById('statQuickPayProfit');
     if (statQuickPayProfitEl) {
-      const quickPayProfit = quickPayAddedTotal - quickPaySalesTotal;
-      statQuickPayProfitEl.textContent = quickPayProfit.toLocaleString();
-      statQuickPayProfitEl.className = quickPayProfit > 0 ? 'profit-positive' : quickPayProfit < 0 ? 'profit-negative' : 'profit-zero';
+        const quickPayProfit = quickPayAddedTotal - quickPaySalesTotal;
+        statQuickPayProfitEl.textContent = quickPayProfit.toLocaleString();
+        statQuickPayProfitEl.className = quickPayProfit > 0 ? 'profit-positive' : quickPayProfit < 0 ? 'profit-negative' : 'profit-zero';
+        if (quickPayProfit === 0) statQuickPayProfitEl.textContent = '0';
     }
 
     updateTodayMoneyStat();
@@ -3108,8 +3158,8 @@
     if (source === 'total') {
       sourceName = 'کۆی گشتی پارەی واسڵکراو';
       availableAmount = moneyRequests
-        .filter(r => r.isTransfer === true && !r.isJemgeza)
-        .reduce((sum, r) => sum + r.amount, 0);
+        .filter(r => r.isTransfer === true && !r.isJemgeza && !r.wasTransferred)
+        .reduce((sum, r) => sum + (r.amount || 0), 0);
     } else if (source === 'today') {
       sourceName = 'کۆی واسڵی ئەمرۆ';
       availableAmount = calculateTodayMoney();
@@ -3514,11 +3564,22 @@
 
   // ===== ACCOUNTING / TRANSFER FUNCTIONS =====
   function updateAccountingDisplay() {
-    const todayMoney = calculateTodayMoney();
+    const closingDate = localStorage.getItem('market_last_closing_date');
+    let todayMoney = 0;
+    
+    if (!closingDate) {
+        todayMoney = calculateTodayMoney();
+    } else {
+        const closingTime = new Date(closingDate);
+        const now = new Date();
+        if (now > closingTime) {
+            todayMoney = calculateTodayMoney();
+        }
+    }
     
     const totalMoney = moneyRequests
-      .filter(r => r.isTransfer === true && !r.isJemgeza)
-      .reduce((sum, r) => sum + r.amount, 0);
+      .filter(r => r.isTransfer === true && !r.isJemgeza && !r.wasTransferred)
+      .reduce((sum, r) => sum + (r.amount || 0), 0);
       
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     const quickpaySales = parseInt(localStorage.getItem('market_quickpay_sales_total') || '0');
@@ -3538,7 +3599,7 @@
     if (quickpaySalesDisplay) quickpaySalesDisplay.textContent = quickpaySales.toLocaleString();
   }
 
-  // ===== TRANSFER MONEY - FIXED =====
+  // ===== TRANSFER MONEY =====
   window.transferMoney = function() {
     const amountInput = document.getElementById('transferAmount');
     const amount = parseInt(amountInput.value);
@@ -5076,7 +5137,7 @@
     updateStats(); 
   }
 
-  // ===== COMPLETE SALE (FIXED) =====
+  // ===== COMPLETE SALE =====
   window.completeSale = function() {
     if (!cart.length) { 
       showToast('⚠️ سەبەتە بەتاڵە! تکایە کاڵا زیاد بکە', 'info');
@@ -5263,9 +5324,6 @@
       w.print();
     }, 500);
   };
-
-  // ===== KEYBOARD SHORTCUT (Alt) =====
-  // تەواوکرا لە سەرەوە
 
   // ===== MANUAL TOTAL EDIT =====
   window.updateManualTotal = function(index, value) {
@@ -7146,7 +7204,7 @@
       if (backup.data.warehouseProducts) { warehouseProducts = backup.data.warehouseProducts; saveWarehouseProducts(); }
       if (backup.data.moneyRequests) { moneyRequests = backup.data.moneyRequests; saveMoneyRequests(); }
       if (backup.data.purchaseHistory) { purchaseHistory = backup.data.purchaseHistory; savePurchaseHistory(); }
-      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backup.data.expiredDamagedProducts; saveExpiryDamage(); }
+      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backupData.expiredDamagedProducts; saveExpiryDamage(); }
       if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
       if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backup.data.purchaseReturnHistory; savePurchaseReturnHistory(); }
       if (backup.data.employees) { employees = backup.data.employees; saveEmployees(); }
@@ -9013,20 +9071,47 @@
 
     const today = new Date();
     const dateStr = today.toLocaleString('ckb', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
     });
 
-    const totalSales = saleHistory.reduce((sum, s) => sum + s.total, 0);
-    const totalPurchases = purchaseHistory.reduce((sum, p) => sum + p.total, 0);
-    const totalMoneyReceived = moneyRequests
-      .filter(r => r.isTransfer === true && !r.isJemgeza)
-      .reduce((sum, r) => sum + r.amount, 0);
-    const totalExpenses = expenseHistory.reduce((sum, e) => sum + e.amount, 0);
-    const totalGiveMoney = giveMoneyHistory.reduce((sum, g) => sum + g.amount, 0);
+    // پشکنینی ئەوەی ئایا پێشتر داخستن کراوە یان نا
+    const existingClosingDate = localStorage.getItem('market_last_closing_date');
+    let filteredSales = saleHistory;
+    let filteredPurchases = purchaseHistory;
+    let filteredExpenses = expenseHistory;
+    let filteredGiveMoney = giveMoneyHistory;
+    let filteredMoneyRequests = moneyRequests;
+    
+    if (existingClosingDate) {
+        const closingTime = new Date(existingClosingDate);
+        filteredSales = saleHistory.filter(s => {
+            try { return new Date(s.date) > closingTime; } catch(e) { return false; }
+        });
+        filteredPurchases = purchaseHistory.filter(p => {
+            try { return new Date(p.date) > closingTime; } catch(e) { return false; }
+        });
+        filteredExpenses = expenseHistory.filter(e => {
+            try { return new Date(e.date) > closingTime; } catch(e) { return false; }
+        });
+        filteredGiveMoney = giveMoneyHistory.filter(g => {
+            try { return new Date(g.date) > closingTime; } catch(e) { return false; }
+        });
+        filteredMoneyRequests = moneyRequests.filter(r => {
+            try { return new Date(r.date) > closingTime; } catch(e) { return false; }
+        });
+    }
+    
+    const totalSales = filteredSales.reduce((sum, s) => sum + (s.total || 0), 0);
+    const totalPurchases = filteredPurchases.reduce((sum, p) => sum + (p.total || 0), 0);
+    const totalMoneyReceived = filteredMoneyRequests
+        .filter(r => r.isTransfer === true && !r.isJemgeza)
+        .reduce((sum, r) => sum + (r.amount || 0), 0);
+    const totalExpenses = filteredExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const totalGiveMoney = filteredGiveMoney.reduce((sum, g) => sum + (g.amount || 0), 0);
     const profit = totalSales - totalPurchases - totalExpenses - totalGiveMoney;
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
 
@@ -9048,18 +9133,18 @@
     if (!confirm(confirmMsg)) return;
 
     const closingRecord = {
-      id: closingId,
-      date: dateStr,
-      totalSales: totalSales,
-      totalPurchases: totalPurchases,
-      totalMoneyReceived: totalMoneyReceived,
-      totalExpenses: totalExpenses,
-      totalGiveMoney: totalGiveMoney,
-      profit: profit,
-      jemgeza: jemgeza,
-      quickPayBalance: quickPayBalance,
-      quickPaySalesTotal: quickPaySalesTotal,
-      quickPayAddedTotal: quickPayAddedTotal
+        id: closingId,
+        date: dateStr,
+        totalSales: totalSales,
+        totalPurchases: totalPurchases,
+        totalMoneyReceived: totalMoneyReceived,
+        totalExpenses: totalExpenses,
+        totalGiveMoney: totalGiveMoney,
+        profit: profit,
+        jemgeza: jemgeza,
+        quickPayBalance: quickPayBalance,
+        quickPaySalesTotal: quickPaySalesTotal,
+        quickPayAddedTotal: quickPayAddedTotal
     };
 
     let closingHistory = JSON.parse(localStorage.getItem('market_closing_history') || '[]');
@@ -9067,33 +9152,38 @@
     if (closingHistory.length > 50) closingHistory = closingHistory.slice(0, 50);
     localStorage.setItem('market_closing_history', JSON.stringify(closingHistory));
 
-    const transferRecords = moneyRequests.filter(r => r.isTransfer === true && !r.isJemgeza);
+    // ===== سفرکردنی هەموو کارتەکان =====
+    // سفرکردنی کۆی واسڵکراو
+    const transferRecords = filteredMoneyRequests.filter(r => r.isTransfer === true && !r.isJemgeza);
     transferRecords.forEach(r => { 
-      r.isTransfer = false; 
-      r.wasTransferred = true; 
-      r.resetOn = dateStr;
-      r.ignoreInTodayCalculation = true;
+        r.isTransfer = false; 
+        r.wasTransferred = true; 
+        r.resetOn = dateStr;
+        r.ignoreInTodayCalculation = true;
     });
     saveMoneyRequests();
 
+    // تۆمارکردنی داخستن لە مێژوودا
     moneyRequests.push({
-      id: 'RESET-' + Date.now(),
-      date: dateStr,
-      type: 'period_reset',
-      entityName: 'داخستنی حیسابات',
-      entityPhone: '-',
-      amount: 0,
-      note: `داخستنی حیسابات - ژمارە: ${closingId}`,
-      isTransfer: false,
-      isExpense: false,
-      isReset: true,
-      resetDate: dateStr,
-      ignoreInTodayCalculation: true
+        id: 'RESET-' + Date.now(),
+        date: dateStr,
+        type: 'period_reset',
+        entityName: 'داخستنی حیسابات',
+        entityPhone: '-',
+        amount: 0,
+        note: `داخستنی حیسابات - ژمارە: ${closingId}`,
+        isTransfer: false,
+        isExpense: false,
+        isReset: true,
+        resetDate: dateStr,
+        ignoreInTodayCalculation: true
     });
     saveMoneyRequests();
 
+    // سفرکردنی جەمگزەی دووەم
     localStorage.setItem('market_jemgeza', '0');
 
+    // سفرکردنی کویک پەی
     quickPayBalance = 0;
     quickPaySalesTotal = 0;
     quickPayAddedTotal = 0;
@@ -9102,60 +9192,78 @@
     localStorage.setItem('market_quickpay_added_total', '0');
 
     quickPayHistory.push({
-      id: 'RESET-QP-' + Date.now(),
-      date: dateStr,
-      type: 'period_reset',
-      amount: 0,
-      note: `داخستنی حیسابات - کویک پەی سفرکرایەوە`
+        id: 'RESET-QP-' + Date.now(),
+        date: dateStr,
+        type: 'period_reset',
+        amount: 0,
+        note: `داخستنی حیسابات - کویک پەی سفرکرایەوە`
     });
     saveQuickPayData();
 
+    // تۆمارکردنی بەرواری داخستن بۆ فلتەرکردنی ئامارەکان
     localStorage.setItem('market_last_closing_date', today.toISOString());
 
+    // ===== سفرکردنی کارتەکانی داشبۆرد بە دەست =====
     const statIds = [
-      'statTotalSales', 'statTotalPurchases', 'statTotalMoneyReceived',
-      'statTotalSpendAndExpenses', 'statTodayMoney', 'statTotalProducts',
-      'statTotalPersons', 'statMyDebtToPartners', 'statPersonsDebtToMe',
-      'statProfit', 'statJemgeza', 'statQuickPay', 'statQuickPaySales',
-      'statQuickPayProfit'
+        'statTotalSales', 'statTotalPurchases', 'statTotalMoneyReceived',
+        'statTotalSpendAndExpenses', 'statTodayMoney', 'statTotalProducts',
+        'statTotalPersons', 'statMyDebtToPartners', 'statPersonsDebtToMe',
+        'statProfit', 'statJemgeza', 'statQuickPay', 'statQuickPaySales',
+        'statQuickPayProfit'
     ];
     
     statIds.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.textContent = '0';
-        if (id === 'statProfit' || id === 'statQuickPayProfit') {
-          el.className = 'profit-zero';
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = '0';
+            if (id === 'statProfit' || id === 'statQuickPayProfit') {
+                el.className = 'profit-zero';
+            }
         }
-      }
     });
 
     const displays = [
-      'accTodayMoney', 'accTotalMoney', 'accJemgezaMoney',
-      'jemgezaBalanceDisplay', 'jemgezaBalanceDisplay2',
-      'quickpaySalesTotalDisplay', 'quickPayBalance'
+        'accTodayMoney', 'accTotalMoney', 'accJemgezaMoney',
+        'jemgezaBalanceDisplay', 'jemgezaBalanceDisplay2',
+        'quickpaySalesTotalDisplay', 'quickPayBalance'
     ];
     
     displays.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = '0';
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = '0';
+        }
     });
 
     const todayMoneyDisplays = [
-      'todayMoneyDisplay', 'todayMoneyGiveDisplay', 'todayRemainingDisplay'
+        'todayMoneyDisplay', 'todayMoneyGiveDisplay', 'todayRemainingDisplay'
     ];
     todayMoneyDisplays.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = '0';
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = '0';
+        }
     });
 
     const expenseDisplays = ['todayExpenseDisplay', 'todayGiveDisplay'];
     expenseDisplays.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = '0';
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = '0';
+        }
     });
 
+    // ===== نوێکردنەوەی هەموو مێژووەکان =====
     renderClosingHistory();
+    updateStats();
+    updateTodayMoneyStat();
+    updateAccountingDisplay();
+    updateQuickPayStats();
+    renderQuickPayHistory();
+    renderMoneyHistory();
+    renderExpenseHistory();
+    renderGiveHistory();
+
     showToast(`✅ حیسابات بە سەرکەوتوویی داخرا!
   📊 قازانجی کۆتایی: ${profit.toLocaleString()} د.ع
   📅 بەروار: ${dateStr}
