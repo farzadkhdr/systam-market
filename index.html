@@ -673,7 +673,8 @@
           <div id="returnHistoryContainer" style="max-height:300px; overflow-y:auto;"></div>
         </div>
       </div>
-      <!-- ===== پانێلی کویک پەی ===== -->
+      
+      <!-- ===== پانێلی کویک پەی (گۆڕانکاری کراوە) ===== -->
       <div class="panel" id="quickPayPanel">
         <div class="quickpay-container">
           <div class="quickpay-balance-card">
@@ -741,6 +742,32 @@
               </select>
             </div>
             <div id="quickPayHistoryList" style="max-height:300px; overflow-y:auto;"></div>
+          </div>
+
+          <!-- ===== تابی داخستنی پارەی کویک پەی (نوێ) ===== -->
+          <div class="quickpay-card-glass" style="margin-top:1.5rem; border-color: #dc2626; border-width: 2px;">
+            <h4 style="color:#dc2626;"><i class="fas fa-ban" style="color:#dc2626;"></i> داخستنی پارەی کویک پەی</h4>
+            <div style="background:#fef2f2; padding:1rem; border-radius:1rem; margin-bottom:1rem;">
+              <p style="font-size:0.9rem; color:#991b1b;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>ئاگادارباش!</strong> ئەم کارە کۆی پارەی کویک پەی (هاوسەنگی کویک پەی) <strong>سفر دەکاتەوە</strong>.
+                مێژووی کویک پەی دەمێنێتەوە بەڵام هاوسەنگی کویک پەی دەبێتە ٠.
+                ئەم کارە <strong>ناگەڕێتەوە</strong>!
+              </p>
+            </div>
+            <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
+              <div style="flex:1; min-width:200px;">
+                <label style="font-weight:600;">تێبینی (ئارەزوومەندانە):</label>
+                <input type="text" id="quickPayResetNote" placeholder="هۆکاری داخستن..." style="width:100%; padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; margin-top:0.3rem;">
+              </div>
+              <button onclick="resetQuickPayBalance()" style="background:#dc2626; color:white; border:none; padding:0.8rem 2rem; border-radius:2rem; font-weight:bold; cursor:pointer; margin-top:0.3rem;">
+                <i class="fas fa-ban"></i> داخستنی پارەی کویک پەی
+              </button>
+            </div>
+            <div id="quickPayResetHistory" style="margin-top:1rem; max-height:150px; overflow-y:auto;">
+              <h5 style="margin-bottom:0.3rem;">📋 مێژووی داخستنەکان</h5>
+              <div id="quickPayResetList" style="font-size:0.85rem;"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -2746,8 +2773,114 @@
     updateQuickPayStats();
   }
 
+  // ===== RESET QUICKPAY BALANCE =====
+  window.resetQuickPayBalance = function() {
+    if (!isAdmin()) {
+      alert('تەنیا بەڕێوەبەر دەتوانێت ئەم کارە بکات!');
+      return;
+    }
+
+    if (quickPayBalance <= 0) {
+      alert('هاوسەنگی کویک پەی پێشتر سفرە! (0 د.ع)');
+      return;
+    }
+
+    const note = document.getElementById('quickPayResetNote')?.value.trim() || 'داخستنی کویک پەی';
+
+    const confirmMsg = `دڵنیایت لە داخستنی پارەی کویک پەی؟
+  
+💰 هاوسەنگی ئێستا: ${quickPayBalance.toLocaleString()} د.ع
+📝 تێبینی: ${note}
+
+⚠️ دوای داخستن، هاوسەنگی کویک پەی دەبێتە 0
+✅ مێژووی کویک پەی دەمێنێتەوە
+❌ ئەم کارە ناگەڕێتەوە!`;
+
+    if (!confirm(confirmMsg)) return;
+
+    const now = new Date();
+    const dateStr = now.toLocaleString('ckb', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    // تۆمارکردنی داخستن لە مێژووی کویک پەی
+    quickPayHistory.unshift({
+      id: 'QP-RESET-' + Date.now(),
+      date: dateStr,
+      type: 'reset',
+      amount: quickPayBalance,
+      note: `داخستنی پارەی کویک پەی: ${note} (بڕی سفرکراو: ${quickPayBalance.toLocaleString()} د.ع)`
+    });
+
+    // تۆمارکردنی داخستن لە مێژووی داخستنەکانی کویک پەی
+    let resetHistory = JSON.parse(localStorage.getItem('market_quickpay_reset_history') || '[]');
+    resetHistory.unshift({
+      id: 'QPR-' + Date.now(),
+      date: dateStr,
+      amount: quickPayBalance,
+      note: note
+    });
+    if (resetHistory.length > 50) resetHistory = resetHistory.slice(0, 50);
+    localStorage.setItem('market_quickpay_reset_history', JSON.stringify(resetHistory));
+
+    // سفرکردنی هاوسەنگی کویک پەی
+    quickPayBalance = 0;
+    localStorage.setItem('market_quickpay_balance', '0');
+
+    // تۆمارکردنی لە moneyRequests بۆ مێژووی پارە
+    moneyRequests.push({
+      id: 'QP-RESET-MONEY-' + Date.now(),
+      date: dateStr,
+      type: 'quickpay_reset',
+      entityName: 'داخستنی کویک پەی',
+      entityPhone: '-',
+      amount: 0,
+      note: `داخستنی کویک پەی: ${note} (بڕی سفرکراو: ${quickPayBalance.toLocaleString()} د.ع)`,
+      isTransfer: false,
+      isExpense: false,
+      isReset: true,
+      ignoreInTodayCalculation: true
+    });
+    saveMoneyRequests();
+
+    saveQuickPayData();
+    updateStats();
+    updateAccountingDisplay();
+    renderQuickPayHistory();
+    renderQuickPayResetHistory();
+
+    document.getElementById('quickPayResetNote').value = '';
+
+    showToast(`✅ پارەی کویک پەی بە سەرکەوتوویی داخرا! (${quickPayBalance.toLocaleString()} د.ع سفرکرا)`, 'success');
+  };
+
+  // ===== RENDER QUICKPAY RESET HISTORY =====
+  function renderQuickPayResetHistory() {
+    const container = document.getElementById('quickPayResetList');
+    if (!container) return;
+    
+    const history = JSON.parse(localStorage.getItem('market_quickpay_reset_history') || '[]');
+    if (!history.length) {
+      container.innerHTML = '<p style="color:#94a3b8;">هیچ داخستنێک تۆمار نەکراوە</p>';
+      return;
+    }
+
+    container.innerHTML = history.map(r => `
+      <div style="display:flex; justify-content:space-between; padding:0.3rem 0; border-bottom:1px solid #f1f5f9; font-size:0.85rem;">
+        <span>📅 ${r.date}</span>
+        <span style="color:#dc2626; font-weight:600;">-${r.amount.toLocaleString()} د.ع</span>
+        <span style="color:#64748b;">${r.note}</span>
+      </div>
+    `).join('');
+  }
+
   // ===== UPDATE STATS (FIXED WITH CLOSING SUPPORT) =====
   function updateStats() {
+    // ===== فلتەر بە بەرواری داخستن =====
     const closingDate = localStorage.getItem('market_last_closing_date');
     let filteredSales = saleHistory;
     let filteredPurchases = purchaseHistory;
