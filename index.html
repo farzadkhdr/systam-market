@@ -208,20 +208,9 @@
     .logo-print img { width:50px; height:50px; border-radius:50%; object-fit:cover; }
     .logo-print i { font-size:2rem; color:#0f172a; }
     .settings-edit-input { width:100%; padding:0.5rem; border-radius:1rem; border:1px solid #cbd5e1; margin-top:0.2rem; }
-    @media print { body { background:white; } .system-container { box-shadow:none; backdrop-filter:none; background:white; padding:0; } .back-header, .tabs, .new-sale-layout .card-glass:first-child, .history-search, .btn-icon, .back-btn, .no-print { display:none !important; } .invoice-preview { border:none; } .barcode-print-section { display:block; } .barcode-print-card { break-inside:avoid; margin-bottom:1rem; } .login-overlay { display:none !important; } .logo-print { display:flex !important; align-items:center !important; gap:0.8rem !important; } .logo-print img { width:50px !important; height:50px !important; border-radius:50% !important; object-fit:cover !important; } .logo-print i { font-size:2rem !important; } }
-    @media (max-width:700px) { .system-container { padding:1.2rem; } .module-section { grid-template-columns:repeat(3,1fr); } .login-box { padding:2rem 1.5rem; border-radius:2rem; } .login-logo-icon { width:60px; height:60px; font-size:2rem; } .login-logo h1 { font-size:1.5rem; } }
-    .accounting-transfer-box { background:#f8fafc; border-radius:1.5rem; padding:1.5rem; margin-bottom:1.5rem; border:2px solid #e2e8f0; }
-    .accounting-transfer-box h3 { color:#1e293b; margin-bottom:1rem; font-size:1.1rem; }
-    .accounting-transfer-box .input-group { display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
-    .accounting-transfer-box .input-group input { flex:1; min-width:150px; padding:0.7rem 1rem; border-radius:2rem; border:1px solid #cbd5e1; font-size:1rem; }
-    .accounting-transfer-box .input-group button { background:#7c3aed; color:white; border:none; padding:0.7rem 1.8rem; border-radius:2rem; font-weight:600; cursor:pointer; transition:0.2s; }
-    .accounting-transfer-box .input-group button:hover { background:#6d28d9; transform:scale(1.02); }
-    .accounting-balance { display:flex; gap:2rem; flex-wrap:wrap; margin-top:0.5rem; font-weight:600; }
-    .accounting-balance span { background:white; padding:0.4rem 1.2rem; border-radius:2rem; border:1px solid #e2e8f0; }
-    .accounting-balance .today-amount { color:#059669; }
-    .accounting-balance .total-amount { color:#2563eb; }
+    /* Report Styles */
     .report-container { background:white; border-radius:1.5rem; padding:2rem; margin-top:1rem; box-shadow:0 10px 25px rgba(0,0,0,0.1); direction:rtl; }
-    .report-header { display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #e2e8f0; padding-bottom:1rem; margin-bottom:1.5rem; }
+    .report-header { display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #e2e8f0; padding-bottom:1rem; margin-bottom:1.5rem; flex-wrap:wrap; gap:0.5rem; }
     .report-title { font-size:1.5rem; font-weight:800; color:#0f172a; }
     .report-subtitle { color:#64748b; font-size:0.9rem; }
     .report-table { width:100%; border-collapse:collapse; margin:1rem 0; }
@@ -322,6 +311,14 @@
     .closing-history-item .amount-positive { color:#059669; font-weight:600; }
     .closing-history-item .amount-negative { color:#dc2626; font-weight:600; }
     .closing-history-item .amount-neutral { color:#475569; font-weight:600; }
+    .report-daterange { display:flex; gap:1rem; flex-wrap:wrap; align-items:center; margin:1rem 0; }
+    .report-daterange input[type="date"] { padding:0.5rem 1rem; border-radius:2rem; border:1px solid #cbd5e1; font-size:0.95rem; background:white; }
+    .report-daterange label { font-weight:600; color:#1e293b; }
+    .report-product-detail { background:#f8fafc; border-radius:1rem; padding:1rem; margin:0.5rem 0; border-right:4px solid #2563eb; }
+    .report-product-detail .stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:0.8rem; margin-top:0.5rem; }
+    .report-product-detail .stat-item { background:white; padding:0.5rem; border-radius:0.8rem; text-align:center; border:1px solid #e2e8f0; }
+    .report-product-detail .stat-item .number { font-size:1.2rem; font-weight:700; color:#0f172a; }
+    .report-product-detail .stat-item .label { font-size:0.8rem; color:#64748b; }
   </style>
 </head>
 <body>
@@ -2101,10 +2098,12 @@
       
       <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:1.5rem;">
         <div class="report-section-tab active" data-reporttab="products" onclick="switchReportTab('products')">📦 تەقریری کاڵا</div>
+        <div class="report-section-tab" data-reporttab="sales" onclick="switchReportTab('sales')">🛒 تەقریری فرۆشتن</div>
+        <div class="report-section-tab" data-reporttab="purchases" onclick="switchReportTab('purchases')">🚚 تەقریری کڕین</div>
         <div class="report-section-tab" data-reporttab="persons" onclick="switchReportTab('persons')">👤 تەقریری کەس/شەریک</div>
-        <div class="report-section-tab" data-reporttab="invoices" onclick="switchReportTab('invoices')">📄 گەڕان بەدوای فاکتوورە</div>
       </div>
 
+      <!-- Products Report -->
       <div id="reportProductsPanel" class="panel active">
         <div class="card-glass">
           <h3 style="margin-bottom:1rem;"><i class="fas fa-box"></i> تەقریری کاڵا</h3>
@@ -2121,6 +2120,41 @@
         </div>
       </div>
 
+      <!-- Sales Report -->
+      <div id="reportSalesPanel" class="panel">
+        <div class="card-glass">
+          <h3 style="margin-bottom:1rem;"><i class="fas fa-shopping-cart"></i> تەقریری فرۆشتن</h3>
+          <div class="report-daterange">
+            <label>لە بەروار:</label>
+            <input type="date" id="salesReportStartDate">
+            <label>تا بەروار:</label>
+            <input type="date" id="salesReportEndDate">
+            <button onclick="generateSalesReport()" style="background:#2563eb; color:white; border:none; padding:0.6rem 1.8rem; border-radius:2rem; font-weight:600;">
+              <i class="fas fa-search"></i> گەڕان
+            </button>
+          </div>
+          <div id="salesReportResult" class="report-container" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- Purchases Report -->
+      <div id="reportPurchasesPanel" class="panel">
+        <div class="card-glass">
+          <h3 style="margin-bottom:1rem;"><i class="fas fa-truck"></i> تەقریری کڕین</h3>
+          <div class="report-daterange">
+            <label>لە بەروار:</label>
+            <input type="date" id="purchasesReportStartDate">
+            <label>تا بەروار:</label>
+            <input type="date" id="purchasesReportEndDate">
+            <button onclick="generatePurchasesReport()" style="background:#dc2626; color:white; border:none; padding:0.6rem 1.8rem; border-radius:2rem; font-weight:600;">
+              <i class="fas fa-search"></i> گەڕان
+            </button>
+          </div>
+          <div id="purchasesReportResult" class="report-container" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- Persons Report -->
       <div id="reportPersonsPanel" class="panel">
         <div class="card-glass">
           <h3 style="margin-bottom:1rem;"><i class="fas fa-users"></i> تەقریری کەس یان شەریک</h3>
@@ -2140,26 +2174,6 @@
             </button>
           </div>
           <div id="personReportResult" class="report-container" style="display:none;"></div>
-        </div>
-      </div>
-
-      <div id="reportInvoicesPanel" class="panel">
-        <div class="card-glass">
-          <h3 style="margin-bottom:1rem;"><i class="fas fa-file-invoice"></i> گەڕان بەدوای فاکتوورەکان</h3>
-          <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center; margin-bottom:1.5rem;">
-            <div style="flex:1; min-width:200px;">
-              <input type="text" id="invoiceSearchInput" placeholder="ژمارەی فاکتوورە، ناوی کاڵا، یان ناوی کڕیار/شەریک..." style="width:100%; padding:0.7rem; border-radius:2rem; border:1px solid #cbd5e1;">
-            </div>
-            <select id="invoiceSearchType" style="padding:0.7rem 1rem; border-radius:2rem; border:1px solid #cbd5e1;">
-              <option value="all">📋 هەموو</option>
-              <option value="sale">🛒 فرۆشتن</option>
-              <option value="purchase">🚚 کڕین</option>
-            </select>
-            <button onclick="searchInvoices()" style="background:#2563eb; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:600;">
-              <i class="fas fa-search"></i> گەڕان
-            </button>
-          </div>
-          <div id="invoiceSearchResult" class="report-container" style="display:none;"></div>
         </div>
       </div>
     </div>
@@ -2182,20 +2196,6 @@
             🚧 لە ژێر کارکردندایە
           </span>
         </p>
-        <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-          <div style="background:#f8fafc; border-radius:1rem; padding:1rem 2rem; border:1px solid #e2e8f0;">
-            <div style="font-weight:700; color:#2563eb;">📈 قازانج</div>
-            <div style="font-size:0.8rem; color:#94a3b8;">لە وەشانی داهاتوو</div>
-          </div>
-          <div style="background:#f8fafc; border-radius:1rem; padding:1rem 2rem; border:1px solid #e2e8f0;">
-            <div style="font-weight:700; color:#059669;">📊 فرۆشتن</div>
-            <div style="font-size:0.8rem; color:#94a3b8;">لە وەشانی داهاتوو</div>
-          </div>
-          <div style="background:#f8fafc; border-radius:1rem; padding:1rem 2rem; border:1px solid #e2e8f0;">
-            <div style="font-weight:700; color:#7c3aed;">📋 کڕین</div>
-            <div style="font-size:0.8rem; color:#94a3b8;">لە وەشانی داهاتوو</div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -2427,12 +2427,10 @@
 
   // ===== TODAY MONEY CALCULATION (FIXED) =====
   function calculateTodayMoney() {
-    // پشکنینی ئەوەی ئایا دوای داخستنە یان نا
     const closingDate = localStorage.getItem('market_last_closing_date');
     if (closingDate) {
         const closingTime = new Date(closingDate);
         const today = new Date();
-        // ئەگەر ئەمڕۆ پێش یان هەمان کاتی داخستن بێت، گەڕاندنەوەی 0
         if (today <= closingTime) {
             return 0;
         }
@@ -4017,13 +4015,216 @@
 
   window.switchReportTab = function(tab) {
     document.querySelectorAll('.report-section-tab').forEach(t => t.classList.remove('active'));
+    const tabMap = {
+      'products': 'reportProductsPanel',
+      'sales': 'reportSalesPanel',
+      'purchases': 'reportPurchasesPanel',
+      'persons': 'reportPersonsPanel'
+    };
     document.querySelector(`[data-reporttab="${tab}"]`).classList.add('active');
-    document.getElementById('reportProductsPanel').classList.toggle('active', tab === 'products');
-    document.getElementById('reportPersonsPanel').classList.toggle('active', tab === 'persons');
-    document.getElementById('reportInvoicesPanel').classList.toggle('active', tab === 'invoices');
+    Object.values(tabMap).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('active', id === tabMap[tab]);
+    });
   };
 
-  // ===== PRODUCT REPORT =====
+  // ===== GENERATE SALES REPORT =====
+  window.generateSalesReport = function() {
+    const startDate = document.getElementById('salesReportStartDate').value;
+    const endDate = document.getElementById('salesReportEndDate').value;
+    const container = document.getElementById('salesReportResult');
+    
+    if (!startDate || !endDate) {
+      alert('تکایە بەرواری دەستپێک و کۆتایی دیاری بکە!');
+      return;
+    }
+    
+    if (startDate > endDate) {
+      alert('بەرواری دەستپێک دەبێت پێش بەرواری کۆتایی بێت!');
+      return;
+    }
+    
+    const filteredSales = saleHistory.filter(s => {
+      try {
+        const saleDate = s.date.split(' ')[0];
+        return saleDate >= startDate && saleDate <= endDate;
+      } catch(e) { return false; }
+    });
+    
+    if (!filteredSales.length) {
+      container.style.display = 'block';
+      container.innerHTML = `
+        <div style="text-align:center; padding:2rem; color:#94a3b8;">
+          <i class="fas fa-info-circle" style="font-size:2rem; display:block; margin-bottom:1rem;"></i>
+          هیچ فرۆشتنێک لەم ماوەیەدا نەدۆزرایەوە
+        </div>
+      `;
+      return;
+    }
+    
+    const totalAmount = filteredSales.reduce((sum, s) => sum + s.total, 0);
+    const totalInvoices = filteredSales.length;
+    
+    let reportHTML = `
+      <div class="report-header no-print">
+        <div>
+          <div class="report-title">📊 تەقریری فرۆشتن</div>
+          <div class="report-subtitle">لە ${startDate} تا ${endDate}</div>
+        </div>
+        <button class="report-print-btn" onclick="window.print()">
+          <i class="fas fa-print"></i> پرێنت
+        </button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
+        <div style="background:#dbeafe; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem;">${totalInvoices}</div>
+          <div style="color:#64748b; font-size:0.9rem;">ژمارەی فاکتوورەکان</div>
+        </div>
+        <div style="background:#d1fae5; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem; color:#059669;">${totalAmount.toLocaleString()} د.ع</div>
+          <div style="color:#64748b; font-size:0.9rem;">کۆی گشتی فرۆشتن</div>
+        </div>
+        <div style="background:#fef3c7; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem; color:#7c3aed;">${(totalInvoices > 0 ? (totalAmount / totalInvoices).toFixed(0) : 0).toLocaleString()} د.ع</div>
+          <div style="color:#64748b; font-size:0.9rem;">تێکڕای هەر فاکتوورە</div>
+        </div>
+      </div>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ژمارەی فاکتوورە</th>
+            <th>بەروار</th>
+            <th>کڕیار</th>
+            <th>کاڵاکان</th>
+            <th>کۆی گشتی</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filteredSales.map((s, idx) => `
+            <tr>
+              <td>${idx + 1}</td>
+              <td><strong>${s.id}</strong></td>
+              <td>${s.date}</td>
+              <td>${s.customer}</td>
+              <td style="font-size:0.85rem;">${s.items.map(i => `${i.name} (${i.qty})`).join('، ')}</td>
+              <td style="font-weight:700; color:#059669;">${s.total.toLocaleString()} د.ع</td>
+            </tr>
+          `).join('')}
+        </tbody>
+        <tfoot>
+          <tr style="font-weight:700; background:#f1f5f9;">
+            <td colspan="5">کۆی گشتی فرۆشتن</td>
+            <td style="font-size:1.1rem; color:#059669;">${totalAmount.toLocaleString()} د.ع</td>
+          </tr>
+        </tfoot>
+      </table>
+    `;
+    
+    container.style.display = 'block';
+    container.innerHTML = reportHTML;
+  };
+
+  // ===== GENERATE PURCHASES REPORT =====
+  window.generatePurchasesReport = function() {
+    const startDate = document.getElementById('purchasesReportStartDate').value;
+    const endDate = document.getElementById('purchasesReportEndDate').value;
+    const container = document.getElementById('purchasesReportResult');
+    
+    if (!startDate || !endDate) {
+      alert('تکایە بەرواری دەستپێک و کۆتایی دیاری بکە!');
+      return;
+    }
+    
+    if (startDate > endDate) {
+      alert('بەرواری دەستپێک دەبێت پێش بەرواری کۆتایی بێت!');
+      return;
+    }
+    
+    const filteredPurchases = purchaseHistory.filter(p => {
+      try {
+        const purchaseDate = p.date.split(' ')[0];
+        return purchaseDate >= startDate && purchaseDate <= endDate;
+      } catch(e) { return false; }
+    });
+    
+    if (!filteredPurchases.length) {
+      container.style.display = 'block';
+      container.innerHTML = `
+        <div style="text-align:center; padding:2rem; color:#94a3b8;">
+          <i class="fas fa-info-circle" style="font-size:2rem; display:block; margin-bottom:1rem;"></i>
+          هیچ کڕینێک لەم ماوەیەدا نەدۆزرایەوە
+        </div>
+      `;
+      return;
+    }
+    
+    const totalAmount = filteredPurchases.reduce((sum, p) => sum + p.total, 0);
+    const totalInvoices = filteredPurchases.length;
+    
+    let reportHTML = `
+      <div class="report-header no-print">
+        <div>
+          <div class="report-title">📊 تەقریری کڕین</div>
+          <div class="report-subtitle">لە ${startDate} تا ${endDate}</div>
+        </div>
+        <button class="report-print-btn" onclick="window.print()">
+          <i class="fas fa-print"></i> پرێنت
+        </button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
+        <div style="background:#dbeafe; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem;">${totalInvoices}</div>
+          <div style="color:#64748b; font-size:0.9rem;">ژمارەی فاکتوورەکان</div>
+        </div>
+        <div style="background:#fef3c7; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem; color:#dc2626;">${totalAmount.toLocaleString()} د.ع</div>
+          <div style="color:#64748b; font-size:0.9rem;">کۆی گشتی کڕین</div>
+        </div>
+        <div style="background:#f3e8ff; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem; color:#7c3aed;">${(totalInvoices > 0 ? (totalAmount / totalInvoices).toFixed(0) : 0).toLocaleString()} د.ع</div>
+          <div style="color:#64748b; font-size:0.9rem;">تێکڕای هەر فاکتوورە</div>
+        </div>
+      </div>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ژمارەی فاکتوورە</th>
+            <th>بەروار</th>
+            <th>شەریک</th>
+            <th>کاڵاکان</th>
+            <th>جۆر</th>
+            <th>کۆی گشتی</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filteredPurchases.map((p, idx) => `
+            <tr>
+              <td>${idx + 1}</td>
+              <td><strong>${p.id}</strong></td>
+              <td>${p.date}</td>
+              <td>${p.partner}</td>
+              <td style="font-size:0.85rem;">${p.items.map(i => `${i.name} (${i.qty})`).join('، ')}</td>
+              <td><span style="background:${p.isCash ? '#d1fae5' : '#fef3c7'}; padding:0.2rem 0.8rem; border-radius:1rem;">${p.isCash ? 'نەقدی' : 'قەرز'}</span></td>
+              <td style="font-weight:700; color:#dc2626;">${p.total.toLocaleString()} د.ع</td>
+            </tr>
+          `).join('')}
+        </tbody>
+        <tfoot>
+          <tr style="font-weight:700; background:#f1f5f9;">
+            <td colspan="6">کۆی گشتی کڕین</td>
+            <td style="font-size:1.1rem; color:#dc2626;">${totalAmount.toLocaleString()} د.ع</td>
+          </tr>
+        </tfoot>
+      </table>
+    `;
+    
+    container.style.display = 'block';
+    container.innerHTML = reportHTML;
+  };
+
+  // ===== PRODUCT REPORT WITH FULL DETAILS =====
   window.generateProductReport = function() {
     const input = document.getElementById('productReportSearch');
     const query = input.value.trim();
@@ -4064,6 +4265,8 @@
     let totalSoldAmount = 0;
     let totalPurchased = 0;
     let totalPurchasedAmount = 0;
+    let totalDamaged = 0;
+    let totalExpired = 0;
     let saleInvoices = [];
     let purchaseInvoices = [];
 
@@ -4087,13 +4290,20 @@
       });
     });
 
+    expiredDamagedProducts.forEach(d => {
+      if (d.productName === product.name) {
+        if (d.type === 'damage') totalDamaged += d.quantity;
+        else if (d.type === 'expiry') totalExpired += d.quantity;
+      }
+    });
+
     const container = document.getElementById('productReportResult');
     container.style.display = 'block';
     
     let reportHTML = `
       <div class="report-header no-print">
         <div>
-          <div class="report-title">📦 تەقریری کاڵا</div>
+          <div class="report-title">📦 تەقریری کاڵا - وردەکاری تەواو</div>
           <div class="report-subtitle">${product.name} | بارکۆد: ${product.barcode}</div>
         </div>
         <button class="report-print-btn" onclick="window.print()">
@@ -4103,34 +4313,46 @@
       <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem;">
         <div style="background:#dbeafe; padding:1rem; border-radius:1rem; text-align:center;">
           <div style="font-weight:700; font-size:1.2rem;">${product.quantity}</div>
-          <div style="color:#64748b; font-size:0.9rem;">بڕی ماوە</div>
+          <div style="color:#64748b; font-size:0.9rem;">بڕی ماوە لە مخزن</div>
         </div>
         <div style="background:#d1fae5; padding:1rem; border-radius:1rem; text-align:center;">
-          <div style="font-weight:700; font-size:1.2rem;">${totalSold}</div>
+          <div style="font-weight:700; font-size:1.2rem; color:#059669;">${totalSold}</div>
           <div style="color:#64748b; font-size:0.9rem;">کۆی فرۆشراو</div>
         </div>
         <div style="background:#fef3c7; padding:1rem; border-radius:1rem; text-align:center;">
-          <div style="font-weight:700; font-size:1.2rem;">${totalPurchased}</div>
+          <div style="font-weight:700; font-size:1.2rem; color:#dc2626;">${totalPurchased}</div>
           <div style="color:#64748b; font-size:0.9rem;">کۆی کڕدراو</div>
         </div>
-        <div style="background:#f3e8ff; padding:1rem; border-radius:1rem; text-align:center;">
-          <div style="font-weight:700; font-size:1.2rem;">${product.sellPrice.toLocaleString()}</div>
-          <div style="color:#64748b; font-size:0.9rem;">نرخی فرۆشتن</div>
+        <div style="background:#fee2e2; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.2rem; color:#991b1b;">${totalDamaged + totalExpired}</div>
+          <div style="color:#64748b; font-size:0.9rem;">کۆی تێکچوو + بەسەرچوو</div>
         </div>
       </div>
       <div style="background:#f8fafc; border-radius:1rem; padding:1rem; margin-bottom:1.5rem;">
-        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:0.8rem;">
           <div><strong>🏷️ نرخی کڕین:</strong> ${product.buyPrice.toLocaleString()} د.ع</div>
+          <div><strong>🏷️ نرخی فرۆشتن:</strong> ${product.sellPrice.toLocaleString()} د.ع</div>
           <div><strong>📅 بەرواری بەسەرچوون:</strong> ${product.expiryDate || 'دیاری نەکراوە'}</div>
-          <div><strong>📊 کۆی بەهای فرۆشراو:</strong> ${totalSoldAmount.toLocaleString()} د.ع</div>
-          <div><strong>📊 کۆی بەهای کڕدراو:</strong> ${totalPurchasedAmount.toLocaleString()} د.ع</div>
+          <div><strong>📦 یەکە:</strong> ${product.unit}</div>
+          <div><strong>💰 بەهای فرۆشراو:</strong> ${totalSoldAmount.toLocaleString()} د.ع</div>
+          <div><strong>💰 بەهای کڕدراو:</strong> ${totalPurchasedAmount.toLocaleString()} د.ع</div>
+        </div>
+      </div>
+      <div class="report-product-detail">
+        <div class="stat-grid">
+          <div class="stat-item"><div class="number">${product.quantity}</div><div class="label">ماوە لە مخزن</div></div>
+          <div class="stat-item"><div class="number">${totalSold}</div><div class="label">فرۆشراو</div></div>
+          <div class="stat-item"><div class="number">${totalPurchased}</div><div class="label">کڕدراو</div></div>
+          <div class="stat-item"><div class="number" style="color:#991b1b;">${totalDamaged}</div><div class="label">تێکچوو</div></div>
+          <div class="stat-item"><div class="number" style="color:#b45309;">${totalExpired}</div><div class="label">بەسەرچوو</div></div>
+          <div class="stat-item"><div class="number" style="color:#059669;">${(totalSoldAmount - (totalSold * product.buyPrice)).toLocaleString()} د.ع</div><div class="label">قازانج</div></div>
         </div>
       </div>
     `;
 
     if (saleInvoices.length) {
       reportHTML += `
-        <h4 style="margin:1rem 0 0.5rem;">🛒 فاکتوورەکانی فرۆشتن</h4>
+        <h4 style="margin:1.5rem 0 0.5rem;">🛒 فاکتوورەکانی فرۆشتن</h4>
         <table class="report-table">
           <thead><tr><th>ژمارە</th><th>بەروار</th><th>کڕیار</th><th>بڕ</th><th>نرخ</th><th>کۆ</th></tr></thead>
           <tbody>
@@ -5555,7 +5777,13 @@
     else if (view === 'employees') { renderEmployeesList(); renderEmployeeSalaryHistory(); renderEmployeeLeaveHistory(); document.getElementById('employeeDetailPanel').innerHTML = '<p style="color:#94a3b8; text-align:center;">کارمەندێک هەڵبژێرە بۆ بینینی زانیاری</p>'; }
     else if (view === 'security') { updateAdminDisplay(); }
     else if (view === 'accounting') { updateAccountingDisplay(); renderClosingHistory(); }
-    else if (view === 'reports') { /* nothing special */ }
+    else if (view === 'reports') { 
+      // Default to products tab
+      document.querySelectorAll('.report-section-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('[data-reporttab="products"]')?.classList.add('active');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('reportProductsPanel').classList.add('active');
+    }
     else if (view === 'quickpay') { renderQuickPayHistory(); updateQuickPayStats(); }
     else if (view === 'general_report') { 
       showToast('📊 بەشی ڕاپۆرتی گشتی لە وەشانی داهاتوودا دەبێت!', 'info'); 
@@ -7311,7 +7539,7 @@
       if (backup.data.warehouseProducts) { warehouseProducts = backup.data.warehouseProducts; saveWarehouseProducts(); }
       if (backup.data.moneyRequests) { moneyRequests = backup.data.moneyRequests; saveMoneyRequests(); }
       if (backup.data.purchaseHistory) { purchaseHistory = backup.data.purchaseHistory; savePurchaseHistory(); }
-      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backupData.expiredDamagedProducts; saveExpiryDamage(); }
+      if (backup.data.expiredDamagedProducts) { expiredDamagedProducts = backup.data.expiredDamagedProducts; saveExpiryDamage(); }
       if (backup.data.returnHistory) { returnHistory = backup.data.returnHistory; saveReturnHistory(); }
       if (backup.data.purchaseReturnHistory) { purchaseReturnHistory = backup.data.purchaseReturnHistory; savePurchaseReturnHistory(); }
       if (backup.data.employees) { employees = backup.data.employees; saveEmployees(); }
@@ -9185,7 +9413,6 @@
         minute: '2-digit'
     });
 
-    // پشکنینی ئەوەی ئایا پێشتر داخستن کراوە یان نا
     const existingClosingDate = localStorage.getItem('market_last_closing_date');
     let filteredSales = saleHistory;
     let filteredPurchases = purchaseHistory;
