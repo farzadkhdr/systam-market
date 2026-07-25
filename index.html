@@ -384,6 +384,7 @@
     <div id="dashboardStats" class="stats-grid">
       <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h4 id="statTotalSales">0</h4><span>کۆی فرۆشتن</span></div></div>
       <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-truck"></i></div><div class="stat-info"><h4 id="statTotalPurchases">0</h4><span>کۆی کڕین</span></div></div>
+      <div class="stat-card"><div class="stat-icon amber"><i class="fas fa-money-bill-wave"></i></div><div class="stat-info"><h4 id="statTotalCashPurchases">0</h4><span>کۆی کڕینی نەقدی</span></div></div>
       <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-info"><h4 id="statTotalMoneyReceived">0</h4><span>کۆی پارەی واسڵکراو</span></div></div>
       <div class="stat-card"><div class="stat-icon red"><i class="fas fa-coins"></i></div><div class="stat-info"><h4 id="statTotalSpendAndExpenses">0</h4><span>کۆی سەرف و مەسروفات</span></div></div>
       <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h4 id="statTodayMoney">0</h4><span>واسڵی ئەمرۆ</span></div></div>
@@ -2172,30 +2173,25 @@
         <button class="back-btn" onclick="navigateTo('dashboard')"><i class="fas fa-arrow-right"></i> داشبۆرد</button>
         <div class="page-title"><i class="fas fa-chart-pie" style="color:#5b21b6;"></i> ڕاپۆرتی گشتی</div>
       </div>
-      <div class="card-glass" style="text-align:center; padding:4rem 2rem;">
-        <i class="fas fa-chart-pie" style="font-size:4rem; color:#5b21b6; opacity:0.3; display:block; margin-bottom:1.5rem;"></i>
-        <h3 style="color:#1e293b; margin-bottom:1rem;">📊 ڕاپۆرتی گشتی</h3>
-        <p style="color:#64748b; font-size:1.1rem; max-width:500px; margin:0 auto;">
-          ئەم بەشە لە وەشانی داهاتووی سیستەمدا دەبێت.
-          <br><br>
-          <span style="background:#ede9fe; padding:0.5rem 1.5rem; border-radius:2rem; display:inline-block; margin-top:1rem; color:#5b21b6; font-weight:600;">
-            🚧 لە ژێر کارکردندایە
-          </span>
-        </p>
-        <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-          <div style="background:#f8fafc; border-radius:1rem; padding:1rem 2rem; border:1px solid #e2e8f0;">
-            <div style="font-weight:700; color:#2563eb;">📈 قازانج</div>
-            <div style="font-size:0.8rem; color:#94a3b8;">لە وەشانی داهاتوو</div>
+      <div class="card-glass">
+        <h3 style="margin-bottom:1.5rem;"><i class="fas fa-calendar-alt"></i> هەڵبژاردنی ماوەی ڕاپۆرت</h3>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:end; margin-bottom:1.5rem;">
+          <div>
+            <label style="font-weight:600; display:block; margin-bottom:0.3rem;">لە بەروار:</label>
+            <input type="date" id="reportDateFrom" style="padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; font-size:1rem;">
           </div>
-          <div style="background:#f8fafc; border-radius:1rem; padding:1rem 2rem; border:1px solid #e2e8f0;">
-            <div style="font-weight:700; color:#059669;">📊 فرۆشتن</div>
-            <div style="font-size:0.8rem; color:#94a3b8;">لە وەشانی داهاتوو</div>
+          <div>
+            <label style="font-weight:600; display:block; margin-bottom:0.3rem;">تا بەروار:</label>
+            <input type="date" id="reportDateTo" style="padding:0.7rem; border-radius:1.5rem; border:1px solid #cbd5e1; font-size:1rem;">
           </div>
-          <div style="background:#f8fafc; border-radius:1rem; padding:1rem 2rem; border:1px solid #e2e8f0;">
-            <div style="font-weight:700; color:#7c3aed;">📋 کڕین</div>
-            <div style="font-size:0.8rem; color:#94a3b8;">لە وەشانی داهاتوو</div>
-          </div>
+          <button onclick="generateGeneralReport()" style="background:#5b21b6; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:600; cursor:pointer;">
+            <i class="fas fa-chart-line"></i> دروستکردنی ڕاپۆرت
+          </button>
+          <button onclick="window.print()" class="no-print" style="background:#0f172a; color:white; border:none; padding:0.7rem 2rem; border-radius:2rem; font-weight:600; cursor:pointer;">
+            <i class="fas fa-print"></i> پرێنت
+          </button>
         </div>
+        <div id="generalReportResult" class="report-container" style="display:none;"></div>
       </div>
     </div>
   </div>
@@ -2953,7 +2949,7 @@
     `).join('');
   }
 
-  // ===== UPDATE STATS (FIXED WITH CLOSING SUPPORT) =====
+  // ===== UPDATE STATS (FIXED WITH CLOSING SUPPORT + TOTAL CASH PURCHASES) =====
   function updateStats() {
     const closingDate = localStorage.getItem('market_last_closing_date');
     
@@ -2991,6 +2987,12 @@
     
     const totalSales = filteredSales.reduce((sum, s) => sum + (s.total || 0), 0);
     const totalPurchases = filteredPurchases.reduce((sum, p) => sum + (p.total || 0), 0);
+    
+    // کۆی کڕینی نەقدی
+    const totalCashPurchases = filteredPurchases
+      .filter(p => p.isCash === true)
+      .reduce((sum, p) => sum + (p.total || 0), 0);
+    
     const totalMoneyReceived = filteredMoneyRequests
         .filter(r => r.isTransfer === true && !r.isJemgeza && !r.wasTransferred)
         .reduce((sum, r) => sum + (r.amount || 0), 0);
@@ -3010,7 +3012,6 @@
     const profit = totalSales - totalPurchases - totalSpendAndExpenses;
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     
-    // قازانجی کویک پەی - بەبێ resetەکان
     const resetHistory = JSON.parse(localStorage.getItem('market_quickpay_reset_history') || '[]');
     const totalResetAmount = resetHistory.reduce((sum, r) => sum + (r.amount || 0), 0);
     const quickPayProfit = (quickPayAddedTotal) - quickPaySalesTotal;
@@ -3018,6 +3019,7 @@
     const statMap = {
         'statTotalSales': totalSales,
         'statTotalPurchases': totalPurchases,
+        'statTotalCashPurchases': totalCashPurchases,
         'statTotalMoneyReceived': totalMoneyReceived,
         'statTotalSpendAndExpenses': totalSpendAndExpenses,
         'statTotalProducts': totalProducts,
@@ -3048,7 +3050,6 @@
     
     const statQuickPayProfitEl = document.getElementById('statQuickPayProfit');
     if (statQuickPayProfitEl) {
-        // قازانجی ڕاستەقینەی کویک پەی - تێکراو منهای فرۆشتن (بەبێ کاریگەری reset)
         const trueQuickPayProfit = quickPayAddedTotal - quickPaySalesTotal;
         statQuickPayProfitEl.textContent = trueQuickPayProfit.toLocaleString();
         statQuickPayProfitEl.className = trueQuickPayProfit > 0 ? 'profit-positive' : trueQuickPayProfit < 0 ? 'profit-negative' : 'profit-zero';
@@ -4029,6 +4030,156 @@
     document.getElementById('reportProductsPanel').classList.toggle('active', tab === 'products');
     document.getElementById('reportPersonsPanel').classList.toggle('active', tab === 'persons');
     document.getElementById('reportInvoicesPanel').classList.toggle('active', tab === 'invoices');
+  };
+
+  // ===== GENERAL REPORT FUNCTION =====
+  window.generateGeneralReport = function() {
+    const dateFrom = document.getElementById('reportDateFrom').value;
+    const dateTo = document.getElementById('reportDateTo').value;
+    
+    if (!dateFrom || !dateTo) {
+      alert('تکایە هەردوو بەروار (لە و تا) هەڵبژێرە!');
+      return;
+    }
+    
+    const from = new Date(dateFrom);
+    const to = new Date(dateTo);
+    to.setHours(23, 59, 59, 999);
+    
+    if (from > to) {
+      alert('بەرواری "لە" دەبێت پێش "تا" بێت!');
+      return;
+    }
+
+    const filteredSales = saleHistory.filter(s => {
+      try {
+        const sDate = new Date(s.date);
+        return sDate >= from && sDate <= to;
+      } catch(e) { return false; }
+    });
+
+    const filteredPurchases = purchaseHistory.filter(p => {
+      try {
+        const pDate = new Date(p.date);
+        return pDate >= from && pDate <= to;
+      } catch(e) { return false; }
+    });
+
+    const filteredExpenses = expenseHistory.filter(e => {
+      try {
+        const eDate = new Date(e.date);
+        return eDate >= from && eDate <= to;
+      } catch(e) { return false; }
+    });
+
+    const filteredGiveMoney = giveMoneyHistory.filter(g => {
+      try {
+        const gDate = new Date(g.date);
+        return gDate >= from && gDate <= to;
+      } catch(e) { return false; }
+    });
+
+    const totalSales = filteredSales.reduce((sum, s) => sum + (s.total || 0), 0);
+    const totalPurchases = filteredPurchases.reduce((sum, p) => sum + (p.total || 0), 0);
+    const totalExpenses = filteredExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const totalGive = filteredGiveMoney.reduce((sum, g) => sum + (g.amount || 0), 0);
+    
+    const profit = totalSales - totalPurchases - totalExpenses - totalGive;
+
+    const container = document.getElementById('generalReportResult');
+    container.style.display = 'block';
+    
+    let salesItemsHTML = '';
+    if (filteredSales.length) {
+      salesItemsHTML = filteredSales.map(s => `
+        <tr>
+          <td><strong>${s.id}</strong></td>
+          <td>${s.date}</td>
+          <td>${s.customer || 'کاش'}</td>
+          <td>${s.items.map(i => `${i.name} (${i.qty})`).join('، ')}</td>
+          <td style="font-weight:700; color:#059669;">${s.total.toLocaleString()} د.ع</td>
+        </tr>
+      `).join('');
+    } else {
+      salesItemsHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">هیچ فرۆشتنێک لەم ماوەیەدا نییە</td></tr>`;
+    }
+
+    let purchaseItemsHTML = '';
+    if (filteredPurchases.length) {
+      purchaseItemsHTML = filteredPurchases.map(p => `
+        <tr>
+          <td><strong>${p.id}</strong></td>
+          <td>${p.date}</td>
+          <td>${p.partner || '-'}</td>
+          <td>${p.items.map(i => `${i.name} (${i.qty})`).join('، ')}</td>
+          <td style="font-weight:700; color:#dc2626;">${p.total.toLocaleString()} د.ع</td>
+        </tr>
+      `).join('');
+    } else {
+      purchaseItemsHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">هیچ کڕینێک لەم ماوەیەدا نییە</td></tr>`;
+    }
+
+    container.innerHTML = `
+      <div class="report-header no-print">
+        <div>
+          <div class="report-title">📊 ڕاپۆرتی گشتی</div>
+          <div class="report-subtitle">ماوە: ${dateFrom} تا ${dateTo}</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:1rem; margin-bottom:1.5rem;">
+        <div style="background:#dbeafe; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.3rem; color:#1e40af;">${totalSales.toLocaleString()} د.ع</div>
+          <div style="color:#64748b; font-size:0.9rem;">🛒 کۆی فرۆشتن</div>
+        </div>
+        <div style="background:#fef3c7; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.3rem; color:#b45309;">${totalPurchases.toLocaleString()} د.ع</div>
+          <div style="color:#64748b; font-size:0.9rem;">📦 کۆی کڕین</div>
+        </div>
+        <div style="background:#fee2e2; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:700; font-size:1.3rem; color:#991b1b;">${(totalExpenses + totalGive).toLocaleString()} د.ع</div>
+          <div style="color:#64748b; font-size:0.9rem;">💸 کۆی مەسروفات</div>
+        </div>
+        <div style="background:${profit >= 0 ? '#d1fae5' : '#fee2e2'}; padding:1rem; border-radius:1rem; text-align:center;">
+          <div style="font-weight:800; font-size:1.5rem; color:${profit >= 0 ? '#059669' : '#dc2626'};">${profit.toLocaleString()} د.ع</div>
+          <div style="color:#64748b; font-size:0.9rem;">📈 قازانج (فرۆشتن - کڕین - مەسروفات)</div>
+        </div>
+      </div>
+
+      <h4 style="margin:1.5rem 0 0.5rem; display:flex; align-items:center; gap:0.5rem;">
+        <i class="fas fa-shopping-cart" style="color:#2563eb;"></i> وردەکاری فرۆشتنەکان
+      </h4>
+      <table class="report-table">
+        <thead><tr><th>ژمارە</th><th>بەروار</th><th>کڕیار</th><th>کاڵاکان</th><th>کۆ</th></tr></thead>
+        <tbody>${salesItemsHTML}</tbody>
+        <tfoot>
+          <tr style="font-weight:700; background:#dbeafe;">
+            <td colspan="4">کۆی گشتی فرۆشتن</td>
+            <td>${totalSales.toLocaleString()} د.ع</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <h4 style="margin:1.5rem 0 0.5rem; display:flex; align-items:center; gap:0.5rem;">
+        <i class="fas fa-truck" style="color:#b45309;"></i> وردەکاری کڕینەکان
+      </h4>
+      <table class="report-table">
+        <thead><tr><th>ژمارە</th><th>بەروار</th><th>شەریک</th><th>کاڵاکان</th><th>کۆ</th></tr></thead>
+        <tbody>${purchaseItemsHTML}</tbody>
+        <tfoot>
+          <tr style="font-weight:700; background:#fef3c7;">
+            <td colspan="4">کۆی گشتی کڕین</td>
+            <td>${totalPurchases.toLocaleString()} د.ع</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div style="margin-top:1.5rem; background:#f8fafc; border-radius:1rem; padding:1rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; border:2px solid #e2e8f0;">
+        <div><strong>📊 ژمارەی فرۆشتن:</strong> ${filteredSales.length}</div>
+        <div><strong>📊 ژمارەی کڕین:</strong> ${filteredPurchases.length}</div>
+        <div><strong>💰 قازانجی خاوەن کار:</strong> <span style="font-weight:800; color:${profit >= 0 ? '#059669' : '#dc2626'};">${profit.toLocaleString()} د.ع</span></div>
+      </div>
+    `;
   };
 
   // ===== PRODUCT REPORT =====
@@ -5566,7 +5717,27 @@
     else if (view === 'reports') { /* nothing special */ }
     else if (view === 'quickpay') { renderQuickPayHistory(); updateQuickPayStats(); }
     else if (view === 'general_report') { 
-      showToast('📊 بەشی ڕاپۆرتی گشتی لە وەشانی داهاتوودا دەبێت!', 'info'); 
+      // دانانی بەرواری بنەڕەت (ئەمڕۆ و ٣٠ ڕۆژ پێش)
+      const today = new Date();
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(today.getDate() - 30);
+      
+      const fromInput = document.getElementById('reportDateFrom');
+      const toInput = document.getElementById('reportDateTo');
+      
+      if (fromInput) {
+        fromInput.value = thirtyDaysAgo.toISOString().split('T')[0];
+      }
+      if (toInput) {
+        toInput.value = today.toISOString().split('T')[0];
+      }
+      
+      // خاڵیکردنەوەی ئەنجامی پێشوو
+      const result = document.getElementById('generalReportResult');
+      if (result) {
+        result.style.display = 'none';
+        result.innerHTML = '';
+      }
     }
   };
 
