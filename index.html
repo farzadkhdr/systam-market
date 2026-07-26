@@ -166,7 +166,7 @@
     .login-logo .subtitle span { color:#a78bfa; font-weight:600; background:rgba(167,139,250,0.15); padding:0.1rem 0.8rem; border-radius:1rem; border:1px solid rgba(167,139,250,0.2); }
     .login-error { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#fca5a5; border-radius:1.2rem; padding:0.8rem 1.2rem; font-size:0.9rem; text-align:center; margin-bottom:1.5rem; display:none; backdrop-filter:blur(5px); }
     .login-error.show { display:block; animation:shake 0.5s ease; }
-    @keyframes shake { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-8px); } 75% { transform:translateX(8px); } }
+    @keyframes shake { 0%,100% { transform:translateX(0); } 50% { transform:translateX(-8px); } 75% { transform:translateX(8px); } }
     .login-input-group { margin-bottom:1.5rem; position:relative; }
     .login-input-group label { display:block; color:rgba(255,255,255,0.6); font-size:0.8rem; font-weight:600; margin-bottom:0.4rem; letter-spacing:0.5px; text-transform:uppercase; }
     .login-input-group .input-wrapper { display:flex; align-items:center; background:rgba(255,255,255,0.06); border-radius:1.5rem; border:2px solid rgba(255,255,255,0.08); transition:all 0.3s ease; overflow:hidden; }
@@ -8357,7 +8357,7 @@
     updateStats();
   };
 
-  // ===== COMPLETE PURCHASE =====
+  // ===== COMPLETE PURCHASE - FIXED: Money deducted from Total Money, not Today Money =====
   window.completePurchase = function() {
     if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
     if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
@@ -8374,6 +8374,7 @@
     saveWarehouseProducts();
     
     if (!isCash) {
+      // قەرز: زیادکردنی قەرز بۆ شەریک
       const currentDebt = selectedPurchasePartner.debt || 0;
       let newDebt = currentDebt;
       if (currentDebt === 0) {
@@ -8398,15 +8399,28 @@
       });
       savePartners();
     } else {
+      // نەقدی: کەمکردنەوەی پارە لە کۆی پارەی واسڵکراو (نەک واسڵی ئەمرۆ)
+      const totalMoneyBefore = moneyRequests
+        .filter(r => r.isTransfer === true && !r.isJemgeza && !r.wasTransferred)
+        .reduce((sum, r) => sum + (r.amount || 0), 0);
+      
+      if (totalMoneyBefore < total) {
+        alert(`پارەی تەواو لە کۆی گشتی پارەی واسڵکراو نییە!\nپارەی هەیە: ${totalMoneyBefore.toLocaleString()} د.ع\nپارەی پێویست: ${total.toLocaleString()} د.ع`);
+        return;
+      }
+      
+      // تۆمارکردنی کەمکردنەوە لە کۆی پارەی واسڵکراو
       moneyRequests.push({
-        id: 'PUR-MONEY' + Date.now(),
+        id: 'PUR-MONEY-' + Date.now(),
         date: dateStr,
-        type: 'purchase',
+        type: 'purchase_cash',
         entityName: selectedPurchasePartner.name,
         entityPhone: selectedPurchasePartner.phone,
         amount: -total,
-        note: `کڕین ${invId}`,
+        note: `کڕینی نەقدی ${invId}`,
         isTransfer: false,
+        isExpense: false, // وەک مەسروفات ناژمێردرێت
+        isPurchaseCash: true,
         ignoreInTodayCalculation: true
       });
       saveMoneyRequests();
@@ -8423,7 +8437,9 @@
     renderPurchaseHistory();
     renderPartnersList();
     renderLowStockProducts();
-    alert(`کڕین بە سەرکەوتوویی تۆمارکرا!\nژمارەی فاکتوورە: ${invId}\nکۆی گشتی: ${total.toLocaleString()} د.ع`);
+    
+    const cashText = isCash ? 'نەقدی' : 'قەرز';
+    alert(`کڕین بە سەرکەوتوویی تۆمارکرا!\nژمارەی فاکتوورە: ${invId}\nکۆی گشتی: ${total.toLocaleString()} د.ع\nجۆر: ${cashText}`);
   };
 
   // ===== AGENTS FUNCTIONS =====
@@ -9348,7 +9364,7 @@
     }
   });
 
-  // ===== ACCOUNT CLOSING SYSTEM - COMPLETE FIX =====
+  // ===== ACCOUNT CLOSING SYSTEM =====
   window.closeAccountingPeriod = function() {
     if (!isAdmin()) {
       alert('تەنیا بەڕێوەبەر دەتوانێت ئەم کارە بکات!');
@@ -9465,10 +9481,8 @@
 
     localStorage.setItem('market_jemgeza', '0');
 
-    // ===== گۆڕانکاری سەرەکی: تەنها هاوسەنگی کویک پەی سفر بکە، نەک کۆی فرۆشتن و تێکراو =====
     quickPayBalance = 0;
     localStorage.setItem('market_quickpay_balance', '0');
-    // quickPaySalesTotal و quickPayAddedTotal سفر نەکە چونکە مێژووی قازانجن
 
     quickPayHistory.push({
         id: 'RESET-QP-' + Date.now(),
@@ -9581,7 +9595,6 @@
     localStorage.setItem('market_jemgeza', record.jemgeza.toString());
 
     quickPayBalance = record.quickPayBalance || 0;
-    // quickPaySalesTotal و quickPayAddedTotal گەڕاندنەوە (ئەگەر پێویست بکات)
     if (record.quickPaySalesTotal !== undefined) {
       quickPaySalesTotal = record.quickPaySalesTotal;
       localStorage.setItem('market_quickpay_sales_total', quickPaySalesTotal.toString());
