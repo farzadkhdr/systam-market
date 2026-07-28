@@ -392,7 +392,7 @@
       <div class="stat-card"><div class="stat-icon indigo"><i class="fas fa-users"></i></div><div class="stat-info"><h4 id="statTotalPersons">0</h4><span>کۆی کەسەکان</span></div></div>
       <div class="stat-card"><div class="stat-icon pink"><i class="fas fa-hand-holding-heart"></i></div><div class="stat-info"><h4 id="statMyDebtToPartners">0</h4><span>قەرزاری من بۆ شەریک</span></div></div>
       <div class="stat-card"><div class="stat-icon green"><i class="fas fa-handshake"></i></div><div class="stat-info"><h4 id="statPersonsDebtToMe">0</h4><span>قەرزاری کەسەکان بۆ من</span></div></div>
-      <div class="stat-card profit-card"><div class="stat-icon gold"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h4 id="statProfit">0</h4><span>📈 قازانج (کۆی واسڵکراو - کۆی سەرف و مەسروفات)</span></div></div>
+      <div class="stat-card profit-card"><div class="stat-icon gold"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h4 id="statProfit">0</h4><span>قازانج (فرۆشتن - کڕین - سەرف)</span></div></div>
       <div class="stat-card jemgeza-card"><div class="stat-icon amber"><i class="fas fa-piggy-bank"></i></div><div class="stat-info"><h4 id="statJemgeza">0</h4><span>جەمگزەی دووەم</span></div></div>
       <div class="stat-card quickpay-card"><div class="stat-icon violet"><i class="fas fa-bolt"></i></div><div class="stat-info"><h4 id="statQuickPay">0</h4><span>کویک پەی</span></div></div>
       <div class="stat-card quickpay-sales-card"><div class="stat-icon quickpay-sales"><i class="fas fa-bolt"></i></div><div class="stat-info"><h4 id="statQuickPaySales">0</h4><span>کۆی فرۆشتنی کویک پەی</span></div></div>
@@ -2287,6 +2287,21 @@
           }
         }
       }
+      
+      // زیاكردنی كاڵا لە سەبەتەی كڕین
+      const purchaseView = document.getElementById('purchaseView');
+      if (purchaseView && purchaseView.style.display !== 'none') {
+        const activePanel = document.querySelector('#purchaseView .panel.active');
+        if (activePanel && activePanel.id === 'newPurchasePanel') {
+          if (purchaseCart.length > 0) {
+            const lastIndex = purchaseCart.length - 1;
+            updatePurchaseCartQty(lastIndex, 1);
+            showToast('➕ بڕی كاڵا زیادكرا بە +1', 'success');
+            e.preventDefault();
+            return;
+          }
+        }
+      }
     }
 
     if (e.key === '-' || e.key === 'Minus') {
@@ -2303,6 +2318,28 @@
               if (confirm(`دڵنیایت لە سڕینەوەی "${cart[lastIndex].product.name}" لە سەبەتە؟`)) {
                 window.salesApp.removeItem(lastIndex);
                 showToast(`🗑️ "${cart[lastIndex]?.product?.name || 'کاڵا'}" سڕکرایەوە`, 'info');
+              }
+            }
+            e.preventDefault();
+            return;
+          }
+        }
+      }
+      
+      // كەمكردنی كاڵا لە سەبەتەی كڕین
+      const purchaseView = document.getElementById('purchaseView');
+      if (purchaseView && purchaseView.style.display !== 'none') {
+        const activePanel = document.querySelector('#purchaseView .panel.active');
+        if (activePanel && activePanel.id === 'newPurchasePanel') {
+          if (purchaseCart.length > 0) {
+            const lastIndex = purchaseCart.length - 1;
+            if (purchaseCart[lastIndex].quantity > 1) {
+              updatePurchaseCartQty(lastIndex, -1);
+              showToast('➖ بڕی کاڵا کەمکرا بە -1', 'success');
+            } else {
+              if (confirm(`دڵنیایت لە سڕینەوەی "${purchaseCart[lastIndex].product.name}" لە سەبەتە؟`)) {
+                removePurchaseCartItem(lastIndex);
+                showToast(`🗑️ "${purchaseCart[lastIndex]?.product?.name || 'کاڵا'}" سڕکرایەوە`, 'info');
               }
             }
             e.preventDefault();
@@ -2474,7 +2511,10 @@
          r.type === 'quickpay_add_from_today' ||
          r.type === 'quickpay_add_from_total' ||
          r.type === 'quickpay_add_from_jemgeza' ||
-         r.type === 'sales_return')
+         r.type === 'sales_return' ||
+         r.type === 'purchase' ||
+         r.type === 'purchase_return' ||
+         r.type === 'adjustment')
     ).reduce((sum, r) => sum + Math.abs(r.amount || 0), 0);
 
     const result = todayCashSales + todayCredits - todayDebits;
@@ -2946,7 +2986,7 @@
     `).join('');
   }
 
-  // ===== UPDATE STATS - FIXED =====
+  // ===== UPDATE STATS =====
   function updateStats() {
     const closingDate = localStorage.getItem('market_last_closing_date');
     
@@ -2990,25 +3030,23 @@
       .filter(p => p.isCash === true)
       .reduce((sum, p) => sum + (p.total || 0), 0);
     
-    // کۆی پارەی واسڵکراو
     const totalMoneyReceived = filteredMoneyRequests
         .filter(r => r.isTransfer === true && !r.isJemgeza && !r.wasTransferred)
         .reduce((sum, r) => sum + (r.amount || 0), 0);
-    
     const totalExpenses = filteredExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
     const totalGiveMoney = filteredGiveMoney.reduce((sum, g) => sum + (g.amount || 0), 0);
     
-    // کۆی سەرف و مەسروفات = مەسروفات + پارە پێدان + کڕینی نەقدی
-    const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalCashPurchases;
+    const totalSpend = filteredPurchases.filter(p => p.isCash).reduce((sum, p) => sum + (p.total || 0), 0) +
+                       employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + (sh.amount || 0), 0), 0) +
+                       returnHistory.reduce((sum, r) => sum + (r.refundAmount || 0), 0);
+    const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalSpend;
     
     const totalProducts = warehouseProducts.length;
     const totalPersons = customers.length;
     const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -(p.debt || 0)), 0);
     const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, (c.debt || 0)), 0);
     
-    // قازانج = کۆی پارەی واسڵکراو - کۆی سەرف و مەسروفات
-    const profit = totalMoneyReceived - totalSpendAndExpenses;
-    
+    const profit = totalSales - totalPurchases - totalSpendAndExpenses;
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     
     const resetHistory = JSON.parse(localStorage.getItem('market_quickpay_reset_history') || '[]');
@@ -3697,6 +3735,8 @@
     const jemgezaDisplay = document.getElementById('jemgezaBalanceDisplay');
     const jemgezaDisplay2 = document.getElementById('jemgezaBalanceDisplay2');
     const quickpaySalesDisplay = document.getElementById('quickpaySalesTotalDisplay');
+    
+    // نوێکردنەوەی دیسپلەی کویک پەی بۆ گواستنەوە بۆ کۆی گشتی
     const quickpaySalesDisplay2 = document.getElementById('quickpaySalesTotalDisplay2');
     const quickpaySalesDisplay3 = document.getElementById('quickpaySalesTotalDisplay3');
     const totalMoneyDisplay2 = document.getElementById('totalMoneyDisplay2');
@@ -5076,22 +5116,18 @@
     const now = new Date();
     const dateStr = dateTime ? new Date(dateTime).toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : now.toLocaleString('ckb');
     expenseHistory.unshift({ id: 'EXP' + Math.floor(Math.random() * 9000 + 1000), date: dateStr, amount: amount, category: category, note: note || category, timestamp: dateTime || now.toISOString() });
-    
-    // مەسروفات تەنها بۆ مەسروفاتەکان زیاد دەکات، لە واسڵکراو کەم ناکات
     moneyRequests.push({
       id: 'EXP-MONEY' + Date.now(),
       date: dateStr,
       type: 'expense',
       entityName: category,
       entityPhone: '-',
-      amount: 0,
+      amount: -amount,
       note: note || category,
       isTransfer: false,
       isExpense: true,
-      ignoreInTodayCalculation: true,
-      expenseAmount: amount
+      ignoreInTodayCalculation: true
     });
-    
     saveExpenseHistory();
     saveMoneyRequests();
     document.getElementById('expenseAmount').value = '';
@@ -5269,7 +5305,6 @@
       newDebt: (selectedGiveEntity.debt || 0) + amount
     });
     
-    // پارە پێدان: لە کۆی واسڵکراو کەم دەکات
     moneyRequests.push({
       id: 'GIVE-MONEY' + Date.now(),
       date: dateStr,
@@ -5280,7 +5315,6 @@
       note: note,
       isTransfer: false,
       isExpense: true,
-      isGiveMoney: true,
       ignoreInTodayCalculation: true
     });
     
@@ -5720,7 +5754,6 @@
     else if (view === 'reports') { /* nothing special */ }
     else if (view === 'quickpay') { renderQuickPayHistory(); updateQuickPayStats(); }
     else if (view === 'general_report') { 
-      // دانانی بەرواری بنەڕەت (ئەمڕۆ و ٣٠ ڕۆژ پێش)
       const today = new Date();
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(today.getDate() - 30);
@@ -5735,7 +5768,6 @@
         toInput.value = today.toISOString().split('T')[0];
       }
       
-      // خاڵیکردنەوەی ئەنجامی پێشوو
       const result = document.getElementById('generalReportResult');
       if (result) {
         result.style.display = 'none';
@@ -6158,12 +6190,11 @@
       type: 'expense',
       entityName: 'تێکچوونی کاڵا',
       entityPhone: '-',
-      amount: 0,
+      amount: -damageCost,
       note: `تێکچوونی کاڵا: ${product.name}`,
       isTransfer: false,
       isExpense: true,
-      ignoreInTodayCalculation: true,
-      expenseAmount: damageCost
+      ignoreInTodayCalculation: true
     });
     saveMoneyRequests();
     
@@ -8361,7 +8392,7 @@
     updateStats();
   };
 
-  // ===== COMPLETE PURCHASE - FIXED =====
+  // ===== COMPLETE PURCHASE =====
   window.completePurchase = function() {
     if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
     if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
@@ -8377,48 +8408,43 @@
     purchaseCart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity += item.quantity; });
     saveWarehouseProducts();
     
-    // کڕینی نەقدی: پارە لە کۆی واسڵکراو کەم دەکات
-    if (isCash) {
-        moneyRequests.push({
-            id: 'PUR-MONEY' + Date.now(),
-            date: dateStr,
-            type: 'purchase_cash',
-            entityName: selectedPurchasePartner.name,
-            entityPhone: selectedPurchasePartner.phone,
-            amount: -total,
-            note: `کڕینی نەقدی ${invId}`,
-            isTransfer: false,
-            isExpense: true,
-            isPurchase: true,
-            isCashPurchase: true,
-            ignoreInTodayCalculation: true
-        });
-        saveMoneyRequests();
+    if (!isCash) {
+      const currentDebt = selectedPurchasePartner.debt || 0;
+      let newDebt = currentDebt;
+      if (currentDebt === 0) {
+        newDebt = -total;
+      } else if (currentDebt > 0 && total <= currentDebt) {
+        newDebt = currentDebt - total;
+      } else if (currentDebt > 0 && total > currentDebt) {
+        newDebt = -(total - currentDebt);
+      } else if (currentDebt < 0) {
+        newDebt = currentDebt - total;
+      }
+      selectedPurchasePartner.debt = newDebt;
+      if (!selectedPurchasePartner.movements) selectedPurchasePartner.movements = [];
+      selectedPurchasePartner.movements.push({
+        type: 'purchase',
+        date: dateStr,
+        amount: total,
+        note: `کڕین ${invId}`,
+        invoiceId: invId,
+        oldDebt: currentDebt,
+        newDebt: newDebt
+      });
+      savePartners();
     } else {
-        // کڕینی قەرز: کاریگەری لەسەر پارە نییە
-        const currentDebt = selectedPurchasePartner.debt || 0;
-        let newDebt = currentDebt;
-        if (currentDebt === 0) {
-            newDebt = -total;
-        } else if (currentDebt > 0 && total <= currentDebt) {
-            newDebt = currentDebt - total;
-        } else if (currentDebt > 0 && total > currentDebt) {
-            newDebt = -(total - currentDebt);
-        } else if (currentDebt < 0) {
-            newDebt = currentDebt - total;
-        }
-        selectedPurchasePartner.debt = newDebt;
-        if (!selectedPurchasePartner.movements) selectedPurchasePartner.movements = [];
-        selectedPurchasePartner.movements.push({
-            type: 'purchase_credit',
-            date: dateStr,
-            amount: total,
-            note: `کڕینی قەرز ${invId}`,
-            invoiceId: invId,
-            oldDebt: currentDebt,
-            newDebt: newDebt
-        });
-        savePartners();
+      moneyRequests.push({
+        id: 'PUR-MONEY' + Date.now(),
+        date: dateStr,
+        type: 'purchase',
+        entityName: selectedPurchasePartner.name,
+        entityPhone: selectedPurchasePartner.phone,
+        amount: -total,
+        note: `کڕین ${invId}`,
+        isTransfer: false,
+        ignoreInTodayCalculation: true
+      });
+      saveMoneyRequests();
     }
     
     purchaseCart = [];
@@ -9357,7 +9383,7 @@
     }
   });
 
-  // ===== ACCOUNT CLOSING SYSTEM - COMPLETE FIX =====
+  // ===== ACCOUNT CLOSING SYSTEM =====
   window.closeAccountingPeriod = function() {
     if (!isAdmin()) {
       alert('تەنیا بەڕێوەبەر دەتوانێت ئەم کارە بکات!');
