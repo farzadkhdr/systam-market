@@ -3091,9 +3091,11 @@
     }
     
     const totalSales = filteredSales.reduce((sum, s) => sum + (s.total || 0), 0);
+    
+    // ===== کۆی کڕین =====
     const totalPurchases = filteredPurchases.reduce((sum, p) => sum + (p.total || 0), 0);
     
-    // کۆی کڕینی نەقدی
+    // کۆی کڕینی نەقدی (تەنها بۆ دیسپلەی ئامارەکان)
     const totalCashPurchases = filteredPurchases
       .filter(p => p.isCash === true)
       .reduce((sum, p) => sum + (p.total || 0), 0);
@@ -3101,20 +3103,25 @@
     const totalMoneyReceived = filteredMoneyRequests
         .filter(r => r.isTransfer === true && !r.isJemgeza && !r.wasTransferred)
         .reduce((sum, r) => sum + (r.amount || 0), 0);
+    
     const totalExpenses = filteredExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
     const totalGiveMoney = filteredGiveMoney.reduce((sum, g) => sum + (g.amount || 0), 0);
     
-    const totalSpend = filteredPurchases.filter(p => p.isCash).reduce((sum, p) => sum + (p.total || 0), 0) +
-                       employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + (sh.amount || 0), 0), 0) +
-                       returnHistory.reduce((sum, r) => sum + (r.refundAmount || 0), 0);
-    const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalSpend;
+    // ===== سەرف و مەسروفات: تەنها خەرجییە ڕاستەقینەکان =====
+    // کڕینی نەقدی لەمەدا نابێت چونکە لە totalPurchases هەیە
+    const employeeSalaries = employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + (sh.amount || 0), 0), 0);
+    const salesReturns = returnHistory.reduce((sum, r) => sum + (r.refundAmount || 0), 0);
+    
+    const totalSpendAndExpenses = totalExpenses + totalGiveMoney + employeeSalaries + salesReturns;
     
     const totalProducts = warehouseProducts.length;
     const totalPersons = customers.length;
     const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -(p.debt || 0)), 0);
     const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, (c.debt || 0)), 0);
     
+    // ===== قازانج =====
     const profit = totalSales - totalPurchases - totalSpendAndExpenses;
+    
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     
     const resetHistory = JSON.parse(localStorage.getItem('market_quickpay_reset_history') || '[]');
