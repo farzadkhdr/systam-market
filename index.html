@@ -8460,9 +8460,7 @@
     updateStats();
   };
 
-  // ============================================================
-  // ===== FIX: کڕینی نەقدی - کەمکردنەوە لە کۆی پارەی واسڵکراو =====
-  // ============================================================
+  // ===== FIX 1: کەمکردنەوەی پارەی واسڵکراو لە کڕینی نەقدی =====
   window.completePurchase = function() {
     if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
     if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
@@ -8471,13 +8469,13 @@
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     const isCash = !document.getElementById('creditPurchaseCheck')?.checked;
-
+    
     purchaseHistory.unshift({ id: invId, date: dateStr, partner: selectedPurchasePartner.name, partnerId: selectedPurchasePartner.id, total: total, isCash: isCash, items: purchaseCart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.product.buyPrice })) });
     savePurchaseHistory();
-
+    
     purchaseCart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity += item.quantity; });
     saveWarehouseProducts();
-
+    
     if (!isCash) {
       // کڕین بە قەرز - قەرزی شەریک زیاد بکە
       const currentDebt = selectedPurchasePartner.debt || 0;
@@ -8504,24 +8502,9 @@
       });
       savePartners();
     } else {
-      // ===== کڕینی نەقدی - کەمکردنەوە لە کۆی پارەی واسڵکراو =====
-
-      // ١. کەمکردنەوە لە کۆی واسڵکراو (وەک گواستنەوە بە نەرێنی)
-      moneyRequests.push({
-        id: 'PUR-CASH-TRANSFER-' + Date.now(),
-        date: dateStr,
-        type: 'purchase_cash_transfer',
-        entityName: selectedPurchasePartner.name,
-        entityPhone: selectedPurchasePartner.phone,
-        amount: -total,
-        note: `کەمکردنەوە لە کۆی واسڵکراو بۆ کڕینی نەقدی ${invId}`,
-        isTransfer: true,
-        isJemgeza: false,
-        ignoreInTodayCalculation: true,
-        wasTransferred: false
-      });
-
-      // ٢. تۆمارکردنی وەک خەرجی (بۆ ڕاپۆرت)
+      // کڕینی نەقدی - پارە لە کۆی پارەی واسڵکراو کەم بکە
+      
+      // 1. کەمکردنەوەی پارە لە کۆی واسڵکراو
       moneyRequests.push({
         id: 'PUR-CASH-OUT-' + Date.now(),
         date: dateStr,
@@ -8534,8 +8517,8 @@
         isExpense: true,
         ignoreInTodayCalculation: true
       });
-
-      // ٣. زیادکردن بۆ مەسروفات
+      
+      // 2. زیادکردنی بۆ مەسروفات
       expenseHistory.unshift({
         id: 'EXP-PURCHASE-' + Date.now(),
         date: dateStr,
@@ -8545,9 +8528,10 @@
         timestamp: now.toISOString()
       });
       saveExpenseHistory();
+      
       saveMoneyRequests();
     }
-
+    
     purchaseCart = [];
     selectedPurchasePartner = null;
     renderPurchaseCart();
