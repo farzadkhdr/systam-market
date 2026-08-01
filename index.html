@@ -2349,89 +2349,21 @@
       }
     }
 
-    // ===== FIX 2: فرۆشتن بە Shift لە کویک پەی =====
     if (e.key === 'Shift' && !e.repeat) {
       const dashboardView = document.getElementById('dashboardView');
       const salesView = document.getElementById('salesView');
-      const quickPayPanel = document.getElementById('quickPayPanel');
-      const isQuickPayActive = quickPayPanel && quickPayPanel.classList.contains('active');
-      
-      // گەڕان بەدوای ئەوەی ئایا لە کویک پەیدایە
-      const quickPayTab = document.querySelector('#salesView .tab[data-tab="quickpay"]');
-      const isQuickPayTabActive = quickPayTab && quickPayTab.classList.contains('active');
       
       if (dashboardView && dashboardView.style.display !== 'none') {
-        // چوون بۆ فرۆشتن و کویک پەی
         navigateTo('sales');
-        setTimeout(() => {
-          // چالاککردنی تابی کویک پەی
-          if (quickPayTab && !quickPayTab.classList.contains('active')) {
-            quickPayTab.click();
-            showToast('⚡ چوویتە سەر کویک پەی (Shift)', 'info');
-          }
-        }, 150);
+        showToast('🛒 چوویتە سەر تابی فرۆشتن', 'info');
         e.preventDefault();
         return;
       }
       
       if (salesView && salesView.style.display !== 'none') {
-        // ئەگەر لە کویک پەیدا بوو، فرۆشتن تۆمار بکە
-        if (isQuickPayActive || isQuickPayTabActive) {
-          const amountInput = document.getElementById('quickPaySendAmount');
-          if (amountInput) {
-            const amount = parseInt(amountInput.value);
-            if (amount && amount > 0) {
-              const reason = document.getElementById('quickPaySendReason')?.value || 'فرۆشتی خێرا (Shift)';
-              const now = new Date();
-              const dateStr = now.toLocaleString('ckb', {
-                year: 'numeric', month: '2-digit', day: '2-digit',
-                hour: '2-digit', minute: '2-digit'
-              });
-              
-              // زیادکردنی کۆی فرۆشتنی کویک پەی
-              quickPaySalesTotal += amount;
-              localStorage.setItem('market_quickpay_sales_total', quickPaySalesTotal.toString());
-              
-              // تۆمارکردن لە مێژووی کویک پەی
-              quickPayHistory.unshift({
-                id: 'QP-SHIFT-' + Date.now(),
-                date: dateStr,
-                type: 'sale',
-                amount: amount,
-                reason: reason,
-                note: `فرۆشتی خێرا (Shift) بۆ ${reason}`
-              });
-              
-              // تۆمارکردن لە مێژووی فرۆشتن (بۆ ئامارەکان)
-              saleHistory.unshift({
-                id: 'FSHIFT-' + Date.now(),
-                date: dateStr,
-                customer: 'کویک پەی (Shift)',
-                total: amount,
-                items: [{ name: `فرۆشتی کویک پەی - ${reason}`, qty: 1, price: amount }]
-              });
-              saveSaleHistory();
-              
-              saveQuickPayData();
-              updateStats();
-              renderQuickPayHistory();
-              
-              amountInput.value = '';
-              showToast(`✅ فرۆشتی خێرا بە Shift! بڕ: ${amount.toLocaleString()} د.ع`, 'success');
-              e.preventDefault();
-              return;
-            } else {
-              showToast('⚠️ تکایە بڕی فرۆشتن بنووسە پێش کلیکی Shift', 'info');
-              e.preventDefault();
-              return;
-            }
-          }
-        } else {
-          // گەڕانەوە بۆ داشبۆرد
-          navigateTo('dashboard');
-          showToast('📊 گەڕایتەوە بۆ داشبۆرد', 'info');
-          e.preventDefault();
-        }
+        navigateTo('dashboard');
+        showToast('📊 گەڕایتەوە بۆ داشبۆرد', 'info');
+        e.preventDefault();
       }
     }
   });
@@ -8460,7 +8392,7 @@
     updateStats();
   };
 
-  // ===== FIX 1: کەمکردنەوەی پارەی واسڵکراو لە کڕینی نەقدی =====
+  // ===== COMPLETE PURCHASE =====
   window.completePurchase = function() {
     if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
     if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
@@ -8477,7 +8409,6 @@
     saveWarehouseProducts();
     
     if (!isCash) {
-      // کڕین بە قەرز - قەرزی شەریک زیاد بکە
       const currentDebt = selectedPurchasePartner.debt || 0;
       let newDebt = currentDebt;
       if (currentDebt === 0) {
@@ -8502,33 +8433,17 @@
       });
       savePartners();
     } else {
-      // کڕینی نەقدی - پارە لە کۆی پارەی واسڵکراو کەم بکە
-      
-      // 1. کەمکردنەوەی پارە لە کۆی واسڵکراو
       moneyRequests.push({
-        id: 'PUR-CASH-OUT-' + Date.now(),
+        id: 'PUR-MONEY' + Date.now(),
         date: dateStr,
-        type: 'purchase_cash',
+        type: 'purchase',
         entityName: selectedPurchasePartner.name,
         entityPhone: selectedPurchasePartner.phone,
         amount: -total,
-        note: `کڕینی نەقدی ${invId} - ${selectedPurchasePartner.name}`,
+        note: `کڕین ${invId}`,
         isTransfer: false,
-        isExpense: true,
         ignoreInTodayCalculation: true
       });
-      
-      // 2. زیادکردنی بۆ مەسروفات
-      expenseHistory.unshift({
-        id: 'EXP-PURCHASE-' + Date.now(),
-        date: dateStr,
-        amount: total,
-        category: 'کڕینی کاڵا',
-        note: `کڕین ${invId} - ${selectedPurchasePartner.name}`,
-        timestamp: now.toISOString()
-      });
-      saveExpenseHistory();
-      
       saveMoneyRequests();
     }
     
