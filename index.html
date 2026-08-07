@@ -392,7 +392,7 @@
       <div class="stat-card"><div class="stat-icon indigo"><i class="fas fa-users"></i></div><div class="stat-info"><h4 id="statTotalPersons">0</h4><span>کۆی کەسەکان</span></div></div>
       <div class="stat-card"><div class="stat-icon pink"><i class="fas fa-hand-holding-heart"></i></div><div class="stat-info"><h4 id="statMyDebtToPartners">0</h4><span>قەرزاری من بۆ شەریک</span></div></div>
       <div class="stat-card"><div class="stat-icon green"><i class="fas fa-handshake"></i></div><div class="stat-info"><h4 id="statPersonsDebtToMe">0</h4><span>قەرزاری کەسەکان بۆ من</span></div></div>
-      <div class="stat-card profit-card"><div class="stat-icon gold"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h4 id="statProfit">0</h4><span>قازانج (فرۆشتن - کڕین - سەرف)</span></div></div>
+      <div class="stat-card profit-card"><div class="stat-icon gold"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h4 id="statProfit">0</h4><span>قازانج (کۆی واسڵکراو - کۆی سەرف و مەسروفات)</span></div></div>
       <div class="stat-card jemgeza-card"><div class="stat-icon amber"><i class="fas fa-piggy-bank"></i></div><div class="stat-info"><h4 id="statJemgeza">0</h4><span>جەمگزەی دووەم</span></div></div>
       <div class="stat-card quickpay-card"><div class="stat-icon violet"><i class="fas fa-bolt"></i></div><div class="stat-info"><h4 id="statQuickPay">0</h4><span>کویک پەی</span></div></div>
       <div class="stat-card quickpay-sales-card"><div class="stat-icon quickpay-sales"><i class="fas fa-bolt"></i></div><div class="stat-info"><h4 id="statQuickPaySales">0</h4><span>کۆی فرۆشتنی کویک پەی</span></div></div>
@@ -2349,21 +2349,89 @@
       }
     }
 
+    // ===== FIX 2: فرۆشتن بە Shift لە کویک پەی =====
     if (e.key === 'Shift' && !e.repeat) {
       const dashboardView = document.getElementById('dashboardView');
       const salesView = document.getElementById('salesView');
+      const quickPayPanel = document.getElementById('quickPayPanel');
+      const isQuickPayActive = quickPayPanel && quickPayPanel.classList.contains('active');
+      
+      // گەڕان بەدوای ئەوەی ئایا لە کویک پەیدایە
+      const quickPayTab = document.querySelector('#salesView .tab[data-tab="quickpay"]');
+      const isQuickPayTabActive = quickPayTab && quickPayTab.classList.contains('active');
       
       if (dashboardView && dashboardView.style.display !== 'none') {
+        // چوون بۆ فرۆشتن و کویک پەی
         navigateTo('sales');
-        showToast('🛒 چوویتە سەر تابی فرۆشتن', 'info');
+        setTimeout(() => {
+          // چالاککردنی تابی کویک پەی
+          if (quickPayTab && !quickPayTab.classList.contains('active')) {
+            quickPayTab.click();
+            showToast('⚡ چوویتە سەر کویک پەی (Shift)', 'info');
+          }
+        }, 150);
         e.preventDefault();
         return;
       }
       
       if (salesView && salesView.style.display !== 'none') {
-        navigateTo('dashboard');
-        showToast('📊 گەڕایتەوە بۆ داشبۆرد', 'info');
-        e.preventDefault();
+        // ئەگەر لە کویک پەیدا بوو، فرۆشتن تۆمار بکە
+        if (isQuickPayActive || isQuickPayTabActive) {
+          const amountInput = document.getElementById('quickPaySendAmount');
+          if (amountInput) {
+            const amount = parseInt(amountInput.value);
+            if (amount && amount > 0) {
+              const reason = document.getElementById('quickPaySendReason')?.value || 'فرۆشتی خێرا (Shift)';
+              const now = new Date();
+              const dateStr = now.toLocaleString('ckb', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit'
+              });
+              
+              // زیادکردنی کۆی فرۆشتنی کویک پەی
+              quickPaySalesTotal += amount;
+              localStorage.setItem('market_quickpay_sales_total', quickPaySalesTotal.toString());
+              
+              // تۆمارکردن لە مێژووی کویک پەی
+              quickPayHistory.unshift({
+                id: 'QP-SHIFT-' + Date.now(),
+                date: dateStr,
+                type: 'sale',
+                amount: amount,
+                reason: reason,
+                note: `فرۆشتی خێرا (Shift) بۆ ${reason}`
+              });
+              
+              // تۆمارکردن لە مێژووی فرۆشتن (بۆ ئامارەکان)
+              saleHistory.unshift({
+                id: 'FSHIFT-' + Date.now(),
+                date: dateStr,
+                customer: 'کویک پەی (Shift)',
+                total: amount,
+                items: [{ name: `فرۆشتی کویک پەی - ${reason}`, qty: 1, price: amount }]
+              });
+              saveSaleHistory();
+              
+              saveQuickPayData();
+              updateStats();
+              renderQuickPayHistory();
+              
+              amountInput.value = '';
+              showToast(`✅ فرۆشتی خێرا بە Shift! بڕ: ${amount.toLocaleString()} د.ع`, 'success');
+              e.preventDefault();
+              return;
+            } else {
+              showToast('⚠️ تکایە بڕی فرۆشتن بنووسە پێش کلیکی Shift', 'info');
+              e.preventDefault();
+              return;
+            }
+          }
+        } else {
+          // گەڕانەوە بۆ داشبۆرد
+          navigateTo('dashboard');
+          showToast('📊 گەڕایتەوە بۆ داشبۆرد', 'info');
+          e.preventDefault();
+        }
       }
     }
   });
@@ -2475,12 +2543,19 @@
         s.customer === 'کاش' && s.date && s.date.includes(todayStr)
     ).reduce((sum, s) => sum + (s.total || 0), 0);
 
+    // فرۆشتی نەقدی کە لە moneyRequests تۆمارکراون (بۆ فرۆشتنی کویک پەی)
+    const todayCashSalesFromRequests = (moneyRequests || []).filter(r =>
+        r.type === 'sale_cash' && r.isTodayMoney === true &&
+        r.date && r.date.includes(todayStr)
+    ).reduce((sum, r) => sum + (r.amount || 0), 0);
+
     const todayCredits = (moneyRequests || []).filter(r => 
         r.date && r.date.includes(todayStr) && 
         (r.amount || 0) > 0 && 
         r.type !== 'adjustment' &&
         !r.isJemgeza &&
         r.type !== 'sale' &&
+        r.type !== 'sale_cash' &&
         r.type !== 'agent_sale' &&
         r.type !== 'expense' &&
         r.type !== 'transfer_out' &&
@@ -2513,11 +2588,12 @@
          r.type === 'quickpay_add_from_jemgeza' ||
          r.type === 'sales_return' ||
          r.type === 'purchase' ||
+         r.type === 'purchase_cash' ||
          r.type === 'purchase_return' ||
          r.type === 'adjustment')
     ).reduce((sum, r) => sum + Math.abs(r.amount || 0), 0);
 
-    const result = todayCashSales + todayCredits - todayDebits;
+    const result = todayCashSales + todayCashSalesFromRequests + todayCredits - todayDebits;
     return Math.max(0, result);
   }
 
@@ -3030,12 +3106,15 @@
       .filter(p => p.isCash === true)
       .reduce((sum, p) => sum + (p.total || 0), 0);
     
+    // کۆی پارەی واسڵکراو - تەنها گواستنەوەکان (بە ئەم تایبەتمەندییانە)
     const totalMoneyReceived = filteredMoneyRequests
         .filter(r => r.isTransfer === true && !r.isJemgeza && !r.wasTransferred)
         .reduce((sum, r) => sum + (r.amount || 0), 0);
+    
     const totalExpenses = filteredExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
     const totalGiveMoney = filteredGiveMoney.reduce((sum, g) => sum + (g.amount || 0), 0);
     
+    // کۆی سەرف و مەسروفات
     const totalSpend = filteredPurchases.filter(p => p.isCash).reduce((sum, p) => sum + (p.total || 0), 0) +
                        employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + (sh.amount || 0), 0), 0) +
                        returnHistory.reduce((sum, r) => sum + (r.refundAmount || 0), 0);
@@ -3046,7 +3125,8 @@
     const myDebtToPartners = partners.reduce((sum, p) => sum + Math.max(0, -(p.debt || 0)), 0);
     const personsDebtToMe = customers.reduce((sum, c) => sum + Math.max(0, (c.debt || 0)), 0);
     
-    const profit = totalSales - totalPurchases - totalSpendAndExpenses;
+    // قازانج = کۆی پارەی واسڵکراو - کۆی سەرف و مەسروفات
+    const profit = totalMoneyReceived - totalSpendAndExpenses;
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
     
     const resetHistory = JSON.parse(localStorage.getItem('market_quickpay_reset_history') || '[]');
@@ -5461,18 +5541,20 @@
       currentCustomer.debt = (currentCustomer.debt || 0) + total;
       saveCustomers();
     } else {
+      // ===== فرۆشتی نەقدی - زیاد بکات بۆ واسڵی ئەمرۆ =====
       moneyRequests.push({
-        id: 'SALE-MONEY-' + Date.now(),
+        id: 'SALE-CASH-' + Date.now(),
         date: dateStr,
-        type: 'sale',
-        entityName: 'کاش',
+        type: 'sale_cash',
+        entityName: 'فرۆشتن',
         entityPhone: '-',
         amount: total,
         note: `فرۆشتن ${invId} (نەقد)`,
         isTransfer: false,
         isExpense: false,
         isCashSale: true,
-        ignoreInTodayCalculation: true
+        isTodayMoney: true,  // ← ئەمە وا دەکات بەشێک بێت لە واسڵی ئەمرۆ
+        ignoreInTodayCalculation: false // ← لە واسڵی ئەمرۆ بژمێردرێت
       });
       saveMoneyRequests();
     }
@@ -5498,7 +5580,7 @@
     updateAccountingDisplay();
     updateTodayMoneyStat();
     
-    showToast(`✅ فرۆشتن بە سەرکەوتوویی تۆمارکرا! بڕ: ${total.toLocaleString()} د.ع`, 'success');
+    showToast(`✅ فرۆشتن بە سەرکەوتوویی تۆمارکرا! بڕ: ${total.toLocaleString()} د.ع (زیادکرا بۆ واسڵی ئەمرۆ)`, 'success');
   };
 
   // ===== F2 KEY FOR FAST PRINT =====
@@ -8392,7 +8474,9 @@
     updateStats();
   };
 
-  // ===== COMPLETE PURCHASE =====
+  // ============================================================
+  // ===== FIX: کڕینی نەقدی - کەمکردنەوە لە کۆی پارەی واسڵکراو =====
+  // ============================================================
   window.completePurchase = function() {
     if (!purchaseCart.length) { alert('هیچ کاڵایەک نییە'); return; }
     if (!selectedPurchasePartner) { alert('تکایە شەریکێک هەڵبژێرە'); return; }
@@ -8401,14 +8485,15 @@
     const now = new Date();
     const dateStr = now.toLocaleString('ckb', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     const isCash = !document.getElementById('creditPurchaseCheck')?.checked;
-    
+
     purchaseHistory.unshift({ id: invId, date: dateStr, partner: selectedPurchasePartner.name, partnerId: selectedPurchasePartner.id, total: total, isCash: isCash, items: purchaseCart.map(i => ({ name: i.product.name, qty: i.quantity, price: i.product.buyPrice })) });
     savePurchaseHistory();
-    
+
     purchaseCart.forEach(item => { const product = warehouseProducts.find(p => p.id === item.product.id); if (product) product.quantity += item.quantity; });
     saveWarehouseProducts();
-    
+
     if (!isCash) {
+      // کڕین بە قەرز - قەرزی شەریک زیاد بکە
       const currentDebt = selectedPurchasePartner.debt || 0;
       let newDebt = currentDebt;
       if (currentDebt === 0) {
@@ -8433,20 +8518,50 @@
       });
       savePartners();
     } else {
+      // ===== کڕینی نەقدی - کەمکردنەوە لە کۆی پارەی واسڵکراو =====
+
+      // ١. کەمکردنەوە لە کۆی واسڵکراو (وەک گواستنەوە بە نەرێنی)
       moneyRequests.push({
-        id: 'PUR-MONEY' + Date.now(),
+        id: 'PUR-CASH-TRANSFER-' + Date.now(),
         date: dateStr,
-        type: 'purchase',
+        type: 'purchase_cash_transfer',
         entityName: selectedPurchasePartner.name,
         entityPhone: selectedPurchasePartner.phone,
         amount: -total,
-        note: `کڕین ${invId}`,
+        note: `کەمکردنەوە لە کۆی واسڵکراو بۆ کڕینی نەقدی ${invId}`,
+        isTransfer: true,
+        isJemgeza: false,
+        ignoreInTodayCalculation: true,
+        wasTransferred: false
+      });
+
+      // ٢. تۆمارکردنی وەک خەرجی (بۆ ڕاپۆرت)
+      moneyRequests.push({
+        id: 'PUR-CASH-OUT-' + Date.now(),
+        date: dateStr,
+        type: 'purchase_cash',
+        entityName: selectedPurchasePartner.name,
+        entityPhone: selectedPurchasePartner.phone,
+        amount: -total,
+        note: `کڕینی نەقدی ${invId} - ${selectedPurchasePartner.name}`,
         isTransfer: false,
+        isExpense: true,
         ignoreInTodayCalculation: true
       });
+
+      // ٣. زیادکردن بۆ مەسروفات
+      expenseHistory.unshift({
+        id: 'EXP-PURCHASE-' + Date.now(),
+        date: dateStr,
+        amount: total,
+        category: 'کڕینی کاڵا',
+        note: `کڕین ${invId} - ${selectedPurchasePartner.name}`,
+        timestamp: now.toISOString()
+      });
+      saveExpenseHistory();
       saveMoneyRequests();
     }
-    
+
     purchaseCart = [];
     selectedPurchasePartner = null;
     renderPurchaseCart();
@@ -9427,12 +9542,24 @@
     
     const totalSales = filteredSales.reduce((sum, s) => sum + (s.total || 0), 0);
     const totalPurchases = filteredPurchases.reduce((sum, p) => sum + (p.total || 0), 0);
+    
+    // کۆی پارەی واسڵکراو - تەنها گواستنەوەکان
     const totalMoneyReceived = filteredMoneyRequests
-        .filter(r => r.isTransfer === true && !r.isJemgeza)
+        .filter(r => r.isTransfer === true && !r.isJemgeza && !r.wasTransferred)
         .reduce((sum, r) => sum + (r.amount || 0), 0);
+    
     const totalExpenses = filteredExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
     const totalGiveMoney = filteredGiveMoney.reduce((sum, g) => sum + (g.amount || 0), 0);
-    const profit = totalSales - totalPurchases - totalExpenses - totalGiveMoney;
+    
+    // کۆی سەرف و مەسروفات
+    const totalSpend = filteredPurchases.filter(p => p.isCash).reduce((sum, p) => sum + (p.total || 0), 0) +
+                       employees.reduce((sum, e) => sum + (e.salaryHistory || []).reduce((s, sh) => s + (sh.amount || 0), 0), 0) +
+                       returnHistory.reduce((sum, r) => sum + (r.refundAmount || 0), 0);
+    
+    const totalSpendAndExpenses = totalExpenses + totalGiveMoney + totalSpend;
+    
+    // قازانج = کۆی پارەی واسڵکراو - کۆی سەرف و مەسروفات
+    const profit = totalMoneyReceived - totalSpendAndExpenses;
     const jemgeza = parseInt(localStorage.getItem('market_jemgeza') || '0');
 
     const closingId = 'CLOSING-' + Date.now();
@@ -9442,7 +9569,7 @@
   💰 کۆی فرۆشتن: ${totalSales.toLocaleString()} د.ع
   📦 کۆی کڕین: ${totalPurchases.toLocaleString()} د.ع
   💳 کۆی واسڵکراو: ${totalMoneyReceived.toLocaleString()} د.ع
-  📉 کۆی مەسروفات: ${(totalExpenses + totalGiveMoney).toLocaleString()} د.ع
+  📉 کۆی سەرف و مەسروفات: ${totalSpendAndExpenses.toLocaleString()} د.ع
   📈 قازانج: ${profit.toLocaleString()} د.ع
   🐷 جەمگزەی دووەم: ${jemgeza.toLocaleString()} د.ع
 
@@ -9458,8 +9585,7 @@
         totalSales: totalSales,
         totalPurchases: totalPurchases,
         totalMoneyReceived: totalMoneyReceived,
-        totalExpenses: totalExpenses,
-        totalGiveMoney: totalGiveMoney,
+        totalSpendAndExpenses: totalSpendAndExpenses,
         profit: profit,
         jemgeza: jemgeza,
         quickPayBalance: quickPayBalance,
@@ -9680,7 +9806,7 @@
           <div>💰 فرۆشتن: <span style="color:#059669; font-weight:600;">${record.totalSales.toLocaleString()} د.ع</span></div>
           <div>📦 کڕین: <span style="color:#dc2626; font-weight:600;">${record.totalPurchases.toLocaleString()} د.ع</span></div>
           <div>💳 واسڵ: <span style="color:#2563eb; font-weight:600;">${record.totalMoneyReceived.toLocaleString()} د.ع</span></div>
-          <div>📉 مەسروفات: <span style="color:#b45309; font-weight:600;">${(record.totalExpenses + record.totalGiveMoney).toLocaleString()} د.ع</span></div>
+          <div>📉 سەرف و مەسروفات: <span style="color:#b45309; font-weight:600;">${record.totalSpendAndExpenses.toLocaleString()} د.ع</span></div>
           <div>📈 قازانج: <span style="color:${record.profit >= 0 ? '#059669' : '#dc2626'}; font-weight:700;">${record.profit.toLocaleString()} د.ع</span></div>
           <div>🐷 جەمگزە: <span style="color:#d97706; font-weight:600;">${record.jemgeza.toLocaleString()} د.ع</span></div>
         </div>
